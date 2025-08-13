@@ -1,0 +1,71 @@
+{
+  "id": "worksheet-3",
+  "title": "Worksheet 3: Getting User Input",
+  "description": "Learn how to ask users for information and make interactive programs",
+  "difficulty": "intermediate",
+  "estimatedTime": "30-40 minutes",
+  "problems": [
+    {
+      "id": "3.1",
+      "type": "instruction",
+      "title": "What is input()?",
+      "content": "The <code>input()</code> function asks the user to type something and gives it back to your program!",
+      "example": "name = input(\"What is your name? \")\nprint(\"Hello, \" + name)",
+      "task": "Run the example code and type your name when asked.",
+      "starterCode": "name = input(\"What is your name? \")\nprint(\"Hello, \" + name)",
+      "expectedOutput": "What is your name? [user types name]\nHello, [name]",
+      "hint": "The input() function waits for you to type something and press Enter!",
+      "points": 1
+    },
+    {
+      "id": "3.2",
+      "type": "practice",
+      "title": "Ask for a Color",
+      "content": "Now ask the user for their favorite color!",
+      "task": "Ask the user for their favorite color and then print \"I like [color] too!\"",
+      "starterCode": "# Ask for favorite color\n\n# Print a message using their color\n",
+      "expectedOutput": "What is your favorite color? [user types color]\nI like [color] too!",
+      "hint": "Use input() to get the color, then use + to combine it with your message",
+      "points": 3
+    },
+    {
+      "id": "3.3",
+      "type": "practice",
+      "title": "Number Input",
+      "content": "You can also ask for numbers!",
+      "task": "Ask the user for their age, then print \"You are [age] years old\"",
+      "starterCode": "# Ask for age\n\n# Print their age\n",
+      "expectedOutput": "How old are you? [user types age]\nYou are [age] years old",
+      "hint": "input() always gives you text, even for numbers",
+      "points": 3
+    },
+    {
+      "id": "3.4",
+      "type": "practice",
+      "title": "Simple Calculator",
+      "content": "Let's make a simple calculator!",
+      "task": "Ask for two numbers and add them together",
+      "starterCode": "# Ask for first number\n\n# Ask for second number\n\n# Convert to numbers and add\n\n# Print the result\n",
+      "expectedOutput": "Enter first number: [number1]\nEnter second number: [number2]\nThe sum is: [sum]",
+      "hint": "Use int() to convert text to a number: int(input())",
+      "points": 4
+    },
+    {
+      "id": "3.5",
+      "type": "challenge",
+      "title": "Personal Information Form",
+      "content": "Create a program that collects personal information!",
+      "task": "Ask for:\n1. Name\n2. Age\n3. Favorite food\nThen print a summary",
+      "starterCode": "# Ask for name\n\n# Ask for age\n\n# Ask for favorite food\n\n# Print a summary\n",
+      "expectedOutput": "What is your name? [name]\nHow old are you? [age]\nWhat is your favorite food? [food]\n\nHello [name]! You are [age] years old and love [food]!",
+      "hint": "Use multiple input() calls and combine all the information in your final print",
+      "points": 6
+    }
+  ],
+  "metadata": {
+    "created": "2025-01-27",
+    "author": "Teacher",
+    "tags": ["input", "interactive", "intermediate"],
+    "prerequisites": ["worksheet-1", "worksheet-2"]
+  }
+}

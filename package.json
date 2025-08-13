@@ -1,7 +1,7 @@
 {
-  "name": "python-browser-editor",
+  "name": "python-learning-platform",
   "version": "1.0.0",
-  "description": "A web application that allows users to write and run Python code directly in the browser using Pyodide",
+  "description": "An interactive Python learning platform with structured worksheets for classroom use",
   "main": "index.html",
   "scripts": {
     "start": "npx http-server -p 8000 -o",

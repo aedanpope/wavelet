@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learn Python - Interactive Tutorial</title>
+    <title>Python Learning Platform - Interactive Worksheets</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
@@ -12,162 +12,110 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>🐍 Learn Python</h1>
-            <p>Interactive Python tutorial - Scroll down to start learning!</p>
-        </header>
-        
-        <!-- Section 1: Introduction to Print -->
-        <section class="lesson-section">
-            <div class="lesson-header">
-                <h2>Lesson 1: Your First Python Program</h2>
-                <div class="lesson-status" id="status-1">⏳ Not Started</div>
+        <!-- Worksheet Selection Screen -->
+        <div id="worksheet-selection" class="worksheet-selection">
+            <header>
+                <h1>🐍 Python Learning Platform</h1>
+                <p>Choose a worksheet to get started with Python programming!</p>
+            </header>
+            
+            <div class="worksheets-grid" id="worksheets-grid">
+                <!-- Worksheets will be loaded here dynamically -->
             </div>
-            <div class="lesson-content">
-                <div class="explanation">
-                    <h3>What is <code>print()</code>?</h3>
-                    <p>The <code>print()</code> function is how we make Python show text on the screen. It's one of the most basic and important functions in Python!</p>
-                    <p><strong>Try it:</strong> Type <code>print("Hello, World!")</code> in the editor below and click "Run Code" to see what happens.</p>
-                </div>
-                <div class="code-section">
-                    <div class="code-header">
-                        <h4>Your Code</h4>
-                        <button class="run-btn" onclick="runSection(1)">▶ Run Code</button>
-                    </div>
-                    <div class="code-editor" id="editor-1"></div>
-                    <div class="output" id="output-1"></div>
-                </div>
-                <div class="task">
-                    <h4>Your Task:</h4>
-                    <p>Write a program that prints "Hello, World!" to the screen.</p>
-                </div>
+            
+            <div class="selection-footer">
+                <p>Each worksheet contains 5-6 problems that get progressively harder. Start with Worksheet 1!</p>
             </div>
-        </section>
+        </div>
 
-        <!-- Section 2: Print with Variables -->
-        <section class="lesson-section">
-            <div class="lesson-header">
-                <h2>Lesson 2: Print with Variables</h2>
-                <div class="lesson-status" id="status-2">⏳ Not Started</div>
-            </div>
-            <div class="lesson-content">
-                <div class="explanation">
-                    <h3>Using Variables with Print</h3>
-                    <p>Variables are like containers that store information. You can create a variable and then print it!</p>
-                    <p><strong>Example:</strong> <code>name = "Alice"</code> creates a variable, then <code>print(name)</code> shows "Alice"</p>
+        <!-- Worksheet Interface -->
+        <div id="worksheet-interface" class="worksheet-interface" style="display: none;">
+            <header class="worksheet-header">
+                <button id="back-to-selection" class="back-btn">← Back to Worksheets</button>
+                <div class="worksheet-info">
+                    <h1 id="worksheet-title">Worksheet Title</h1>
+                    <p id="worksheet-description">Worksheet description</p>
                 </div>
-                <div class="code-section">
-                    <div class="code-header">
-                        <h4>Your Code</h4>
-                        <button class="run-btn" onclick="runSection(2)">▶ Run Code</button>
-                    </div>
-                    <div class="code-editor" id="editor-2"></div>
-                    <div class="output" id="output-2"></div>
+                <div class="worksheet-meta">
+                    <span id="worksheet-difficulty" class="difficulty-badge">Beginner</span>
+                    <span id="worksheet-time" class="time-badge">20-30 min</span>
                 </div>
-                <div class="task">
-                    <h4>Your Task:</h4>
-                    <p>Create a variable called <code>message</code> with the value "Python is fun!" and then print it.</p>
-                </div>
-            </div>
-        </section>
+            </header>
 
-        <!-- Section 3: String Quotes -->
-        <section class="lesson-section">
-            <div class="lesson-header">
-                <h2>Lesson 3: Understanding String Quotes</h2>
-                <div class="lesson-status" id="status-3">⏳ Not Started</div>
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="progress-text" id="progress-text">Problem 1 of 5</div>
             </div>
-            <div class="lesson-content">
-                <div class="explanation">
-                    <h3>Single vs Double Quotes</h3>
-                    <p>In Python, you can use either single quotes <code>'</code> or double quotes <code>"</code> to create strings. Both work the same way!</p>
-                    <p><strong>Examples:</strong></p>
-                    <ul>
-                        <li><code>print('Hello')</code> - Single quotes</li>
-                        <li><code>print("Hello")</code> - Double quotes</li>
-                    </ul>
-                </div>
-                <div class="code-section">
-                    <div class="code-header">
-                        <h4>Your Code</h4>
-                        <button class="run-btn" onclick="runSection(3)">▶ Run Code</button>
-                    </div>
-                    <div class="code-editor" id="editor-3"></div>
-                    <div class="output" id="output-3"></div>
-                </div>
-                <div class="task">
-                    <h4>Your Task:</h4>
-                    <p>Fix the syntax error in the code. The string is missing quotes around it!</p>
-                </div>
-            </div>
-        </section>
 
-        <!-- Section 4: Multiple Print Statements -->
-        <section class="lesson-section">
-            <div class="lesson-header">
-                <h2>Lesson 4: Multiple Print Statements</h2>
-                <div class="lesson-status" id="status-4">⏳ Not Started</div>
+            <!-- Problem Navigation -->
+            <div class="problem-nav">
+                <button id="prev-problem" class="nav-btn">← Previous</button>
+                <span id="problem-counter">Problem 1 of 5</span>
+                <button id="next-problem" class="nav-btn">Next →</button>
             </div>
-            <div class="lesson-content">
-                <div class="explanation">
-                    <h3>Printing Multiple Lines</h3>
-                    <p>You can use multiple <code>print()</code> statements to create output on different lines. Each <code>print()</code> creates a new line!</p>
-                    <p><strong>Try this:</strong> Use two print statements to show your name and your favorite color.</p>
-                </div>
-                <div class="code-section">
-                    <div class="code-header">
-                        <h4>Your Code</h4>
-                        <button class="run-btn" onclick="runSection(4)">▶ Run Code</button>
-                    </div>
-                    <div class="code-editor" id="editor-4"></div>
-                    <div class="output" id="output-4"></div>
-                </div>
-                <div class="task">
-                    <h4>Your Task:</h4>
-                    <p>Write two print statements: one that prints your name, and another that prints your favorite color.</p>
-                </div>
-            </div>
-        </section>
 
-        <!-- Section 5: Print with Numbers -->
-        <section class="lesson-section">
-            <div class="lesson-header">
-                <h2>Lesson 5: Print with Numbers</h2>
-                <div class="lesson-status" id="status-5">⏳ Not Started</div>
-            </div>
-            <div class="lesson-content">
-                <div class="explanation">
-                    <h3>Printing Numbers</h3>
-                    <p>You can print numbers directly without quotes! Numbers are different from strings in Python.</p>
-                    <p><strong>Examples:</strong></p>
-                    <ul>
-                        <li><code>print(42)</code> - Prints the number 42</li>
-                        <li><code>print("42")</code> - Prints the text "42"</li>
-                    </ul>
-                </div>
-                <div class="code-section">
-                    <div class="code-header">
-                        <h4>Your Code</h4>
-                        <button class="run-btn" onclick="runSection(5)">▶ Run Code</button>
+            <!-- Current Problem -->
+            <div class="problem-container">
+                <div class="problem-header">
+                    <h2 id="problem-title">Problem Title</h2>
+                    <div class="problem-meta">
+                        <span id="problem-type" class="type-badge">Practice</span>
+                        <span id="problem-points" class="points-badge">2 points</span>
                     </div>
-                    <div class="code-editor" id="editor-5"></div>
-                    <div class="output" id="output-5"></div>
                 </div>
-                <div class="task">
-                    <h4>Your Task:</h4>
-                    <p>Print the number 100 (without quotes) and then print the text "is a big number" (with quotes).</p>
-                </div>
-            </div>
-        </section>
 
-        <!-- Progress Summary -->
-        <section class="progress-section">
-            <h2>Your Progress</h2>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progress-fill"></div>
+                <div class="problem-content">
+                    <div class="explanation">
+                        <div id="problem-content">Problem content will be loaded here</div>
+                        <div id="problem-task" class="task-box">
+                            <h4>Your Task:</h4>
+                            <p id="task-text">Task description</p>
+                        </div>
+                    </div>
+
+                    <div class="code-section">
+                        <div class="code-header">
+                            <h4>Your Code</h4>
+                            <div class="code-controls">
+                                <button id="show-hint" class="hint-btn">💡 Hint</button>
+                                <button id="run-code" class="run-btn">▶ Run Code</button>
+                            </div>
+                        </div>
+                        <div class="code-editor" id="code-editor"></div>
+                        <div class="output" id="output"></div>
+                    </div>
+                </div>
             </div>
-            <p id="progress-text">0 out of 5 lessons completed</p>
-        </section>
+
+            <!-- Hint Modal -->
+            <div id="hint-modal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h3>💡 Hint</h3>
+                    <p id="hint-text">Hint text will appear here</p>
+                </div>
+            </div>
+
+            <!-- Completion Modal -->
+            <div id="completion-modal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <h3>🎉 Worksheet Complete!</h3>
+                    <p id="completion-text">You've completed this worksheet!</p>
+                    <div class="completion-stats">
+                        <p>Total Points: <span id="total-points">0</span></p>
+                        <p>Problems Completed: <span id="problems-completed">0</span></p>
+                    </div>
+                    <div class="completion-actions">
+                        <button id="restart-worksheet" class="btn">🔄 Restart Worksheet</button>
+                        <button id="next-worksheet" class="btn">📚 Next Worksheet</button>
+                        <button id="back-to-menu" class="btn">🏠 Back to Menu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
     <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>

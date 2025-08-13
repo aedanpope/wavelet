@@ -1,155 +1,187 @@
-# Python Browser Editor
+# Python Learning Platform
 
-A modern web application that allows users to write and run Python code directly in the browser using Pyodide. This is a client-side only application - all Python code execution happens in your browser, no server required!
+An interactive Python learning platform designed for classroom use with structured worksheets. Students can write and run Python code directly in their browser using Pyodide (Python compiled to WebAssembly).
 
 ## Features
 
-- 🐍 **Full Python Support**: Run Python 3.9+ code with Pyodide
-- 📝 **Syntax Highlighting**: Beautiful code editor with Python syntax highlighting
-- 🎨 **Modern UI**: Clean, responsive design that works on desktop and mobile
-- 📦 **Popular Libraries**: Built-in support for NumPy and Matplotlib
-- 📚 **Code Examples**: Pre-built examples to help you get started
-- ⌨️ **Keyboard Shortcuts**: Ctrl+Enter to run code quickly
-- 📱 **Responsive Design**: Works perfectly on all device sizes
+- **Interactive Worksheets**: Structured learning with 5-6 problems per worksheet
+- **Progressive Difficulty**: Problems start easy and get progressively harder
+- **Real-time Code Execution**: Run Python code instantly in the browser
+- **Progress Tracking**: Visual progress indicators and completion tracking
+- **Hints System**: Helpful hints for each problem
+- **Responsive Design**: Works on desktop, tablet, and mobile devices
+- **No Installation Required**: Runs entirely in the browser
 
-## Getting Started
+## Worksheet Structure
 
-### Option 1: Open Directly in Browser
-Simply open `index.html` in your web browser. The app will automatically load Pyodide and be ready to use.
+Each worksheet contains:
+- **Instruction Problems**: Introduce new concepts with examples
+- **Practice Problems**: Reinforce learning with guided exercises
+- **Challenge Problems**: Apply knowledge to more complex scenarios
+- **Points System**: Gamified learning with point-based scoring
+- **Estimated Time**: Help teachers plan classroom activities
 
-### Option 2: Local Server (Recommended)
-For the best experience, serve the files using a local web server:
+## Current Worksheets
 
-```bash
-# Using Python 3
-python -m http.server 8000
+1. **Worksheet 1: Getting Started with Print** - Learn the basics of Python's print function
+2. **Worksheet 2: Variables and Basic Math** - Introduction to variables and arithmetic
+3. **Worksheet 3: Getting User Input** - Interactive programs with user input
 
-# Using Python 2
-python -m SimpleHTTPServer 8000
+## For Teachers
 
-# Using Node.js (if you have http-server installed)
-npx http-server
+### Creating New Worksheets
 
-# Using PHP
-php -S localhost:8000
+1. Copy the template file: `worksheets/template.json`
+2. Rename it to `worksheet-X.json` (where X is the next number)
+3. Fill in the worksheet content following the template structure
+4. Update `worksheets/index.json` to include your new worksheet
+5. Deploy the updated files
+
+### Worksheet Data Structure
+
+```json
+{
+  "id": "worksheet-id",
+  "title": "Worksheet Title",
+  "description": "Brief description",
+  "difficulty": "beginner|intermediate|advanced",
+  "estimatedTime": "20-30 minutes",
+  "problems": [
+    {
+      "id": "1.1",
+      "type": "instruction|practice|challenge",
+      "title": "Problem Title",
+      "content": "Explanation content (supports HTML)",
+      "task": "What the student needs to do",
+      "starterCode": "# Starting code for students",
+      "expectedOutput": "Expected output description",
+      "hint": "Helpful hint for students",
+      "points": 1
+    }
+  ],
+  "metadata": {
+    "created": "YYYY-MM-DD",
+    "author": "Teacher Name",
+    "tags": ["tag1", "tag2"],
+    "prerequisites": ["worksheet-1"]
+  }
+}
 ```
 
-Then open `http://localhost:8000` in your browser.
+### Problem Types
 
-## How to Use
+- **instruction**: Introduce new concepts with examples
+- **practice**: Reinforce learning with guided exercises  
+- **challenge**: Apply knowledge to complex scenarios
 
-1. **Write Code**: Type your Python code in the left editor panel
-2. **Run Code**: Click the "Run Code" button or press Ctrl+Enter
-3. **View Output**: See the results in the right output panel
-4. **Try Examples**: Click "Examples" to load pre-built code samples
-5. **Clear**: Use the clear buttons to reset the editor or output
+## For Students
 
-## Available Examples
+### Getting Started
 
-- **Hello World**: Simple print statements
-- **Basic Math**: Mathematical operations and calculations
-- **Loops & Lists**: Working with loops, lists, and list comprehensions
-- **Functions**: Defining and calling functions
-- **Matplotlib**: Creating plots and visualizations
+1. Open the platform in your web browser
+2. Choose a worksheet from the selection screen
+3. Read the problem explanation and task
+4. Write your Python code in the editor
+5. Click "Run Code" to execute your program
+6. Use the "Hint" button if you need help
+7. Navigate between problems using the arrow buttons
+8. Complete all problems to finish the worksheet
 
-## Supported Libraries
+### Tips for Success
 
-The app comes with these popular Python libraries pre-loaded:
-
-- **NumPy**: For numerical computing
-- **Matplotlib**: For creating plots and visualizations
-- **Standard Library**: All Python standard library modules
+- Start with Worksheet 1 if you're new to Python
+- Read the problem carefully before writing code
+- Use hints when you're stuck
+- Don't worry about making mistakes - that's how you learn!
+- Try different approaches to solve problems
 
 ## Technical Details
 
-### Architecture
-- **Frontend**: Vanilla JavaScript, HTML5, CSS3
-- **Code Editor**: CodeMirror with Python syntax highlighting
-- **Python Runtime**: Pyodide (Python compiled to WebAssembly)
-- **Styling**: Custom CSS with modern design principles
+### Technology Stack
+
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **Code Editor**: CodeMirror 5.65.2
+- **Python Runtime**: Pyodide v0.24.1 (Python compiled to WebAssembly)
+- **Styling**: Custom CSS with responsive design
+- **Data Format**: JSON for worksheet content
 
 ### Browser Compatibility
-- Chrome/Chromium 80+
+
+- Chrome 80+
 - Firefox 75+
 - Safari 13+
 - Edge 80+
 
-### Performance
-- Initial load time: ~10-15 seconds (Pyodide download)
-- Code execution: Near-native speed
-- Memory usage: ~50-100MB for basic operations
+### File Structure
 
-## Limitations
-
-- **Initial Load**: Pyodide is ~40MB and takes time to download on first use
-- **Limited Libraries**: Only pre-loaded packages are available (NumPy, Matplotlib)
-- **No File I/O**: Cannot read/write files on your system
-- **No Network**: Cannot make HTTP requests (by default)
-- **Memory**: Large computations may be limited by browser memory
-
-## Customization
-
-### Adding More Examples
-Edit the `examples` object in `script.js` to add your own code examples:
-
-```javascript
-const examples = {
-    // ... existing examples ...
-    myExample: `# My custom example
-print("Hello from my example!")
-# Add your code here
-`
-};
+```
+├── index.html              # Main application
+├── styles.css              # Application styling
+├── script.js               # Application logic
+├── package.json            # Project configuration
+├── worksheets/             # Worksheet data
+│   ├── index.json          # Worksheet index
+│   ├── template.json       # Worksheet template
+│   ├── worksheet-1.json    # Print basics
+│   ├── worksheet-2.json    # Variables and math
+│   └── worksheet-3.json    # User input
+└── README.md               # This file
 ```
 
-### Changing the Theme
-The editor uses the Monokai theme by default. You can change it by modifying the CodeMirror initialization in `script.js`:
+## Development
 
-```javascript
-editor = CodeMirror(document.getElementById('editor'), {
-    // ... other options ...
-    theme: 'your-preferred-theme', // Change this line
-    // ... other options ...
-});
+### Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Or use the simple server
+npm run serve
 ```
 
-### Styling
-All styles are in `styles.css`. The app uses CSS Grid for layout and CSS custom properties for theming.
+### Production Deployment
 
-## Troubleshooting
+The application is a static web app that can be deployed to any web hosting service:
 
-### Pyodide Won't Load
-- Check your internet connection
-- Try refreshing the page
-- Ensure you're using a supported browser
-- Check browser console for error messages
+- **GitHub Pages**: Push to GitHub and enable Pages
+- **Netlify**: Drag and drop the project folder
+- **Vercel**: Connect GitHub repository
+- **Traditional Web Server**: Copy files to web directory
 
-### Code Won't Run
-- Make sure Pyodide has finished loading
-- Check for syntax errors in your Python code
-- Ensure you're not using unsupported libraries
+### Adding New Worksheets
 
-### Performance Issues
-- Close other browser tabs to free up memory
-- Avoid infinite loops in your code
-- Large computations may take time or fail
+1. Create a new JSON file in the `worksheets/` directory
+2. Follow the template structure
+3. Update `worksheets/index.json` to include the new worksheet
+4. Test locally before deploying
+5. Deploy the updated files
 
 ## Contributing
 
-Feel free to contribute to this project by:
-- Adding new examples
-- Improving the UI/UX
-- Adding support for more libraries
-- Fixing bugs
-- Improving documentation
+This platform is designed for educational use. To contribute:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
 ## License
 
-This project is open source and available under the MIT License.
+MIT License - see LICENSE file for details
 
-## Acknowledgments
+## Support
 
-- [Pyodide](https://pyodide.org/) - Python in the browser
-- [CodeMirror](https://codemirror.net/) - Code editor component
-- [Matplotlib](https://matplotlib.org/) - Plotting library
-- [NumPy](https://numpy.org/) - Numerical computing library
+For questions or issues:
+- Check the browser console for error messages
+- Ensure you have a stable internet connection (required for Pyodide)
+- Try refreshing the page if the application doesn't load
+- Contact the development team for technical support
+
+---
+
+**Happy Coding! 🐍**
