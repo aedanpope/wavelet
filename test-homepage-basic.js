@@ -272,7 +272,7 @@ class BasicHomepageTest {
         
         if (failed === 0) {
             console.log('\n🎉 All basic homepage tests passed!');
-            console.log('💡 To run full browser tests, install Puppeteer: npm install puppeteer');
+            console.log('✅ Basic homepage tests completed successfully');
             console.log('   Then run: npm run test:homepage');
         } else {
             console.log(`\n⚠️  ${failed} test(s) failed. Please check the homepage implementation.`);
