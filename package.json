@@ -1,0 +1,35 @@
+{
+  "name": "python-browser-editor",
+  "version": "1.0.0",
+  "description": "A web application that allows users to write and run Python code directly in the browser using Pyodide",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server -p 8000 -o",
+    "serve": "npx http-server -p 8000",
+    "dev": "npx live-server --port=8000",
+    "build": "echo 'Static build complete - files ready for deployment'",
+    "deploy:docker": "docker build -t python-editor . && docker run -p 80:80 python-editor"
+  },
+  "keywords": [
+    "python",
+    "pyodide",
+    "webassembly",
+    "code-editor",
+    "browser",
+    "javascript"
+  ],
+  "author": "Python Browser Editor",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "live-server": "^1.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/python-browser-editor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/python-browser-editor/issues"
+  },
+  "homepage": "https://github.com/yourusername/python-browser-editor#readme"
+}
