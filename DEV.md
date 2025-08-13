@@ -8,9 +8,8 @@ npm start
 
 Submit changes to github
 
-```powershell
-./git-push.sh
-```
+... ask the agent
+
 
 Run tests
 ```powershell
