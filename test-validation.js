@@ -391,6 +391,54 @@ const testCases = [
         code: 'print(undefined_variable)',
         output: 'NameError: name \'undefined_variable\' is not defined\n',
         expected: false
+    },
+    {
+        name: "Worksheet 1.10 - Division problem (should pass with 5.0)",
+        problem: {
+            id: "1.10",
+            validation: {
+                type: "exact_match",
+                rules: [
+                    {
+                        type: "code_contains",
+                        pattern: "print(25 / 5)",
+                        description: "Code must contain the exact print statement"
+                    },
+                    {
+                        type: "output_contains",
+                        pattern: "5.0",
+                        description: "Output must contain '5.0'"
+                    }
+                ]
+            }
+        },
+        code: 'print(25 / 5)',
+        output: '5.0\n',
+        expected: true
+    },
+    {
+        name: "Worksheet 1.10 - Division problem (should pass with 5)",
+        problem: {
+            id: "1.10",
+            validation: {
+                type: "exact_match",
+                rules: [
+                    {
+                        type: "code_contains",
+                        pattern: "print(25 / 5)",
+                        description: "Code must contain the exact print statement"
+                    },
+                    {
+                        type: "output_contains",
+                        pattern: "5.0",
+                        description: "Output must contain '5.0'"
+                    }
+                ]
+            }
+        },
+        code: 'print(25 / 5)',
+        output: '5\n',
+        expected: true
     }
 ];
 

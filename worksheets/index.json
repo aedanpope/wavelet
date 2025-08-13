@@ -2,30 +2,12 @@
   "worksheets": [
     {
       "id": "worksheet-1",
-      "title": "Worksheet 1: Getting Started with Print",
-      "description": "Learn the basics of Python's print function with lots of practice",
+      "title": "Worksheet 1: The Python Calculator",
+      "description": "Learn to use Python for basic arithmetic with the print() function.",
       "difficulty": "beginner",
       "file": "worksheet-1.json",
-      "tags": ["print", "basics", "beginner"],
+      "tags": ["print", "calculator", "operators", "beginner"],
       "prerequisites": []
-    },
-    {
-      "id": "worksheet-2", 
-      "title": "Worksheet 2: Variables and Basic Math",
-      "description": "Learn how to use variables and do simple math in Python",
-      "difficulty": "beginner",
-      "file": "worksheet-2.json",
-      "tags": ["variables", "math", "beginner"],
-      "prerequisites": ["worksheet-1"]
-    },
-    {
-      "id": "worksheet-3",
-      "title": "Worksheet 3: Getting User Input", 
-      "description": "Learn how to ask users for information and make interactive programs",
-      "difficulty": "intermediate",
-      "file": "worksheet-3.json",
-      "tags": ["input", "interactive", "intermediate"],
-      "prerequisites": ["worksheet-1", "worksheet-2"]
     }
   ],
   "metadata": {

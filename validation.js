@@ -52,6 +52,12 @@ function validateRule(code, output, rule) {
             return result;
             
         case 'output_contains':
+            // Special handling for division outputs
+            if (rule.pattern.endsWith('.0') && code.includes('/')) {
+                // For division problems expecting decimal output, also accept integer output
+                const integerVersion = rule.pattern.replace('.0', '');
+                return output.includes(rule.pattern) || output.includes(integerVersion);
+            }
             return output.includes(rule.pattern);
             
         case 'code_min_length':

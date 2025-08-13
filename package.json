@@ -11,7 +11,8 @@
     "deploy:docker": "docker build -t python-editor . && docker run -p 80:80 python-editor",
     "test": "node test-error-handling.js",
     "test:homepage:basic": "node test-homepage-basic.js",
-    "test:all": "npm run test; npm run test:homepage:basic"
+    "test:validation": "node test-validation.js",
+    "test:all": "npm run test; npm run test:homepage:basic; npm run test:validation"
   },
   "keywords": [
     "python",

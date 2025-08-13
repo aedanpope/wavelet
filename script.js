@@ -29,7 +29,7 @@ async function init() {
 // Load worksheets from the index file
 async function loadWorksheets() {
     try {
-        const response = await fetch('worksheets/index.json');
+        const response = await fetch('worksheets/index.json?t=' + Date.now());
         const data = await response.json();
         worksheets = data.worksheets;
     } catch (error) {
@@ -93,7 +93,7 @@ async function loadWorksheet(worksheetId) {
         }
         
         // Load worksheet data
-        const response = await fetch(`worksheets/${worksheet.file}`);
+        const response = await fetch(`worksheets/${worksheet.file}?t=${Date.now()}`);
         currentWorksheet = await response.json();
         
         // Reset progress
@@ -138,6 +138,14 @@ function loadAllProblems() {
     // Initialize all code editors after DOM is ready
     setTimeout(() => {
         initAllCodeEditors();
+        
+        // Render LaTeX content in all problem elements
+        currentWorksheet.problems.forEach((problem, index) => {
+            const problemElement = document.getElementById(`problem-${index}`);
+            if (problemElement) {
+                renderLatexInElement(problemElement);
+            }
+        });
     }, 100);
 }
 
@@ -149,7 +157,7 @@ function createProblemElement(problem, index) {
     
     problemDiv.innerHTML = `
         <div class="problem-header">
-            <h2>${problem.title}</h2>
+            <h2>${problem.id}: ${problem.title}</h2>
             <div class="problem-meta">
                 <span class="type-badge ${problem.type}">${problem.type}</span>
             </div>
@@ -173,12 +181,24 @@ function createProblemElement(problem, index) {
                     </div>
                 </div>
                 <div class="code-editor" id="code-editor-${index}"></div>
-                <div class="output" id="output-${index}"></div>
+                <div class="output-section">
+                    <h4>Output</h4>
+                    <div class="output" id="output-${index}"></div>
+                </div>
             </div>
         </div>
     `;
     
     return problemDiv;
+}
+
+// Render LaTeX content in a problem element
+function renderLatexInElement(element) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise([element]).catch((err) => {
+            console.warn('MathJax rendering error:', err);
+        });
+    }
 }
 
 // Initialize all CodeMirror editors
@@ -242,8 +262,8 @@ async function runCode(problemIndex) {
         const isValid = Validation.validateAnswer(code, printOutput, problem);
         
         if (isValid) {
-            // Display output
-            output.textContent = printOutput || 'Code executed successfully!';
+            // Display output with success message
+            output.textContent = printOutput + '\n\n✅ Correct! Well done!';
             output.className = 'output success';
             
             // Mark as completed
@@ -291,66 +311,54 @@ function showCompletionModal() {
 // Reset Python environment to clear all variables and state
 async function resetPythonEnvironment() {
     try {
-        // Use a more aggressive approach to clear the environment
+        // Use a much simpler approach that's more compatible with Pyodide
         await pyodide.runPythonAsync(`
-# Clear all user-defined variables from globals
-import sys
-import builtins
-
-# Get all current global variables
-current_globals = list(globals().keys())
-
-# Define built-in names that should be preserved
-builtin_names = {
-    '__builtins__', '__name__', '__doc__', '__package__', '__loader__', 
-    '__spec__', '__annotations__', '__all__', '__file__', '__cached__',
-    'print', 'input', 'len', 'str', 'int', 'float', 'list', 'dict', 'tuple',
-    'set', 'bool', 'type', 'range', 'enumerate', 'zip', 'map', 'filter',
-    'sum', 'min', 'max', 'abs', 'round', 'pow', 'divmod', 'bin', 'oct', 'hex',
-    'chr', 'ord', 'ascii', 'repr', 'eval', 'exec', 'compile', 'open',
-    'help', 'dir', 'vars', 'locals', 'globals', 'getattr', 'setattr',
-    'hasattr', 'delattr', 'isinstance', 'issubclass', 'super', 'property',
-    'staticmethod', 'classmethod', 'object', 'type', 'Exception', 'BaseException',
-    'StopIteration', 'GeneratorExit', 'ArithmeticError', 'BufferError',
-    'LookupError', 'AssertionError', 'AttributeError', 'EOFError',
-    'FloatingPointError', 'OSError', 'ImportError', 'ModuleNotFoundError',
-    'IndexError', 'KeyError', 'KeyboardInterrupt', 'MemoryError',
-    'NameError', 'OverflowError', 'RecursionError', 'ReferenceError',
-    'RuntimeError', 'SyntaxError', 'IndentationError', 'TabError',
-    'SystemError', 'TypeError', 'UnboundLocalError', 'UnicodeError',
-    'UnicodeEncodeError', 'UnicodeDecodeError', 'UnicodeTranslateError',
-    'ValueError', 'ZeroDivisionError', 'BlockingIOError', 'BrokenPipeError',
-    'ChildProcessError', 'ConnectionError', 'BrokenPipeError', 'ConnectionAbortedError',
-    'ConnectionRefusedError', 'ConnectionResetError', 'FileExistsError',
-    'FileNotFoundError', 'InterruptedError', 'IsADirectoryError',
-    'NotADirectoryError', 'PermissionError', 'ProcessLookupError',
-    'TimeoutError', 'Warning', 'UserWarning', 'DeprecationWarning',
-    'PendingDeprecationWarning', 'SyntaxWarning', 'RuntimeWarning',
-    'FutureWarning', 'ImportWarning', 'UnicodeWarning', 'BytesWarning',
-    'ResourceWarning', 'True', 'False', 'None'
-}
-
-# Add all built-in function names
-builtin_names.update(dir(builtins))
-
-# Remove user-defined variables
-for var_name in current_globals:
-    if var_name not in builtin_names and not var_name.startswith('_'):
-        try:
-            del globals()[var_name]
-        except:
-            pass
-
-# Clear imported modules
-modules_to_remove = [name for name in sys.modules.keys() 
-                    if not name.startswith('_') and name not in ['sys', 'builtins', 'pyodide']]
-for module in modules_to_remove:
-    if module in sys.modules:
-        del sys.modules[module]
-
-# Force garbage collection to clean up any remaining references
-import gc
-gc.collect()
+# Simple environment reset - just clear user-defined variables
+try:
+    # Get current globals
+    current_globals = list(globals().keys())
+    
+    # Define built-in names that should be preserved
+    builtin_names = {
+        '__builtins__', '__name__', '__doc__', '__package__', '__loader__', 
+        '__spec__', '__annotations__', '__all__', '__file__', '__cached__',
+        'print', 'input', 'len', 'str', 'int', 'float', 'list', 'dict', 'tuple',
+        'set', 'bool', 'type', 'range', 'enumerate', 'zip', 'map', 'filter',
+        'sum', 'min', 'max', 'abs', 'round', 'pow', 'divmod', 'bin', 'oct', 'hex',
+        'chr', 'ord', 'ascii', 'repr', 'eval', 'exec', 'compile', 'open',
+        'help', 'dir', 'vars', 'locals', 'globals', 'getattr', 'setattr',
+        'hasattr', 'delattr', 'isinstance', 'issubclass', 'super', 'property',
+        'staticmethod', 'classmethod', 'object', 'type', 'Exception', 'BaseException',
+        'StopIteration', 'GeneratorExit', 'ArithmeticError', 'BufferError',
+        'LookupError', 'AssertionError', 'AttributeError', 'EOFError',
+        'FloatingPointError', 'OSError', 'ImportError', 'ModuleNotFoundError',
+        'IndexError', 'KeyError', 'KeyboardInterrupt', 'MemoryError',
+        'NameError', 'OverflowError', 'RecursionError', 'ReferenceError',
+        'RuntimeError', 'SyntaxError', 'IndentationError', 'TabError',
+        'SystemError', 'TypeError', 'UnboundLocalError', 'UnicodeError',
+        'UnicodeEncodeError', 'UnicodeDecodeError', 'UnicodeTranslateError',
+        'ValueError', 'ZeroDivisionError', 'BlockingIOError', 'BrokenPipeError',
+        'ChildProcessError', 'ConnectionError', 'BrokenPipeError', 'ConnectionAbortedError',
+        'ConnectionRefusedError', 'ConnectionResetError', 'FileExistsError',
+        'FileNotFoundError', 'InterruptedError', 'IsADirectoryError',
+        'NotADirectoryError', 'PermissionError', 'ProcessLookupError',
+        'TimeoutError', 'Warning', 'UserWarning', 'DeprecationWarning',
+        'PendingDeprecationWarning', 'SyntaxWarning', 'RuntimeWarning',
+        'FutureWarning', 'ImportWarning', 'UnicodeWarning', 'BytesWarning',
+        'ResourceWarning', 'True', 'False', 'None'
+    }
+    
+    # Remove user-defined variables (those not in builtin_names and not starting with '_')
+    for var_name in current_globals:
+        if var_name not in builtin_names and not var_name.startswith('_'):
+            try:
+                del globals()[var_name]
+            except:
+                pass
+                
+except Exception as e:
+    # If anything goes wrong, just continue
+    pass
 `);
         
     } catch (error) {
