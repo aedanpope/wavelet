@@ -13,8 +13,7 @@
       "task": "Run the example code and type your name when asked.",
       "starterCode": "name = input(\"What is your name? \")\nprint(\"Hello, \" + name)",
       "expectedOutput": "What is your name? [user types name]\nHello, [name]",
-      "hint": "The input() function waits for you to type something and press Enter!",
-      "points": 1
+      "hint": "The input() function waits for you to type something and press Enter!"
     },
     {
       "id": "3.2",
@@ -24,8 +23,7 @@
       "task": "Ask the user for their favorite color and then print \"I like [color] too!\"",
       "starterCode": "# Ask for favorite color\n\n# Print a message using their color\n",
       "expectedOutput": "What is your favorite color? [user types color]\nI like [color] too!",
-      "hint": "Use input() to get the color, then use + to combine it with your message",
-      "points": 3
+      "hint": "Use input() to get the color, then use + to combine it with your message"
     },
     {
       "id": "3.3",
@@ -35,8 +33,7 @@
       "task": "Ask the user for their age, then print \"You are [age] years old\"",
       "starterCode": "# Ask for age\n\n# Print their age\n",
       "expectedOutput": "How old are you? [user types age]\nYou are [age] years old",
-      "hint": "input() always gives you text, even for numbers",
-      "points": 3
+      "hint": "input() always gives you text, even for numbers"
     },
     {
       "id": "3.4",
@@ -46,8 +43,7 @@
       "task": "Ask for two numbers and add them together",
       "starterCode": "# Ask for first number\n\n# Ask for second number\n\n# Convert to numbers and add\n\n# Print the result\n",
       "expectedOutput": "Enter first number: [number1]\nEnter second number: [number2]\nThe sum is: [sum]",
-      "hint": "Use int() to convert text to a number: int(input())",
-      "points": 4
+      "hint": "Use int() to convert text to a number: int(input())"
     },
     {
       "id": "3.5",
@@ -57,8 +53,7 @@
       "task": "Ask for:\n1. Name\n2. Age\n3. Favorite food\nThen print a summary",
       "starterCode": "# Ask for name\n\n# Ask for age\n\n# Ask for favorite food\n\n# Print a summary\n",
       "expectedOutput": "What is your name? [name]\nHow old are you? [age]\nWhat is your favorite food? [food]\n\nHello [name]! You are [age] years old and love [food]!",
-      "hint": "Use multiple input() calls and combine all the information in your final print",
-      "points": 6
+      "hint": "Use multiple input() calls and combine all the information in your final print"
     }
   ],
   "metadata": {

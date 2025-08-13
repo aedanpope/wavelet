@@ -1,8 +1,7 @@
 // Global variables
 let pyodide = null;
 let currentWorksheet = null;
-let currentProblemIndex = 0;
-let codeEditor = null;
+let codeEditors = []; // Array to hold multiple code editors
 let worksheets = [];
 let completedProblems = new Set();
 
@@ -98,14 +97,10 @@ async function loadWorksheet(worksheetId) {
         currentWorksheet = await response.json();
         
         // Reset progress
-        currentProblemIndex = 0;
         completedProblems.clear();
         
         // Show worksheet interface
         showWorksheetInterface();
-        
-        // Load first problem
-        loadProblem(0);
         
     } catch (error) {
         console.error('Error loading worksheet:', error);
@@ -125,84 +120,98 @@ function showWorksheetInterface() {
     document.getElementById('worksheet-difficulty').className = `difficulty-badge ${currentWorksheet.difficulty}`;
     document.getElementById('worksheet-time').textContent = currentWorksheet.estimatedTime;
     
-    // Initialize code editor if not already done
-    if (!codeEditor) {
-        initCodeEditor();
-    }
+    // Load all problems
+    loadAllProblems();
 }
 
-// Initialize CodeMirror editor
-function initCodeEditor() {
-    const editorElement = document.getElementById('code-editor');
-    codeEditor = CodeMirror(editorElement, {
-        mode: 'python',
-        theme: 'monokai',
-        lineNumbers: true,
-        indentUnit: 4,
-        tabSize: 4,
-        lineWrapping: true,
-        autoCloseBrackets: true,
-        matchBrackets: true,
-        extraKeys: {
-            "Tab": function(cm) {
-                cm.replaceSelection("    ", "end");
+// Load all problems at once
+function loadAllProblems() {
+    const container = document.getElementById('problems-container');
+    container.innerHTML = '';
+    codeEditors = [];
+    
+    currentWorksheet.problems.forEach((problem, index) => {
+        const problemElement = createProblemElement(problem, index);
+        container.appendChild(problemElement);
+    });
+    
+    // Initialize all code editors after DOM is ready
+    setTimeout(() => {
+        initAllCodeEditors();
+    }, 100);
+}
+
+// Create a problem element
+function createProblemElement(problem, index) {
+    const problemDiv = document.createElement('div');
+    problemDiv.className = 'problem-container';
+    problemDiv.id = `problem-${index}`;
+    
+    problemDiv.innerHTML = `
+        <div class="problem-header">
+            <h2>${problem.title}</h2>
+            <div class="problem-meta">
+                <span class="type-badge ${problem.type}">${problem.type}</span>
+            </div>
+        </div>
+
+        <div class="problem-content">
+            <div class="explanation">
+                <div class="problem-content-text">${problem.content}</div>
+                <div class="task-box">
+                    <h4>Your Task:</h4>
+                    <p>${problem.task}</p>
+                </div>
+            </div>
+
+            <div class="code-section">
+                <div class="code-header">
+                    <h4>Your Code</h4>
+                    <div class="code-controls">
+                        <button class="hint-btn" onclick="showHint(${index})">💡 Hint</button>
+                        <button class="run-btn" onclick="runCode(${index})">▶ Run Code</button>
+                    </div>
+                </div>
+                <div class="code-editor" id="code-editor-${index}"></div>
+                <div class="output" id="output-${index}"></div>
+            </div>
+        </div>
+    `;
+    
+    return problemDiv;
+}
+
+// Initialize all CodeMirror editors
+function initAllCodeEditors() {
+    currentWorksheet.problems.forEach((problem, index) => {
+        const editorElement = document.getElementById(`code-editor-${index}`);
+        const editor = CodeMirror(editorElement, {
+            mode: 'python',
+            theme: 'monokai',
+            lineNumbers: true,
+            indentUnit: 4,
+            tabSize: 4,
+            lineWrapping: true,
+            autoCloseBrackets: true,
+            matchBrackets: true,
+            extraKeys: {
+                "Tab": function(cm) {
+                    cm.replaceSelection("    ", "end");
+                }
             }
-        }
+        });
+        
+        // Set starter code
+        editor.setValue(problem.starterCode || '');
+        codeEditors[index] = editor;
     });
 }
 
-// Load a specific problem
-function loadProblem(index) {
-    if (index < 0 || index >= currentWorksheet.problems.length) {
-        return;
-    }
-    
-    currentProblemIndex = index;
-    const problem = currentWorksheet.problems[index];
-    
-    // Update problem info
-    document.getElementById('problem-title').textContent = problem.title;
-    document.getElementById('problem-type').textContent = problem.type;
-    document.getElementById('problem-type').className = `type-badge ${problem.type}`;
-    document.getElementById('problem-points').textContent = `${problem.points} points`;
-    document.getElementById('problem-content').innerHTML = problem.content;
-    document.getElementById('task-text').textContent = problem.task;
-    
-    // Set starter code
-    codeEditor.setValue(problem.starterCode || '');
-    
-    // Clear output
-    document.getElementById('output').textContent = '';
-    
-    // Update navigation
-    updateNavigation();
-    updateProgress();
-}
-
-// Update navigation buttons
-function updateNavigation() {
-    const prevBtn = document.getElementById('prev-problem');
-    const nextBtn = document.getElementById('next-problem');
-    const counter = document.getElementById('problem-counter');
-    
-    prevBtn.disabled = currentProblemIndex === 0;
-    nextBtn.disabled = currentProblemIndex === currentWorksheet.problems.length - 1;
-    
-    counter.textContent = `Problem ${currentProblemIndex + 1} of ${currentWorksheet.problems.length}`;
-}
-
-// Update progress bar
-function updateProgress() {
-    const progress = (completedProblems.size / currentWorksheet.problems.length) * 100;
-    document.getElementById('progress-fill').style.width = `${progress}%`;
-    document.getElementById('progress-text').textContent = `${completedProblems.size} of ${currentWorksheet.problems.length} problems completed`;
-}
-
-// Run Python code
-async function runCode() {
-    const code = codeEditor.getValue();
-    const output = document.getElementById('output');
-    const problem = currentWorksheet.problems[currentProblemIndex];
+// Run Python code for a specific problem
+async function runCode(problemIndex) {
+    const code = codeEditors[problemIndex].getValue();
+    const output = document.getElementById(`output-${problemIndex}`);
+    const problem = currentWorksheet.problems[problemIndex];
     
     if (!code.trim()) {
         output.textContent = 'Please enter some code to run.';
@@ -238,7 +247,7 @@ async function runCode() {
             output.className = 'output success';
             
             // Mark as completed
-            completedProblems.add(currentProblemIndex);
+            completedProblems.add(problemIndex);
             updateProgress();
             
             // Check if worksheet is complete
@@ -257,6 +266,26 @@ async function runCode() {
         output.textContent = errorInfo.fullMessage;
         output.className = 'output error';
     }
+}
+
+// Show hint for a specific problem
+function showHint(problemIndex) {
+    const problem = currentWorksheet.problems[problemIndex];
+    const modal = document.getElementById('hint-modal');
+    const hintText = document.getElementById('hint-text');
+    
+    hintText.textContent = problem.hint;
+    modal.style.display = 'flex';
+}
+
+// Show completion modal
+function showCompletionModal() {
+    const modal = document.getElementById('completion-modal');
+    const problemsCompleted = document.getElementById('problems-completed');
+    
+    problemsCompleted.textContent = completedProblems.size;
+    
+    modal.style.display = 'flex';
 }
 
 // Reset Python environment to clear all variables and state
@@ -420,56 +449,17 @@ function validateAnswer(code, output, problem) {
     }
 }
 
-// Show hint modal
-function showHint() {
-    const problem = currentWorksheet.problems[currentProblemIndex];
-    const modal = document.getElementById('hint-modal');
-    const hintText = document.getElementById('hint-text');
-    
-    hintText.textContent = problem.hint;
-    modal.style.display = 'flex';
-}
-
-// Show completion modal
-function showCompletionModal() {
-    const modal = document.getElementById('completion-modal');
-    const totalPoints = document.getElementById('total-points');
-    const problemsCompleted = document.getElementById('problems-completed');
-    
-    // Calculate total points
-    const points = currentWorksheet.problems
-        .filter((_, index) => completedProblems.has(index))
-        .reduce((sum, problem) => sum + problem.points, 0);
-    
-    totalPoints.textContent = points;
-    problemsCompleted.textContent = completedProblems.size;
-    
-    modal.style.display = 'flex';
+// Update progress bar
+function updateProgress() {
+    const progress = (completedProblems.size / currentWorksheet.problems.length) * 100;
+    document.getElementById('progress-fill').style.width = `${progress}%`;
+    document.getElementById('progress-text').textContent = `${completedProblems.size} of ${currentWorksheet.problems.length} problems completed`;
 }
 
 // Setup event listeners
 function setupEventListeners() {
-    // Navigation buttons
-    document.getElementById('prev-problem').onclick = () => {
-        if (currentProblemIndex > 0) {
-            loadProblem(currentProblemIndex - 1);
-        }
-    };
-    
-    document.getElementById('next-problem').onclick = () => {
-        if (currentProblemIndex < currentWorksheet.problems.length - 1) {
-            loadProblem(currentProblemIndex + 1);
-        }
-    };
-    
     // Back to selection
     document.getElementById('back-to-selection').onclick = showWorksheetSelection;
-    
-    // Run code
-    document.getElementById('run-code').onclick = runCode;
-    
-    // Show hint
-    document.getElementById('show-hint').onclick = showHint;
     
     // Modal close buttons
     document.querySelectorAll('.close').forEach(closeBtn => {

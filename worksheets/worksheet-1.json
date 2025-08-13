@@ -13,8 +13,7 @@
       "task": "Type the example code and run it to see what happens.",
       "starterCode": "print(\"Hello, World!\")",
       "expectedOutput": "Hello, World!",
-      "hint": "Make sure you have quotes around the text!",
-      "points": 1
+      "hint": "Make sure you have quotes around the text!"
     },
     {
       "id": "1.2",
@@ -24,8 +23,7 @@
       "task": "Write a program that prints \"My name is [your name]\"",
       "starterCode": "# Write your code here\n",
       "expectedOutput": "My name is [any name]",
-      "hint": "Replace [your name] with your actual name in quotes",
-      "points": 2
+      "hint": "Replace [your name] with your actual name in quotes"
     },
     {
       "id": "1.3",
@@ -35,8 +33,7 @@
       "task": "Print the number 42 (without quotes)",
       "starterCode": "# Print the number 42\n",
       "expectedOutput": "42",
-      "hint": "Numbers don't need quotes around them",
-      "points": 2
+      "hint": "Numbers don't need quotes around them"
     },
     {
       "id": "1.4",
@@ -46,8 +43,7 @@
       "task": "Write two print statements: one that prints your favorite color, and another that prints your favorite food",
       "starterCode": "# Print your favorite color\n\n# Print your favorite food\n",
       "expectedOutput": "[color]\n[food]",
-      "hint": "Each print() creates a new line automatically",
-      "points": 3
+      "hint": "Each print() creates a new line automatically"
     },
     {
       "id": "1.5",
@@ -57,8 +53,7 @@
       "task": "Create a program that prints:\n1. Your name\n2. Your age (as a number)\n3. \"I love Python!\"",
       "starterCode": "# Print your name\n\n# Print your age (as a number)\n\n# Print \"I love Python!\"\n",
       "expectedOutput": "[name]\n[age]\nI love Python!",
-      "hint": "Remember: text needs quotes, numbers don't!",
-      "points": 5
+      "hint": "Remember: text needs quotes, numbers don't!"
     }
   ],
   "metadata": {

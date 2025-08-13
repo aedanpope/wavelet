@@ -13,8 +13,7 @@
       "task": "Run the example code to see how variables work.",
       "starterCode": "name = \"Alice\"\nprint(name)",
       "expectedOutput": "Alice",
-      "hint": "Variables store values that you can use later!",
-      "points": 1
+      "hint": "Variables store values that you can use later!"
     },
     {
       "id": "2.2",
@@ -24,8 +23,7 @@
       "task": "Create a variable called 'animal' with your favorite animal, then print it",
       "starterCode": "# Create a variable called 'animal'\n\n# Print the animal\n",
       "expectedOutput": "[any animal name]",
-      "hint": "Use the format: variable_name = \"value\"",
-      "points": 2
+      "hint": "Use the format: variable_name = \"value\""
     },
     {
       "id": "2.3",
@@ -35,8 +33,7 @@
       "task": "Create a variable called 'age' with your age (as a number), then print it",
       "starterCode": "# Create a variable for your age\n\n# Print your age\n",
       "expectedOutput": "[age number]",
-      "hint": "Numbers don't need quotes!",
-      "points": 2
+      "hint": "Numbers don't need quotes!"
     },
     {
       "id": "2.4",
@@ -46,8 +43,7 @@
       "task": "Create two variables with numbers, then add them together and print the result",
       "starterCode": "# Create two number variables\n\n# Add them together and print\n",
       "expectedOutput": "[sum of the two numbers]",
-      "hint": "Use the + symbol to add numbers",
-      "points": 3
+      "hint": "Use the + symbol to add numbers"
     },
     {
       "id": "2.5",
@@ -57,8 +53,7 @@
       "task": "Create variables for:\n1. Your age\n2. Your friend's age\n3. Print both ages and their sum",
       "starterCode": "# Your age\n\n# Your friend's age\n\n# Print both ages\n\n# Print the sum\n",
       "expectedOutput": "[your age]\n[friend's age]\n[sum]",
-      "hint": "Use multiple print statements to show each piece of information",
-      "points": 5
+      "hint": "Use multiple print statements to show each piece of information"
     }
   ],
   "metadata": {
