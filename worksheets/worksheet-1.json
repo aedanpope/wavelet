@@ -3,7 +3,6 @@
   "title": "Worksheet 1: Getting Started with Print",
   "description": "Learn the basics of Python's print function with lots of practice",
   "difficulty": "beginner",
-  "estimatedTime": "20-30 minutes",
   "problems": [
     {
       "id": "1.1",

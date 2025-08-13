@@ -3,7 +3,6 @@
   "title": "Worksheet 2: Variables and Basic Math",
   "description": "Learn how to use variables and do simple math in Python",
   "difficulty": "beginner",
-  "estimatedTime": "25-35 minutes",
   "problems": [
     {
       "id": "2.1",

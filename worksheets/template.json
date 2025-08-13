@@ -3,7 +3,6 @@
   "title": "Worksheet Template: [Your Title Here]",
   "description": "[Brief description of what this worksheet teaches]",
   "difficulty": "beginner|intermediate|advanced",
-  "estimatedTime": "20-30 minutes",
   "problems": [
     {
       "id": "1.1",
