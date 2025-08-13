@@ -2,6 +2,8 @@
 
 An interactive Python learning platform designed for classroom use with structured worksheets. Students can write and run Python code directly in their browser using Pyodide (Python compiled to WebAssembly).
 
+🌐 **Live App**: [https://aedanpope.github.io/elve/](https://aedanpope.github.io/elve/)
+
 ## Features
 
 - **Interactive Worksheets**: Structured learning with 5-6 problems per worksheet
