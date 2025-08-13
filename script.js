@@ -202,6 +202,7 @@ function updateProgress() {
 async function runCode() {
     const code = codeEditor.getValue();
     const output = document.getElementById('output');
+    const problem = currentWorksheet.problems[currentProblemIndex];
     
     if (!code.trim()) {
         output.textContent = 'Please enter some code to run.';
@@ -210,6 +211,9 @@ async function runCode() {
     
     try {
         output.textContent = 'Running...';
+        
+        // Reset Python environment to clear previous state
+        await resetPythonEnvironment();
         
         // Capture print output
         let printOutput = '';
@@ -225,22 +229,194 @@ async function runCode() {
         // Restore original print
         pyodide.globals.set('print', originalPrint);
         
-        // Display output
-        output.textContent = printOutput || 'Code executed successfully!';
-        output.className = 'output success';
+        // Validate the answer
+        const isValid = validateAnswer(code, printOutput, problem);
         
-        // Mark as completed
-        completedProblems.add(currentProblemIndex);
-        updateProgress();
-        
-        // Check if worksheet is complete
-        if (completedProblems.size === currentWorksheet.problems.length) {
-            setTimeout(showCompletionModal, 1000);
+        if (isValid) {
+            // Display output
+            output.textContent = printOutput || 'Code executed successfully!';
+            output.className = 'output success';
+            
+            // Mark as completed
+            completedProblems.add(currentProblemIndex);
+            updateProgress();
+            
+            // Check if worksheet is complete
+            if (completedProblems.size === currentWorksheet.problems.length) {
+                setTimeout(showCompletionModal, 1000);
+            }
+        } else {
+            // Show feedback for incorrect answer
+            output.textContent = printOutput + '\n\n❌ Not quite right! Check the task requirements and try again.';
+            output.className = 'output error';
         }
         
     } catch (error) {
-        output.textContent = `Error: ${error.message}`;
+        // Use the shared error handling logic
+        const errorInfo = ErrorHandler.extractErrorInfo(error.message);
+        output.textContent = errorInfo.fullMessage;
         output.className = 'output error';
+    }
+}
+
+// Reset Python environment to clear all variables and state
+async function resetPythonEnvironment() {
+    try {
+        // Use a more aggressive approach to clear the environment
+        await pyodide.runPythonAsync(`
+# Clear all user-defined variables from globals
+import sys
+import builtins
+
+# Get all current global variables
+current_globals = list(globals().keys())
+
+# Define built-in names that should be preserved
+builtin_names = {
+    '__builtins__', '__name__', '__doc__', '__package__', '__loader__', 
+    '__spec__', '__annotations__', '__all__', '__file__', '__cached__',
+    'print', 'input', 'len', 'str', 'int', 'float', 'list', 'dict', 'tuple',
+    'set', 'bool', 'type', 'range', 'enumerate', 'zip', 'map', 'filter',
+    'sum', 'min', 'max', 'abs', 'round', 'pow', 'divmod', 'bin', 'oct', 'hex',
+    'chr', 'ord', 'ascii', 'repr', 'eval', 'exec', 'compile', 'open',
+    'help', 'dir', 'vars', 'locals', 'globals', 'getattr', 'setattr',
+    'hasattr', 'delattr', 'isinstance', 'issubclass', 'super', 'property',
+    'staticmethod', 'classmethod', 'object', 'type', 'Exception', 'BaseException',
+    'StopIteration', 'GeneratorExit', 'ArithmeticError', 'BufferError',
+    'LookupError', 'AssertionError', 'AttributeError', 'EOFError',
+    'FloatingPointError', 'OSError', 'ImportError', 'ModuleNotFoundError',
+    'IndexError', 'KeyError', 'KeyboardInterrupt', 'MemoryError',
+    'NameError', 'OverflowError', 'RecursionError', 'ReferenceError',
+    'RuntimeError', 'SyntaxError', 'IndentationError', 'TabError',
+    'SystemError', 'TypeError', 'UnboundLocalError', 'UnicodeError',
+    'UnicodeEncodeError', 'UnicodeDecodeError', 'UnicodeTranslateError',
+    'ValueError', 'ZeroDivisionError', 'BlockingIOError', 'BrokenPipeError',
+    'ChildProcessError', 'ConnectionError', 'BrokenPipeError', 'ConnectionAbortedError',
+    'ConnectionRefusedError', 'ConnectionResetError', 'FileExistsError',
+    'FileNotFoundError', 'InterruptedError', 'IsADirectoryError',
+    'NotADirectoryError', 'PermissionError', 'ProcessLookupError',
+    'TimeoutError', 'Warning', 'UserWarning', 'DeprecationWarning',
+    'PendingDeprecationWarning', 'SyntaxWarning', 'RuntimeWarning',
+    'FutureWarning', 'ImportWarning', 'UnicodeWarning', 'BytesWarning',
+    'ResourceWarning', 'True', 'False', 'None'
+}
+
+# Add all built-in function names
+builtin_names.update(dir(builtins))
+
+# Remove user-defined variables
+for var_name in current_globals:
+    if var_name not in builtin_names and not var_name.startswith('_'):
+        try:
+            del globals()[var_name]
+        except:
+            pass
+
+# Clear imported modules
+modules_to_remove = [name for name in sys.modules.keys() 
+                    if not name.startswith('_') and name not in ['sys', 'builtins', 'pyodide']]
+for module in modules_to_remove:
+    if module in sys.modules:
+        del sys.modules[module]
+
+# Force garbage collection to clean up any remaining references
+import gc
+gc.collect()
+`);
+        
+    } catch (error) {
+        console.warn('Error resetting Python environment:', error);
+        // Continue anyway - the environment will be mostly clean
+    }
+}
+
+// Validate the student's answer
+function validateAnswer(code, output, problem) {
+    const codeTrimmed = code.trim();
+    const outputTrimmed = output.trim();
+    
+    // Check if code is too empty (just comments or whitespace)
+    const codeWithoutComments = codeTrimmed.replace(/#.*$/gm, '').trim();
+    if (codeWithoutComments.length < 5) {
+        return false;
+    }
+    
+    // Check for common errors that should fail validation
+    if (output.includes('NameError') || output.includes('SyntaxError') || 
+        output.includes('TypeError') || output.includes('AttributeError') ||
+        output.includes('IndentationError') || output.includes('ZeroDivisionError')) {
+        return false;
+    }
+    
+    // Problem-specific validation based on problem type and content
+    switch (problem.id) {
+        case '1.1':
+            // Must have print("Hello, World!")
+            return code.includes('print("Hello, World!")') || code.includes("print('Hello, World!')");
+            
+        case '1.2':
+            // Must have print with "My name is" and some name
+            return code.includes('print') && code.includes('My name is') && output.includes('My name is');
+            
+        case '1.3':
+            // Must print the number 42
+            return code.includes('print(42)') && output.includes('42');
+            
+        case '1.4':
+            // Must have two print statements
+            const printCount = (code.match(/print\(/g) || []).length;
+            return printCount >= 2 && output.split('\n').filter(line => line.trim()).length >= 2;
+            
+        case '1.5':
+            // Must have three print statements with name, age, and "I love Python!"
+            const prints = (code.match(/print\(/g) || []).length;
+            return prints >= 3 && output.includes('I love Python!');
+            
+        case '2.1':
+            // Must have variable assignment and print
+            return code.includes('=') && code.includes('print') && output.includes('Alice');
+            
+        case '2.2':
+            // Must create 'animal' variable and print it
+            return code.includes('animal =') && code.includes('print(animal)') && output.trim().length > 0 && !output.includes('NameError');
+            
+        case '2.3':
+            // Must create 'age' variable with number and print it
+            return code.includes('age =') && code.includes('print(age)') && /age\s*=\s*\d+/.test(code);
+            
+        case '2.4':
+            // Must have two variables and add them
+            return code.includes('=') && code.includes('+') && code.includes('print') && output.trim().length > 0;
+            
+        case '2.5':
+            // Must have multiple variables and calculations
+            const assignments = (code.match(/=/g) || []).length;
+            return assignments >= 2 && code.includes('print') && output.split('\n').filter(line => line.trim()).length >= 3;
+            
+        case '3.1':
+            // Must use input() and print
+            return code.includes('input(') && code.includes('print(') && output.includes('Hello,');
+            
+        case '3.2':
+            // Must use input() for color and print message
+            return code.includes('input(') && code.includes('I like') && output.includes('I like');
+            
+        case '3.3':
+            // Must use input() for age and print age message
+            return code.includes('input(') && code.includes('years old') && output.includes('years old');
+            
+        case '3.4':
+            // Must use input() twice and int() conversion
+            return code.includes('input(') && code.includes('int(') && code.includes('+') && output.includes('sum');
+            
+        case '3.5':
+            // Must use input() three times and create summary
+            const inputCount = (code.match(/input\(/g) || []).length;
+            return inputCount >= 3 && output.includes('Hello') && output.includes('years old') && output.includes('love');
+            
+        default:
+            // For unknown problems, require at least some meaningful code and output
+            return codeWithoutComments.length > 10 && outputTrimmed.length > 0;
     }
 }
 
