@@ -239,7 +239,7 @@ async function runCode(problemIndex) {
         pyodide.globals.set('print', originalPrint);
         
         // Validate the answer
-        const isValid = validateAnswer(code, printOutput, problem);
+        const isValid = Validation.validateAnswer(code, printOutput, problem);
         
         if (isValid) {
             // Display output
@@ -359,95 +359,7 @@ gc.collect()
     }
 }
 
-// Validate the student's answer
-function validateAnswer(code, output, problem) {
-    const codeTrimmed = code.trim();
-    const outputTrimmed = output.trim();
-    
-    // Check if code is too empty (just comments or whitespace)
-    const codeWithoutComments = codeTrimmed.replace(/#.*$/gm, '').trim();
-    if (codeWithoutComments.length < 5) {
-        return false;
-    }
-    
-    // Check for common errors that should fail validation
-    if (output.includes('NameError') || output.includes('SyntaxError') || 
-        output.includes('TypeError') || output.includes('AttributeError') ||
-        output.includes('IndentationError') || output.includes('ZeroDivisionError')) {
-        return false;
-    }
-    
-    // Problem-specific validation based on problem type and content
-    switch (problem.id) {
-        case '1.1':
-            // Must have print("Hello, World!")
-            return code.includes('print("Hello, World!")') || code.includes("print('Hello, World!')");
-            
-        case '1.2':
-            // Must have print with "My name is" and some name
-            return code.includes('print') && code.includes('My name is') && output.includes('My name is');
-            
-        case '1.3':
-            // Must print the number 42
-            return code.includes('print(42)') && output.includes('42');
-            
-        case '1.4':
-            // Must have two print statements
-            const printCount = (code.match(/print\(/g) || []).length;
-            return printCount >= 2 && output.split('\n').filter(line => line.trim()).length >= 2;
-            
-        case '1.5':
-            // Must have three print statements with name, age, and "I love Python!"
-            const prints = (code.match(/print\(/g) || []).length;
-            return prints >= 3 && output.includes('I love Python!');
-            
-        case '2.1':
-            // Must have variable assignment and print
-            return code.includes('=') && code.includes('print') && output.includes('Alice');
-            
-        case '2.2':
-            // Must create 'animal' variable and print it
-            return code.includes('animal =') && code.includes('print(animal)') && output.trim().length > 0 && !output.includes('NameError');
-            
-        case '2.3':
-            // Must create 'age' variable with number and print it
-            return code.includes('age =') && code.includes('print(age)') && /age\s*=\s*\d+/.test(code);
-            
-        case '2.4':
-            // Must have two variables and add them
-            return code.includes('=') && code.includes('+') && code.includes('print') && output.trim().length > 0;
-            
-        case '2.5':
-            // Must have multiple variables and calculations
-            const assignments = (code.match(/=/g) || []).length;
-            return assignments >= 2 && code.includes('print') && output.split('\n').filter(line => line.trim()).length >= 3;
-            
-        case '3.1':
-            // Must use input() and print
-            return code.includes('input(') && code.includes('print(') && output.includes('Hello,');
-            
-        case '3.2':
-            // Must use input() for color and print message
-            return code.includes('input(') && code.includes('I like') && output.includes('I like');
-            
-        case '3.3':
-            // Must use input() for age and print age message
-            return code.includes('input(') && code.includes('years old') && output.includes('years old');
-            
-        case '3.4':
-            // Must use input() twice and int() conversion
-            return code.includes('input(') && code.includes('int(') && code.includes('+') && output.includes('sum');
-            
-        case '3.5':
-            // Must use input() three times and create summary
-            const inputCount = (code.match(/input\(/g) || []).length;
-            return inputCount >= 3 && output.includes('Hello') && output.includes('years old') && output.includes('love');
-            
-        default:
-            // For unknown problems, require at least some meaningful code and output
-            return codeWithoutComments.length > 10 && outputTrimmed.length > 0;
-    }
-}
+
 
 // Update progress bar
 function updateProgress() {

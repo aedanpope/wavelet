@@ -9,6 +9,7 @@ An interactive Python learning platform designed for classroom use with structur
 - **Real-time Code Execution**: Run Python code instantly in the browser
 - **Progress Tracking**: Visual progress indicators and completion tracking
 - **Hints System**: Helpful hints for each problem
+- **Self-contained Validation**: Each worksheet includes its own validation logic
 - **Responsive Design**: Works on desktop, tablet, and mobile devices
 - **No Installation Required**: Runs entirely in the browser
 
@@ -34,8 +35,9 @@ Each worksheet contains:
 1. Copy the template file: `worksheets/template.json`
 2. Rename it to `worksheet-X.json` (where X is the next number)
 3. Fill in the worksheet content following the template structure
-4. Update `worksheets/index.json` to include your new worksheet
-5. Deploy the updated files
+4. Add validation rules to each problem (see `VALIDATION.md` for details)
+5. Update `worksheets/index.json` to include your new worksheet
+6. Deploy the updated files
 
 ### Worksheet Data Structure
 
@@ -56,6 +58,16 @@ Each worksheet contains:
       "starterCode": "# Starting code for students",
       "expectedOutput": "Expected output description",
       "hint": "Helpful hint for students",
+      "validation": {
+        "type": "pattern_match",
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "required_pattern",
+            "description": "Description of validation rule"
+          }
+        ]
+      },
       "points": 1
     }
   ],
@@ -125,6 +137,7 @@ Each worksheet contains:
 │   ├── worksheet-1.json    # Print basics
 │   ├── worksheet-2.json    # Variables and math
 │   └── worksheet-3.json    # User input
+├── VALIDATION.md           # Validation system documentation
 └── README.md               # This file
 ```
 

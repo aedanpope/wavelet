@@ -13,7 +13,64 @@
       "task": "[What the student needs to do]",
       "starterCode": "# [Starting code for the student]\n",
       "expectedOutput": "[What the output should look like]",
-      "hint": "[Helpful hint for the student]"
+      "hint": "[Helpful hint for the student]",
+      "validation": {
+        "type": "exact_match|pattern_match",
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "[text that must be in the code]",
+            "description": "[Description of what this rule checks]"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "[text that must be in the output]",
+            "description": "[Description of what this rule checks]"
+          },
+          {
+            "type": "code_min_length",
+            "minLength": 20,
+            "description": "[Minimum code length requirement]"
+          },
+          {
+            "type": "print_count",
+            "minCount": 2,
+            "description": "[Minimum number of print statements]"
+          },
+          {
+            "type": "output_line_count",
+            "minLines": 3,
+            "description": "[Minimum number of output lines]"
+          },
+          {
+            "type": "assignment_count",
+            "minCount": 2,
+            "description": "[Minimum number of variable assignments]"
+          },
+          {
+            "type": "input_count",
+            "minCount": 1,
+            "description": "[Minimum number of input() calls]"
+          },
+          {
+            "type": "code_contains_number",
+            "pattern": "[regex pattern for number validation]",
+            "description": "[Description of number validation]"
+          },
+          {
+            "type": "output_is_number",
+            "description": "[Checks if output is a number]"
+          },
+          {
+            "type": "output_not_empty",
+            "description": "[Checks if output is not empty]"
+          },
+          {
+            "type": "no_errors",
+            "description": "[Checks for absence of errors]"
+          }
+        ]
+      }
     }
   ],
   "metadata": {

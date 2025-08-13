@@ -13,7 +13,27 @@
       "task": "Run the example code to see how variables work.",
       "starterCode": "name = \"Alice\"\nprint(name)",
       "expectedOutput": "Alice",
-      "hint": "Variables store values that you can use later!"
+      "hint": "Variables store values that you can use later!",
+      "validation": {
+        "type": "exact_match",
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "name = \"Alice\"",
+            "description": "Code must contain the variable assignment"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "print(name)",
+            "description": "Code must contain print(name)"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "Alice",
+            "description": "Output must contain 'Alice'"
+          }
+        ]
+      }
     },
     {
       "id": "2.2",
@@ -23,7 +43,30 @@
       "task": "Create a variable called 'animal' with your favorite animal, then print it",
       "starterCode": "# Create a variable called 'animal'\n\n# Print the animal\n",
       "expectedOutput": "[any animal name]",
-      "hint": "Use the format: variable_name = \"value\""
+      "hint": "Use the format: variable_name = \"value\"",
+      "validation": {
+        "type": "pattern_match",
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "animal =",
+            "description": "Code must create a variable called 'animal'"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "print(animal)",
+            "description": "Code must print the animal variable"
+          },
+          {
+            "type": "output_not_empty",
+            "description": "Output must not be empty"
+          },
+          {
+            "type": "no_errors",
+            "description": "Code must not produce errors"
+          }
+        ]
+      }
     },
     {
       "id": "2.3",
@@ -33,7 +76,31 @@
       "task": "Create a variable called 'age' with your age (as a number), then print it",
       "starterCode": "# Create a variable for your age\n\n# Print your age\n",
       "expectedOutput": "[age number]",
-      "hint": "Numbers don't need quotes!"
+      "hint": "Numbers don't need quotes!",
+      "validation": {
+        "type": "pattern_match",
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "age =",
+            "description": "Code must create a variable called 'age'"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "print(age)",
+            "description": "Code must print the age variable"
+          },
+          {
+            "type": "code_contains_number",
+            "pattern": "age\\s*=\\s*\\d+",
+            "description": "Age must be assigned a number value"
+          },
+          {
+            "type": "output_is_number",
+            "description": "Output must be a number"
+          }
+        ]
+      }
     },
     {
       "id": "2.4",
@@ -43,7 +110,36 @@
       "task": "Create two variables with numbers, then add them together and print the result",
       "starterCode": "# Create two number variables\n\n# Add them together and print\n",
       "expectedOutput": "[sum of the two numbers]",
-      "hint": "Use the + symbol to add numbers"
+      "hint": "Use the + symbol to add numbers",
+      "validation": {
+        "type": "pattern_match",
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "=",
+            "description": "Code must contain variable assignments"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "+",
+            "description": "Code must contain addition operation"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "print",
+            "description": "Code must contain a print statement"
+          },
+          {
+            "type": "output_not_empty",
+            "description": "Output must not be empty"
+          },
+          {
+            "type": "code_min_length",
+            "minLength": 20,
+            "description": "Code must be substantial"
+          }
+        ]
+      }
     },
     {
       "id": "2.5",
@@ -53,7 +149,32 @@
       "task": "Create variables for:\n1. Your age\n2. Your friend's age\n3. Print both ages and their sum",
       "starterCode": "# Your age\n\n# Your friend's age\n\n# Print both ages\n\n# Print the sum\n",
       "expectedOutput": "[your age]\n[friend's age]\n[sum]",
-      "hint": "Use multiple print statements to show each piece of information"
+      "hint": "Use multiple print statements to show each piece of information",
+      "validation": {
+        "type": "pattern_match",
+        "rules": [
+          {
+            "type": "assignment_count",
+            "minCount": 2,
+            "description": "Must have at least 2 variable assignments"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "print",
+            "description": "Code must contain print statements"
+          },
+          {
+            "type": "output_line_count",
+            "minLines": 3,
+            "description": "Output must have at least 3 lines"
+          },
+          {
+            "type": "code_min_length",
+            "minLength": 25,
+            "description": "Code must be substantial"
+          }
+        ]
+      }
     }
   ],
   "metadata": {
