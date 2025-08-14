@@ -147,7 +147,7 @@ function createProblemElement(problem, index) {
     
     problemDiv.innerHTML = `
         <div class="problem-header">
-            <h2>${problem.id}: ${problem.title}</h2>
+            <h2>Problem ${index + 1}: ${problem.title}</h2>
         </div>
 
         <div class="problem-content">

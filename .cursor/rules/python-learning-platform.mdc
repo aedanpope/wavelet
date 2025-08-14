@@ -1,7 +1,6 @@
 ---
 alwaysApply: true
 ---
-
 # Python Learning Platform Rules
 
 ## Context
@@ -63,6 +62,17 @@ This is a web-based Python learning platform that provides interactive coding wo
 - Minimize DOM queries by caching elements
 - Write unit test for complex subroutines
 - Extract code under test to a logical separate shared file
+
+### GitHub Workflow
+- When user says "push to gh" or similar, follow this workflow:
+  1. Check git status to see what files have been modified
+  2. Add relevant files to staging (usually the specific files that were worked on)
+  3. Create a descriptive commit message that explains the changes made
+  4. Commit the changes
+  5. Push to the main branch on GitHub
+- Use descriptive commit messages that explain what was changed and why
+- Only commit files that are relevant to the current changes
+- If there are multiple unrelated changes, suggest committing them separately
 
 ### Python Code Execution
 - Always reset Python environment between executions
