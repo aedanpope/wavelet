@@ -4,7 +4,6 @@
   "description": "Learn to use Python for basic arithmetic with the print() function.",
   "problems": [
     {
-      "id": "1.1",
       "title": "Adding two numbers",
       "content": "The `print()` function can be used as a simple calculator. Run this program and observe the output.",
       "example": "print(5 + 3)",
@@ -29,72 +28,6 @@
       }
     },
     {
-      "id": "1.2",
-      "title": "Subtracting two numbers",
-      "content": "The `-` symbol is used for subtraction. What is the answer to this problem?",
-      "example": "print(10 - 4)",
-      "task": "Run the code and find out the answer.",
-      "starterCode": "print(10 - 4)",
-      "expectedOutput": "6",
-      "hint": "What does ten minus four equal?",
-      "validation": {
-        "type": "exact_match",
-        "rules": [
-          {
-            "type": "code_contains",
-            "pattern": "print(10 - 4)",
-            "description": "Code must contain the exact print statement"
-          },
-          {
-            "type": "output_contains",
-            "pattern": "6",
-            "description": "Output must contain '6'"
-          }
-        ]
-      }
-    },
-    {
-      "id": "1.3",
-      "title": "Edit to subtract",
-      "content": "Now it's your turn to make a small change. Edit the code below to solve the new problem.",
-      "example": "print(12 - 7)",
-      "task": "Edit the program to find the answer to $12 - 7$.",
-      "starterCode": "print(20 - 5)",
-      "expectedOutput": "5",
-      "hint": "Change the numbers inside the parentheses to 12 and 7.",
-      "validation": {
-        "type": "pattern_match",
-        "rules": [
-          {
-            "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
-          },
-          {
-            "type": "output_contains",
-            "pattern": "5",
-            "description": "Output must contain '5'"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "12",
-            "description": "Code must contain the number 12"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "7",
-            "description": "Code must contain the number 7"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "-",
-            "description": "Code must contain the subtraction operator"
-          }
-        ]
-      }
-    },
-    {
-      "id": "1.4",
       "title": "Another addition",
       "content": "Here is another problem to practice addition. The `+` symbol adds numbers together.",
       "task": "Run the program and find out the answer.",
@@ -118,46 +51,6 @@
       }
     },
     {
-      "id": "1.5",
-      "title": "Adding Apples",
-      "content": "Sarah has six apples and buys nine more apples at the store. How many apples does she have in total?",
-      "task": "Write a program that adds six and nine and prints the answer.",
-      "starterCode": "",
-      "expectedOutput": "15",
-      "hint": "Use the addition operator (+) to add 6 and 9.",
-      "validation": {
-        "type": "pattern_match",
-        "rules": [
-          {
-            "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
-          },
-          {
-            "type": "output_contains",
-            "pattern": "15",
-            "description": "Output must contain '15'"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "6",
-            "description": "Code must contain the number 6"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "9",
-            "description": "Code must contain the number 9"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "+",
-            "description": "Code must contain the addition operator"
-          }
-        ]
-      }
-    },
-    {
-      "id": "1.6",
       "title": "Practice addition again",
       "content": "This is another one to practice addition.",
       "task": "Run the program and find out the answer.",
@@ -181,7 +74,6 @@
       }
     },
     {
-      "id": "1.7",
       "title": "Edit to add",
       "content": "Practice your addition skills by editing this code.",
       "example": "print(50 + 25)",
@@ -221,7 +113,6 @@
       }
     },
     {
-      "id": "1.8",
       "title": "Write to add",
       "content": "Write a complete program to solve this addition problem.",
       "task": "Write a program to find the answer to $7 + 13$.",
@@ -260,13 +151,12 @@
       }
     },
     {
-      "id": "1.9",
-      "title": "Subtracting Money",
-      "content": "Tom has \\$25 and spends \\$8 on lunch. How much money does he have left?",
-      "task": "Write a program that subtracts eight from twenty-five and prints the answer.",
+      "title": "Adding Apples",
+      "content": "Sarah has six apples and buys nine more apples at the store. How many apples does she have in total?",
+      "task": "Write a program that adds six and nine and prints the answer.",
       "starterCode": "",
-      "expectedOutput": "17",
-      "hint": "Use the subtraction operator (-) to subtract 8 from 25.",
+      "expectedOutput": "15",
+      "hint": "Use the addition operator (+) to add 6 and 9.",
       "validation": {
         "type": "pattern_match",
         "rules": [
@@ -277,18 +167,81 @@
           },
           {
             "type": "output_contains",
-            "pattern": "17",
-            "description": "Output must contain '17'"
+            "pattern": "15",
+            "description": "Output must contain '15'"
           },
           {
             "type": "code_contains",
-            "pattern": "25",
-            "description": "Code must contain the number 25"
+            "pattern": "6",
+            "description": "Code must contain the number 6"
           },
           {
             "type": "code_contains",
-            "pattern": "8",
-            "description": "Code must contain the number 8"
+            "pattern": "9",
+            "description": "Code must contain the number 9"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "+",
+            "description": "Code must contain the addition operator"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Subtracting two numbers",
+      "content": "The `-` symbol is used for subtraction. What is the answer to this problem?",
+      "example": "print(10 - 4)",
+      "task": "Run the code and find out the answer.",
+      "starterCode": "print(10 - 4)",
+      "expectedOutput": "6",
+      "hint": "What does ten minus four equal?",
+      "validation": {
+        "type": "exact_match",
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "print(10 - 4)",
+            "description": "Code must contain the exact print statement"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "6",
+            "description": "Output must contain '6'"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Edit to subtract",
+      "content": "Now it's your turn to make a small change. Edit the code below to solve the new problem.",
+      "example": "print(12 - 7)",
+      "task": "Edit the program to find the answer to $12 - 7$.",
+      "starterCode": "print(20 - 5)",
+      "expectedOutput": "5",
+      "hint": "Change the numbers inside the parentheses to 12 and 7.",
+      "validation": {
+        "type": "pattern_match",
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "print",
+            "description": "Code must contain a print statement"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "5",
+            "description": "Output must contain '5'"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "12",
+            "description": "Code must contain the number 12"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "7",
+            "description": "Code must contain the number 7"
           },
           {
             "type": "code_contains",
@@ -299,7 +252,6 @@
       }
     },
     {
-      "id": "1.10",
       "title": "Write to subtract",
       "content": "Write a complete program to solve this subtraction problem.",
       "task": "Write a program to find the answer to $30 - 15$.",
@@ -338,7 +290,44 @@
       }
     },
     {
-      "id": "1.11",
+      "title": "Subtracting Money",
+      "content": "Tom has \\$25 and spends \\$8 on lunch. How much money does he have left?",
+      "task": "Write a program that subtracts eight from twenty-five and prints the answer.",
+      "starterCode": "",
+      "expectedOutput": "17",
+      "hint": "Use the subtraction operator (-) to subtract 8 from 25.",
+      "validation": {
+        "type": "pattern_match",
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "print",
+            "description": "Code must contain a print statement"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "17",
+            "description": "Output must contain '17'"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "25",
+            "description": "Code must contain the number 25"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "8",
+            "description": "Code must contain the number 8"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "-",
+            "description": "Code must contain the subtraction operator"
+          }
+        ]
+      }
+    },
+    {
       "title": "Multiplication",
       "content": "The `*` symbol is used for multiplication. What is the answer to this problem?",
       "task": "Run the program and find out the answer.",
@@ -362,31 +351,6 @@
       }
     },
     {
-      "id": "1.12",
-      "title": "Division",
-      "content": "The `/` symbol is used for division. What is the answer to this problem?",
-      "task": "Run the program and find out the answer.",
-      "starterCode": "print(25 / 5)",
-      "expectedOutput": "5.0",
-      "hint": "Division in Python can sometimes give a number with a decimal point, even if the answer is a whole number.",
-      "validation": {
-        "type": "exact_match",
-        "rules": [
-          {
-            "type": "code_contains",
-            "pattern": "print(25 / 5)",
-            "description": "Code must contain the exact print statement"
-          },
-          {
-            "type": "output_contains",
-            "pattern": "5.0",
-            "description": "Output must contain '5.0'"
-          }
-        ]
-      }
-    },
-    {
-      "id": "1.13",
       "title": "Edit to multiply",
       "content": "Practice your multiplication skills by editing this code.",
       "task": "Edit the program below to find the answer to $8 * 8$.",
@@ -420,124 +384,6 @@
       }
     },
     {
-      "id": "1.14",
-      "title": "Multiplying Books",
-      "content": "A library has 7 shelves, and each shelf holds 12 books. How many books are in the library?",
-      "task": "Write a program that multiplies seven and twelve and prints the answer.",
-      "starterCode": "",
-      "expectedOutput": "84",
-      "hint": "Use the multiplication operator (*) to multiply 7 and 12.",
-      "validation": {
-        "type": "pattern_match",
-        "rules": [
-          {
-            "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
-          },
-          {
-            "type": "output_contains",
-            "pattern": "84",
-            "description": "Output must contain '84'"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "7",
-            "description": "Code must contain the number 7"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "12",
-            "description": "Code must contain the number 12"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "*",
-            "description": "Code must contain the multiplication operator"
-          }
-        ]
-      }
-    },
-    {
-      "id": "1.15",
-      "title": "Edit to divide",
-      "content": "Practice your division skills by editing this code.",
-      "task": "Edit the program below to find the answer to $48 / 6$.",
-      "starterCode": "print(20 / 4)",
-      "expectedOutput": "8.0",
-      "hint": "Change the numbers inside the parentheses to 48 and 6.",
-      "validation": {
-        "type": "pattern_match",
-        "rules": [
-          {
-            "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
-          },
-          {
-            "type": "output_contains",
-            "pattern": "8.0",
-            "description": "Output must contain '8.0'"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "48",
-            "description": "Code must contain the number 48"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "6",
-            "description": "Code must contain the number 6"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "/",
-            "description": "Code must contain the division operator"
-          }
-        ]
-      }
-    },
-    {
-      "id": "1.16",
-      "title": "Dividing Cookies",
-      "content": "Emma baked 36 cookies and wants to share them equally among 6 friends. How many cookies will each friend get?",
-      "task": "Write a program that divides thirty-six by six and prints the answer.",
-      "starterCode": "",
-      "expectedOutput": "6.0",
-      "hint": "Use the division operator (/) to divide 36 by 6.",
-      "validation": {
-        "type": "pattern_match",
-        "rules": [
-          {
-            "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
-          },
-          {
-            "type": "output_contains",
-            "pattern": "6.0",
-            "description": "Output must contain '6.0'"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "36",
-            "description": "Code must contain the number 36"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "6",
-            "description": "Code must contain the number 6"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "/",
-            "description": "Code must contain the division operator"
-          }
-        ]
-      }
-    },
-    {
-      "id": "1.17",
       "title": "Write to multiply",
       "content": "Write a complete program to solve this multiplication problem.",
       "task": "Write a program to find the answer to $9 * 10$.",
@@ -576,7 +422,105 @@
       }
     },
     {
-      "id": "1.18",
+      "title": "Multiplying Books",
+      "content": "A library has 7 shelves, and each shelf holds 12 books. How many books are in the library?",
+      "task": "Write a program that multiplies seven and twelve and prints the answer.",
+      "starterCode": "",
+      "expectedOutput": "84",
+      "hint": "Use the multiplication operator (*) to multiply 7 and 12.",
+      "validation": {
+        "type": "pattern_match",
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "print",
+            "description": "Code must contain a print statement"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "84",
+            "description": "Output must contain '84'"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "7",
+            "description": "Code must contain the number 7"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "12",
+            "description": "Code must contain the number 12"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "*",
+            "description": "Code must contain the multiplication operator"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Division",
+      "content": "The `/` symbol is used for division. What is the answer to this problem?",
+      "task": "Run the program and find out the answer.",
+      "starterCode": "print(25 / 5)",
+      "expectedOutput": "5.0",
+      "hint": "Division in Python can sometimes give a number with a decimal point, even if the answer is a whole number.",
+      "validation": {
+        "type": "exact_match",
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "print(25 / 5)",
+            "description": "Code must contain the exact print statement"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "5.0",
+            "description": "Output must contain '5.0'"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Edit to divide",
+      "content": "Practice your division skills by editing this code.",
+      "task": "Edit the program below to find the answer to $48 / 6$.",
+      "starterCode": "print(20 / 4)",
+      "expectedOutput": "8.0",
+      "hint": "Change the numbers inside the parentheses to 48 and 6.",
+      "validation": {
+        "type": "pattern_match",
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "print",
+            "description": "Code must contain a print statement"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "8.0",
+            "description": "Output must contain '8.0'"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "48",
+            "description": "Code must contain the number 48"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "6",
+            "description": "Code must contain the number 6"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "/",
+            "description": "Code must contain the division operator"
+          }
+        ]
+      }
+    },
+    {
       "title": "Write to divide",
       "content": "Write a complete program to solve this division problem.",
       "task": "Write a program to find the answer to $100 / 10$.",
@@ -615,7 +559,44 @@
       }
     },
     {
-      "id": "1.19",
+      "title": "Dividing Cookies",
+      "content": "Emma baked 36 cookies and wants to share them equally among 6 friends. How many cookies will each friend get?",
+      "task": "Write a program that divides thirty-six by six and prints the answer.",
+      "starterCode": "",
+      "expectedOutput": "6.0",
+      "hint": "Use the division operator (/) to divide 36 by 6.",
+      "validation": {
+        "type": "pattern_match",
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "print",
+            "description": "Code must contain a print statement"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "6.0",
+            "description": "Output must contain '6.0'"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "36",
+            "description": "Code must contain the number 36"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "6",
+            "description": "Code must contain the number 6"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "/",
+            "description": "Code must contain the division operator"
+          }
+        ]
+      }
+    },
+    {
       "title": "Order of Operations",
       "content": "Python follows the order of operations (PEMDAS/BODMAS) just like in math. It does multiplication and division before addition and subtraction.",
       "task": "Run the program and find out the answer to $20 - 5 * 2$.",
@@ -639,7 +620,6 @@
       }
     },
     {
-      "id": "1.20",
       "title": "Using Parentheses",
       "content": "Parentheses `()` can be used to change the order of operations, just like in math.",
       "task": "Edit the program to find the answer to $(10 + 5) / 3$.",
@@ -668,56 +648,6 @@
       }
     },
     {
-      "id": "1.21",
-      "title": "Mixed Operations",
-      "content": "A store sells shirts for \\$15 each. If you buy 3 shirts and get a \\$5 discount, how much do you pay in total?",
-      "task": "Write a program that multiplies fifteen by three, then subtracts five, and prints the answer.",
-      "starterCode": "",
-      "expectedOutput": "40",
-      "hint": "First multiply 15 by 3, then subtract 5 from the result.",
-      "validation": {
-        "type": "pattern_match",
-        "rules": [
-          {
-            "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
-          },
-          {
-            "type": "output_contains",
-            "pattern": "40",
-            "description": "Output must contain '40'"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "15",
-            "description": "Code must contain the number 15"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "3",
-            "description": "Code must contain the number 3"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "5",
-            "description": "Code must contain the number 5"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "*",
-            "description": "Code must contain the multiplication operator"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "-",
-            "description": "Code must contain the subtraction operator"
-          }
-        ]
-      }
-    },
-    {
-      "id": "1.22",
       "title": "Write with Parentheses",
       "content": "Write a complete program that uses parentheses to solve a problem.",
       "task": "Write a program to find the answer to $10 * (5 - 3)$.",
@@ -776,13 +706,12 @@
       }
     },
     {
-      "id": "1.23",
-      "title": "Using Parentheses",
-      "content": "A pizza costs \\$12 and you want to buy 2 pizzas. There is also a \\$3 delivery fee. How much do you pay in total?",
-      "task": "Write a program that multiplies twelve by two, then adds three, and prints the answer.",
+      "title": "Mixed Operations",
+      "content": "A store sells shirts for \\$15 each. If you buy 3 shirts and get a \\$5 discount, how much do you pay in total?",
+      "task": "Write a program that multiplies fifteen by three, then subtracts five, and prints the answer.",
       "starterCode": "",
-      "expectedOutput": "27",
-      "hint": "You can use parentheses to make the multiplication happen first: (12 * 2) + 3.",
+      "expectedOutput": "40",
+      "hint": "First multiply 15 by 3, then subtract 5 from the result.",
       "validation": {
         "type": "pattern_match",
         "rules": [
@@ -793,18 +722,13 @@
           },
           {
             "type": "output_contains",
-            "pattern": "27",
-            "description": "Output must contain '27'"
+            "pattern": "40",
+            "description": "Output must contain '40'"
           },
           {
             "type": "code_contains",
-            "pattern": "12",
-            "description": "Code must contain the number 12"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "2",
-            "description": "Code must contain the number 2"
+            "pattern": "15",
+            "description": "Code must contain the number 15"
           },
           {
             "type": "code_contains",
@@ -813,20 +737,24 @@
           },
           {
             "type": "code_contains",
+            "pattern": "5",
+            "description": "Code must contain the number 5"
+          },
+          {
+            "type": "code_contains",
             "pattern": "*",
             "description": "Code must contain the multiplication operator"
           },
           {
             "type": "code_contains",
-            "pattern": "+",
-            "description": "Code must contain the addition operator"
+            "pattern": "-",
+            "description": "Code must contain the subtraction operator"
           }
         ]
       }
     },
     {
-      "id": "1.24",
-      "title": "Final Challenge",
+      "title": "Order of Operations Challenge",
       "content": "Let's combine everything you've learned so far!",
       "task": "Write a program to find the answer to $8 + (12 / 4)$.",
       "starterCode": "",
@@ -884,13 +812,12 @@
       }
     },
     {
-      "id": "1.25",
-      "title": "Complex Calculation",
-      "content": "A farmer has 5 chickens that each lay 3 eggs per day. If he sells half of the eggs, how many eggs does he keep?",
-      "task": "Write a program that multiplies five by three, then divides by two, and prints the answer.",
+      "title": "Pizza Delivery",
+      "content": "A pizza costs \\$12 and you want to buy 2 pizzas. There is also a \\$3 delivery fee. How much do you pay in total?",
+      "task": "Write a program that multiplies twelve by two, then adds three, and prints the answer.",
       "starterCode": "",
-      "expectedOutput": "7.5",
-      "hint": "First multiply 5 by 3 to get total eggs, then divide by 2 to find half.",
+      "expectedOutput": "27",
+      "hint": "You can use parentheses to make the multiplication happen first: (12 * 2) + 3.",
       "validation": {
         "type": "pattern_match",
         "rules": [
@@ -901,13 +828,61 @@
           },
           {
             "type": "output_contains",
-            "pattern": "7.5",
-            "description": "Output must contain '7.5'"
+            "pattern": "27",
+            "description": "Output must contain '27'"
           },
           {
             "type": "code_contains",
-            "pattern": "5",
-            "description": "Code must contain the number 5"
+            "pattern": "12",
+            "description": "Code must contain the number 12"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "2",
+            "description": "Code must contain the number 2"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "3",
+            "description": "Code must contain the number 3"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "*",
+            "description": "Code must contain the multiplication operator"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "+",
+            "description": "Code must contain the addition operator"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Egg Collection",
+      "content": "A farmer has 6 chickens that each lay 3 eggs per day. If he sells half of the eggs, how many eggs does he keep?",
+      "task": "Write a program that multiplies six by three, then divides by two, and prints the answer.",
+      "starterCode": "",
+      "expectedOutput": "9",
+      "hint": "First multiply 6 by 3 to get total eggs, then divide by 2 to find half.",
+      "validation": {
+        "type": "pattern_match",
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "print",
+            "description": "Code must contain a print statement"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "9",
+            "description": "Output must contain '9'"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "6",
+            "description": "Code must contain the number 6"
           },
           {
             "type": "code_contains",
@@ -933,7 +908,6 @@
       }
     },
     {
-      "id": "1.26",
       "title": "A Baker's Challenge",
       "content": "A baker made 4 dozen cookies. He gave away 10 of them. How many cookies does he have left?",
       "task": "Write a program that solves this problem using multiplication and subtraction. (Hint: One dozen is 12 cookies).",
