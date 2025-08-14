@@ -1,86 +1,36 @@
 # Python Learning Platform
 
-An interactive Python learning platform designed for classroom use with structured worksheets. Students can write and run Python code directly in their browser using Pyodide (Python compiled to WebAssembly).
+An innovative web-based Python learning platform designed specifically for upper primary students. The platform uses a unique "worksheet" approach with carefully balanced problem difficulty levels to ensure all students can make meaningful progress.
 
-🌐 **Live App**: [https://aedanpope.github.io/elve/](https://aedanpope.github.io/elve/)
+🌐 **Live App**: [https://wavelet.zone/](https://wavelet.zone/)
 
-## Features
+## Key Features
 
-- **Interactive Worksheets**: Structured learning with 5-6 problems per worksheet
-- **Structured Learning**: Problems are organized in a logical progression
-- **Real-time Code Execution**: Run Python code instantly in the browser
-- **Progress Tracking**: Visual progress indicators and completion tracking
-- **Hints System**: Helpful hints for each problem
-- **Self-contained Validation**: Each worksheet includes its own validation logic
+- **Worksheet-Based Learning**: 5 structured worksheets with ~20 problems each across three difficulty levels
+- **Numerical Programming Foundation**: Worksheets 1-4 focus on core programming concepts without string complexity
+- **Interactive Code Execution**: Run Python code instantly in the browser using Pyodide
+- **Visual Input System**: User-friendly textbox inputs instead of intimidating command line prompts
+- **Real-time Validation**: Immediate feedback with educational error messages
+- **Progress Tracking**: Visual indicators and completion tracking
 - **Responsive Design**: Works on desktop, tablet, and mobile devices
-- **No Installation Required**: Runs entirely in the browser
 
-## Worksheet Structure
+## Educational Approach
 
-Each worksheet contains:
-- **Structured Problems**: Problems that build upon each other
-- **Interactive Learning**: Write and run code directly in the browser
-- **Progress Tracking**: Visual indicators of completion
-- **Helpful Hints**: Guidance when you need assistance
+The platform addresses key limitations of traditional programming courses:
+- **Multiple Practice Opportunities**: Unlike single-concept repetition
+- **Non-Linear Learning**: Students can work on different difficulty levels within the same worksheet
+- **Always Accessible**: Students always have problems they can solve, preventing frustration
+- **Immediate Results**: Students always run working code, never spend entire lessons stuck
 
-## Current Worksheets
+## Learning Progression
 
-1. **Worksheet 1: Getting Started with Print** - Learn the basics of Python's print function
-2. **Worksheet 2: Variables and Basic Math** - Introduction to variables and arithmetic
-3. **Worksheet 3: Getting User Input** - Interactive programs with user input
+The curriculum follows a carefully designed progression where Worksheets 1-4 focus exclusively on numerical programming without string complexity, allowing students to build solid fundamentals while creating engaging interactive programs. Only after mastering core concepts do students encounter strings in Worksheet 5, introduced in a simplified manner that avoids common pitfalls and unnecessary complexity.
 
-## For Teachers
+For detailed descriptions of each worksheet, see [WORKSHEETS.md](WORKSHEETS.md).
 
-### Creating New Worksheets
+## Quick Start
 
-1. Copy the template file: `worksheets/template.json`
-2. Rename it to `worksheet-X.json` (where X is the next number)
-3. Fill in the worksheet content following the template structure
-4. Add validation rules to each problem (see `VALIDATION.md` for details)
-5. Update `worksheets/index.json` to include your new worksheet
-6. Deploy the updated files
-
-### Worksheet Data Structure
-
-```json
-{
-  "id": "worksheet-id",
-  "title": "Worksheet Title",
-  "description": "Brief description",
-  "problems": [
-    {
-      "id": "1.1",
-      "title": "Problem Title",
-      "content": "Explanation content (supports HTML)",
-      "task": "What the student needs to do",
-      "starterCode": "# Starting code for students",
-      "expectedOutput": "Expected output description",
-      "hint": "Helpful hint for students",
-      "validation": {
-        "type": "pattern_match",
-        "rules": [
-          {
-            "type": "code_contains",
-            "pattern": "required_pattern",
-            "description": "Description of validation rule"
-          }
-        ]
-      }
-    }
-  ],
-  "metadata": {
-    "created": "YYYY-MM-DD",
-    "author": "Teacher Name"
-  }
-}
-```
-
-
-
-## For Students
-
-### Getting Started
-
+### For Students
 1. Open the platform in your web browser
 2. Choose a worksheet from the selection screen
 3. Read the problem explanation and task
@@ -88,81 +38,31 @@ Each worksheet contains:
 5. Click "Run Code" to execute your program
 6. Use the "Hint" button if you need help
 7. Navigate between problems using the arrow buttons
-8. Complete all problems to finish the worksheet
 
-### Tips for Success
+### For Teachers
+1. Copy `worksheets/template.json` to create new worksheets
+2. Follow the structure in [VALIDATION.md](VALIDATION.md) for validation rules
+3. Update `worksheets/index.json` to include new worksheets
+4. Test locally before deploying
 
-- Start with Worksheet 1 if you're new to Python
-- Read the problem carefully before writing code
-- Use hints when you're stuck
-- Don't worry about making mistakes - that's how you learn!
-- Try different approaches to solve problems
+## Documentation
 
-## Technical Details
+- **[DESIGN.md](DESIGN.md)** - Detailed design decisions and technical requirements
+- **[WORKSHEETS.md](WORKSHEETS.md)** - Complete worksheet descriptions and learning objectives
+- **[VALIDATION.md](VALIDATION.md)** - Validation system documentation and examples
+- **[DEV.md](DEV.md)** - Development setup and technical details
+- **[TESTING.md](TESTING.md)** - Testing procedures and guidelines
 
-### Technology Stack
+## Technology Stack
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
 - **Code Editor**: CodeMirror 5.65.2
 - **Python Runtime**: Pyodide v0.24.1 (Python compiled to WebAssembly)
-- **Styling**: Custom CSS with responsive design
 - **Data Format**: JSON for worksheet content
-
-### Browser Compatibility
-
-- Chrome 80+
-- Firefox 75+
-- Safari 13+
-- Edge 80+
-
-### File Structure
-
-```
-├── index.html              # Main application
-├── styles.css              # Application styling
-├── script.js               # Application logic
-├── package.json            # Project configuration
-├── worksheets/             # Worksheet data
-│   ├── index.json          # Worksheet index
-│   ├── template.json       # Worksheet template
-│   ├── worksheet-1.json    # Print basics
-│   ├── worksheet-2.json    # Variables and math
-│   └── worksheet-3.json    # User input
-├── VALIDATION.md           # Validation system documentation
-└── README.md               # This file
-```
 
 ## Development
 
-### Local Development
-
-```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Or use the simple server
-npm run serve
-```
-
-### Production Deployment
-
-The application is a static web app that can be deployed to any web hosting service:
-
-- **GitHub Pages**: Push to GitHub and enable Pages
-- **Netlify**: Drag and drop the project folder
-- **Vercel**: Connect GitHub repository
-- **Traditional Web Server**: Copy files to web directory
-
-### Adding New Worksheets
-
-1. Create a new JSON file in the `worksheets/` directory
-2. Follow the template structure
-3. Update `worksheets/index.json` to include the new worksheet
-4. Test locally before deploying
-5. Deploy the updated files
+For local development setup, deployment instructions, and technical details, see [DEV.md](DEV.md).
 
 ## Contributing
 
@@ -171,20 +71,12 @@ This platform is designed for educational use. To contribute:
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test thoroughly
+4. Test thoroughly (see [TESTING.md](TESTING.md))
 5. Submit a pull request
 
 ## License
 
-MIT License - see LICENSE file for details
-
-## Support
-
-For questions or issues:
-- Check the browser console for error messages
-- Ensure you have a stable internet connection (required for Pyodide)
-- Try refreshing the page if the application doesn't load
-- Contact the development team for technical support
+This software is for personal use only and is not to be copied, modified, or distributed without the explicit permission of the author. All rights reserved. See LICENSE file for details.
 
 ---
 

@@ -1,0 +1,129 @@
+# Python Learning Platform - Design Document
+
+## Overview
+
+This document outlines the design decisions and requirements for a web-based Python learning platform designed specifically for upper primary students. The platform uses an innovative "worksheet" approach with carefully balanced problem difficulty levels.
+
+## Educational Philosophy
+
+### Core Innovation: Worksheet-Based Learning
+- **Problem Distribution**: Each worksheet contains ~20 problems across three difficulty levels:
+  - 30% Easy - Building confidence and basic understanding
+  - 30% Medium - Reinforcing concepts with moderate challenge  
+  - 30% Hard - Stretching students' abilities and problem-solving skills
+
+### Differentiation from Traditional Courses
+- **Multiple Practice Opportunities**: Unlike traditional courses with single concept repetition
+- **Non-Linear Learning**: Students can work on different difficulty levels within the same worksheet
+- **Always Accessible**: Students always have problems they can solve, preventing frustration
+- **Immediate Results**: Students always run working code, never spend entire lessons stuck
+
+## Learning Progression
+
+The curriculum follows a carefully designed progression where Worksheets 1-4 focus exclusively on numerical programming without string complexity, allowing students to build solid fundamentals while creating engaging interactive programs. Only after mastering core concepts do students encounter strings in Worksheet 5, introduced in a simplified manner that avoids common pitfalls and unnecessary complexity. For detailed descriptions of each worksheet, see [WORKSHEETS.md](WORKSHEETS.md).
+
+## Problem Types
+
+Each worksheet incorporates three main exercise types:
+
+1. **Observation Exercises** - "Run this program and observe the output"
+   - Students learn by seeing code in action
+   - Builds understanding of program behavior
+
+2. **Modification Exercises** - "Edit this program to do something different"
+   - Students practice code modification
+   - Reinforces understanding through active engagement
+
+3. **Creation Exercises** - "Write a program to do something"
+   - Students apply learned concepts independently
+   - Develops problem-solving and coding skills
+
+## User Interface Design
+
+### Current Interface (from screenshot)
+- Clean design with white main content and light blue/purple sidebar
+- Each problem has:
+  - Problem description and task
+  - "Your Task" box with specific instructions
+  - Code editor with dark theme
+  - Hint and Run Code buttons
+  - Output area with feedback
+  - Success/error feedback boxes
+
+### Input Design Requirements for Worksheet 2
+
+**Problem**: Command line input is intimidating for upper primary students
+
+**Solution**: Textbox-based input system
+
+**Implementation Approach**:
+- Input requirements specified as part of each problem configuration
+- Dynamic input field creation based on problem needs
+- Progressive complexity: single input → multiple inputs → mixed types
+
+**Example Problem Structure**:
+```
+Problem: Let's add two numbers together!
+
+Inputs:
+First number: [textbox]
+Second number: [textbox]
+
+Code:
+num1 = input1
+num2 = input2
+result = num1 + num2
+print(result)
+
+Task: Enter two numbers and run the code to see their sum.
+```
+
+**Benefits**:
+- Visual and intuitive for young students
+- No command line fear
+- Immediate feedback on input
+- Easy to modify and re-run
+- Feels like using real applications
+
+## Technical Requirements
+
+### Core Features
+- Python code execution in browser (Pyodide)
+- Real-time code validation and feedback
+- Input/output handling for interactive programs
+- Progress tracking across worksheets
+- Responsive design for different screen sizes
+
+### Input System Implementation
+- Dynamic input field generation based on problem configuration
+- Input validation and type checking
+- Seamless integration with code execution
+- Support for different input types (numbers, text, etc.)
+
+### Validation System
+- Pattern matching for code requirements
+- Output validation
+- Error handling and user-friendly messages
+- Progressive difficulty validation rules
+
+## Success Metrics
+
+### Educational Goals
+- All students make meaningful progress in each session
+- Students build confidence through incremental success
+- Immediate feedback and visible results
+- Fun and engaging learning experience
+
+### Technical Goals
+- Fast, reliable code execution
+- Intuitive user interface
+- Robust error handling
+- Scalable problem creation system
+
+## Next Steps
+
+1. **Implement Input System**: Develop the textbox-based input system for Worksheet 2
+2. **Create Worksheet Content**: Develop the actual problem sets for each worksheet
+3. **Enhance Validation**: Build comprehensive validation for different problem types
+4. **User Testing**: Test with target age group to validate design decisions
+5. **Iterate and Improve**: Refine based on student feedback and performance
