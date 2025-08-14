@@ -4,214 +4,234 @@
   "description": "Learn to use variables to store and manipulate data in Python.",
   "problems": [
     {
-      "title": "Simple Variable Assignment",
-      "content": "Variables are like boxes that can store values. We use the `=` symbol to put a value into a variable. Run this program and observe how the variable stores the number.",
-      "task": "Run the code to see how variables work.",
-      "starterCode": "age = 10\nprint(age)",
-      "expectedOutput": "10",
-      "hint": "The variable 'age' stores the number 10, and print shows us what's inside.",
+      "title": "Your first variable",
+      "content": "Variables are like boxes that store values. This code stores the number 7 in a variable and prints it.",
+      "task": "Run the code to see the value stored in the variable.",
+      "starterCode": "age = 7\nprint(age)",
+      "expectedOutput": "7",
+      "hint": "The variable 'age' holds the number 7.",
       "validation": {
         "type": "exact_match",
         "rules": [
           {
             "type": "code_contains",
-            "pattern": "age = 10",
-            "description": "Code must contain the variable assignment"
+            "pattern": "age = 7"
           },
           {
             "type": "code_contains",
-            "pattern": "print(age)",
-            "description": "Code must contain the print statement"
+            "pattern": "print(age)"
           },
           {
             "type": "output_contains",
-            "pattern": "10",
-            "description": "Output must contain '10'"
+            "pattern": "7"
           }
         ]
       }
     },
     {
-      "title": "Using Variables in Calculations",
-      "content": "Variables can be used in calculations just like regular numbers. This program stores two numbers in variables and then adds them together.",
-      "task": "Run the code to see how variables work in calculations.",
-      "starterCode": "num1 = 5\nnum2 = 3\nresult = num1 + num2\nprint(result)",
+      "title": "Changing a variable",
+      "content": "You can change what a variable stores by giving it a new value.",
+      "task": "Run the code to see the updated value.",
+      "starterCode": "score = 10\nscore = 15\nprint(score)",
+      "expectedOutput": "15",
+      "hint": "The second assignment replaces the first value.",
+      "validation": {
+        "type": "exact_match",
+        "rules": [
+          {
+            "type": "output_contains",
+            "pattern": "15"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Two variables",
+      "content": "Variables can store different values and be used together.",
+      "task": "Run the code to see both values printed.",
+      "starterCode": "apples = 5\nbananas = 3\nprint(apples)\nprint(bananas)",
+      "expectedOutput": "5\n3",
+      "hint": "Each print shows the value of one variable.",
+      "validation": {
+        "type": "exact_match",
+        "rules": [
+          {
+            "type": "output_contains",
+            "pattern": "5"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "3"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Variables in calculations",
+      "content": "You can use variables in calculations.",
+      "task": "Run the code to see the sum of apples and bananas.",
+      "starterCode": "apples = 5\nbananas = 3\ntotal = apples + bananas\nprint(total)",
       "expectedOutput": "8",
-      "hint": "The program stores 5 in num1, 3 in num2, adds them together, and prints the result.",
-      "codeHeight": 4,
+      "hint": "Variables work like numbers in math.",
       "validation": {
         "type": "exact_match",
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "num1 = 5",
-            "description": "Code must contain the first variable assignment"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "num2 = 3",
-            "description": "Code must contain the second variable assignment"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "result = num1 + num2",
-            "description": "Code must contain the calculation using variables"
-          },
-          {
             "type": "output_contains",
-            "pattern": "8",
-            "description": "Output must contain '8'"
+            "pattern": "8"
           }
         ]
       }
     },
     {
-      "title": "Interactive Addition with Input",
-      "content": "Now let's make the program interactive! You can enter two numbers and the program will add them together using variables.",
-      "task": "Enter two numbers and run the code to see their sum.",
+      "title": "Edit the numbers",
+      "content": "Change the numbers in the variables so the total is 20.",
+      "task": "Edit the code to make total = 20.",
+      "starterCode": "x = 5\ny = 7\ntotal = x + y\nprint(total)",
+      "expectedOutput": "20",
+      "hint": "Adjust x and y to add up to 20.",
+      "validation": {
+        "type": "pattern_match",
+        "rules": [
+          {
+            "type": "output_contains",
+            "pattern": "20"
+          }
+        ]
+      }
+    },
+    {
+      "title": "From input to variable",
+      "content": "You can store what the user enters into a variable.",
+      "task": "Enter a number and run the code.",
       "inputs": [
         {
           "name": "first_number",
+          "label": "Enter a number:",
+          "type": "number"
+        }
+      ],
+      "starterCode": "num = first_number\nprint(num)",
+      "expectedOutput": "dynamic",
+      "hint": "Whatever you type will be printed.",
+      "validation": {
+        "type": "pattern_match",
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "num = first_number"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Adding two inputs",
+      "content": "Enter two numbers and the program will add them.",
+      "task": "Fill in the inputs and run.",
+      "inputs": [
+        {
+          "name": "a",
           "label": "First number:",
-          "type": "number",
-          "placeholder": "Enter a number"
+          "type": "number"
         },
         {
-          "name": "second_number", 
+          "name": "b",
           "label": "Second number:",
-          "type": "number",
-          "placeholder": "Enter another number"
+          "type": "number"
         }
       ],
-      "starterCode": "num1 = first_number\nnum2 = second_number\nresult = num1 + num2\nprint(f\"{num1} + {num2} = {result}\")",
+      "starterCode": "x = a\ny = b\nresult = x + y\nprint(result)",
       "expectedOutput": "dynamic",
-      "hint": "The program will use the numbers you enter to calculate their sum.",
-      "codeHeight": 4,
+      "hint": "The sum will be printed.",
       "validation": {
         "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
-            "pattern": "num1 = first_number",
-            "description": "Code must assign the first input to a variable"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "num2 = second_number",
-            "description": "Code must assign the second input to a variable"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "result = num1 + num2",
-            "description": "Code must calculate the sum using variables"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
+            "pattern": "result = x + y"
           }
         ]
       }
     },
     {
-      "title": "Temperature Converter",
-      "content": "Let's create a temperature converter! You'll enter a temperature in Celsius and the program will convert it to Fahrenheit using the formula: F = C × 9/5 + 32.",
-      "task": "Enter a temperature in Celsius and run the code to convert it to Fahrenheit.",
+      "title": "Multiplying two inputs",
+      "content": "Enter two numbers and modify the code so it multiplies the variables instead of adding them.",
+      "task": "Edit the code to multiply the variables.",
       "inputs": [
         {
-          "name": "celsius",
-          "label": "Temperature in Celsius:",
-          "type": "number",
-          "placeholder": "Enter temperature (e.g., 25)"
-        }
-      ],
-      "starterCode": "c = celsius\nf = c * 9/5 + 32\nprint(f\"{c}°C is equal to {f}°F\")",
-      "expectedOutput": "dynamic",
-      "hint": "The program multiplies the Celsius temperature by 9/5, then adds 32 to get Fahrenheit.",
-      "codeHeight": 4,
-      "validation": {
-        "type": "pattern_match",
-        "rules": [
-          {
-            "type": "code_contains",
-            "pattern": "c = celsius",
-            "description": "Code must assign the input to a variable"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "f = c * 9/5 + 32",
-            "description": "Code must contain the conversion formula"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
-          }
-        ]
-      }
-    },
-    {
-      "title": "Simple Calculator",
-      "content": "Create a simple calculator that can add, subtract, multiply, or divide two numbers based on your choice of operation.",
-      "task": "Enter two numbers and choose an operation (+, -, *, /) to perform the calculation.",
-      "inputs": [
-        {
-          "name": "number1",
+          "name": "a",
           "label": "First number:",
-          "type": "number",
-          "placeholder": "Enter first number"
+          "type": "number"
         },
         {
-          "name": "number2",
-          "label": "Second number:", 
-          "type": "number",
-          "placeholder": "Enter second number"
-        },
-        {
-          "name": "operation",
-          "label": "Operation (+, -, *, /):",
-          "type": "text",
-          "placeholder": "Enter +, -, *, or /"
+          "name": "b",
+          "label": "Second number:",
+          "type": "number"
         }
       ],
-      "starterCode": "a = number1\nb = number2\nop = operation\n\nif op == '+':\n    result = a + b\nelif op == '-':\n    result = a - b\nelif op == '*':\n    result = a * b\nelif op == '/':\n    result = a / b\nelse:\n    result = \"Invalid operation\"\n\nprint(f\"{a} {op} {b} = {result}\")",
+      "starterCode": "x = a\ny = b\nresult = x + y\nprint(result)",
       "expectedOutput": "dynamic",
-      "hint": "The program uses if statements to check which operation you chose and performs the appropriate calculation.",
-      "codeHeight": 8,
+      "hint": "Change the + to * to multiply instead of add.",
       "validation": {
         "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
-            "pattern": "a = number1",
-            "description": "Code must assign the first input to a variable"
-          },
+            "pattern": "result = x * y"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Double from input",
+      "content": "Write a program that asks for a number and prints double its value.",
+      "task": "Enter a number and write the program from scratch.",
+      "inputs": [
+        {
+          "name": "n",
+          "label": "Number:",
+          "type": "number"
+        }
+      ],
+      "starterCode": "",
+      "expectedOutput": "dynamic",
+      "hint": "Assign the input to a variable, multiply by 2, print.",
+      "validation": {
+        "type": "pattern_match",
+        "rules": [
           {
             "type": "code_contains",
-            "pattern": "b = number2",
-            "description": "Code must assign the second input to a variable"
-          },
+            "pattern": "* 2"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Three times the fun",
+      "content": "Enter a number and the program will print triple its value.",
+      "task": "Enter a number.",
+      "inputs": [
+        {
+          "name": "n",
+          "label": "Number:",
+          "type": "number"
+        }
+      ],
+      "starterCode": "num = n\ntriple = num * 3\nprint(triple)",
+      "expectedOutput": "dynamic",
+      "hint": "Multiply the input by 3.",
+      "validation": {
+        "type": "pattern_match",
+        "rules": [
           {
             "type": "code_contains",
-            "pattern": "op = operation",
-            "description": "Code must assign the operation input to a variable"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "if",
-            "description": "Code must contain conditional logic"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
+            "pattern": "* 3"
           }
         ]
       }
     }
   ],
   "metadata": {
-    "created": "2025-01-27",
-    "author": "Python Learning Platform"
+    "created": "2025-08-14"
   }
 }
