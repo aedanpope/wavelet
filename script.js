@@ -72,13 +72,6 @@ function createWorksheetCard(worksheet) {
     card.innerHTML = `
         <h3>${worksheet.title}</h3>
         <p>${worksheet.description}</p>
-        <div class="worksheet-meta">
-            <span class="difficulty-badge ${worksheet.difficulty}">${worksheet.difficulty}</span>
-            <span class="time-badge">${worksheet.estimatedTime}</span>
-        </div>
-        <div class="worksheet-tags">
-            ${worksheet.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-        </div>
     `;
     
     return card;
@@ -116,9 +109,6 @@ function showWorksheetInterface() {
     // Update worksheet info
     document.getElementById('worksheet-title').textContent = currentWorksheet.title;
     document.getElementById('worksheet-description').textContent = currentWorksheet.description;
-    document.getElementById('worksheet-difficulty').textContent = currentWorksheet.difficulty;
-    document.getElementById('worksheet-difficulty').className = `difficulty-badge ${currentWorksheet.difficulty}`;
-    document.getElementById('worksheet-time').textContent = currentWorksheet.estimatedTime;
     
     // Load all problems
     loadAllProblems();
@@ -158,9 +148,6 @@ function createProblemElement(problem, index) {
     problemDiv.innerHTML = `
         <div class="problem-header">
             <h2>${problem.id}: ${problem.title}</h2>
-            <div class="problem-meta">
-                <span class="type-badge ${problem.type}">${problem.type}</span>
-            </div>
         </div>
 
         <div class="problem-content">

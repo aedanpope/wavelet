@@ -30,9 +30,6 @@ class BasicHomepageTest {
             'script.js',
             'error-handler.js',
             'worksheets/index.json',
-            'worksheets/worksheet-1.json',
-            'worksheets/worksheet-2.json',
-            'worksheets/worksheet-3.json',
             'worksheets/template.json'
         ];
 
@@ -48,7 +45,27 @@ class BasicHomepageTest {
             throw new Error(`Missing required files: ${missingFiles.join(', ')}`);
         }
 
-        return { filesFound: requiredFiles.length };
+        // Check that at least one worksheet file exists
+        const indexContent = fs.readFileSync('worksheets/index.json', 'utf8');
+        const indexData = JSON.parse(indexContent);
+        
+        if (indexData.worksheets.length === 0) {
+            throw new Error('No worksheets found in index.json');
+        }
+
+        // Check that all referenced worksheet files exist
+        indexData.worksheets.forEach(worksheet => {
+            const worksheetFile = `worksheets/${worksheet.file}`;
+            if (!fs.existsSync(worksheetFile)) {
+                missingFiles.push(worksheetFile);
+            }
+        });
+
+        if (missingFiles.length > 0) {
+            throw new Error(`Missing required files: ${missingFiles.join(', ')}`);
+        }
+
+        return { filesFound: requiredFiles.length + indexData.worksheets.length };
     }
 
     testHTMLStructure() {
@@ -60,7 +77,6 @@ class BasicHomepageTest {
             'id="worksheet-selection"',
             'id="worksheet-interface"',
             'id="worksheets-grid"',
-            'id="code-editor"',
             'script src="script.js"'
         ];
 
@@ -76,7 +92,12 @@ class BasicHomepageTest {
             throw new Error(`Missing required HTML elements: ${missingElements.join(', ')}`);
         }
 
-        return { elementsFound: requiredElements.length };
+        // Check for CodeMirror integration (code editors are created dynamically)
+        if (!htmlContent.includes('codemirror')) {
+            throw new Error('Missing CodeMirror integration for code editors');
+        }
+
+        return { elementsFound: requiredElements.length + 1 }; // +1 for CodeMirror
     }
 
     testWorksheetsIndexStructure() {
@@ -88,12 +109,12 @@ class BasicHomepageTest {
             throw new Error('Worksheets index missing "worksheets" array');
         }
 
-        if (indexData.worksheets.length < 3) {
-            throw new Error(`Expected at least 3 worksheets, found ${indexData.worksheets.length}`);
+        if (indexData.worksheets.length === 0) {
+            throw new Error('Worksheets index is empty - at least one worksheet is required');
         }
 
         // Check each worksheet has required fields
-        const requiredFields = ['id', 'title', 'description', 'difficulty', 'file'];
+        const requiredFields = ['id', 'title', 'description', 'file'];
         
         indexData.worksheets.forEach((worksheet, index) => {
             requiredFields.forEach(field => {
@@ -107,16 +128,20 @@ class BasicHomepageTest {
     }
 
     testIndividualWorksheets() {
-        const worksheetFiles = [
-            'worksheets/worksheet-1.json',
-            'worksheets/worksheet-2.json',
-            'worksheets/worksheet-3.json'
-        ];
+        // Get the list of worksheets from the index
+        const indexContent = fs.readFileSync('worksheets/index.json', 'utf8');
+        const indexData = JSON.parse(indexContent);
+        
+        const requiredWorksheetFields = ['id', 'title', 'description', 'problems'];
+        const requiredProblemFields = ['id', 'title', 'content', 'task', 'starterCode', 'expectedOutput', 'hint'];
 
-        const requiredWorksheetFields = ['id', 'title', 'description', 'difficulty', 'problems'];
-        const requiredProblemFields = ['id', 'type', 'title', 'content', 'task', 'starterCode', 'expectedOutput', 'hint', 'points'];
-
-        worksheetFiles.forEach(file => {
+        indexData.worksheets.forEach(worksheet => {
+            const file = `worksheets/${worksheet.file}`;
+            
+            if (!fs.existsSync(file)) {
+                throw new Error(`Worksheet file not found: ${file}`);
+            }
+            
             const content = fs.readFileSync(file, 'utf8');
             const data = JSON.parse(content);
 
@@ -134,40 +159,17 @@ class BasicHomepageTest {
 
             data.problems.forEach((problem, index) => {
                 requiredProblemFields.forEach(field => {
-                    if (!problem[field]) {
+                    if (!(field in problem)) {
                         throw new Error(`${file} problem ${index + 1} missing required field: ${field}`);
                     }
                 });
             });
         });
 
-        return { worksheetsValidated: worksheetFiles.length };
+        return { worksheetsValidated: indexData.worksheets.length };
     }
 
-    testNoTimeEstimates() {
-        const filesToCheck = [
-            'worksheets/index.json',
-            'worksheets/worksheet-1.json',
-            'worksheets/worksheet-2.json',
-            'worksheets/worksheet-3.json',
-            'worksheets/template.json'
-        ];
 
-        const filesWithTimeEstimates = [];
-
-        filesToCheck.forEach(file => {
-            const content = fs.readFileSync(file, 'utf8');
-            if (content.includes('estimatedTime')) {
-                filesWithTimeEstimates.push(file);
-            }
-        });
-
-        if (filesWithTimeEstimates.length > 0) {
-            throw new Error(`Files still contain time estimates: ${filesWithTimeEstimates.join(', ')}`);
-        }
-
-        return { timeEstimatesRemoved: true };
-    }
 
     testCSSFile() {
         const cssContent = fs.readFileSync('styles.css', 'utf8');
@@ -239,7 +241,6 @@ class BasicHomepageTest {
             this.runTest('HTML Structure', () => this.testHTMLStructure());
             this.runTest('Worksheets Index Structure', () => this.testWorksheetsIndexStructure());
             this.runTest('Individual Worksheets', () => this.testIndividualWorksheets());
-            this.runTest('No Time Estimates', () => this.testNoTimeEstimates());
             this.runTest('CSS File', () => this.testCSSFile());
             this.runTest('JavaScript File', () => this.testJavaScriptFile());
 

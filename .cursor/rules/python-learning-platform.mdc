@@ -1,0 +1,169 @@
+---
+alwaysApply: true
+---
+
+# Python Learning Platform Rules
+
+## Context
+
+This is a web-based Python learning platform that provides interactive coding worksheets. The application allows users to select from various Python learning worksheets, write and run Python code in a browser-based environment, get real-time feedback and validation, and track progress through interactive problems.
+
+**Technology Stack:**
+- Frontend: HTML5, CSS3, JavaScript (ES6+)
+- Python Runtime: Pyodide (Python in the browser)
+- Code Editor: CodeMirror
+- Math Rendering: MathJax
+- Styling: Custom CSS with modern design patterns
+
+**Key Files:**
+- `index.html` - Main HTML file
+- `styles.css` - All CSS styling
+- `script.js` - Main JavaScript application logic
+- `error-handler.js` - Error handling utilities
+- `validation.js` - Answer validation logic
+- `worksheets/` - JSON files containing learning content
+
+## Rules
+
+### Developer preferences
+- When the user asks for changes to be made, ask for confirmation of the proposed strategy before making a lot of changes
+
+### Educational Context
+- Always consider the educational context when suggesting changes
+- Maintain clear, readable code for learning purposes
+- Ensure error messages are educational and helpful
+- Keep the UI intuitive and minimal for beginners
+- Consider performance impact on slower devices
+
+### JavaScript Standards
+- Use ES6+ features (async/await, arrow functions, template literals)
+- Prefer `const` and `let` over `var`
+- Use meaningful function and variable names
+- Add JSDoc comments for complex functions
+- Handle errors gracefully with try-catch blocks
+- Use the `ErrorHandler` utility for consistent error processing
+
+### CSS Standards
+- Use modern CSS features (Grid, Flexbox, CSS Variables)
+- Follow BEM-like naming conventions for complex components
+- Use semantic class names
+- Implement responsive design with mobile-first approach
+- Use CSS custom properties for consistent theming
+
+### HTML Standards
+- Use semantic HTML5 elements
+- Ensure accessibility with proper ARIA labels
+- Keep structure clean and logical
+
+### Code Organization
+- Keep related functionality together
+- Use clear function names that describe their purpose
+- Add comments for complex logic
+- Maintain consistent formatting
+- Minimize DOM queries by caching elements
+- Write unit test for complex subroutines
+- Extract code under test to a logical separate shared file
+
+### Python Code Execution
+- Always reset Python environment between executions
+- Capture and format output appropriately
+- Provide clear feedback for success/failure states
+- Display user-friendly error messages
+- Log detailed errors to console for debugging
+
+## Examples
+
+### Creating UI Elements
+```javascript
+function createElement(type, className, content) {
+    const element = document.createElement(type);
+    element.className = className;
+    if (content) element.textContent = content;
+    return element;
+}
+```
+
+### Event Handling
+```javascript
+element.addEventListener('event', (event) => {
+    // Handle event
+    // Update UI
+    // Update state
+});
+```
+
+### Async Operations with Error Handling
+```javascript
+async function performAsyncOperation() {
+    try {
+        const result = await someAsyncCall();
+        // Handle success
+    } catch (error) {
+        // Handle error using ErrorHandler
+        ErrorHandler.handleError(error);
+    }
+}
+```
+
+### Python Code Execution Pattern
+```javascript
+async function runCode(problemIndex) {
+    const code = codeEditors[problemIndex].getValue();
+    const output = document.getElementById(`output-${problemIndex}`);
+    
+    if (!code.trim()) {
+        displayOutput(output, 'Please enter some code to run.', 'error');
+        return;
+    }
+    
+    try {
+        displayOutput(output, '', 'running');
+        await resetPythonEnvironment();
+        
+        // Capture print output
+        let printOutput = '';
+        const originalPrint = pyodide.globals.get('print');
+        pyodide.globals.set('print', function(...args) {
+            printOutput += args.join(' ') + '\n';
+        });
+        
+        await pyodide.runPythonAsync(code);
+        pyodide.globals.set('print', originalPrint);
+        
+        const isValid = Validation.validateAnswer(code, printOutput, problem);
+        displayOutput(output, printOutput, isValid ? 'success' : 'error');
+        
+    } catch (error) {
+        const errorInfo = ErrorHandler.extractErrorInfo(error.message);
+        displayOutput(output, errorInfo.fullMessage, 'error');
+    }
+}
+```
+
+### CSS Component Pattern
+```css
+.component {
+    /* Base styles */
+    background: var(--component-bg);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+}
+
+.component__header {
+    /* Element styles */
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+}
+
+.component--success {
+    /* Modifier styles */
+    background: var(--success-bg);
+    border-left: 4px solid var(--success-color);
+}
+```
+
+### Adding New Worksheets
+1. Create JSON file in `worksheets/` directory
+2. Follow the structure from `template.json`
+3. Include all required fields: id, title, description, difficulty, problems
+4. Each problem should have: id, title, content, task, hint, starterCode, expectedOutput

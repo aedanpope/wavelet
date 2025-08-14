@@ -2,11 +2,9 @@
   "id": "worksheet-3",
   "title": "Worksheet 3: Getting User Input",
   "description": "Learn how to ask users for information and make interactive programs",
-  "difficulty": "intermediate",
   "problems": [
     {
       "id": "3.1",
-      "type": "instruction",
       "title": "What is input()?",
       "content": "The <code>input()</code> function asks the user to type something and gives it back to your program!",
       "example": "name = input(\"What is your name? \")\nprint(\"Hello, \" + name)",
@@ -37,7 +35,6 @@
     },
     {
       "id": "3.2",
-      "type": "practice",
       "title": "Ask for a Color",
       "content": "Now ask the user for their favorite color!",
       "task": "Ask the user for their favorite color and then print \"I like [color] too!\"",
@@ -72,7 +69,6 @@
     },
     {
       "id": "3.3",
-      "type": "practice",
       "title": "Number Input",
       "content": "You can also ask for numbers!",
       "task": "Ask the user for their age, then print \"You are [age] years old\"",
@@ -107,7 +103,6 @@
     },
     {
       "id": "3.4",
-      "type": "practice",
       "title": "Simple Calculator",
       "content": "Let's make a simple calculator!",
       "task": "Ask for two numbers and add them together",
@@ -147,7 +142,6 @@
     },
     {
       "id": "3.5",
-      "type": "challenge",
       "title": "Personal Information Form",
       "content": "Create a program that collects personal information!",
       "task": "Ask for:\n1. Name\n2. Age\n3. Favorite food\nThen print a summary",
@@ -188,8 +182,6 @@
   ],
   "metadata": {
     "created": "2025-01-27",
-    "author": "Teacher",
-    "tags": ["input", "interactive", "intermediate"],
-    "prerequisites": ["worksheet-1", "worksheet-2"]
+    "author": "Teacher"
   }
 }

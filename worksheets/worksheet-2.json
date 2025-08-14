@@ -2,11 +2,9 @@
   "id": "worksheet-2",
   "title": "Worksheet 2: Variables and Basic Math",
   "description": "Learn how to use variables and do simple math in Python",
-  "difficulty": "beginner",
   "problems": [
     {
       "id": "2.1",
-      "type": "instruction",
       "title": "What are Variables?",
       "content": "Variables are like boxes that store information. You can create them and use them in your programs!",
       "example": "name = \"Alice\"\nprint(name)",
@@ -37,7 +35,6 @@
     },
     {
       "id": "2.2",
-      "type": "practice",
       "title": "Create Your Own Variable",
       "content": "Now create a variable with your favorite animal!",
       "task": "Create a variable called 'animal' with your favorite animal, then print it",
@@ -70,7 +67,6 @@
     },
     {
       "id": "2.3",
-      "type": "practice",
       "title": "Number Variables",
       "content": "Variables can store numbers too!",
       "task": "Create a variable called 'age' with your age (as a number), then print it",
@@ -104,7 +100,6 @@
     },
     {
       "id": "2.4",
-      "type": "practice",
       "title": "Simple Math",
       "content": "Python can do math! Try adding two numbers.",
       "task": "Create two variables with numbers, then add them together and print the result",
@@ -143,7 +138,6 @@
     },
     {
       "id": "2.5",
-      "type": "challenge",
       "title": "Math Challenge",
       "content": "Let's do some more math!",
       "task": "Create variables for:\n1. Your age\n2. Your friend's age\n3. Print both ages and their sum",
@@ -179,8 +173,6 @@
   ],
   "metadata": {
     "created": "2025-01-27",
-    "author": "Teacher",
-    "tags": ["variables", "math", "beginner"],
-    "prerequisites": ["worksheet-1"]
+    "author": "Teacher"
   }
 }

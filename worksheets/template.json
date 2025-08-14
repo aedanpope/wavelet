@@ -2,11 +2,9 @@
   "id": "worksheet-template",
   "title": "Worksheet Template: [Your Title Here]",
   "description": "[Brief description of what this worksheet teaches]",
-  "difficulty": "beginner|intermediate|advanced",
   "problems": [
     {
       "id": "1.1",
-      "type": "instruction|practice|challenge",
       "title": "[Problem Title]",
       "content": "[Explanation of the concept]",
       "example": "[Example code if applicable]",
@@ -75,9 +73,7 @@
   ],
   "metadata": {
     "created": "[YYYY-MM-DD]",
-    "author": "[Teacher Name]",
-    "tags": ["tag1", "tag2"],
-    "prerequisites": ["worksheet-1"]
+    "author": "[Teacher Name]"
   }
 }
 

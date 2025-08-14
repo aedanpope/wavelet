@@ -80,51 +80,13 @@ body {
     line-height: 1.5;
 }
 
-.worksheet-meta {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-}
 
-.difficulty-badge {
-    background: #28a745;
-    color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
 
-.difficulty-badge.intermediate {
-    background: #ffc107;
-    color: #212529;
-}
 
-.difficulty-badge.advanced {
-    background: #dc3545;
-}
 
-.time-badge {
-    background: #6c757d;
-    color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-}
 
-.worksheet-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-}
 
-.tag {
-    background: #e9ecef;
-    color: #495057;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 0.7rem;
-}
+
 
 .selection-footer {
     text-align: center;
@@ -176,10 +138,7 @@ body {
     font-size: 1rem;
 }
 
-.worksheet-meta {
-    display: flex;
-    gap: 10px;
-}
+
 
 /* Progress Bar */
 .progress-container {
@@ -287,27 +246,7 @@ body {
     gap: 10px;
 }
 
-.type-badge {
-    background: #17a2b8;
-    color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
 
-.type-badge.instruction {
-    background: #28a745;
-}
-
-.type-badge.practice {
-    background: #ffc107;
-    color: #212529;
-}
-
-.type-badge.challenge {
-    background: #dc3545;
-}
 
 /* Problem Content */
 .problem-content {

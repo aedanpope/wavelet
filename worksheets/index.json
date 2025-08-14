@@ -4,16 +4,12 @@
       "id": "worksheet-1",
       "title": "Worksheet 1: The Python Calculator",
       "description": "Learn to use Python for basic arithmetic with the print() function.",
-      "difficulty": "beginner",
-      "file": "worksheet-1.json",
-      "tags": ["print", "calculator", "operators", "beginner"],
-      "prerequisites": []
+      "file": "worksheet-1.json"
     }
   ],
   "metadata": {
     "version": "1.0",
     "lastUpdated": "2025-01-27",
-    "totalWorksheets": 3,
-    "difficultyLevels": ["beginner", "intermediate", "advanced"]
+    "totalWorksheets": 1
   }
 }

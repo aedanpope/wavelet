@@ -7,7 +7,7 @@ An interactive Python learning platform designed for classroom use with structur
 ## Features
 
 - **Interactive Worksheets**: Structured learning with 5-6 problems per worksheet
-- **Progressive Difficulty**: Problems start easy and get progressively harder
+- **Structured Learning**: Problems are organized in a logical progression
 - **Real-time Code Execution**: Run Python code instantly in the browser
 - **Progress Tracking**: Visual progress indicators and completion tracking
 - **Hints System**: Helpful hints for each problem
@@ -18,11 +18,10 @@ An interactive Python learning platform designed for classroom use with structur
 ## Worksheet Structure
 
 Each worksheet contains:
-- **Instruction Problems**: Introduce new concepts with examples
-- **Practice Problems**: Reinforce learning with guided exercises
-- **Challenge Problems**: Apply knowledge to more complex scenarios
-- **Points System**: Gamified learning with point-based scoring
-- **Estimated Time**: Help teachers plan classroom activities
+- **Structured Problems**: Problems that build upon each other
+- **Interactive Learning**: Write and run code directly in the browser
+- **Progress Tracking**: Visual indicators of completion
+- **Helpful Hints**: Guidance when you need assistance
 
 ## Current Worksheets
 
@@ -48,12 +47,9 @@ Each worksheet contains:
   "id": "worksheet-id",
   "title": "Worksheet Title",
   "description": "Brief description",
-  "difficulty": "beginner|intermediate|advanced",
-  "estimatedTime": "20-30 minutes",
   "problems": [
     {
       "id": "1.1",
-      "type": "instruction|practice|challenge",
       "title": "Problem Title",
       "content": "Explanation content (supports HTML)",
       "task": "What the student needs to do",
@@ -69,24 +65,17 @@ Each worksheet contains:
             "description": "Description of validation rule"
           }
         ]
-      },
-      "points": 1
+      }
     }
   ],
   "metadata": {
     "created": "YYYY-MM-DD",
-    "author": "Teacher Name",
-    "tags": ["tag1", "tag2"],
-    "prerequisites": ["worksheet-1"]
+    "author": "Teacher Name"
   }
 }
 ```
 
-### Problem Types
 
-- **instruction**: Introduce new concepts with examples
-- **practice**: Reinforce learning with guided exercises  
-- **challenge**: Apply knowledge to complex scenarios
 
 ## For Students
 
