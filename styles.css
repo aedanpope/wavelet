@@ -363,9 +363,100 @@ body {
 
 /* CodeMirror Customization */
 .CodeMirror {
-    height: 80px !important;
     font-size: 14px;
     border: none;
+    min-height: 70px;
+}
+
+/* Input Section */
+.input-section {
+    background: #f8f9fa;
+    border-top: 1px solid #e2e8f0;
+    padding: 20px;
+}
+
+.input-fields {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.input-field {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.input-field label {
+    color: #4a5568;
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    white-space: nowrap;
+}
+
+.problem-input {
+    padding: 8px 10px;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    background: white;
+    width: 80px;
+    text-align: center;
+}
+
+.problem-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.problem-input::placeholder {
+    color: #a0aec0;
+}
+
+/* Responsive design for input fields */
+@media (max-width: 768px) {
+    .input-fields {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+    
+    .input-field {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .problem-input {
+        width: 100%;
+        text-align: left;
+    }
+}
+
+/* Run Code Button */
+.run-btn {
+    background: #28a745;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    min-width: 100px;
+}
+
+.run-btn:hover {
+    background: #218838;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
 }
 
 /* Output */
@@ -387,9 +478,10 @@ body {
     border-bottom: 1px solid #e2e8f0;
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 
-.output-header::before {
+.output-header span::before {
     content: "▶";
     font-size: 0.8rem;
     opacity: 0.8;

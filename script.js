@@ -145,6 +145,29 @@ function createProblemElement(problem, index) {
     problemDiv.className = 'problem-container';
     problemDiv.id = `problem-${index}`;
     
+         // Generate input fields HTML if the problem has inputs
+     let inputsHTML = '';
+     if (problem.inputs && problem.inputs.length > 0) {
+         inputsHTML = `
+             <div class="input-section">
+                 <div class="input-fields" id="input-fields-${index}">
+                     ${problem.inputs.map(input => `
+                         <div class="input-field">
+                             <label for="input-${index}-${input.name}">${input.name} =</label>
+                             <input 
+                                 type="${input.type}" 
+                                 id="input-${index}-${input.name}" 
+                                 name="${input.name}"
+                                 placeholder="${input.placeholder || ''}"
+                                 class="problem-input"
+                             >
+                         </div>
+                     `).join('')}
+                 </div>
+             </div>
+         `;
+     }
+    
     problemDiv.innerHTML = `
         <div class="problem-header">
             <h2>Problem ${index + 1}: ${problem.title}</h2>
@@ -164,12 +187,17 @@ function createProblemElement(problem, index) {
                     <h4>Your Code</h4>
                     <div class="code-controls">
                         <button class="hint-btn" onclick="showHint(${index})">💡 Hint</button>
-                        <button class="run-btn" onclick="runCode(${index})">▶ Run Code</button>
                     </div>
                 </div>
                 <div class="code-editor" id="code-editor-${index}"></div>
+                
+                ${inputsHTML}
+                
                 <div class="output-section">
-                    <div class="output-header">Output</div>
+                    <div class="output-header">
+                        <span>Output</span>
+                        <button class="run-btn" onclick="runCode(${index})">▶ Run Code</button>
+                    </div>
                     <div class="output" id="output-${index}"></div>
                 </div>
             </div>
@@ -210,6 +238,11 @@ function initAllCodeEditors() {
         
         // Set starter code
         editor.setValue(problem.starterCode || '');
+        
+        // Set editor height based on problem configuration (default: 3 lines)
+        const height = problem.codeHeight || 3;
+        editor.setSize(null, height * 20 + 25); // 20px per line + 25px padding
+        
         codeEditors[index] = editor;
     });
 }
@@ -231,6 +264,28 @@ async function runCode(problemIndex) {
         
         // Reset Python environment to clear previous state
         await resetPythonEnvironment();
+        
+        // Set up input variables if the problem has inputs
+        if (problem.inputs && problem.inputs.length > 0) {
+            for (const input of problem.inputs) {
+                const inputElement = document.getElementById(`input-${problemIndex}-${input.name}`);
+                if (inputElement) {
+                    let value = inputElement.value;
+                    
+                    // Convert to appropriate type
+                    if (input.type === 'number') {
+                        value = parseFloat(value);
+                        if (isNaN(value)) {
+                            displayOutput(output, `Please enter a valid number for ${input.label}`, 'error');
+                            return;
+                        }
+                    }
+                    
+                    // Set the variable in Python environment
+                    pyodide.globals.set(input.name, value);
+                }
+            }
+        }
         
         // Capture print output
         let printOutput = '';

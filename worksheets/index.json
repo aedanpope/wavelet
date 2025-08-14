@@ -5,11 +5,17 @@
       "title": "Worksheet 1: The Python Calculator",
       "description": "Learn to use Python for basic arithmetic with the print() function.",
       "file": "worksheet-1.json"
+    },
+    {
+      "id": "worksheet-2",
+      "title": "Worksheet 2: Storing Your Numbers",
+      "description": "Learn to use variables to store and manipulate data in Python.",
+      "file": "worksheet-2.json"
     }
   ],
   "metadata": {
     "version": "1.0",
     "lastUpdated": "2025-01-27",
-    "totalWorksheets": 1
+    "totalWorksheets": 2
   }
 }
