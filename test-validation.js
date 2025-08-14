@@ -4,152 +4,186 @@
 // Import the shared validation functions
 const { validateAnswer } = require('./validation.js');
 
+// Common problem definitions that can be reused across test cases
+const problemDefinitions = {
+    helloWorld: {
+        id: "1.1",
+        validation: {
+            type: "exact_match",
+            rules: [
+                {
+                    type: "code_contains",
+                    pattern: "print(\"Hello, World!\")",
+                    description: "Code must contain the exact print statement"
+                },
+                {
+                    type: "output_contains",
+                    pattern: "Hello, World!",
+                    description: "Output must contain 'Hello, World!'"
+                }
+            ]
+        }
+    },
+    myNameIs: {
+        id: "1.2",
+        validation: {
+            type: "pattern_match",
+            rules: [
+                {
+                    type: "code_contains",
+                    pattern: "print",
+                    description: "Code must contain a print statement"
+                },
+                {
+                    type: "code_contains",
+                    pattern: "My name is",
+                    description: "Code must contain 'My name is'"
+                },
+                {
+                    type: "output_contains",
+                    pattern: "My name is",
+                    description: "Output must contain 'My name is'"
+                },
+                {
+                    type: "code_min_length",
+                    minLength: 20,
+                    description: "Code must be substantial (not just comments)"
+                }
+            ]
+        }
+    },
+    animalVariable: {
+        id: "2.2",
+        validation: {
+            type: "pattern_match",
+            rules: [
+                {
+                    type: "code_contains",
+                    pattern: "animal =",
+                    description: "Code must create a variable called 'animal'"
+                },
+                {
+                    type: "code_contains",
+                    pattern: "print(animal)",
+                    description: "Code must print the animal variable"
+                },
+                {
+                    type: "output_not_empty",
+                    description: "Output must not be empty"
+                },
+                {
+                    type: "no_errors",
+                    description: "Code must not produce errors"
+                }
+            ]
+        }
+    },
+    divisionProblem: {
+        id: "1.10",
+        validation: {
+            type: "exact_match",
+            rules: [
+                {
+                    type: "code_contains",
+                    pattern: "print(25 / 5)",
+                    description: "Code must contain the exact print statement"
+                },
+                {
+                    type: "output_contains",
+                    pattern: "5.0",
+                    description: "Output must contain '5.0'"
+                }
+            ]
+        }
+    },
+    parenthesesProblem: {
+        id: "1.X",
+        validation: {
+            type: "pattern_match",
+            rules: [
+                {
+                    type: "code_contains",
+                    pattern: "print",
+                    description: "Code must contain a print statement"
+                },
+                {
+                    type: "output_contains",
+                    pattern: "5.0",
+                    description: "Output must contain '5.0'"
+                },
+                {
+                    type: "code_contains",
+                    pattern: "10",
+                    description: "Code must contain the number 10"
+                },
+                {
+                    type: "code_contains",
+                    pattern: "5",
+                    description: "Code must contain the number 5"
+                },
+                {
+                    type: "code_contains",
+                    pattern: "3",
+                    description: "Code must contain the number 3"
+                },
+                {
+                    type: "code_contains",
+                    pattern: "+",
+                    description: "Code must contain the addition operator"
+                },
+                {
+                    type: "code_contains",
+                    pattern: "/",
+                    description: "Code must contain the division operator"
+                },
+                {
+                    type: "code_contains",
+                    pattern: "(",
+                    description: "Code must contain an opening parenthesis"
+                },
+                {
+                    type: "code_contains",
+                    pattern: ")",
+                    description: "Code must contain a closing parenthesis"
+                }
+            ]
+        }
+    }
+};
+
 // Test cases
 const testCases = [
     {
         name: "Worksheet 1.1 - Hello World",
-        problem: {
-            id: "1.1",
-            validation: {
-                type: "exact_match",
-                rules: [
-                    {
-                        type: "code_contains",
-                        pattern: "print(\"Hello, World!\")",
-                        description: "Code must contain the exact print statement"
-                    },
-                    {
-                        type: "output_contains",
-                        pattern: "Hello, World!",
-                        description: "Output must contain 'Hello, World!'"
-                    }
-                ]
-            }
-        },
+        problem: problemDefinitions.helloWorld,
         code: 'print("Hello, World!")',
         output: 'Hello, World!\n',
         expected: true
     },
     {
         name: "Worksheet 1.2 - My name is",
-        problem: {
-            id: "1.2",
-            validation: {
-                type: "pattern_match",
-                rules: [
-                    {
-                        type: "code_contains",
-                        pattern: "print",
-                        description: "Code must contain a print statement"
-                    },
-                    {
-                        type: "code_contains",
-                        pattern: "My name is",
-                        description: "Code must contain 'My name is'"
-                    },
-                    {
-                        type: "output_contains",
-                        pattern: "My name is",
-                        description: "Output must contain 'My name is'"
-                    },
-                    {
-                        type: "code_min_length",
-                        minLength: 20,
-                        description: "Code must be substantial (not just comments)"
-                    }
-                ]
-            }
-        },
+        problem: problemDefinitions.myNameIs,
         code: 'print("My name is Alice")',
         output: 'My name is Alice\n',
         expected: true
     },
     {
         name: "Worksheet 2.2 - Animal variable",
-        problem: {
-            id: "2.2",
-            validation: {
-                type: "pattern_match",
-                rules: [
-                    {
-                        type: "code_contains",
-                        pattern: "animal =",
-                        description: "Code must create a variable called 'animal'"
-                    },
-                    {
-                        type: "code_contains",
-                        pattern: "print(animal)",
-                        description: "Code must print the animal variable"
-                    },
-                    {
-                        type: "output_not_empty",
-                        description: "Output must not be empty"
-                    },
-                    {
-                        type: "no_errors",
-                        description: "Code must not produce errors"
-                    }
-                ]
-            }
-        },
+        problem: problemDefinitions.animalVariable,
         code: 'animal = "dog"\nprint(animal)',
         output: 'dog\n',
         expected: true
     },
     {
         name: "Worksheet 1.1 - Wrong code (should fail)",
-        problem: {
-            id: "1.1",
-            validation: {
-                type: "exact_match",
-                rules: [
-                    {
-                        type: "code_contains",
-                        pattern: "print(\"Hello, World!\")",
-                        description: "Code must contain the exact print statement"
-                    },
-                    {
-                        type: "output_contains",
-                        pattern: "Hello, World!",
-                        description: "Output must contain 'Hello, World!'"
-                    }
-                ]
-            }
-        },
+        problem: problemDefinitions.helloWorld,
         code: 'print("Hello, Python!")',
         output: 'Hello, Python!\n',
         expected: false
     },
     {
         name: "Worksheet 1.2 - Missing required pattern (should fail)",
-        problem: {
-            id: "1.2",
-            validation: {
-                type: "pattern_match",
-                rules: [
-                    {
-                        type: "code_contains",
-                        pattern: "print",
-                        description: "Code must contain a print statement"
-                    },
-                    {
-                        type: "code_contains",
-                        pattern: "My name is",
-                        description: "Code must contain 'My name is'"
-                    },
-                    {
-                        type: "output_contains",
-                        pattern: "My name is",
-                        description: "Output must contain 'My name is'"
-                    },
-                    {
-                        type: "code_min_length",
-                        minLength: 20,
-                        description: "Code must be substantial (not just comments)"
-                    }
-                ]
-            }
-        },
+        problem: problemDefinitions.myNameIs,
         code: 'print("Hello")',
         output: 'Hello\n',
         expected: false
@@ -214,32 +248,7 @@ const testCases = [
     },
     {
         name: "Worksheet 2.2 - Wrong variable name (should fail)",
-        problem: {
-            id: "2.2",
-            validation: {
-                type: "pattern_match",
-                rules: [
-                    {
-                        type: "code_contains",
-                        pattern: "animal =",
-                        description: "Code must create a variable called 'animal'"
-                    },
-                    {
-                        type: "code_contains",
-                        pattern: "print(animal)",
-                        description: "Code must print the animal variable"
-                    },
-                    {
-                        type: "output_not_empty",
-                        description: "Output must not be empty"
-                    },
-                    {
-                        type: "no_errors",
-                        description: "Code must not produce errors"
-                    }
-                ]
-            }
-        },
+        problem: problemDefinitions.animalVariable,
         code: 'pet = "dog"\nprint(pet)',
         output: 'dog\n',
         expected: false
@@ -394,51 +403,38 @@ const testCases = [
     },
     {
         name: "Worksheet 1.10 - Division problem (should pass with 5.0)",
-        problem: {
-            id: "1.10",
-            validation: {
-                type: "exact_match",
-                rules: [
-                    {
-                        type: "code_contains",
-                        pattern: "print(25 / 5)",
-                        description: "Code must contain the exact print statement"
-                    },
-                    {
-                        type: "output_contains",
-                        pattern: "5.0",
-                        description: "Output must contain '5.0'"
-                    }
-                ]
-            }
-        },
+        problem: problemDefinitions.divisionProblem,
         code: 'print(25 / 5)',
         output: '5.0\n',
         expected: true
     },
     {
         name: "Worksheet 1.10 - Division problem (should pass with 5)",
-        problem: {
-            id: "1.10",
-            validation: {
-                type: "exact_match",
-                rules: [
-                    {
-                        type: "code_contains",
-                        pattern: "print(25 / 5)",
-                        description: "Code must contain the exact print statement"
-                    },
-                    {
-                        type: "output_contains",
-                        pattern: "5.0",
-                        description: "Output must contain '5.0'"
-                    }
-                ]
-            }
-        },
+        problem: problemDefinitions.divisionProblem,
         code: 'print(25 / 5)',
         output: '5\n',
         expected: true
+    },
+    {
+        name: "Worksheet 1.X - Using Parentheses (user's code format)",
+        problem: problemDefinitions.parenthesesProblem,
+        code: 'print((10+5)/3)',
+        output: '5\n',
+        expected: true
+    },
+    {
+        name: "Worksheet 1.X - Using Parentheses (with spaces)",
+        problem: problemDefinitions.parenthesesProblem,
+        code: 'print((10 + 5) / 3)',
+        output: '5\n',
+        expected: true
+    },
+    {
+        name: "Worksheet 1.X - Using Parentheses (wrong numbers should fail)",
+        problem: problemDefinitions.parenthesesProblem,
+        code: 'print((5+5)/3)',
+        output: '3.3333333333333335\n',
+        expected: false
     }
 ];
 

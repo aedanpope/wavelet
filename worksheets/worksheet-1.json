@@ -641,8 +641,38 @@
           },
           {
             "type": "code_contains",
-            "pattern": "(10 + 5) / 3",
-            "description": "Code must contain the correct expression with parentheses"
+            "pattern": "10",
+            "description": "Code must contain the number 10"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "5",
+            "description": "Code must contain the number 5"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "3",
+            "description": "Code must contain the number 3"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "+",
+            "description": "Code must contain the addition operator"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "/",
+            "description": "Code must contain the division operator"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "(",
+            "description": "Code must contain an opening parenthesis"
+          },
+          {
+            "type": "code_contains",
+            "pattern": ")",
+            "description": "Code must contain a closing parenthesis"
           }
         ]
       }

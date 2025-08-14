@@ -51,6 +51,10 @@ function validateRule(code, output, rule) {
             }
             return result;
             
+        case 'code_contains_regex':
+            const regexPattern = new RegExp(rule.pattern, 'i'); // case insensitive
+            return regexPattern.test(code);
+            
         case 'output_contains':
             // Special handling for division outputs
             if (rule.pattern.endsWith('.0') && code.includes('/')) {
