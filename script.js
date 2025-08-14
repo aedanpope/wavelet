@@ -182,7 +182,7 @@ function createProblemElement(problem, index) {
                 </div>
                 <div class="code-editor" id="code-editor-${index}"></div>
                 <div class="output-section">
-                    <h4>Output</h4>
+                    <div class="output-header">Output</div>
                     <div class="output" id="output-${index}"></div>
                 </div>
             </div>
