@@ -234,12 +234,13 @@ async function runCode(problemIndex) {
     const problem = currentWorksheet.problems[problemIndex];
     
     if (!code.trim()) {
-        output.textContent = 'Please enter some code to run.';
+        displayOutput(output, 'Please enter some code to run.', 'error');
         return;
     }
     
     try {
-        output.textContent = 'Running...';
+        // Show running state
+        displayOutput(output, '', 'running');
         
         // Reset Python environment to clear previous state
         await resetPythonEnvironment();
@@ -263,8 +264,7 @@ async function runCode(problemIndex) {
         
         if (isValid) {
             // Display output with success message
-            output.textContent = printOutput + '\n\n✅ Correct! Well done!';
-            output.className = 'output success';
+            displayOutput(output, printOutput, 'success', '✅ Correct! Well done!');
             
             // Mark as completed
             completedProblems.add(problemIndex);
@@ -276,17 +276,39 @@ async function runCode(problemIndex) {
             }
         } else {
             // Show feedback for incorrect answer
-            output.textContent = printOutput + '\n\n❌ Not quite right! Check the task requirements and try again.';
-            output.className = 'output error';
+            displayOutput(output, printOutput, 'error', '❌ Not quite right! Check the task requirements and try again.');
         }
         
     } catch (error) {
         // Use the shared error handling logic
         const errorInfo = ErrorHandler.extractErrorInfo(error.message);
-        output.textContent = errorInfo.fullMessage;
-        output.className = 'output error';
+        displayOutput(output, errorInfo.fullMessage, 'error');
     }
 }
+
+// Enhanced output display function
+function displayOutput(outputElement, content, type = 'normal', message = null) {
+    // Clear previous content
+    outputElement.innerHTML = '';
+    outputElement.className = `output ${type}`;
+    
+    if (content.trim()) {
+        // Show raw output content
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'output-content';
+        contentDiv.textContent = content;
+        outputElement.appendChild(contentDiv);
+    }
+    
+    if (message) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `output-message ${type}`;
+        messageDiv.textContent = message;
+        outputElement.appendChild(messageDiv);
+    }
+}
+
+
 
 // Show hint for a specific problem
 function showHint(problemIndex) {
