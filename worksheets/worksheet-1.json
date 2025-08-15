@@ -6,7 +6,6 @@
     {
       "title": "Adding two numbers",
       "content": "The `print()` function can be used as a simple calculator. Run this program and observe the output.",
-      "example": "print(5 + 3)",
       "task": "Run the code to see the result of the calculation.",
       "starterCode": "print(5 + 3)",
       "hint": "Check the output to see the answer.",
@@ -70,7 +69,6 @@
     {
       "title": "Edit to add",
       "content": "Practice your addition skills by editing this code.",
-      "example": "print(50 + 25)",
       "task": "Edit the program to find the answer to $50 + 25$.",
       "starterCode": "print(10 + 10)",
       "hint": "Change the numbers inside the parentheses to 50 and 25.",
@@ -179,7 +177,6 @@
     {
       "title": "Subtracting two numbers",
       "content": "The `-` symbol is used for subtraction. What is the answer to this problem?",
-      "example": "print(10 - 4)",
       "task": "Run the code and find out the answer.",
       "starterCode": "print(10 - 4)",
       "hint": "What does ten minus four equal?",
@@ -201,7 +198,6 @@
     {
       "title": "Edit to subtract",
       "content": "Now it's your turn to make a small change. Edit the code below to solve the new problem.",
-      "example": "print(12 - 7)",
       "task": "Edit the program to find the answer to $12 - 7$.",
       "starterCode": "print(20 - 5)",
       "hint": "Change the numbers inside the parentheses to 12 and 7.",
