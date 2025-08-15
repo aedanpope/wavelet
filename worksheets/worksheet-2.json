@@ -176,12 +176,8 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "get_input\\s*\\(\\s*\\)"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "\\*\\s*2"
+            "type": "solution_code",
+            "solutionCode": "x = get_input()\nresult = x * 2\nprint(result)"
           }
         ]
       }
@@ -202,12 +198,8 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "get_input\\s*\\(\\s*\\)"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "\\*\\s*[a-zA-Z_][a-zA-Z0-9_]*"
+            "type": "solution_code",
+            "solutionCode": "x = get_input()\nresult = x * x\nprint(result)"
           }
         ]
       }
@@ -250,20 +242,8 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "get_input\\s*\\(\\s*\\)"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "print\\s*\\(\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*\\)"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "print\\s*\\(\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*\\+\\s*5\\s*\\)"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "print\\s*\\(\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*\\+\\s*10\\s*\\)"
+            "type": "solution_code",
+            "solutionCode": "x = get_input()\nprint(x)\nprint(x + 5)\nprint(x + 10)"
           }
         ]
       }

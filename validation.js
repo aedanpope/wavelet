@@ -2,7 +2,7 @@
 // This module contains the validation functions used by both script.js and test files
 
 // Validate the student's answer using validation rules from the problem definition
-function validateAnswer(code, output, problem) {
+async function validateAnswer(code, output, problem, problemIndex) {
     const codeTrimmed = code.trim();
     const outputTrimmed = output.trim();
     
@@ -28,7 +28,7 @@ function validateAnswer(code, output, problem) {
     const validationRules = problem.validation.rules;
     
     for (const rule of validationRules) {
-        const ruleResult = validateRule(code, output, rule);
+        const ruleResult = await validateRule(code, output, rule, problem, problemIndex);
         if (!ruleResult) {
             console.log(`Validation failed for rule: ${rule.type} - ${rule.pattern}`);
             return false;
@@ -39,7 +39,7 @@ function validateAnswer(code, output, problem) {
 }
 
 // Validate a single validation rule
-function validateRule(code, output, rule) {
+async function validateRule(code, output, rule, problem, problemIndex) {
     switch (rule.type) {
         case 'code_contains':
             let result;
@@ -102,9 +102,135 @@ function validateRule(code, output, rule) {
             const inputMatches = code.match(/input\(/g) || [];
             return inputMatches.length >= rule.minCount;
             
+        case 'solution_code':
+            return await validateSolutionCode(code, output, rule, problem, problemIndex);
+            
         default:
             console.warn(`Unknown validation rule type: ${rule.type}`);
             return true;
+    }
+}
+
+// Validate student code against a solution program
+async function validateSolutionCode(studentCode, studentOutput, rule, problem, problemIndex) {
+    try {
+        const solutionCode = rule.solutionCode;
+        if (!solutionCode) {
+            console.warn('Solution code not provided for solution_code validation rule');
+            return false;
+        }
+        
+        // Get the current input values from the student's run
+        const currentInputs = getCurrentInputValues(problem, problemIndex);
+        
+        // Generate test inputs (i * 17 + 31 for each input)
+        const testInputs = generateTestInputs(problem);
+        
+        // Test with current inputs
+        const currentResult = await testCodeWithInputs(studentCode, currentInputs, problem);
+        const currentSolutionResult = await testCodeWithInputs(solutionCode, currentInputs, problem);
+        
+        if (!currentResult.success || !currentSolutionResult.success) {
+            console.log('Code execution failed with current inputs');
+            return false;
+        }
+        
+        // Test with generated inputs
+        const testResult = await testCodeWithInputs(studentCode, testInputs, problem);
+        const testSolutionResult = await testCodeWithInputs(solutionCode, testInputs, problem);
+        
+        if (!testResult.success || !testSolutionResult.success) {
+            console.log('Code execution failed with test inputs');
+            return false;
+        }
+        
+        // Compare outputs - both current and test inputs should match
+        const currentMatch = currentResult.output.trim() === currentSolutionResult.output.trim();
+        console.log('currentResult.output.trim():', currentResult.output.trim());
+        console.log('currentSolutionResult.output.trim():', currentSolutionResult.output.trim());
+        console.log('Current match:', currentMatch);
+        const testMatch = testResult.output.trim() === testSolutionResult.output.trim();
+        console.log('Test match:', testMatch);
+        
+        return currentMatch && testMatch;
+        
+    } catch (error) {
+        console.error('Error in solution_code validation:', error);
+        return false;
+    }
+}
+
+// Get current input values from the student's run
+function getCurrentInputValues(problem, problemIndex) {
+    const inputs = {};
+    if (problem.inputs) {
+        for (const input of problem.inputs) {
+            const inputElement = document.getElementById(`input-${problemIndex}-${input.name}`);
+            if (inputElement) {
+                let value = inputElement.value;
+                if (input.type === 'number') {
+                    value = parseFloat(value) || 0;
+                }
+                inputs[input.name] = value;
+            }
+        }
+    }
+    return inputs;
+}
+
+// Generate test input values
+function generateTestInputs(problem) {
+    const inputs = {};
+    if (problem.inputs) {
+        for (let i = 0; i < problem.inputs.length; i++) {
+            const input = problem.inputs[i];
+            // Use (i * 17) + 31 for variety and noise
+            const testValue = (i * 17) + 31;
+            inputs[input.name] = testValue;
+        }
+    }
+    return inputs;
+}
+
+// Test code with specific input values
+async function testCodeWithInputs(code, inputValues, problem) {
+    try {
+        // Get the global pyodide instance
+        const pyodideInstance = window.pyodide || pyodide;
+        if (!pyodideInstance) {
+            console.error('Pyodide instance not available');
+            return { success: false, output: '', error: 'Pyodide not available' };
+        }
+        
+        // Create a mock get_input function for testing
+        const mockGetInput = function(inputName) {
+            if (inputName === undefined || inputName === null) {
+                // Return first input value if no argument provided
+                const firstInputName = Object.keys(inputValues)[0];
+                return firstInputName ? inputValues[firstInputName] : null;
+            }
+            return inputValues[inputName] || null;
+        };
+        
+        // Set up the mock get_input function
+        pyodideInstance.globals.set('get_input', mockGetInput);
+        
+        // Capture print output
+        let printOutput = '';
+        const originalPrint = pyodideInstance.globals.get('print');
+        pyodideInstance.globals.set('print', function(...args) {
+            printOutput += args.join(' ') + '\n';
+        });
+        
+        // Run the code
+        await pyodideInstance.runPythonAsync(code);
+        pyodideInstance.globals.set('print', originalPrint);
+        
+        return { success: true, output: printOutput };
+        
+    } catch (error) {
+        console.error('Error testing code with inputs:', error);
+        return { success: false, output: '', error: error.message };
     }
 }
 

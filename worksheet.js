@@ -270,7 +270,7 @@ async function runCode(problemIndex) {
         await pyodide.runPythonAsync(code);
         pyodide.globals.set('print', originalPrint);
         
-        const isValid = Validation.validateAnswer(code, printOutput, problem);
+        const isValid = await Validation.validateAnswer(code, printOutput, problem, problemIndex);
         const message = isValid ? '✅ Correct! Well done!' : '❌ Not quite right! Check the task requirements and try again.';
         displayOutput(output, printOutput, isValid ? 'success' : 'error', message);
         
