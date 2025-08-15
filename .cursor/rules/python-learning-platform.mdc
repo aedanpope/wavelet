@@ -66,6 +66,7 @@ This is a web-based Python learning platform that provides interactive coding wo
 ### GitHub Workflow
 - When user says "push to gh" or similar, follow this workflow:
   1. Check git status to see what files have been modified
+  - use `git status` directly, no need to CD
   2. If there are multiple unrelated changes - commit them all together for expediency
   3. Add relevant files to staging (usually the specific files that were worked on)
   4. Create a descriptive commit message that explains the changes made
