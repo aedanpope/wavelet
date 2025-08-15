@@ -70,10 +70,11 @@ This is a web-based Python learning platform that provides interactive coding wo
   2. If there are multiple unrelated changes - commit them all together for expediency
   3. Add relevant files to staging (usually the specific files that were worked on)
   4. Create a descriptive commit message that explains the changes made
-  5. Commit the changes
+  5. Commit the changes with terminal synchronization fix: `git commit -m "message"; Write-Host "Git operation completed"`
   6. Push to the main branch on GitHub
 - Use descriptive commit messages that explain what was changed and why
 - Always check git status first to understand what changes exist
+- Add `Write-Host "Git operation completed"` after git commands to ensure proper terminal synchronization and avoid PowerShell hanging issues
 
 ### System Environment
 - The user is on Windows with PowerShell, not bash/sed
