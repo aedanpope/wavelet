@@ -13,9 +13,9 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "print(5 + 3)",
-            "description": "Code must contain the exact print statement"
+            "type": "code_contains_regex",
+            "pattern": "print\\s*\\(\\s*5\\s*\\+\\s*3\\s*\\)",
+            "description": "Code must contain a print statement with 5 + 3"
           },
           {
             "type": "output_contains",
@@ -34,9 +34,9 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "print(4 + 8)",
-            "description": "Code must contain the exact print statement"
+            "type": "code_contains_regex",
+            "pattern": "print\\s*\\(\\s*4\\s*\\+\\s*8\\s*\\)",
+            "description": "Code must contain a print statement with 4 + 8"
           },
           {
             "type": "output_contains",

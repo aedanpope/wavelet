@@ -149,8 +149,8 @@ const problemDefinitions = {
         validation: {
             rules: [
                 {
-                    type: "output_contains",
-                    pattern: "/^(?!0\\n$|0\\.0\\n$).+/",
+                    type: "output_contains_regex",
+                    pattern: "^(?!0\\n$|0\\.0\\n$).+",
                     description: "Output must contain a non-zero number"
                 }
             ]
@@ -484,6 +484,64 @@ const testCases = [
         code: 'num = 0\n# No print statement',
         output: '',
         expected: false
+    },
+    {
+        name: "Worksheet 2.7 - Adding two inputs (zero inputs should fail)",
+        problem: {
+            id: "2.7",
+            validation: {
+                rules: [
+                    {
+                        type: "code_contains_regex",
+                        pattern: "get_input\\('a'\\)"
+                    },
+                    {
+                        type: "code_contains_regex",
+                        pattern: "get_input\\('b'\\)"
+                    },
+                    {
+                        type: "code_contains_regex",
+                        pattern: "result = num1 \\+ num2"
+                    },
+                    {
+                        type: "output_contains_regex",
+                        pattern: "^(?!0\\n$|0\\.0\\n$).+"
+                    }
+                ]
+            }
+        },
+        code: 'num1 = get_input(\'a\')\nnum2 = get_input(\'b\')\nresult = num1 + num2\nprint(result)',
+        output: '0\n',
+        expected: false
+    },
+    {
+        name: "Worksheet 2.7 - Adding two inputs (non-zero inputs should pass)",
+        problem: {
+            id: "2.7",
+            validation: {
+                rules: [
+                    {
+                        type: "code_contains_regex",
+                        pattern: "get_input\\('a'\\)"
+                    },
+                    {
+                        type: "code_contains_regex",
+                        pattern: "get_input\\('b'\\)"
+                    },
+                    {
+                        type: "code_contains_regex",
+                        pattern: "result = num1 \\+ num2"
+                    },
+                    {
+                        type: "output_contains_regex",
+                        pattern: "^(?!0\\n$|0\\.0\\n$).+"
+                    }
+                ]
+            }
+        },
+        code: 'num1 = get_input(\'a\')\nnum2 = get_input(\'b\')\nresult = num1 + num2\nprint(result)',
+        output: '15\n',
+        expected: true
     }
 ];
 

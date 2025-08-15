@@ -91,35 +91,35 @@
       }
     },
     {
-      "title": "From input to variable",
-      "content": "You can store what the user enters into a variable.",
-      "task": "Enter a non-zero number and run the code.",
+      "title": "Getting input from the user",
+      "content": "In this problem, we'll use the special `get_input()` command. This command grabs the number from an input box on the screen so you can use it in your code.",
+      "task": "Enter a number and run the code to see how get_input() works.",
       "inputs": [
         {
           "name": "first_number",
-          "label": "Enter a non-zero number:",
+          "label": "Enter a number:",
           "type": "number"
         }
       ],
-      "starterCode": "num = first_number\nprint(num)",
-      "hint": "Enter any number except zero. Whatever you type will be printed.",
+      "starterCode": "user_number = get_input('first_number')\nprint(user_number)",
+      "hint": "To get the value from the box labeled 'first_number', you write: `my_variable = get_input('first_number')`",
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "num = first_number"
+            "type": "code_contains_regex",
+            "pattern": "get_input\\('first_number'\\)"
           },
-          {
-            "type": "output_contains",
-            "pattern": "/^(?!0\\n$|0\\.0\\n$).+/"
-          }
+                     {
+             "type": "output_contains_regex",
+             "pattern": "^(?!0\\n$|0\\.0\\n$).+"
+           }
         ]
       }
     },
     {
       "title": "Adding two inputs",
-      "content": "Enter two numbers and the program will add them.",
-      "task": "Fill in the inputs and run.",
+      "content": "Now let's get two numbers from the input boxes and add them together. We'll use `get_input()` twice to get both numbers.",
+      "task": "Fill in the inputs and run the code to see the sum.",
       "inputs": [
         {
           "name": "a",
@@ -132,21 +132,33 @@
           "type": "number"
         }
       ],
-      "starterCode": "x = a\ny = b\nresult = x + y\nprint(result)",
-      "hint": "The sum will be printed.",
+      "starterCode": "# Get the first number from box 'a'\nnum1 = get_input('a')\n\n# Get the second number from box 'b'\nnum2 = get_input('b')\n\n# Now use the variables you created\nresult = num1 + num2\nprint(result)",
+      "hint": "Use `get_input('a')` to get the first number and `get_input('b')` to get the second number.",
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "result = x + y"
+            "type": "code_contains_regex",
+            "pattern": "get_input\\('a'\\)"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "get_input\\('b'\\)"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "result = num1 \\+ num2"
+          },
+          {
+            "type": "output_contains_regex",
+            "pattern": "^(?!0\\n$|0\\.0\\n$).+"
           }
         ]
       }
     },
     {
       "title": "Multiplying two inputs",
-      "content": "Enter two numbers and modify the code so it multiplies the variables instead of adding them.",
-      "task": "Edit the code to multiply the variables.",
+      "content": "Now let's modify the code to multiply the two numbers instead of adding them. You'll need to change the operation from addition to multiplication.",
+      "task": "Edit the code to multiply the variables instead of adding them.",
       "inputs": [
         {
           "name": "a",
@@ -159,20 +171,24 @@
           "type": "number"
         }
       ],
-      "starterCode": "x = a\ny = b\nresult = x + y\nprint(result)",
+      "starterCode": "# Get the first number from box 'a'\nnum1 = get_input('a')\n\n# Get the second number from box 'b'\nnum2 = get_input('b')\n\n# Now use the variables you created\nresult = num1 + num2\nprint(result)",
       "hint": "Change the + to * to multiply instead of add.",
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "result = x * y"
+            "type": "code_contains_regex",
+            "pattern": "result = num1 \\* num2"
+          },
+          {
+            "type": "output_contains_regex",
+            "pattern": "^(?!0\\n$|0\\.0\\n$).+"
           }
         ]
       }
     },
     {
       "title": "Double from input",
-      "content": "Write a program that asks for a number and prints double its value.",
+      "content": "Now you'll write a program from scratch! Use `get_input()` to get a number, then calculate and print double its value.",
       "task": "Enter a number and write the program from scratch.",
       "inputs": [
         {
@@ -182,20 +198,28 @@
         }
       ],
       "starterCode": "",
-      "hint": "Assign the input to a variable, multiply by 2, print.",
+      "hint": "Use `get_input('n')` to get the number, assign it to a variable, multiply by 2, then print the result.",
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "* 2"
+            "type": "code_contains_regex",
+            "pattern": "get_input\\('n'\\)"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "\\* 2"
+          },
+          {
+            "type": "output_contains_regex",
+            "pattern": "^(?!0\\n$|0\\.0\\n$).+"
           }
         ]
       }
     },
     {
       "title": "Three times the fun",
-      "content": "Enter a number and the program will print triple its value.",
-      "task": "Enter a number.",
+      "content": "Let's create a program that gets a number from the input and calculates triple its value.",
+      "task": "Enter a number and run the code.",
       "inputs": [
         {
           "name": "n",
@@ -203,13 +227,21 @@
           "type": "number"
         }
       ],
-      "starterCode": "num = n\ntriple = num * 3\nprint(triple)",
-      "hint": "Multiply the input by 3.",
+      "starterCode": "# Get the number from the input box\nnum = get_input('n')\n\n# Calculate triple the value\ntriple = num * 3\nprint(triple)",
+      "hint": "Use `get_input('n')` to get the number, then multiply by 3.",
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "* 3"
+            "type": "code_contains_regex",
+            "pattern": "get_input\\('n'\\)"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "\\* 3"
+          },
+          {
+            "type": "output_contains_regex",
+            "pattern": "^(?!0\\n$|0\\.0\\n$).+"
           }
         ]
       }

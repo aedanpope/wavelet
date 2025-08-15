@@ -208,6 +208,136 @@ Checks that the output doesn't contain error messages.
 - **Documented**: Clear descriptions of what each validation rule checks
 - **Extensible**: New validation rule types can be easily added
 
+## Design Principles
+
+### User Experience Considerations
+
+#### Quote Flexibility
+**Problem**: Users may use different quote styles (single vs double quotes) in their code, which can cause validation failures and frustration.
+
+**Solution**: When creating validation rules, consider the following approaches:
+
+1. **Use `code_contains_regex` for flexible quote matching**:
+   ```json
+   {
+     "type": "code_contains_regex",
+     "pattern": "get_input\\('a'\\)|get_input\\(\"a\"\\)",
+     "description": "Code must use get_input() with either single or double quotes"
+   }
+   ```
+
+2. **Focus on the essential pattern, not quote style**:
+   ```json
+   {
+     "type": "code_contains_regex", 
+     "pattern": "get_input\\s*\\(\\s*['\"]a['\"]\\s*\\)",
+     "description": "Code must use get_input() with the parameter 'a'"
+   }
+   ```
+
+3. **For simple string matching, use `code_contains` with the most common pattern**:
+   ```json
+   {
+     "type": "code_contains",
+     "pattern": "print(",
+     "description": "Code must contain a print statement"
+   }
+   ```
+
+#### Whitespace Flexibility
+**Problem**: Users may use different spacing patterns (e.g., `x=2` vs `x = 2`) that don't affect program correctness but can cause validation failures.
+
+**Solution**: Use regex patterns that account for optional whitespace around operators and assignments:
+
+1. **Flexible assignment patterns**:
+   ```json
+   {
+     "type": "code_contains_regex",
+     "pattern": "x\\s*=\\s*2",
+     "description": "Code must assign the value 2 to variable x"
+   }
+   ```
+
+2. **Flexible operator patterns**:
+   ```json
+   {
+     "type": "code_contains_regex",
+     "pattern": "num1\\s*\\+\\s*num2",
+     "description": "Code must add num1 and num2"
+   }
+   ```
+
+3. **Flexible function call patterns**:
+   ```json
+   {
+     "type": "code_contains_regex",
+     "pattern": "print\\s*\\(\\s*['\"]Hello['\"]\\s*\\)",
+     "description": "Code must print 'Hello'"
+   }
+   ```
+
+**Common whitespace patterns to consider**:
+- `\\s*` - Zero or more whitespace characters
+- `\\s+` - One or more whitespace characters  
+- `\\s*=\\s*` - Assignment with optional spaces around `=`
+- `\\s*[+\\-*/]\\s*` - Operators with optional spaces
+- `\\s*\\(\\s*` - Function calls with optional spaces around parentheses
+
+#### Best Practices for Validation Rules
+
+- **Be flexible with syntax variations** that don't affect learning objectives
+- **Focus on conceptual understanding** rather than exact syntax matching
+- **Test validation rules** with different user input styles
+- **Provide clear error messages** that guide users toward the correct approach
+- **Consider edge cases** like extra spaces, different quote styles, and alternative syntax
+
+#### Examples of User-Friendly Validation
+
+**Good**: Flexible with quote styles
+```json
+{
+  "type": "code_contains_regex",
+  "pattern": "name\\s*=\\s*['\"][^'\"]*['\"]",
+  "description": "Code must assign a string value to a variable called 'name'"
+}
+```
+
+**Good**: Flexible with whitespace
+```json
+{
+  "type": "code_contains_regex",
+  "pattern": "x\\s*=\\s*5\\s*\\+\\s*y",
+  "description": "Code must assign the sum of 5 and y to variable x"
+}
+```
+
+**Good**: Flexible with both quotes and whitespace
+```json
+{
+  "type": "code_contains_regex",
+  "pattern": "result\\s*=\\s*get_input\\s*\\(\\s*['\"]number['\"]\\s*\\)",
+  "description": "Code must use get_input() to get a value and assign it to result"
+}
+```
+
+**Avoid**: Too strict with specific quote requirements
+```json
+{
+  "type": "code_contains",
+  "pattern": "name = \"John\"",
+  "description": "Code must exactly match this pattern"
+}
+```
+
+**Avoid**: Too strict with whitespace requirements
+```json
+{
+  "type": "code_contains",
+  "pattern": "x = 2 + y",
+  "description": "Code must exactly match this spacing pattern"
+}
+```
+
 ## Fallback Behavior
 
 If a problem doesn't include validation rules, the system falls back to basic validation:

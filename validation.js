@@ -30,7 +30,7 @@ function validateAnswer(code, output, problem) {
     for (const rule of validationRules) {
         const ruleResult = validateRule(code, output, rule);
         if (!ruleResult) {
-            console.log(`Validation failed for rule: ${rule.description}`);
+            console.log(`Validation failed for rule: ${rule.type} - ${rule.pattern}`);
             return false;
         }
     }
@@ -52,16 +52,10 @@ function validateRule(code, output, rule) {
             return result;
             
         case 'code_contains_regex':
-            const regexPattern = new RegExp(rule.pattern, 'i'); // case insensitive
-            return regexPattern.test(code);
+            const codeRegexPattern = new RegExp(rule.pattern, 'i'); // case insensitive
+            return codeRegexPattern.test(code);
             
         case 'output_contains':
-            // Check if pattern is a regex (starts with / and ends with /)
-            if (rule.pattern.startsWith('/') && rule.pattern.endsWith('/')) {
-                const regexPattern = new RegExp(rule.pattern.slice(1, -1));
-                return regexPattern.test(output);
-            }
-            
             // Special handling for division outputs
             if (rule.pattern.endsWith('.0') && code.includes('/')) {
                 // For division problems expecting decimal output, also accept integer output
@@ -69,6 +63,10 @@ function validateRule(code, output, rule) {
                 return output.includes(rule.pattern) || output.includes(integerVersion);
             }
             return output.includes(rule.pattern);
+            
+        case 'output_contains_regex':
+            const outputRegexPattern = new RegExp(rule.pattern, 'i'); // case insensitive
+            return outputRegexPattern.test(output);
             
         case 'code_min_length':
             const codeWithoutComments = code.replace(/#.*$/gm, '').trim();
