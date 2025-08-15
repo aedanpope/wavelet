@@ -8,10 +8,8 @@
       "content": "Variables are like labeled boxes that can store values. We use the `=` symbol to put a value into a variable. Run this program and observe how the variable stores the number.",
       "task": "Run the code to see how a variable stores the number 10.",
       "starterCode": "age = 10\nprint(age)",
-      "expectedOutput": "10",
       "hint": "The variable 'age' stores the number 10, and print shows us what's inside.",
       "validation": {
-        "type": "exact_match",
         "expected": "10"
       }
     },
@@ -20,10 +18,8 @@
       "content": "You can create as many variables as you need. Each variable can store different values. Run this program to see how multiple variables work.",
       "task": "Run the code to see how multiple variables work.",
       "starterCode": "score = 85\nlevel = 3\nlives = 5\nprint(score)\nprint(level)\nprint(lives)",
-      "expectedOutput": "85\n3\n5",
       "hint": "Each variable stores a different value, and we print them one by one.",
       "validation": {
-        "type": "exact_match",
         "expected": "85\n3\n5"
       }
     },
@@ -32,10 +28,8 @@
       "content": "Variables can be used in calculations just like regular numbers. Run this program to see how variables work in calculations.",
       "task": "Run the code to see how variables work in calculations.",
       "starterCode": "num1 = 7\nnum2 = 4\nsum = num1 + num2\nprint(sum)",
-      "expectedOutput": "11",
       "hint": "The program stores 7 in num1, 4 in num2, adds them together, and prints the result.",
       "validation": {
-        "type": "exact_match",
         "expected": "11"
       }
     },
@@ -44,10 +38,8 @@
       "content": "Variables work with all math operations: addition (+), subtraction (-), multiplication (*), and division (/). Run this program to see different operations.",
       "task": "Run the code to see different math operations with variables.",
       "starterCode": "a = 12\nb = 3\nprint(a + b)\nprint(a - b)\nprint(a * b)\nprint(a / b)",
-      "expectedOutput": "15\n9\n36\n4.0",
       "hint": "The program shows addition (15), subtraction (9), multiplication (36), and division (4.0).",
       "validation": {
-        "type": "exact_match",
         "expected": "15\n9\n36\n4.0"
       }
     },
@@ -56,10 +48,8 @@
       "content": "Variables can be changed! You can update a variable's value by assigning it a new value. Run this program to see how variables can be updated.",
       "task": "Run the code to see how variables can be updated.",
       "starterCode": "points = 0\nprint(points)\npoints = points + 15\nprint(points)\npoints = points + 7\nprint(points)",
-      "expectedOutput": "0\n15\n22",
       "hint": "The variable 'points' starts at 0, then gets updated to 15, then to 22.",
       "validation": {
-        "type": "exact_match",
         "expected": "0\n15\n22"
       }
     },
@@ -68,10 +58,8 @@
       "content": "Now it's your turn to make changes! Edit the code below to create your own variables.",
       "task": "Edit the program to create a variable called `score` with value 100, then print it.",
       "starterCode": "age = 10\nprint(age)",
-      "expectedOutput": "100",
       "hint": "Change the variable name from 'age' to 'score' and the value from 10 to 100.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -101,10 +89,8 @@
       "content": "Practice your variable skills by editing this code.",
       "task": "Edit the program to create two variables with values 8 and 5, add them together, and print the result.",
       "starterCode": "num1 = 3\nnum2 = 2\nresult = num1 + num2\nprint(result)",
-      "expectedOutput": "13",
       "hint": "Change the values of num1 and num2 to 8 and 5.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -139,10 +125,8 @@
       "content": "Practice multiplication with variables by editing this code.",
       "task": "Edit the program to create two variables with values 6 and 7, multiply them together, and print the result.",
       "starterCode": "a = 2\nb = 3\nproduct = a * b\nprint(product)",
-      "expectedOutput": "42",
       "hint": "Change the values of a and b to 6 and 7.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -177,10 +161,8 @@
       "content": "Practice updating variables by editing this code.",
       "task": "Edit the program to start with a variable called `coins` with value 5, then add 10 to it and print the result.",
       "starterCode": "score = 0\nscore = score + 5\nprint(score)",
-      "expectedOutput": "15",
       "hint": "Change the variable name to 'coins', start with value 5, and add 10 to it.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -215,10 +197,8 @@
       "content": "Write a complete program to create a variable called `age` and store the number 12 in it, then print it.",
       "task": "Write code to create a variable called `age` with the value 12, then print it.",
       "starterCode": "",
-      "expectedOutput": "12",
       "hint": "Use the equals sign (=) to assign a value to a variable, then use print() to show it.",
       "validation": {
-        "type": "exact_match",
         "expected": "12"
       }
     },
@@ -227,10 +207,8 @@
       "content": "Write a program that creates three variables: `score` with value 85, `level` with value 3, and `lives` with value 5. Print each variable on a separate line.",
       "task": "Create three variables and print each one.",
       "starterCode": "",
-      "expectedOutput": "85\n3\n5",
       "hint": "Create each variable using the equals sign, then print them one by one.",
       "validation": {
-        "type": "exact_match",
         "expected": "85\n3\n5"
       }
     },
@@ -239,10 +217,8 @@
       "content": "Write a program that creates two variables called `num1` and `num2` with values 9 and 6. Then create a third variable called `sum` that stores the result of adding num1 and num2. Print the sum.",
       "task": "Create two variables, add them together, and print the result.",
       "starterCode": "",
-      "expectedOutput": "15",
       "hint": "Use the + operator to add the two variables together.",
       "validation": {
-        "type": "exact_match",
         "expected": "15"
       }
     },
@@ -251,10 +227,8 @@
       "content": "Write a program that creates two variables called `a` and `b` with values 15 and 4. Calculate a × b and store it in a variable called `product`. Then calculate a - b and store it in a variable called `difference`. Print both results.",
       "task": "Create variables, perform multiplication and subtraction, then print both results.",
       "starterCode": "",
-      "expectedOutput": "60\n11",
       "hint": "Use * for multiplication and - for subtraction.",
       "validation": {
-        "type": "exact_match",
         "expected": "60\n11"
       }
     },
@@ -263,10 +237,8 @@
       "content": "Write a program that creates a variable called `points` with value 0. Print it, then add 20 to it and print it again, then add 8 more and print it one more time.",
       "task": "Create a variable, update it twice, and print it each time.",
       "starterCode": "",
-      "expectedOutput": "0\n20\n28",
       "hint": "Use points = points + 20 to add to the existing value.",
       "validation": {
-        "type": "exact_match",
         "expected": "0\n20\n28"
       }
     },
@@ -275,10 +247,8 @@
       "content": "Sarah has six apples and buys nine more apples at the store. How many apples does she have in total? Use variables to solve this problem.",
       "task": "Write a program that creates variables for Sarah's apples and the apples she buys, then adds them together and prints the total.",
       "starterCode": "",
-      "expectedOutput": "15",
       "hint": "Create variables for the initial apples (6) and new apples (9), then add them together.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -313,10 +283,8 @@
       "content": "Tom has $25 and spends $8 on lunch. How much money does he have left? Use variables to solve this problem.",
       "task": "Write a program that creates variables for Tom's money and his spending, then subtracts and prints the result.",
       "starterCode": "",
-      "expectedOutput": "17",
       "hint": "Create variables for the initial money (25) and spending (8), then subtract them.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -351,10 +319,8 @@
       "content": "A library has 7 shelves, and each shelf holds 12 books. How many books are in the library? Use variables to solve this problem.",
       "task": "Write a program that creates variables for the number of shelves and books per shelf, then multiplies them and prints the total.",
       "starterCode": "",
-      "expectedOutput": "84",
       "hint": "Create variables for shelves (7) and books per shelf (12), then multiply them.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -389,10 +355,8 @@
       "content": "Emma baked 36 cookies and wants to share them equally among 6 friends. How many cookies will each friend get? Use variables to solve this problem.",
       "task": "Write a program that creates variables for the total cookies and number of friends, then divides and prints the result.",
       "starterCode": "",
-      "expectedOutput": "6.0",
       "hint": "Create variables for total cookies (36) and friends (6), then divide them.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -434,10 +398,8 @@
         }
       ],
       "starterCode": "# Get the input number\n# Calculate its square (multiply by itself)\n# Print the result\n",
-      "expectedOutput": "dynamic",
       "hint": "Multiply the input number by itself to get its square.",
       "validation": {
-        "type": "dynamic",
         "description": "Should show the input number squared"
       }
     },
@@ -453,10 +415,8 @@
         }
       ],
       "starterCode": "# Get the input number\n# Calculate its cube (multiply by itself three times)\n# Print the result\n",
-      "expectedOutput": "dynamic",
       "hint": "Multiply the number by itself, then by itself again to get its cube.",
       "validation": {
-        "type": "dynamic",
         "description": "Should show the input number cubed"
       }
     },
@@ -472,10 +432,8 @@
         }
       ],
       "starterCode": "# Get the side length\n# Calculate area (side length squared)\n# Print the area\n",
-      "expectedOutput": "dynamic",
       "hint": "Multiply the side length by itself to get the area of a square.",
       "validation": {
-        "type": "dynamic",
         "description": "Should show the correct area calculation"
       }
     },
@@ -496,10 +454,8 @@
         }
       ],
       "starterCode": "# Get the speed and time\n# Calculate distance (speed × time)\n# Print the distance\n",
-      "expectedOutput": "dynamic",
       "hint": "Multiply speed by time to get the distance traveled.",
       "validation": {
-        "type": "dynamic",
         "description": "Should show the correct distance calculation"
       }
     }

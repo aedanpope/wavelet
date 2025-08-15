@@ -74,6 +74,11 @@ This is a web-based Python learning platform that provides interactive coding wo
 - Use descriptive commit messages that explain what was changed and why
 - Always check git status first to understand what changes exist
 
+### System Environment
+- The user is on Windows with PowerShell, not bash/sed
+- Use PowerShell commands instead of Unix commands (e.g., `Get-Content`, `Set-Content` instead of `cat`, `sed`)
+- Avoid Unix-specific commands like `sed`, `grep`, `awk` in terminal operations
+
 ### Python Code Execution
 - Always reset Python environment between executions
 - Capture and format output appropriately

@@ -9,10 +9,8 @@
       "example": "print(5 + 3)",
       "task": "Run the code to see the result of the calculation.",
       "starterCode": "print(5 + 3)",
-      "expectedOutput": "8",
       "hint": "Check the output to see the answer.",
       "validation": {
-        "type": "exact_match",
         "rules": [
           {
             "type": "code_contains",
@@ -32,10 +30,8 @@
       "content": "Here is another problem to practice addition. The `+` symbol adds numbers together.",
       "task": "Run the program and find out the answer.",
       "starterCode": "print(4 + 8)",
-      "expectedOutput": "12",
       "hint": "What does four plus eight equal?",
       "validation": {
-        "type": "exact_match",
         "rules": [
           {
             "type": "code_contains",
@@ -55,10 +51,8 @@
       "content": "This is another one to practice addition.",
       "task": "Run the program and find out the answer.",
       "starterCode": "print(15 + 20)",
-      "expectedOutput": "35",
       "hint": "What does fifteen plus twenty equal?",
       "validation": {
-        "type": "exact_match",
         "rules": [
           {
             "type": "code_contains",
@@ -79,10 +73,8 @@
       "example": "print(50 + 25)",
       "task": "Edit the program to find the answer to $50 + 25$.",
       "starterCode": "print(10 + 10)",
-      "expectedOutput": "75",
       "hint": "Change the numbers inside the parentheses to 50 and 25.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -117,10 +109,8 @@
       "content": "Write a complete program to solve this addition problem.",
       "task": "Write a program to find the answer to $7 + 13$.",
       "starterCode": "",
-      "expectedOutput": "20",
       "hint": "Use the `print()` function with the numbers and the `+` operator.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -155,10 +145,8 @@
       "content": "Sarah has six apples and buys nine more apples at the store. How many apples does she have in total?",
       "task": "Write a program that adds six and nine and prints the answer.",
       "starterCode": "",
-      "expectedOutput": "15",
       "hint": "Use the addition operator (+) to add 6 and 9.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -194,10 +182,8 @@
       "example": "print(10 - 4)",
       "task": "Run the code and find out the answer.",
       "starterCode": "print(10 - 4)",
-      "expectedOutput": "6",
       "hint": "What does ten minus four equal?",
       "validation": {
-        "type": "exact_match",
         "rules": [
           {
             "type": "code_contains",
@@ -218,10 +204,8 @@
       "example": "print(12 - 7)",
       "task": "Edit the program to find the answer to $12 - 7$.",
       "starterCode": "print(20 - 5)",
-      "expectedOutput": "5",
       "hint": "Change the numbers inside the parentheses to 12 and 7.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -256,10 +240,8 @@
       "content": "Write a complete program to solve this subtraction problem.",
       "task": "Write a program to find the answer to $30 - 15$.",
       "starterCode": "",
-      "expectedOutput": "15",
       "hint": "Remember to use the `-` operator for subtraction.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -294,10 +276,8 @@
       "content": "Tom has \\$25 and spends \\$8 on lunch. How much money does he have left?",
       "task": "Write a program that subtracts eight from twenty-five and prints the answer.",
       "starterCode": "",
-      "expectedOutput": "17",
       "hint": "Use the subtraction operator (-) to subtract 8 from 25.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -332,10 +312,8 @@
       "content": "The `*` symbol is used for multiplication. What is the answer to this problem?",
       "task": "Run the program and find out the answer.",
       "starterCode": "print(4 * 6)",
-      "expectedOutput": "24",
       "hint": "What does four times six equal?",
       "validation": {
-        "type": "exact_match",
         "rules": [
           {
             "type": "code_contains",
@@ -355,10 +333,8 @@
       "content": "Practice your multiplication skills by editing this code.",
       "task": "Edit the program below to find the answer to $8 * 8$.",
       "starterCode": "print(7 * 7)",
-      "expectedOutput": "64",
       "hint": "What does eight times eight equal?",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -388,10 +364,8 @@
       "content": "Write a complete program to solve this multiplication problem.",
       "task": "Write a program to find the answer to $9 * 10$.",
       "starterCode": "",
-      "expectedOutput": "90",
       "hint": "Use the `*` operator to multiply.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -426,10 +400,8 @@
       "content": "A library has 7 shelves, and each shelf holds 12 books. How many books are in the library?",
       "task": "Write a program that multiplies seven and twelve and prints the answer.",
       "starterCode": "",
-      "expectedOutput": "84",
       "hint": "Use the multiplication operator (*) to multiply 7 and 12.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -464,10 +436,8 @@
       "content": "The `/` symbol is used for division. What is the answer to this problem?",
       "task": "Run the program and find out the answer.",
       "starterCode": "print(25 / 5)",
-      "expectedOutput": "5.0",
       "hint": "Division in Python can sometimes give a number with a decimal point, even if the answer is a whole number.",
       "validation": {
-        "type": "exact_match",
         "rules": [
           {
             "type": "code_contains",
@@ -487,10 +457,8 @@
       "content": "Practice your division skills by editing this code.",
       "task": "Edit the program below to find the answer to $48 / 6$.",
       "starterCode": "print(20 / 4)",
-      "expectedOutput": "8.0",
       "hint": "Change the numbers inside the parentheses to 48 and 6.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -525,10 +493,8 @@
       "content": "Write a complete program to solve this division problem.",
       "task": "Write a program to find the answer to $100 / 10$.",
       "starterCode": "",
-      "expectedOutput": "10.0",
       "hint": "Use the `/` operator to divide.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -563,10 +529,8 @@
       "content": "Emma baked 36 cookies and wants to share them equally among 6 friends. How many cookies will each friend get?",
       "task": "Write a program that divides thirty-six by six and prints the answer.",
       "starterCode": "",
-      "expectedOutput": "6.0",
       "hint": "Use the division operator (/) to divide 36 by 6.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -601,10 +565,8 @@
       "content": "Python follows the order of operations (PEMDAS/BODMAS) just like in math. It does multiplication and division before addition and subtraction.",
       "task": "Run the program and find out the answer to $20 - 5 * 2$.",
       "starterCode": "print(20 - 5 * 2)",
-      "expectedOutput": "10",
       "hint": "Remember that Python does multiplication before subtraction.",
       "validation": {
-        "type": "exact_match",
         "rules": [
           {
             "type": "code_contains",
@@ -624,10 +586,8 @@
       "content": "Parentheses `()` can be used to change the order of operations, just like in math.",
       "task": "Edit the program to find the answer to $(10 + 5) / 3$.",
       "starterCode": "print(4 + 6 / 2)",
-      "expectedOutput": "5.0",
       "hint": "Wrap the addition part in parentheses to make it happen first.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -682,10 +642,8 @@
       "content": "Write a complete program that uses parentheses to solve a problem.",
       "task": "Write a program to find the answer to $10 * (5 - 3)$.",
       "starterCode": "",
-      "expectedOutput": "20",
       "hint": "Put the `5 - 3` part inside parentheses.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -740,10 +698,8 @@
       "content": "A store sells shirts for \\$15 each. If you buy 3 shirts and get a \\$5 discount, how much do you pay in total?",
       "task": "Write a program that multiplies fifteen by three, then subtracts five, and prints the answer.",
       "starterCode": "",
-      "expectedOutput": "40",
       "hint": "First multiply 15 by 3, then subtract 5 from the result.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -788,10 +744,8 @@
       "content": "Let's combine everything you've learned so far!",
       "task": "Write a program to find the answer to $8 + (12 / 4)$.",
       "starterCode": "",
-      "expectedOutput": "11.0",
       "hint": "The division part `12 / 4` needs to go inside parentheses to happen before the addition.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -846,10 +800,8 @@
       "content": "A pizza costs \\$12 and you want to buy 2 pizzas. There is also a \\$3 delivery fee. How much do you pay in total?",
       "task": "Write a program that multiplies twelve by two, then adds three, and prints the answer.",
       "starterCode": "",
-      "expectedOutput": "27",
       "hint": "You can use parentheses to make the multiplication happen first: (12 * 2) + 3.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -894,10 +846,8 @@
       "content": "A farmer has 6 chickens that each lay 3 eggs per day. If he sells half of the eggs, how many eggs does he keep?",
       "task": "Write a program that multiplies six by three, then divides by two, and prints the answer.",
       "starterCode": "",
-      "expectedOutput": "9",
       "hint": "First multiply 6 by 3 to get total eggs, then divide by 2 to find half.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -942,10 +892,8 @@
       "content": "A baker made 4 dozen cookies. He gave away 10 of them. How many cookies does he have left?",
       "task": "Write a program that solves this problem using multiplication and subtraction. (Hint: One dozen is 12 cookies).",
       "starterCode": "",
-      "expectedOutput": "38",
       "hint": "Your expression should be `4 * 12 - 10`.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",

@@ -9,7 +9,6 @@ const problemDefinitions = {
     helloWorld: {
         id: "1.1",
         validation: {
-            type: "exact_match",
             rules: [
                 {
                     type: "code_contains",
@@ -27,7 +26,6 @@ const problemDefinitions = {
     myNameIs: {
         id: "1.2",
         validation: {
-            type: "pattern_match",
             rules: [
                 {
                     type: "code_contains",
@@ -55,7 +53,6 @@ const problemDefinitions = {
     animalVariable: {
         id: "2.2",
         validation: {
-            type: "pattern_match",
             rules: [
                 {
                     type: "code_contains",
@@ -81,7 +78,6 @@ const problemDefinitions = {
     divisionProblem: {
         id: "1.10",
         validation: {
-            type: "exact_match",
             rules: [
                 {
                     type: "code_contains",
@@ -99,7 +95,6 @@ const problemDefinitions = {
     parenthesesProblem: {
         id: "1.X",
         validation: {
-            type: "pattern_match",
             rules: [
                 {
                     type: "code_contains",
@@ -148,6 +143,18 @@ const problemDefinitions = {
                 }
             ]
         }
+    },
+    inputToVariable: {
+        id: "2.1",
+        validation: {
+            rules: [
+                {
+                    type: "output_contains",
+                    pattern: "/^(?!0\\n$|0\\.0\\n$).+/",
+                    description: "Output must contain a non-zero number"
+                }
+            ]
+        }
     }
 };
 
@@ -193,7 +200,6 @@ const testCases = [
         problem: {
             id: "1.3",
             validation: {
-                type: "exact_match",
                 rules: [
                     {
                         type: "code_contains",
@@ -217,7 +223,6 @@ const testCases = [
         problem: {
             id: "1.4",
             validation: {
-                type: "pattern_match",
                 rules: [
                     {
                         type: "code_contains",
@@ -258,7 +263,6 @@ const testCases = [
         problem: {
             id: "2.3",
             validation: {
-                type: "pattern_match",
                 rules: [
                     {
                         type: "code_contains",
@@ -291,7 +295,6 @@ const testCases = [
         problem: {
             id: "3.4",
             validation: {
-                type: "pattern_match",
                 rules: [
                     {
                         type: "code_contains",
@@ -330,7 +333,6 @@ const testCases = [
         problem: {
             id: "3.4",
             validation: {
-                type: "pattern_match",
                 rules: [
                     {
                         type: "code_contains",
@@ -369,7 +371,6 @@ const testCases = [
         problem: {
             id: "empty-test",
             validation: {
-                type: "pattern_match",
                 rules: [
                     {
                         type: "code_min_length",
@@ -388,7 +389,6 @@ const testCases = [
         problem: {
             id: "error-test",
             validation: {
-                type: "pattern_match",
                 rules: [
                     {
                         type: "no_errors",
@@ -434,6 +434,55 @@ const testCases = [
         problem: problemDefinitions.parenthesesProblem,
         code: 'print((5+5)/3)',
         output: '3.3333333333333335\n',
+        expected: false
+    },
+    {
+        name: "Worksheet 2.1 - Input to Variable (positive number should pass)",
+        problem: problemDefinitions.inputToVariable,
+        code: 'num = 42\nprint(num)',
+        output: '42\n',
+        expected: true
+    },
+    {
+        name: "Worksheet 2.1 - Input to Variable (negative number should pass)",
+        problem: problemDefinitions.inputToVariable,
+        code: 'num = -5\nprint(num)',
+        output: '-5\n',
+        expected: true
+    },
+    {
+        name: "Worksheet 2.1 - Input to Variable (decimal number should pass)",
+        problem: problemDefinitions.inputToVariable,
+        code: 'num = 3.14\nprint(num)',
+        output: '3.14\n',
+        expected: true
+    },
+    {
+        name: "Worksheet 2.1 - Input to Variable (zero should fail)",
+        problem: problemDefinitions.inputToVariable,
+        code: 'num = 0\nprint(num)',
+        output: '0\n',
+        expected: false
+    },
+    {
+        name: "Worksheet 2.1 - Input to Variable (zero decimal should fail)",
+        problem: problemDefinitions.inputToVariable,
+        code: 'num = 0.0\nprint(num)',
+        output: '0.0\n',
+        expected: false
+    },
+    {
+        name: "Worksheet 2.1 - Input to Variable (string should pass)",
+        problem: problemDefinitions.inputToVariable,
+        code: 'num = "hello"\nprint(num)',
+        output: 'hello\n',
+        expected: true
+    },
+    {
+        name: "Worksheet 2.1 - Input to Variable (empty output should fail)",
+        problem: problemDefinitions.inputToVariable,
+        code: 'num = 0\n# No print statement',
+        output: '',
         expected: false
     }
 ];

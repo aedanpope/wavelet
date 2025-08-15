@@ -56,6 +56,12 @@ function validateRule(code, output, rule) {
             return regexPattern.test(code);
             
         case 'output_contains':
+            // Check if pattern is a regex (starts with / and ends with /)
+            if (rule.pattern.startsWith('/') && rule.pattern.endsWith('/')) {
+                const regexPattern = new RegExp(rule.pattern.slice(1, -1));
+                return regexPattern.test(output);
+            }
+            
             // Special handling for division outputs
             if (rule.pattern.endsWith('.0') && code.includes('/')) {
                 // For division problems expecting decimal output, also accept integer output

@@ -8,10 +8,8 @@
       "content": "Variables are like boxes that store values. This code stores the number 7 in a variable and prints it.",
       "task": "Run the code to see the value stored in the variable.",
       "starterCode": "age = 7\nprint(age)",
-      "expectedOutput": "7",
       "hint": "The variable 'age' holds the number 7.",
       "validation": {
-        "type": "exact_match",
         "rules": [
           {
             "type": "code_contains",
@@ -33,10 +31,8 @@
       "content": "You can change what a variable stores by giving it a new value.",
       "task": "Run the code to see the updated value.",
       "starterCode": "score = 10\nscore = 15\nprint(score)",
-      "expectedOutput": "15",
       "hint": "The second assignment replaces the first value.",
       "validation": {
-        "type": "exact_match",
         "rules": [
           {
             "type": "output_contains",
@@ -50,10 +46,8 @@
       "content": "Variables can store different values and be used together.",
       "task": "Run the code to see both values printed.",
       "starterCode": "apples = 5\nbananas = 3\nprint(apples)\nprint(bananas)",
-      "expectedOutput": "5\n3",
       "hint": "Each print shows the value of one variable.",
       "validation": {
-        "type": "exact_match",
         "rules": [
           {
             "type": "output_contains",
@@ -71,10 +65,8 @@
       "content": "You can use variables in calculations.",
       "task": "Run the code to see the sum of apples and bananas.",
       "starterCode": "apples = 5\nbananas = 3\ntotal = apples + bananas\nprint(total)",
-      "expectedOutput": "8",
       "hint": "Variables work like numbers in math.",
       "validation": {
-        "type": "exact_match",
         "rules": [
           {
             "type": "output_contains",
@@ -88,10 +80,8 @@
       "content": "Change the numbers in the variables so the total is 20.",
       "task": "Edit the code to make total = 20.",
       "starterCode": "x = 5\ny = 7\ntotal = x + y\nprint(total)",
-      "expectedOutput": "20",
       "hint": "Adjust x and y to add up to 20.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "output_contains",
@@ -103,23 +93,25 @@
     {
       "title": "From input to variable",
       "content": "You can store what the user enters into a variable.",
-      "task": "Enter a number and run the code.",
+      "task": "Enter a non-zero number and run the code.",
       "inputs": [
         {
           "name": "first_number",
-          "label": "Enter a number:",
+          "label": "Enter a non-zero number:",
           "type": "number"
         }
       ],
       "starterCode": "num = first_number\nprint(num)",
-      "expectedOutput": "dynamic",
-      "hint": "Whatever you type will be printed.",
+      "hint": "Enter any number except zero. Whatever you type will be printed.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
             "pattern": "num = first_number"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "/^(?!0\\n$|0\\.0\\n$).+/"
           }
         ]
       }
@@ -141,10 +133,8 @@
         }
       ],
       "starterCode": "x = a\ny = b\nresult = x + y\nprint(result)",
-      "expectedOutput": "dynamic",
       "hint": "The sum will be printed.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -170,10 +160,8 @@
         }
       ],
       "starterCode": "x = a\ny = b\nresult = x + y\nprint(result)",
-      "expectedOutput": "dynamic",
       "hint": "Change the + to * to multiply instead of add.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -194,10 +182,8 @@
         }
       ],
       "starterCode": "",
-      "expectedOutput": "dynamic",
       "hint": "Assign the input to a variable, multiply by 2, print.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
@@ -218,10 +204,8 @@
         }
       ],
       "starterCode": "num = n\ntriple = num * 3\nprint(triple)",
-      "expectedOutput": "dynamic",
       "hint": "Multiply the input by 3.",
       "validation": {
-        "type": "pattern_match",
         "rules": [
           {
             "type": "code_contains",
