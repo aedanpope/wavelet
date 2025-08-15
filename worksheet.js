@@ -229,29 +229,7 @@ async function runCode(problemIndex) {
         await resetPythonEnvironment();
         
         // Set up the get_input() function if the problem has inputs
-        if (problem.inputs && problem.inputs.length > 0) {
-            // Create a get_input function that retrieves values from input fields
-            pyodide.globals.set('get_input', function(inputName) {
-                const inputElement = document.getElementById(`input-${problemIndex}-${inputName}`);
-                if (inputElement) {
-                    let value = inputElement.value;
-                    
-                    // Find the input configuration to determine type
-                    const inputConfig = problem.inputs.find(input => input.name === inputName);
-                    if (inputConfig) {
-                        // Convert value based on input type
-                        if (inputConfig.type === 'number') {
-                            value = parseFloat(value) || 0;
-                        } else if (inputConfig.type === 'boolean') {
-                            value = value === 'true';
-                        }
-                    }
-                    
-                    return value;
-                }
-                return null;
-            });
-        }
+        InputSystem.setupGetInputFunction(pyodide, problem, problemIndex);
         
         // Capture print output
         let printOutput = '';

@@ -92,7 +92,7 @@
     },
     {
       "title": "Getting input from the user",
-      "content": "In this problem, we'll use the special `get_input()` command. This command grabs the number from an input box on the screen so you can use it in your code.",
+      "content": "In this problem, we'll use the special `get_input()` command. Since there's only one input box, we can call `get_input()` without any arguments to get its value. This makes the code simpler and avoids needing to remember the input name.",
       "task": "Enter a number and run the code to see how get_input() works.",
       "inputs": [
         {
@@ -101,18 +101,18 @@
           "type": "number"
         }
       ],
-      "starterCode": "user_number = get_input('first_number')\nprint(user_number)",
-      "hint": "To get the value from the box labeled 'first_number', you write: `my_variable = get_input('first_number')`",
+      "starterCode": "user_number = get_input()\nprint(user_number)",
+      "hint": "When there's only one input box, you can use `get_input()` without any arguments to get its value.",
       "validation": {
         "rules": [
           {
             "type": "code_contains_regex",
-            "pattern": "get_input\\s*\\(\\s*['\"]first_number['\"]\\s*\\)"
+            "pattern": "get_input\\s*\\(\\s*\\)"
           },
-                     {
-             "type": "output_contains_regex",
-             "pattern": "^(?!0\\n$|0\\.0\\n$).+"
-           }
+          {
+            "type": "output_contains_regex",
+            "pattern": "^(?!0\\n$|0\\.0\\n$).+"
+          }
         ]
       }
     },
@@ -198,12 +198,12 @@
         }
       ],
       "starterCode": "",
-      "hint": "Use `get_input('n')` to get the number, assign it to a variable, multiply by 2, then print the result.",
+      "hint": "Use `get_input()` to get the number (no arguments needed since there's only one input), assign it to a variable, multiply by 2, then print the result.",
       "validation": {
         "rules": [
           {
             "type": "code_contains_regex",
-            "pattern": "get_input\\s*\\(\\s*['\"]n['\"]\\s*\\)"
+            "pattern": "get_input\\s*\\(\\s*\\)"
           },
           {
             "type": "code_contains_regex",
@@ -227,13 +227,13 @@
           "type": "number"
         }
       ],
-      "starterCode": "# Get the number from the input box\nnum = get_input('n')\n\n# Calculate triple the value\ntriple = num * 3\nprint(triple)",
-      "hint": "Use `get_input('n')` to get the number, then multiply by 3.",
+      "starterCode": "# Get the number from the input box\nnum = get_input()\n\n# Calculate triple the value\ntriple = num * 3\nprint(triple)",
+      "hint": "Use `get_input()` to get the number (no arguments needed), then multiply by 3.",
       "validation": {
         "rules": [
           {
             "type": "code_contains_regex",
-            "pattern": "get_input\\s*\\(\\s*['\"]n['\"]\\s*\\)"
+            "pattern": "get_input\\s*\\(\\s*\\)"
           },
           {
             "type": "code_contains_regex",

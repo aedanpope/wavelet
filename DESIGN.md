@@ -149,6 +149,11 @@ num1 = get_input('a')
 num2 = get_input('b')
 result = num1 + num2
 print(result)
+
+# For single-input problems, you can call get_input() without arguments
+# This returns the value of the first (and only) input field
+temperature = get_input()  # No string literal needed!
+print(temperature)
 ```
 
 ### Key Features
@@ -156,6 +161,7 @@ print(result)
 - **Type Support**: Number and text input types with automatic validation
 - **Explicit Input Function**: Students use `get_input()` function to actively retrieve values
 - **Progressive Complexity**: Starts with simple inputs, builds to complex interactions
+- **Simplified Single Input**: For single-input problems, `get_input()` can be called without arguments to avoid string literals
 
 ### Technical Implementation
 - Dynamic input field generation based on problem configuration
