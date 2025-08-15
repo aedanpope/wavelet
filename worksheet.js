@@ -217,7 +217,7 @@ async function runCode(problemIndex) {
     const problem = currentWorksheet.problems[problemIndex];
     
     if (!code.trim()) {
-        displayOutput(output, 'Please enter some code to run.', 'error');
+        displayOutput(output, 'Please enter some code to run.', 'error', '❌ Please enter some code to run.');
         return;
     }
     
@@ -264,7 +264,8 @@ async function runCode(problemIndex) {
         pyodide.globals.set('print', originalPrint);
         
         const isValid = Validation.validateAnswer(code, printOutput, problem);
-        displayOutput(output, printOutput, isValid ? 'success' : 'error');
+        const message = isValid ? '✅ Correct! Well done!' : '❌ Not quite right! Check the task requirements and try again.';
+        displayOutput(output, printOutput, isValid ? 'success' : 'error', message);
         
         // Update progress if problem is completed
         if (isValid && !completedProblems.has(problemIndex)) {
@@ -279,7 +280,7 @@ async function runCode(problemIndex) {
         
     } catch (error) {
         const errorInfo = ErrorHandler.extractErrorInfo(error.message);
-        displayOutput(output, errorInfo.fullMessage, 'error');
+        displayOutput(output, errorInfo.fullMessage, 'error', '❌ There was an error running your code.');
     }
 }
 
