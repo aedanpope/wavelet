@@ -49,6 +49,7 @@
       "title": "Two variables",
       "content": "Variables can store different values and be used together.",
       "task": "Run the code to see both values printed.",
+      "codeHeight": 4,
       "starterCode": "apples = 5\nbananas = 3\nprint(apples)\nprint(bananas)",
       "hint": "Each print shows the value of one variable.",
       "validation": {
@@ -68,6 +69,7 @@
       "title": "Variables in calculations",
       "content": "You can use variables in calculations.",
       "task": "Run the code to see the sum of apples and bananas.",
+      "codeHeight": 4,
       "starterCode": "apples = 5\nbananas = 3\ntotal = apples + bananas\nprint(total)",
       "hint": "Variables work like numbers in math.",
       "validation": {
@@ -83,6 +85,7 @@
       "title": "Edit the numbers",
       "content": "Change the numbers in the variables so the total is 20.",
       "task": "Edit the code to make total = 20.",
+      "codeHeight": 4,
       "starterCode": "apples = 5\nbananas = 3\ntotal = apples + bananas\nprint(total)",
       "hint": "Adjust apples and bananas to add up to 20.",
       "validation": {
