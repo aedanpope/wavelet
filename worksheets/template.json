@@ -10,6 +10,7 @@
       "task": "[What the student needs to do]",
       "starterCode": "# [Starting code for the student]\n",
       "hint": "[Helpful hint for the student]",
+      "codeHeight": 3,
       "validation": {
         "rules": [
           {

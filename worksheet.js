@@ -204,7 +204,7 @@ function initAllCodeEditors() {
         
         // Set editor height based on problem configuration (default: 3 lines)
         const height = problem.codeHeight || 3;
-        editor.setSize(null, height * 20 + 10);
+        editor.setSize(null, height * 23 + 10);
         
         codeEditors[index] = editor;
     });

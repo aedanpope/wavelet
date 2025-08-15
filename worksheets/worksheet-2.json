@@ -154,8 +154,8 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "x\\s*\\+\\s*10"
+            "type": "solution_code",
+            "solutionCode": "x = get_input()\nprint(x + 10)"
           }
         ]
       }
@@ -230,6 +230,7 @@
       "title": "Multiple calculations",
       "content": "Now let's do multiple calculations with the same input. We'll print the input, then input+5, then input+10.",
       "task": "Write code from scratch that prints x, x+5, and x+10. You can look at previous questions for help.",
+      "codeHeight": 5,
       "inputs": [
         {
           "name": "number",
@@ -252,6 +253,7 @@
       "title": "Adding two inputs",
       "content": "Now let's get two numbers from the input boxes and add them together. We'll use <code>get_input()</code> twice to get both numbers.",
       "task": "Input 2 non-zero numbers and run the code to see the sum.",
+      "codeHeight": 5,
       "inputs": [
         {
           "name": "a",
@@ -291,6 +293,7 @@
       "title": "Make the sum 10",
       "content": "Now let's use the same code but you'll fill in the inputs so the output adds up to 10. Both inputs should not be zero.",
       "task": "Fill in the inputs so the output is 10. Both inputs must be non-zero.",
+      "codeHeight": 5,
       "inputs": [
         {
           "name": "a",
@@ -318,6 +321,7 @@
       "title": "Multiplying two inputs",
       "content": "Now let's modify the code to multiply the two numbers instead of adding them. You'll need to change the operation from addition to multiplication.",
       "task": "Edit the code to multiply the variables instead of adding them.",
+      "codeHeight": 5,
       "inputs": [
         {
           "name": "a",
@@ -335,12 +339,8 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "result\\s*=\\s*x\\s*\\*\\s*y"
-          },
-          {
-            "type": "output_contains_regex",
-            "pattern": "^(?!0\\n$|0\\.0\\n$).+"
+            "type": "solution_code",
+            "solutionCode": "x = get_input('a')\ny = get_input('b')\nresult = x * y\nprint(result)"
           }
         ]
       }
@@ -349,6 +349,7 @@
       "title": "Divide two inputs",
       "content": "Now let's write code from scratch to divide two inputs. Try lots of different inputs once you have the program working!",
       "task": "Write code from scratch that divides the first input by the second input.",
+      "codeHeight": 5,
       "inputs": [
         {
           "name": "a",
@@ -366,20 +367,8 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "get_input\\s*\\(\\s*['\"]a['\"]\\s*\\)"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "get_input\\s*\\(\\s*['\"]b['\"]\\s*\\)"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "\\/"
-          },
-          {
-            "type": "output_contains_regex",
-            "pattern": "^(?!0\\n$|0\\.0\\n$).+"
+            "type": "solution_code",
+            "solutionCode": "x = get_input('a')\ny = get_input('b')\nresult = x / y\nprint(result)"
           }
         ]
       }
@@ -388,6 +377,7 @@
       "title": "Add three inputs",
       "content": "Let's take it up a notch! Now we'll work with three input boxes.",
       "task": "Write code from scratch that takes 3 inputs and adds them all together.",
+      "codeHeight": 6,
       "inputs": [
         {
           "name": "a",
@@ -410,24 +400,8 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "get_input\\s*\\(\\s*['\"]a['\"]\\s*\\)"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "get_input\\s*\\(\\s*['\"]b['\"]\\s*\\)"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "get_input\\s*\\(\\s*['\"]c['\"]\\s*\\)"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "\\+"
-          },
-          {
-            "type": "output_contains_regex",
-            "pattern": "^(?!0\\n$|0\\.0\\n$).+"
+            "type": "solution_code",
+            "solutionCode": "x = get_input('a')\ny = get_input('b')\nz = get_input('c')\nresult = x + y + z\nprint(result)"
           }
         ]
       }
@@ -436,6 +410,7 @@
       "title": "Multiply three inputs",
       "content": "Now let's multiply all three inputs together.",
       "task": "Write code from scratch that takes 3 inputs and multiplies them all together.",
+      "codeHeight": 6,
       "inputs": [
         {
           "name": "a",
@@ -458,24 +433,8 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "get_input\\s*\\(\\s*['\"]a['\"]\\s*\\)"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "get_input\\s*\\(\\s*['\"]b['\"]\\s*\\)"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "get_input\\s*\\(\\s*['\"]c['\"]\\s*\\)"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "\\*"
-          },
-          {
-            "type": "output_contains_regex",
-            "pattern": "^(?!0\\n$|0\\.0\\n$).+"
+            "type": "solution_code",
+            "solutionCode": "x = get_input('a')\ny = get_input('b')\nz = get_input('c')\nresult = x * y * z\nprint(result)"
           }
         ]
       }
