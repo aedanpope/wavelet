@@ -210,6 +210,27 @@ function initAllCodeEditors() {
     });
 }
 
+// Validate that all required input fields are filled
+function validateInputs(problem, problemIndex) {
+    if (!problem.inputs || problem.inputs.length === 0) {
+        return { isValid: true, missingInputs: [] };
+    }
+    
+    const missingInputs = [];
+    
+    for (const input of problem.inputs) {
+        const inputElement = document.getElementById(`input-${problemIndex}-${input.name}`);
+        if (inputElement && !inputElement.value.trim()) {
+            missingInputs.push(input.name);
+        }
+    }
+    
+    return {
+        isValid: missingInputs.length === 0,
+        missingInputs: missingInputs
+    };
+}
+
 // Run Python code for a specific problem
 async function runCode(problemIndex) {
     const code = codeEditors[problemIndex].getValue();
@@ -218,6 +239,14 @@ async function runCode(problemIndex) {
     
     if (!code.trim()) {
         displayOutput(output, 'Please enter some code to run.', 'error', '❌ Please enter some code to run.');
+        return;
+    }
+    
+    // Validate that all required input fields are filled
+    const inputValidation = validateInputs(problem, problemIndex);
+    if (!inputValidation.isValid) {
+        const missingList = inputValidation.missingInputs.join(', ');
+        displayOutput(output, '', 'error', `❌ Please fill in all input fields: ${missingList}`);
         return;
     }
     
@@ -290,7 +319,7 @@ function showHint(problemIndex) {
     const modal = document.getElementById('hint-modal');
     const hintText = document.getElementById('hint-text');
     
-    hintText.textContent = problem.hint;
+    hintText.innerHTML = problem.hint;
     modal.style.display = 'flex';
 }
 

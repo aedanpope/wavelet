@@ -5,7 +5,7 @@
   "problems": [
     {
       "title": "Your first variable",
-      "content": "Variables are like boxes that store values. This code stores the number 7 in a variable and prints it.",
+      "content": "Variables are containers that hold values. Think of them like labeled boxes - you put something inside and give it a name. Let's create your first variable! Here we're creating a variable named 'age' and giving it the value 7. The equals sign (=) assigns the value to the variable.",
       "task": "Run the code to see the value stored in the variable.",
       "starterCode": "age = 7\nprint(age)",
       "hint": "The variable 'age' holds the number 7.",
@@ -28,15 +28,19 @@
     },
     {
       "title": "Changing a variable",
-      "content": "You can change what a variable stores by giving it a new value.",
-      "task": "Run the code to see the updated value.",
-      "starterCode": "score = 10\nscore = 15\nprint(score)",
-      "hint": "The second assignment replaces the first value.",
+      "content": "You can change what a variable stores by giving it a new value. Try setting the age to your own age for fun!",
+      "task": "Change the age to your own age and run the code to see the updated value.",
+      "starterCode": "age = 100\nprint(age)",
+      "hint": "Surely you're less than 100! Change the number to your actual age.",
       "validation": {
         "rules": [
           {
-            "type": "output_contains",
-            "pattern": "15"
+            "type": "code_contains_regex",
+            "pattern": "age\\s*=\\s*\\d+"
+          },
+          {
+            "type": "output_contains_regex",
+            "pattern": "^(?!100\\n$).+"
           }
         ]
       }
@@ -79,8 +83,8 @@
       "title": "Edit the numbers",
       "content": "Change the numbers in the variables so the total is 20.",
       "task": "Edit the code to make total = 20.",
-      "starterCode": "x = 5\ny = 7\ntotal = x + y\nprint(total)",
-      "hint": "Adjust x and y to add up to 20.",
+      "starterCode": "apples = 5\nbananas = 3\ntotal = apples + bananas\nprint(total)",
+      "hint": "Adjust apples and bananas to add up to 20.",
       "validation": {
         "rules": [
           {
@@ -92,8 +96,8 @@
     },
     {
       "title": "Getting input from the user",
-      "content": "In this problem, we'll use the special `get_input()` command. Since there's only one input box, we can call `get_input()` without any arguments to get its value. This makes the code simpler and avoids needing to remember the input name.",
-      "task": "Enter a number and run the code to see how get_input() works.",
+      "content": "In this problem, we'll use the <code>get_input()</code> command to get a value from the input text box.",
+      "task": "There is a box to the right called 'first_number', enter a number and run the code to see how get_input() works.",
       "inputs": [
         {
           "name": "first_number",
@@ -101,8 +105,74 @@
           "type": "number"
         }
       ],
-      "starterCode": "user_number = get_input()\nprint(user_number)",
-      "hint": "When there's only one input box, you can use `get_input()` without any arguments to get its value.",
+      "starterCode": "x = get_input()\nprint(x)",
+      "hint": "When there's only one input box, you can use <code>get_input()</code> without any arguments to get its value.",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains_regex",
+            "pattern": "get_input\\s*\\(\\s*\\)"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Calculating with input",
+      "content": "Now let's do a calculation with the user input. We can use the input value in math operations just like any other number.",
+      "task": "Enter a number and run the code to see the input plus 5.",
+      "inputs": [
+        {
+          "name": "number",
+          "label": "Enter a number:",
+          "type": "number"
+        }
+      ],
+      "starterCode": "x = get_input()\nprint(x + 5)",
+      "hint": "The input value is added to 5 in the print statement.",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains_regex",
+            "pattern": "x\\s*\\+\\s*5"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Modify the calculation",
+      "content": "Your turn - modify the code to add 10 instead of 5 to the user input.",
+      "task": "Edit the code to print the user input plus 10 instead of plus 5.",
+      "inputs": [
+        {
+          "name": "number",
+          "label": "Enter a number:",
+          "type": "number"
+        }
+      ],
+      "starterCode": "x = get_input()\nprint(x + 5)",
+      "hint": "Change the 5 to 10 in the print statement.",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains_regex",
+            "pattern": "x\\s*\\+\\s*10"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Double the input",
+      "content": "Now you'll write code from scratch! Write a program that gets a number from the input and doubles it. Remember to use <code>*2</code> for multiplication.",
+      "task": "Write code from scratch that doubles the user input.",
+      "inputs": [
+        {
+          "name": "number",
+          "label": "Enter a number:",
+          "type": "number"
+        }
+      ],
+      "starterCode": "",
+      "hint": "Use <code>get_input()</code> to get the number, assign it to a variable, multiply by 2 using <code>*2</code>, then print the result.",
       "validation": {
         "rules": [
           {
@@ -110,16 +180,98 @@
             "pattern": "get_input\\s*\\(\\s*\\)"
           },
           {
-            "type": "output_contains_regex",
-            "pattern": "^(?!0\\n$|0\\.0\\n$).+"
+            "type": "code_contains_regex",
+            "pattern": "\\*\\s*2"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Square the input",
+      "content": "Squaring a number means multiplying it by itself. For example, 5 squared is $5 × 5 = 25$. In the program, we can write this as <code>x*x</code>.",
+      "task": "Write code from scratch that squares the user input.",
+      "inputs": [
+        {
+          "name": "number",
+          "label": "Enter a number:",
+          "type": "number"
+        }
+      ],
+      "starterCode": "",
+      "hint": "Use <code>get_input()</code> to get the number, then multiply it by itself using <code>x*x</code>.",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains_regex",
+            "pattern": "get_input\\s*\\(\\s*\\)"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "\\*\\s*[a-zA-Z_][a-zA-Z0-9_]*"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Print input twice",
+      "content": "Let's create a simple example where we print the user input twice.",
+      "task": "Enter a number and run the code to see it printed twice.",
+      "inputs": [
+        {
+          "name": "number",
+          "label": "Enter a number:",
+          "type": "number"
+        }
+      ],
+      "starterCode": "x = get_input()\nprint(x)\nprint(x)",
+      "hint": "The same variable is printed twice.",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains_regex",
+            "pattern": "print\\s*\\(\\s*x\\s*\\)"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Multiple calculations",
+      "content": "Now let's do multiple calculations with the same input. We'll print the input, then input+5, then input+10.",
+      "task": "Write code from scratch that prints x, x+5, and x+10. You can look at previous questions for help.",
+      "inputs": [
+        {
+          "name": "number",
+          "label": "Enter a number:",
+          "type": "number"
+        }
+      ],
+      "starterCode": "",
+      "hint": "Get the input, then use three print statements: one for x, one for x+5, and one for x+10.",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains_regex",
+            "pattern": "get_input\\s*\\(\\s*\\)"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "print\\s*\\(\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*\\)"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "print\\s*\\(\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*\\+\\s*5\\s*\\)"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "print\\s*\\(\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*\\+\\s*10\\s*\\)"
           }
         ]
       }
     },
     {
       "title": "Adding two inputs",
-      "content": "Now let's get two numbers from the input boxes and add them together. We'll use `get_input()` twice to get both numbers.",
-      "task": "Fill in the inputs and run the code to see the sum.",
+      "content": "Now let's get two numbers from the input boxes and add them together. We'll use <code>get_input()</code> twice to get both numbers.",
+      "task": "Input 2 non-zero numbers and run the code to see the sum.",
       "inputs": [
         {
           "name": "a",
@@ -132,8 +284,8 @@
           "type": "number"
         }
       ],
-      "starterCode": "# Get the first number from box 'a'\nnum1 = get_input('a')\n\n# Get the second number from box 'b'\nnum2 = get_input('b')\n\n# Now use the variables you created\nresult = num1 + num2\nprint(result)",
-      "hint": "Use `get_input('a')` to get the first number and `get_input('b')` to get the second number.",
+      "starterCode": "x = get_input('a')\ny = get_input('b')\nresult = x + y\nprint(result)",
+      "hint": "Use <code>get_input('a')</code> to get the first number and <code>get_input('b')</code> to get the second number.",
       "validation": {
         "rules": [
           {
@@ -146,11 +298,38 @@
           },
           {
             "type": "code_contains_regex",
-            "pattern": "result\\s*=\\s*num1\\s*\\+\\s*num2"
+            "pattern": "result\\s*=\\s*x\\s*\\+\\s*y"
           },
           {
             "type": "output_contains_regex",
             "pattern": "^(?!0\\n$|0\\.0\\n$).+"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Make the sum 10",
+      "content": "Now let's use the same code but you'll fill in the inputs so the output adds up to 10. Both inputs should not be zero.",
+      "task": "Fill in the inputs so the output is 10. Both inputs must be non-zero.",
+      "inputs": [
+        {
+          "name": "a",
+          "label": "First number:",
+          "type": "number"
+        },
+        {
+          "name": "b",
+          "label": "Second number:",
+          "type": "number"
+        }
+      ],
+      "starterCode": "x = get_input('a')\ny = get_input('b')\nresult = x + y\nprint(result)",
+      "hint": "Choose two non-zero numbers that add up to 10.",
+      "validation": {
+        "rules": [
+          {
+            "type": "output_contains",
+            "pattern": "10"
           }
         ]
       }
@@ -171,13 +350,13 @@
           "type": "number"
         }
       ],
-      "starterCode": "# Get the first number from box 'a'\nnum1 = get_input('a')\n\n# Get the second number from box 'b'\nnum2 = get_input('b')\n\n# Now use the variables you created\nresult = num1 + num2\nprint(result)",
+      "starterCode": "x = get_input('a')\ny = get_input('b')\nresult = x + y\nprint(result)",
       "hint": "Change the + to * to multiply instead of add.",
       "validation": {
         "rules": [
           {
             "type": "code_contains_regex",
-            "pattern": "result\\s*=\\s*num1\\s*\\*\\s*num2"
+            "pattern": "result\\s*=\\s*x\\s*\\*\\s*y"
           },
           {
             "type": "output_contains_regex",
@@ -187,27 +366,36 @@
       }
     },
     {
-      "title": "Double from input",
-      "content": "Now you'll write a program from scratch! Use `get_input()` to get a number, then calculate and print double its value.",
-      "task": "Enter a number and write the program from scratch.",
+      "title": "Divide two inputs",
+      "content": "Now let's write code from scratch to divide two inputs. Try lots of different inputs once you have the program working!",
+      "task": "Write code from scratch that divides the first input by the second input.",
       "inputs": [
         {
-          "name": "n",
-          "label": "Number:",
+          "name": "a",
+          "label": "First number:",
+          "type": "number"
+        },
+        {
+          "name": "b",
+          "label": "Second number:",
           "type": "number"
         }
       ],
       "starterCode": "",
-      "hint": "Use `get_input()` to get the number (no arguments needed since there's only one input), assign it to a variable, multiply by 2, then print the result.",
+      "hint": "Use <code>get_input('a')</code> and <code>get_input('b')</code> to get the numbers, then divide using <code>/</code>.",
       "validation": {
         "rules": [
           {
             "type": "code_contains_regex",
-            "pattern": "get_input\\s*\\(\\s*\\)"
+            "pattern": "get_input\\s*\\(\\s*['\"]a['\"]\\s*\\)"
           },
           {
             "type": "code_contains_regex",
-            "pattern": "\\*\\s*2"
+            "pattern": "get_input\\s*\\(\\s*['\"]b['\"]\\s*\\)"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "\\/"
           },
           {
             "type": "output_contains_regex",
@@ -217,27 +405,93 @@
       }
     },
     {
-      "title": "Three times the fun",
-      "content": "Let's create a program that gets a number from the input and calculates triple its value.",
-      "task": "Enter a number and run the code.",
+      "title": "Add three inputs",
+      "content": "Let's take it up a notch! Now we'll work with three input boxes.",
+      "task": "Write code from scratch that takes 3 inputs and adds them all together.",
       "inputs": [
         {
-          "name": "n",
-          "label": "Number:",
+          "name": "a",
+          "label": "First number:",
+          "type": "number"
+        },
+        {
+          "name": "b",
+          "label": "Second number:",
+          "type": "number"
+        },
+        {
+          "name": "c",
+          "label": "Third number:",
           "type": "number"
         }
       ],
-      "starterCode": "# Get the number from the input box\nnum = get_input()\n\n# Calculate triple the value\ntriple = num * 3\nprint(triple)",
-      "hint": "Use `get_input()` to get the number (no arguments needed), then multiply by 3.",
+      "starterCode": "",
+      "hint": "Use <code>get_input('a')</code>, <code>get_input('b')</code>, and <code>get_input('c')</code> to get all three numbers, then add them together.",
       "validation": {
         "rules": [
           {
             "type": "code_contains_regex",
-            "pattern": "get_input\\s*\\(\\s*\\)"
+            "pattern": "get_input\\s*\\(\\s*['\"]a['\"]\\s*\\)"
           },
           {
             "type": "code_contains_regex",
-            "pattern": "\\*\\s*3"
+            "pattern": "get_input\\s*\\(\\s*['\"]b['\"]\\s*\\)"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "get_input\\s*\\(\\s*['\"]c['\"]\\s*\\)"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "\\+"
+          },
+          {
+            "type": "output_contains_regex",
+            "pattern": "^(?!0\\n$|0\\.0\\n$).+"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Multiply three inputs",
+      "content": "Now let's multiply all three inputs together.",
+      "task": "Write code from scratch that takes 3 inputs and multiplies them all together.",
+      "inputs": [
+        {
+          "name": "a",
+          "label": "First number:",
+          "type": "number"
+        },
+        {
+          "name": "b",
+          "label": "Second number:",
+          "type": "number"
+        },
+        {
+          "name": "c",
+          "label": "Third number:",
+          "type": "number"
+        }
+      ],
+      "starterCode": "",
+      "hint": "Use <code>get_input('a')</code>, <code>get_input('b')</code>, and <code>get_input('c')</code> to get all three numbers, then multiply them together using <code>*</code>.",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains_regex",
+            "pattern": "get_input\\s*\\(\\s*['\"]a['\"]\\s*\\)"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "get_input\\s*\\(\\s*['\"]b['\"]\\s*\\)"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "get_input\\s*\\(\\s*['\"]c['\"]\\s*\\)"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "\\*"
           },
           {
             "type": "output_contains_regex",
