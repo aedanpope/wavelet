@@ -12,7 +12,8 @@
     "test": "node test-error-handling.js",
     "test:homepage:basic": "node test-homepage-basic.js",
     "test:validation": "node test-validation.js",
-    "test:all": "npm run test; npm run test:homepage:basic; npm run test:validation"
+    "test:input-system": "node test-input-system.js",
+    "test:all": "npm run test; npm run test:homepage:basic; npm run test:validation; npm run test:input-system"
   },
   "keywords": [
     "python",

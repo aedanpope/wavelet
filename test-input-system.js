@@ -30,9 +30,9 @@ const mockInputElements = {
     'input-4-operation': { value: '+' }
 };
 
-// Test the input processing logic
-function testInputProcessing() {
-    console.log('Testing input processing...');
+// Test the get_input() function logic
+function testGetInputFunction() {
+    console.log('Testing get_input() function...');
     
     // Test case 1: Simple number inputs
     const problem1 = {
@@ -42,28 +42,34 @@ function testInputProcessing() {
         ]
     };
     
-    // Simulate the input processing logic
-    for (const input of problem1.inputs) {
-        const inputElement = document.getElementById(`input-2-${input.name}`);
+    // Simulate the get_input function
+    const mockGetInput = function(inputName) {
+        const inputElement = document.getElementById(`input-2-${inputName}`);
         if (inputElement) {
             let value = inputElement.value;
             
-            if (input.type === 'number') {
-                value = parseFloat(value);
-                if (isNaN(value)) {
-                    console.error(`Invalid number for ${input.label}`);
-                    return false;
+            // Find the input configuration to determine type
+            const inputConfig = problem1.inputs.find(input => input.name === inputName);
+            if (inputConfig) {
+                // Convert value based on input type
+                if (inputConfig.type === 'number') {
+                    value = parseFloat(value) || 0;
+                } else if (inputConfig.type === 'boolean') {
+                    value = value === 'true';
                 }
             }
             
-            mockPyodide.globals.set(input.name, value);
-            console.log(`Set ${input.name} = ${value}`);
+            return value;
         }
-    }
+        return null;
+    };
     
-    // Verify the values were set correctly
-    console.log('first_number:', mockPyodide.globals.get('first_number'));
-    console.log('second_number:', mockPyodide.globals.get('second_number'));
+    // Test the function
+    const result1 = mockGetInput('first_number');
+    const result2 = mockGetInput('second_number');
+    
+    console.log('get_input("first_number"):', result1);
+    console.log('get_input("second_number"):', result2);
     
     return true;
 }
@@ -203,7 +209,7 @@ function testHTMLGeneration() {
 console.log('Starting input system tests...');
 console.log('=====================================');
 
-testInputProcessing();
+testGetInputFunction();
 console.log('-------------------------------------');
 
 testWorksheetStructure();

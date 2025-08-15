@@ -70,8 +70,13 @@ First number: [textbox]
 Second number: [textbox]
 
 Code:
-num1 = input1
-num2 = input2
+# Get the first number from box 'a'
+num1 = get_input('a')
+
+# Get the second number from box 'b'
+num2 = get_input('b')
+
+# Now use the variables you created
 result = num1 + num2
 print(result)
 
@@ -125,10 +130,31 @@ Task: Enter two numbers and run the code to see their sum.
 ### Overview
 The input system has been implemented for Worksheet 2, allowing students to interact with Python programs through textbox inputs instead of command-line input.
 
+### The `get_input()` Function Approach
+Instead of automatically injecting variables into the Python environment, students use an explicit `get_input()` function to retrieve values from input fields. This approach:
+
+- **Makes the connection explicit**: Students actively call `get_input('input_name')` to get values
+- **Teaches function concepts**: Introduces the idea of calling functions to get data
+- **Eliminates "magic"**: No mysterious variables appearing out of nowhere
+- **Reinforces variable assignment**: Students must assign the result to their own variables
+
+### Example Usage
+```python
+# Get a number from the input box labeled 'first_number'
+user_number = get_input('first_number')
+print(user_number)
+
+# Get two numbers and add them
+num1 = get_input('a')
+num2 = get_input('b')
+result = num1 + num2
+print(result)
+```
+
 ### Key Features
 - **Textbox-based Input**: Students use familiar form inputs instead of command-line
 - **Type Support**: Number and text input types with automatic validation
-- **Variable Integration**: Input values automatically set as Python variables
+- **Explicit Input Function**: Students use `get_input()` function to actively retrieve values
 - **Progressive Complexity**: Starts with simple inputs, builds to complex interactions
 
 ### Technical Implementation
@@ -140,7 +166,8 @@ The input system has been implemented for Worksheet 2, allowing students to inte
 ### Educational Benefits
 - Eliminates command-line fear for young students
 - Provides immediate visual feedback on inputs
-- Teaches variable concepts through practical examples
+- Teaches variable concepts through practical examples with explicit `get_input()` function
+- Makes the connection between UI inputs and Python variables clear and intentional
 - Supports both input and non-input problems in same worksheet
 
 ## Next Steps
@@ -149,3 +176,5 @@ The input system has been implemented for Worksheet 2, allowing students to inte
 2. **Enhance Validation**: Build comprehensive validation for different problem types
 3. **User Testing**: Test with target age group to validate design decisions
 4. **Iterate and Improve**: Refine based on student feedback and performance
+
+
