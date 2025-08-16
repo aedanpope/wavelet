@@ -144,12 +144,16 @@ function testSetupGetInputFunction() {
     if (mockGlobals.get_input && typeof mockGlobals.get_input === 'function') {
         console.log('✅ setupGetInputFunction correctly sets get_input in Pyodide globals');
         
-        // Test that the function works
-        const testResult = mockGlobals.get_input();
-        if (testResult === null) { // No input element found, should return null
-            console.log('✅ setupGetInputFunction creates working get_input function');
-        } else {
-            console.log('❌ setupGetInputFunction creates non-working get_input function');
+        // Test that the function works - now it should throw an error when input element not found
+        try {
+            const testResult = mockGlobals.get_input();
+            console.log('❌ setupGetInputFunction should have thrown an error for missing input element');
+        } catch (error) {
+            if (error.message.includes('Input field \'test_input\' not found')) {
+                console.log('✅ setupGetInputFunction creates working get_input function with proper error handling');
+            } else {
+                console.log('❌ setupGetInputFunction creates get_input function with unexpected error:', error.message);
+            }
         }
     } else {
         console.log('❌ setupGetInputFunction failed to set get_input in Pyodide globals');
@@ -248,6 +252,62 @@ function testInputValidation() {
     });
 }
 
+// Test error handling for invalid input names
+function testErrorHandling() {
+    console.log('Testing error handling for invalid input names...');
+    
+    const problem = {
+        inputs: [
+            { name: 'first_number', type: 'number', label: 'First number:' },
+            { name: 'second_number', type: 'number', label: 'Second number:' }
+        ]
+    };
+    
+    const mockGetInput = InputSystem.createGetInputFunction(problem, 2);
+    
+    // Test case 1: Invalid input name
+    try {
+        mockGetInput('invalid_name');
+        console.log('✗ Test failed: Should have thrown an error for invalid input name');
+    } catch (error) {
+        if (error.message.includes('Input field \'invalid_name\' not found')) {
+            console.log('✓ Test passed: Correct error message for invalid input name');
+        } else {
+            console.log('✗ Test failed: Unexpected error message:', error.message);
+        }
+    }
+    
+    // Test case 2: Problem with no inputs
+    const problemNoInputs = { inputs: [] };
+    const mockGetInputNoInputs = InputSystem.createGetInputFunction(problemNoInputs, 3);
+    
+    try {
+        mockGetInputNoInputs();
+        console.log('✗ Test failed: Should have thrown an error for problem with no inputs');
+    } catch (error) {
+        if (error.message.includes('No input fields are available')) {
+            console.log('✓ Test passed: Correct error message for problem with no inputs');
+        } else {
+            console.log('✗ Test failed: Unexpected error message:', error.message);
+        }
+    }
+    
+    // Test case 3: Problem with no inputs property
+    const problemNoInputsProperty = {};
+    const mockGetInputNoInputsProperty = InputSystem.createGetInputFunction(problemNoInputsProperty, 4);
+    
+    try {
+        mockGetInputNoInputsProperty();
+        console.log('✗ Test failed: Should have thrown an error for problem with no inputs property');
+    } catch (error) {
+        if (error.message.includes('No input fields are available')) {
+            console.log('✓ Test passed: Correct error message for problem with no inputs property');
+        } else {
+            console.log('✗ Test failed: Unexpected error message:', error.message);
+        }
+    }
+}
+
 // Test HTML generation
 function testHTMLGeneration() {
     console.log('Testing HTML generation...');
@@ -306,6 +366,9 @@ testWorksheetStructure();
 console.log('-------------------------------------');
 
 testInputValidation();
+console.log('-------------------------------------');
+
+testErrorHandling();
 console.log('-------------------------------------');
 
 testHTMLGeneration();

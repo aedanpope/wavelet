@@ -317,6 +317,34 @@
       }
     },
     {
+      "title": "Fix the input bug",
+      "content": "The value passed to the get_input() call must be the label on the input area. Can you see and fix the bug in this code?",
+      "task": "Run this code to see the error, then fix the bug in the second get_input() function call so the program works correctly.",
+      "codeHeight": 5,
+      "inputs": [
+        {
+          "name": "x",
+          "label": "First number:",
+          "type": "number"
+        },
+        {
+          "name": "y",
+          "label": "Second number:",
+          "type": "number"
+        }
+      ],
+      "starterCode": "x = get_input('x')\ny = get_input('a')\nresult = x + y\nprint(result)",
+      "hint": "Look at the input labels and make sure the get_input() calls use the correct names, the second one uses 'a' instead of 'y'.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "x = get_input('x')\ny = get_input('y')\nresult = x + y\nprint(result)"
+          }
+        ]
+      }
+    },
+    {
       "title": "Multiplying two inputs",
       "content": "Now let's modify the code to multiply the two numbers instead of adding them. You'll need to change the operation from addition to multiplication.",
       "task": "Edit the code to multiply the variables instead of adding them.",
@@ -440,8 +468,8 @@
     },
     {
       "title": "Powers of a number",
-      "content": "You wrote a program to output squared above (x*x). The meaning of x 'cubed' is x*x*x, or 'x to the power of 3'. Write a program that takes an input and prints 3 lines: x, x squared, and x cubed. Experiment with different inputs to see how the output changes, what happens when you use negative numbers, and what happens when you use decimal numbers?",
-      "task": "Write a program that takes one input and prints three lines: the original number, the number squared, and the number cubed.",
+      "content": "In math, when we multiply a number by itself, we call it a 'power'. For example, 5 squared (5²) means 5 × 5 = 25, and 5 cubed (5³) means 5 × 5 × 5 = 125. Let's create a program that shows all three: the original number, the number squared, and the number cubed!",
+      "task": "<p>Write a program that takes one input and prints three lines: the original number, the number squared, and the number cubed.</p><p>Try different input numbers like 2, 3, 5, 0.5, and even negative numbers to see what happens!</p>",
       "codeHeight": 6,
       "inputs": [
         {
@@ -450,7 +478,7 @@
           "type": "number"
         }
       ],
-      "hint": "Use <code>x * x</code> to square the number and <code>x * x * x</code> to cube it. Make sure to print each result on a separate line.",
+      "hint": "First get the input with <code>get_input('x')</code>. Then use three print statements: one for the original number, one for <code>x * x</code> (squared), and one for <code>x * x * x</code> (cubed).",
       "validation": {
         "rules": [
           {
@@ -460,8 +488,82 @@
         ]
       }
     },
+    {
+      "title": "Area of a square",
+      "content": "So far we've used simple variable names like 'x'. But good programmers use descriptive names that explain what the variable represents! For a square, we'll use 'side_length' instead of 'x' to make our code clearer. The area of a square is found by multiplying the length of one side by itself. For example, if a square has sides of 5 units, its area is 5 × 5 = 25 square units.",
+      "task": "Write a program that calculates the area of a square. Use the descriptive variable name 'side_length' for the input.",
+      "codeHeight": 5,
+      "inputs": [
+        {
+          "name": "side_length",
+          "label": "Enter the length of one side of the square:",
+          "type": "number"
+        }
+      ],
+      "starterCode": "side_length = get_input('side_length')",
+      "hint": "Use <code>side_length = get_input('side_length')</code> to get the input, then multiply it by itself using <code>side_length * side_length</code> to calculate the area. Notice how 'side_length' is much clearer than 'x'!",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "side_length = get_input('side_length')\narea = side_length * side_length\nprint(area)"
+          }
+        ]
+      }
+         },
+     {
+       "title": "Perimeter of a square",
+       "content": "Great! Now let's calculate the perimeter of a square. The perimeter is the total distance around the square - you add up all four sides. Since all sides of a square are equal, the perimeter is 4 times the length of one side. For example, if a square has sides of 5 units, its perimeter is 4 × 5 = 20 units.",
+       "task": "Write a program that calculates the perimeter of a square. Use the descriptive variable name 'side_length' for the input.",
+       "codeHeight": 5,
+       "inputs": [
          {
-       "title": "Creative challenge",
+           "name": "side_length",
+           "label": "Enter the length of one side of the square:",
+           "type": "number"
+         }
+       ],
+       "starterCode": "side_length = get_input('side_length')",
+       "hint": "Use <code>side_length = get_input('side_length')</code> to get the input, then multiply it by 4 using <code>side_length * 4</code> to calculate the perimeter. Remember, perimeter = 4 × side length!",
+       "validation": {
+         "rules": [
+           {
+             "type": "solution_code",
+             "solutionCode": "side_length = get_input('side_length')\nperimeter = side_length * 4\nprint(perimeter)"
+           }
+         ]
+       }
+          },
+     {
+       "title": "Rectangle area and perimeter",
+       "content": "<p>Now let's work with rectangles! A rectangle has two different sides - length and width. The area is length × width, and the perimeter is 2 × (length + width).</p><p>Why 2 × (length + width)? Imagine you have to walk all the way around a rectangular room - you walk one length, then one width, then another length, then another width. So you walk length + width + length + width = 2 × (length + width).</p><p>For example, a rectangle with length 6 and width 4 has area = 6 × 4 = 24 and perimeter = 2 × (6 + 4) = 2 × 10 = 20.</p>",
+       "task": "Write a program that calculates both the area and perimeter of a rectangle. Use descriptive variable names 'length' and 'width' for the inputs.",
+       "codeHeight": 7,
+       "inputs": [
+         {
+           "name": "length",
+           "label": "Enter the length of the rectangle:",
+           "type": "number"
+         },
+         {
+           "name": "width",
+           "label": "Enter the width of the rectangle:",
+           "type": "number"
+         }
+       ],
+       "starterCode": "",
+       "hint": "Get both inputs using <code>get_input('length')</code> and <code>get_input('width')</code>. Then calculate area with <code>length * width</code> and perimeter with <code>2 * (length + width)</code>. Print both results!",
+       "validation": {
+         "rules": [
+           {
+             "type": "solution_code",
+             "solutionCode": "length = get_input('length')\nwidth = get_input('width')\narea = length * width\nperimeter = 2 * (length + width)\nprint(area)\nprint(perimeter)"
+           }
+         ]
+       }
+     },
+     {
+         "title": "Creative challenge",
        "content": "Write a program using one input & do something cool. Be creative! Show your teacher your code and your output.",
        "task": "Create a program that takes one input and does something interesting with it. You can use any of the concepts you've learned: variables, calculations, multiple print statements, etc.",
        "codeHeight": 8,

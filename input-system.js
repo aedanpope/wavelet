@@ -17,7 +17,7 @@ function createGetInputFunction(problem, problemIndex) {
             if (problem.inputs && problem.inputs.length > 0) {
                 targetInputName = problem.inputs[0].name;
             } else {
-                return null;
+                throw new Error("No input fields are available for this problem. Use get_input() only when the problem has input boxes.");
             }
         }
         
@@ -38,7 +38,10 @@ function createGetInputFunction(problem, problemIndex) {
             
             return value;
         }
-        return null;
+        
+        // Provide a helpful error message when input field is not found
+        const availableInputs = problem.inputs ? problem.inputs.map(input => `'${input.name}'`).join(', ') : 'none';
+        throw new Error(`Input field '${targetInputName}' not found. Available input fields: ${availableInputs}. Make sure you're using the correct input name that matches the label on the input box.`);
     };
 }
 
