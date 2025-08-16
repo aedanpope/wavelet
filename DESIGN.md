@@ -176,6 +176,41 @@ print(temperature)
 - Makes the connection between UI inputs and Python variables clear and intentional
 - Supports both input and non-input problems in same worksheet
 
+## Progress Persistence System
+
+### Overview
+Simple browser-based progress tracking that saves student work automatically when they run code, with a "Start Over" button to reset the current worksheet.
+
+### Design Principles
+- **Minimal implementation**: ~20 lines of code total
+- **Automatic saving**: Progress saved on every "Run Code" click
+- **Session persistence**: Uses localStorage to survive page refreshes and tab closure
+- **Worksheet isolation**: Each worksheet has independent progress tracking
+
+### Data Structure
+```javascript
+{
+  "worksheet-1": {
+    "completedProblems": [0, 1, 2],
+    "problems": [
+      {
+        "code": "print('Hello World')",
+        "completed": true,
+        "output": "Hello World",
+        "message": "✅ Correct! Well done!",
+        "status": "success"
+      }
+    ]
+  }
+}
+```
+
+### Implementation
+- **Save triggers**: Every "Run Code" click saves code, output, and status
+- **Recovery**: On page load, restores full state (code, output, status) if available
+- **Start Over**: Button clears current worksheet progress and reloads page
+- **Privacy-focused**: All data stays in browser session storage
+
 ## Next Steps
 
 1. **Create Additional Worksheets**: Develop Worksheets 3-5 following the established progression
