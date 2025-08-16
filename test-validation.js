@@ -542,6 +542,205 @@ const testCases = [
         code: 'num1 = get_input(\'a\')\nnum2 = get_input(\'b\')\nresult = num1 + num2\nprint(result)',
         output: '15\n',
         expected: true
+    },
+    // New tests for helpful error messages
+    {
+        name: "Helpful Error - Missing print statement when output expected",
+        problem: {
+            id: "test-missing-print",
+            validation: {
+                rules: [
+                    {
+                        type: "output_contains",
+                        pattern: "20"
+                    }
+                ]
+            }
+        },
+        code: '(7+13)',
+        output: '',
+        expected: false,
+        expectedErrorType: 'missing_print',
+        expectedMessage: 'Your program should produce some output. Try adding a print() statement.'
+    },
+    {
+        name: "Helpful Error - Wrong numerical output",
+        problem: {
+            id: "test-wrong-number",
+            validation: {
+                rules: [
+                    {
+                        type: "output_contains",
+                        pattern: "15"
+                    }
+                ]
+            }
+        },
+        code: 'print(30-14)',
+        output: '16',
+        expected: false,
+        expectedErrorType: 'wrong_number',
+        expectedMessage: 'Expected output: 15, but your program output: 16'
+    },
+    {
+        name: "Helpful Error - Correct numerical output should pass",
+        problem: {
+            id: "test-correct-number",
+            validation: {
+                rules: [
+                    {
+                        type: "output_contains",
+                        pattern: "15"
+                    }
+                ]
+            }
+        },
+        code: 'print(30-15)',
+        output: '15',
+        expected: true
+    },
+    {
+        name: "Helpful Error - No print suggestion when no output expected",
+        problem: {
+            id: "test-no-output-expected",
+            validation: {
+                rules: [
+                    {
+                        type: "code_contains",
+                        pattern: "print"
+                    },
+                    {
+                        type: "output_not_empty"
+                    }
+                ]
+            }
+        },
+        code: 'print("hello")',
+        output: '',
+        expected: false,
+        expectedErrorType: 'general_error',
+        expectedMessage: 'Not quite right! Check the task requirements and try again.'
+    },
+    {
+        name: "Helpful Error - Right number but wrong operations should get generic message",
+        problem: {
+            id: "test-divide-problem",
+            validation: {
+                rules: [
+                    {
+                        type: "code_contains",
+                        pattern: "/"
+                    },
+                    {
+                        type: "output_contains",
+                        pattern: "10.0"
+                    }
+                ]
+            }
+        },
+        code: 'print(100)',
+        output: '100',
+        expected: false,
+        expectedErrorType: 'general_error',
+        expectedMessage: 'Not quite right! Check the task requirements and try again.'
+    },
+    {
+        name: "Helpful Error - Write to divide problem exact scenario",
+        problem: {
+            id: "write-to-divide",
+            validation: {
+                rules: [
+                    {
+                        type: "code_contains",
+                        pattern: "print"
+                    },
+                    {
+                        type: "output_contains",
+                        pattern: "10.0"
+                    },
+                    {
+                        type: "code_contains",
+                        pattern: "100"
+                    },
+                    {
+                        type: "code_contains",
+                        pattern: "10"
+                    },
+                    {
+                        type: "code_contains",
+                        pattern: "/"
+                    }
+                ]
+            }
+        },
+        code: 'print(100)',
+        output: '100',
+        expected: false,
+        expectedErrorType: 'general_error',
+        expectedMessage: 'Not quite right! Check the task requirements and try again.'
+    },
+    {
+        name: "Normalized numerical comparison - Multiplication with .0 pattern",
+        problem: {
+            id: "test-multiply-normalized",
+            validation: {
+                rules: [
+                    {
+                        type: "code_contains",
+                        pattern: "*"
+                    },
+                    {
+                        type: "output_contains",
+                        pattern: "50.0"
+                    }
+                ]
+            }
+        },
+        code: 'print(5 * 10)',
+        output: '50',
+        expected: true
+    },
+    {
+        name: "Normalized numerical comparison - Addition with .0 pattern",
+        problem: {
+            id: "test-add-normalized",
+            validation: {
+                rules: [
+                    {
+                        type: "code_contains",
+                        pattern: "+"
+                    },
+                    {
+                        type: "output_contains",
+                        pattern: "15.0"
+                    }
+                ]
+            }
+        },
+        code: 'print(7 + 8)',
+        output: '15',
+        expected: true
+    },
+    {
+        name: "Helpful Error - Should not show wrong number when normalized comparison matches",
+        problem: {
+            id: "test-normalized-helpful-error",
+            validation: {
+                rules: [
+                    {
+                        type: "code_contains",
+                        pattern: "/"
+                    },
+                    {
+                        type: "output_contains",
+                        pattern: "10.0"
+                    }
+                ]
+            }
+        },
+        code: 'print(100/10)',
+        output: '10',
+        expected: true
     }
 ];
 
@@ -551,21 +750,48 @@ console.log("Testing validation system...\n");
 let passed = 0;
 let failed = 0;
 
-testCases.forEach((testCase, index) => {
+testCases.forEach(async (testCase, index) => {
     console.log(`Test ${index + 1}: ${testCase.name}`);
     
-    const result = validateAnswer(testCase.code, testCase.output, testCase.problem);
+    const result = await validateAnswer(testCase.code, testCase.output, testCase.problem, 0);
     
-    if (result === testCase.expected) {
-        console.log(`✅ PASSED - Expected: ${testCase.expected}, Got: ${result}`);
+    // Check if the result matches expected validation outcome
+    const validationPassed = result.isValid === testCase.expected;
+    
+    // Check error type if specified
+    let errorTypePassed = true;
+    if (testCase.expectedErrorType && !result.isValid) {
+        errorTypePassed = result.errorType === testCase.expectedErrorType;
+    }
+    
+    // Check for specific error messages
+    let messagePassed = true;
+    if (testCase.expectedMessage) {
+        messagePassed = result.message.includes(testCase.expectedMessage);
+    }
+    
+    if (validationPassed && errorTypePassed && messagePassed) {
+        console.log(`✅ PASSED - Expected: ${testCase.expected}, Got: ${result.isValid}`);
+        if (testCase.expectedErrorType) {
+            console.log(`   Error Type: ${result.errorType}`);
+        }
         passed++;
     } else {
-        console.log(`❌ FAILED - Expected: ${testCase.expected}, Got: ${result}`);
+        console.log(`❌ FAILED - Expected: ${testCase.expected}, Got: ${result.isValid}`);
+        if (testCase.expectedErrorType) {
+            console.log(`   Expected Error Type: ${testCase.expectedErrorType}, Got: ${result.errorType}`);
+        }
+        if (!messagePassed) {
+            console.log(`   ❌ Message assertion failed:`);
+            console.log(`      Expected: "${testCase.expectedMessage}"`);
+            console.log(`      Got:      "${result.message}"`);
+        }
         failed++;
     }
     
     console.log(`   Code: "${testCase.code}"`);
     console.log(`   Output: "${testCase.output}"`);
+    console.log(`   Message: "${result.message}"`);
     console.log("");
 });
 

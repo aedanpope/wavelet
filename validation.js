@@ -1,6 +1,17 @@
 // Shared validation logic for the Python learning platform
 // This module contains the validation functions used by both script.js and test files
 
+// Helper function to normalize numerical comparisons
+function normalizeNumericalComparison(output, pattern) {
+    // Normalize numerical comparisons for all operations
+    if (/^\d+\.0$/.test(pattern)) {
+        // For any numerical pattern ending in .0, also accept integer output
+        const integerVersion = pattern.replace('.0', '');
+        return output.includes(pattern) || output.includes(integerVersion);
+    }
+    return output.includes(pattern);
+}
+
 // Validate the student's answer using validation rules from the problem definition
 async function validateAnswer(code, output, problem, problemIndex) {
     const codeTrimmed = code.trim();
@@ -8,20 +19,33 @@ async function validateAnswer(code, output, problem, problemIndex) {
     
     // Basic validation checks that apply to all problems
     const codeWithoutComments = codeTrimmed.replace(/#.*$/gm, '').trim();
-    if (codeWithoutComments.length < 5) {
-        return false;
+    if (codeWithoutComments.length < 3) {
+        return {
+            isValid: false,
+            errorType: 'insufficient_code',
+            message: 'Please enter more code to run.'
+        };
     }
     
     // Check for common errors that should fail validation
     if (output.includes('NameError') || output.includes('SyntaxError') || 
         output.includes('TypeError') || output.includes('AttributeError') ||
         output.includes('IndentationError') || output.includes('ZeroDivisionError')) {
-        return false;
+        return {
+            isValid: false,
+            errorType: 'python_error',
+            message: '❌ There was an error running your code.'
+        };
     }
     
     // If no validation rules are defined, use basic validation
     if (!problem.validation || !problem.validation.rules) {
-        return codeWithoutComments.length > 10 && outputTrimmed.length > 0;
+        const isValid = codeWithoutComments.length > 10 && outputTrimmed.length > 0;
+        return {
+            isValid,
+            errorType: isValid ? null : 'basic_validation_failed',
+            message: isValid ? '✅ Correct! Well done!' : '❌ Not quite right! Check the task requirements and try again.'
+        };
     }
     
     // Apply validation rules from the problem definition
@@ -31,11 +55,59 @@ async function validateAnswer(code, output, problem, problemIndex) {
         const ruleResult = await validateRule(code, output, rule, problem, problemIndex);
         if (!ruleResult) {
             console.log(`Validation failed for rule: ${rule.type} - ${rule.pattern}`);
-            return false;
+            // Use helpful error message generation instead of generic message
+            return generateHelpfulErrorMessage(code, output, problem, rule);
         }
     }
     
-    return true;
+    // If we get here, validation passed
+    return {
+        isValid: true,
+        errorType: null,
+        message: '✅ Correct! Well done!'
+    };
+}
+
+// Generate helpful error messages for specific common cases
+function generateHelpfulErrorMessage(code, output, problem, failedRule) {
+    const outputTrimmed = output.trim();
+    
+    // Check for missing output when there should be some
+    if (!outputTrimmed) {
+        // Only suggest print() if there's an expected output rule
+        const hasExpectedOutput = problem.validation.rules.some(rule => 
+            rule.type === 'output_contains' || rule.type === 'output_contains_regex'
+        );
+        if (hasExpectedOutput) {
+            return {
+                isValid: false,
+                errorType: 'missing_print',
+                message: '❌ Your program should produce some output. Try adding a print() statement.'
+            };
+        }
+    }
+    
+    // Check for wrong numerical output - but only if the failed rule was an output rule
+    if (outputTrimmed && /^\d+(\.\d+)?$/.test(outputTrimmed) && 
+        failedRule && failedRule.type === 'output_contains' && /^\d+(\.\d+)?$/.test(failedRule.pattern)) {
+        // Apply the same normalization logic as in validateRule
+        const outputMatches = normalizeNumericalComparison(outputTrimmed, failedRule.pattern);
+        
+        if (!outputMatches) {
+            return {
+                isValid: false,
+                errorType: 'wrong_number',
+                message: `❌ Expected output: ${failedRule.pattern}, but your program output: ${outputTrimmed}`
+            };
+        }
+    }
+    
+    // Default error message
+    return {
+        isValid: false,
+        errorType: 'general_error',
+        message: '❌ Not quite right! Check the task requirements and try again.'
+    };
 }
 
 // Validate a single validation rule
@@ -56,13 +128,7 @@ async function validateRule(code, output, rule, problem, problemIndex) {
             return codeRegexPattern.test(code);
             
         case 'output_contains':
-            // Special handling for division outputs
-            if (rule.pattern.endsWith('.0') && code.includes('/')) {
-                // For division problems expecting decimal output, also accept integer output
-                const integerVersion = rule.pattern.replace('.0', '');
-                return output.includes(rule.pattern) || output.includes(integerVersion);
-            }
-            return output.includes(rule.pattern);
+            return normalizeNumericalComparison(output, rule.pattern);
             
         case 'output_contains_regex':
             const outputRegexPattern = new RegExp(rule.pattern, 'i'); // case insensitive
