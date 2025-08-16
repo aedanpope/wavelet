@@ -69,7 +69,7 @@
     {
       "title": "Edit to add",
       "content": "Practice your addition skills by editing this code.",
-      "task": "Edit the program to find the answer to $50 + 25$.",
+      "task": "Edit the program to find and print the answer to $50 + 25$.",
       "starterCode": "print(10 + 10)",
       "hint": "Change the numbers inside the parentheses to 50 and 25.",
       "validation": {
@@ -105,7 +105,7 @@
     {
       "title": "Write to add",
       "content": "Write a complete program to solve this addition problem.",
-      "task": "Write a program to find the answer to $7 + 13$.",
+      "task": "Write a program to find and print the answer to $7 + 13$.",
       "starterCode": "",
       "hint": "Use the `print()` function with the numbers and the `+` operator.",
       "validation": {
@@ -198,7 +198,7 @@
     {
       "title": "Edit to subtract",
       "content": "Now it's your turn to make a small change. Edit the code below to solve the new problem.",
-      "task": "Edit the program to find the answer to $12 - 7$.",
+      "task": "Edit the program to find and print the answer to $12 - 7$.",
       "starterCode": "print(20 - 5)",
       "hint": "Change the numbers inside the parentheses to 12 and 7.",
       "validation": {
@@ -234,7 +234,7 @@
     {
       "title": "Write to subtract",
       "content": "Write a complete program to solve this subtraction problem.",
-      "task": "Write a program to find the answer to $30 - 15$.",
+      "task": "Write a program to find and print the answer to $30 - 15$.",
       "starterCode": "",
       "hint": "Remember to use the `-` operator for subtraction.",
       "validation": {
@@ -327,7 +327,7 @@
     {
       "title": "Edit to multiply",
       "content": "Practice your multiplication skills by editing this code.",
-      "task": "Edit the program below to find the answer to $8 * 8$.",
+      "task": "Edit the program below to find and print the answer to $8 * 8$.",
       "starterCode": "print(7 * 7)",
       "hint": "What does eight times eight equal?",
       "validation": {
@@ -358,7 +358,7 @@
     {
       "title": "Write to multiply",
       "content": "Write a complete program to solve this multiplication problem.",
-      "task": "Write a program to find the answer to $9 * 10$.",
+      "task": "Write a program to find and print the answer to $9 * 10$.",
       "starterCode": "",
       "hint": "Use the `*` operator to multiply.",
       "validation": {
@@ -451,7 +451,7 @@
     {
       "title": "Edit to divide",
       "content": "Practice your division skills by editing this code.",
-      "task": "Edit the program below to find the answer to $48 / 6$.",
+      "task": "Edit the program below to find and print the answer to $48 / 6$.",
       "starterCode": "print(20 / 4)",
       "hint": "Change the numbers inside the parentheses to 48 and 6.",
       "validation": {
@@ -463,8 +463,8 @@
           },
           {
             "type": "output_contains",
-            "pattern": "8.0",
-            "description": "Output must contain '8.0'"
+            "pattern": "8",
+            "description": "Output must contain '8'"
           },
           {
             "type": "code_contains",
@@ -487,7 +487,7 @@
     {
       "title": "Write to divide",
       "content": "Write a complete program to solve this division problem.",
-      "task": "Write a program to find the answer to $100 / 10$.",
+      "task": "Write a program to find and print the answer to $100 / 10$.",
       "starterCode": "",
       "hint": "Use the `/` operator to divide.",
       "validation": {
@@ -499,8 +499,8 @@
           },
           {
             "type": "output_contains",
-            "pattern": "10.0",
-            "description": "Output must contain '10.0'"
+            "pattern": "10",
+            "description": "Output must contain '10'"
           },
           {
             "type": "code_contains",
@@ -535,8 +535,8 @@
           },
           {
             "type": "output_contains",
-            "pattern": "6.0",
-            "description": "Output must contain '6.0'"
+            "pattern": "6",
+            "description": "Output must contain '6'"
           },
           {
             "type": "code_contains",
@@ -580,7 +580,7 @@
     {
       "title": "Using Parentheses",
       "content": "Parentheses `()` can be used to change the order of operations, just like in math.",
-      "task": "Edit the program to find the answer to $(10 + 5) / 3$.",
+      "task": "Edit the program to find and print the answer to $(10 + 5) / 3$.",
       "starterCode": "print(4 + 6 / 2)",
       "hint": "Wrap the addition part in parentheses to make it happen first.",
       "validation": {
@@ -592,8 +592,8 @@
           },
           {
             "type": "output_contains",
-            "pattern": "5.0",
-            "description": "Output must contain '5.0'"
+            "pattern": "5",
+            "description": "Output must contain '5'"
           },
           {
             "type": "code_contains",
@@ -636,7 +636,7 @@
     {
       "title": "Write with Parentheses",
       "content": "Write a complete program that uses parentheses to solve a problem.",
-      "task": "Write a program to find the answer to $10 * (5 - 3)$.",
+      "task": "Write a program to find and print the answer to $10 * (5 - 3)$.",
       "starterCode": "",
       "hint": "Put the `5 - 3` part inside parentheses.",
       "validation": {
@@ -738,7 +738,7 @@
     {
       "title": "Order of Operations Challenge",
       "content": "Let's combine everything you've learned so far!",
-      "task": "Write a program to find the answer to $8 + (12 / 4)$.",
+      "task": "Write a program to find and print the answer to $8 + (12 / 4)$.",
       "starterCode": "",
       "hint": "The division part `12 / 4` needs to go inside parentheses to happen before the addition.",
       "validation": {
