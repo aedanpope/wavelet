@@ -23,8 +23,17 @@
 </head>
 <body>
     <div class="container">
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <h2>Loading Worksheet...</h2>
+                <p>Please wait while we load your worksheet</p>
+            </div>
+        </div>
+        
         <!-- Worksheet Interface -->
-        <div id="worksheet-interface" class="worksheet-interface">
+        <div id="worksheet-interface" class="worksheet-interface" style="display: none;">
             <header class="worksheet-header">
                 <button id="back-to-selection" class="back-btn">← Back to Worksheets</button>
                 <div class="worksheet-info">
@@ -70,6 +79,12 @@
                         <button id="back-to-menu" class="btn">🏠 Back to Menu</button>
                     </div>
                 </div>
+            </div>
+            
+            <!-- Scroll Hint Arrow -->
+            <div id="scroll-hint" class="scroll-hint">
+                <div class="scroll-arrow">↓</div>
+                <div class="scroll-text">More problems below</div>
             </div>
         </div>
     </div>

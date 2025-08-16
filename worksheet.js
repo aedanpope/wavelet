@@ -3,6 +3,7 @@ let pyodide = null;
 let currentWorksheet = null;
 let codeEditors = []; // Array to hold multiple code editors
 let completedProblems = new Set();
+let hasScrolled = false; // Track if user has scrolled
 
 // Progress persistence functions
 function saveProgress(worksheetId) {
@@ -143,12 +144,21 @@ async function loadWorksheet(worksheetId) {
         
     } catch (error) {
         console.error('Error loading worksheet:', error);
+        // Hide loading overlay and show error
+        document.getElementById('loading-overlay').style.display = 'none';
+        document.getElementById('worksheet-interface').style.display = 'block';
         showError('Failed to load worksheet. Please try again.');
     }
 }
 
 // Show worksheet interface
 function showWorksheetInterface() {
+    // Hide loading overlay
+    document.getElementById('loading-overlay').style.display = 'none';
+    
+    // Show worksheet interface
+    document.getElementById('worksheet-interface').style.display = 'block';
+    
     // Update worksheet info
     document.getElementById('worksheet-title').textContent = currentWorksheet.title;
     document.getElementById('worksheet-description').textContent = currentWorksheet.description;
@@ -192,6 +202,9 @@ function loadAllProblems() {
             });
         }
         
+        // Update progress bar after restoring saved state
+        updateProgress();
+        
         // Render LaTeX content in all problem elements
         currentWorksheet.problems.forEach((problem, index) => {
             const problemElement = document.getElementById(`problem-${index}`);
@@ -199,6 +212,11 @@ function loadAllProblems() {
                 renderLatexInElement(problemElement);
             }
         });
+        
+        // Show scroll hint if there are multiple problems
+        if (currentWorksheet.problems.length > 1) {
+            showScrollHint();
+        }
     }, 100);
 }
 
@@ -372,6 +390,11 @@ async function runCode(problemIndex) {
         if (isValid && !completedProblems.has(problemIndex)) {
             completedProblems.add(problemIndex);
             updateProgress();
+            
+            // Animate scroll hint if problem 1 is completed
+            if (problemIndex === 0 && !hasScrolled) {
+                animateScrollHint();
+            }
             
             // Check if all problems are completed
             if (completedProblems.size === currentWorksheet.problems.length) {
@@ -588,6 +611,39 @@ function setupEventListeners() {
             event.target.style.display = 'none';
         }
     };
+    
+    // Track scroll to hide scroll hint
+    window.addEventListener('scroll', function() {
+        if (!hasScrolled) {
+            hasScrolled = true;
+            hideScrollHint();
+        }
+    });
+}
+
+// Show scroll hint
+function showScrollHint() {
+    const scrollHint = document.getElementById('scroll-hint');
+    if (scrollHint && !hasScrolled) {
+        scrollHint.style.display = 'flex';
+    }
+}
+
+// Animate scroll hint
+function animateScrollHint() {
+    const scrollHint = document.getElementById('scroll-hint');
+    if (scrollHint && !hasScrolled) {
+        scrollHint.classList.add('animate');
+    }
+}
+
+// Hide scroll hint
+function hideScrollHint() {
+    const scrollHint = document.getElementById('scroll-hint');
+    if (scrollHint) {
+        scrollHint.style.display = 'none';
+        scrollHint.classList.remove('animate');
+    }
 }
 
 // Show error message

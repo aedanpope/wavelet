@@ -23,8 +23,17 @@
 </head>
 <body>
     <div class="container">
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <h2>Loading Worksheets...</h2>
+                <p>Please wait while we load available worksheets</p>
+            </div>
+        </div>
+        
         <!-- Worksheet Selection Screen -->
-        <div id="worksheet-selection" class="worksheet-selection">
+        <div id="worksheet-selection" class="worksheet-selection" style="display: none;">
             <header>
                 <h1>🐍 Python Learning Platform</h1>
                 <p>Choose a worksheet to get started with Python programming!</p>

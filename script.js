@@ -24,6 +24,9 @@ async function loadWorksheets() {
         worksheets = data.worksheets;
     } catch (error) {
         console.error('Error loading worksheets:', error);
+        // Hide loading overlay and show error
+        document.getElementById('loading-overlay').style.display = 'none';
+        document.getElementById('worksheet-selection').style.display = 'block';
         throw new Error('Failed to load worksheets');
     }
 }
@@ -32,6 +35,12 @@ async function loadWorksheets() {
 
 // Show worksheet selection screen
 function showWorksheetSelection() {
+    // Hide loading overlay
+    document.getElementById('loading-overlay').style.display = 'none';
+    
+    // Show worksheet selection
+    document.getElementById('worksheet-selection').style.display = 'block';
+    
     const grid = document.getElementById('worksheets-grid');
     grid.innerHTML = '';
     

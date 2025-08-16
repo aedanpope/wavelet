@@ -1,7 +1,3 @@
-- save progress in local browser session
-- reset individual problem button
-- reset whole worksheet progress btn
-- show loading while reading json
 - show scroll down hint around 1st problem, as it's not clear on ipad
 - hint when program has no output - "did you forget to print()"
 - hint when number wrong - "your program printed output, but the output value was wrong" expected vs actual
