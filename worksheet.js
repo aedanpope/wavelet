@@ -213,10 +213,7 @@ function loadAllProblems() {
             }
         });
         
-        // Show scroll hint if there are multiple problems
-        if (currentWorksheet.problems.length > 1) {
-            showScrollHint();
-        }
+        // Don't show scroll hint initially - only show after completing problem 1
     }, 100);
 }
 
@@ -391,8 +388,9 @@ async function runCode(problemIndex) {
             completedProblems.add(problemIndex);
             updateProgress();
             
-            // Animate scroll hint if problem 1 is completed
-            if (problemIndex === 0 && !hasScrolled) {
+            // Show and animate scroll hint if problem 1 is completed
+            if (problemIndex === 0 && !hasScrolled && currentWorksheet.problems.length > 1) {
+                showScrollHint();
                 animateScrollHint();
             }
             
