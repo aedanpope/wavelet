@@ -133,6 +133,26 @@ body {
     background: rgba(255, 255, 255, 0.3);
 }
 
+.start-over-btn {
+    background: #6c757d;
+    border: 2px solid #6c757d;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+}
+
+.start-over-btn:hover {
+    background: #5a6268;
+    border-color: #5a6268;
+    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.4);
+    transform: translateY(-1px);
+}
+
 .worksheet-info h1 {
     font-size: 1.8rem;
     margin-bottom: 5px;
@@ -339,13 +359,22 @@ body {
     gap: 10px;
 }
 
-.hint-btn, .run-btn {
+.hint-btn, .run-btn, .reset-btn {
     padding: 8px 16px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.9rem;
     transition: all 0.3s ease;
+}
+
+.reset-btn {
+    background: #6c757d;
+    color: white;
+}
+
+.reset-btn:hover {
+    background: #5a6268;
 }
 
 .hint-btn {

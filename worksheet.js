@@ -4,6 +4,72 @@ let currentWorksheet = null;
 let codeEditors = []; // Array to hold multiple code editors
 let completedProblems = new Set();
 
+// Progress persistence functions
+function saveProgress(worksheetId) {
+    try {
+        const allProgress = JSON.parse(localStorage.getItem('pythonProgress') || '{}');
+        const worksheetProgress = {
+            completedProblems: Array.from(completedProblems),
+            problems: []
+        };
+        
+        // Save state for each problem
+        currentWorksheet.problems.forEach((problem, index) => {
+            const codeEditor = codeEditors[index];
+            const outputElement = document.getElementById(`output-${index}`);
+            
+            let problemState = {
+                code: codeEditor ? codeEditor.getValue() : '',
+                completed: completedProblems.has(index)
+            };
+            
+            // Save output and status if available
+            if (outputElement && outputElement.innerHTML !== '') {
+                const outputContent = outputElement.querySelector('.output-content');
+                const outputMessage = outputElement.querySelector('.output-message');
+                
+                if (outputContent) {
+                    problemState.output = outputContent.textContent;
+                }
+                if (outputMessage) {
+                    problemState.message = outputMessage.textContent;
+                    problemState.status = outputElement.className.includes('success') ? 'success' : 
+                                        outputElement.className.includes('error') ? 'error' : 'normal';
+                }
+            }
+            
+            worksheetProgress.problems.push(problemState);
+        });
+        
+        allProgress[worksheetId] = worksheetProgress;
+        localStorage.setItem('pythonProgress', JSON.stringify(allProgress));
+    } catch (error) {
+        console.warn('Failed to save progress:', error);
+    }
+}
+
+function loadProgress(worksheetId) {
+    try {
+        const allProgress = JSON.parse(localStorage.getItem('pythonProgress') || '{}');
+        return allProgress[worksheetId] || null;
+    } catch (error) {
+        console.warn('Failed to load progress:', error);
+        return null;
+    }
+}
+
+function clearWorksheetProgress(worksheetId) {
+    try {
+        const allProgress = JSON.parse(localStorage.getItem('pythonProgress') || '{}');
+        delete allProgress[worksheetId];
+        localStorage.setItem('pythonProgress', JSON.stringify(allProgress));
+        location.reload();
+    } catch (error) {
+        console.warn('Failed to clear progress:', error);
+        location.reload();
+    }
+}
+
 // Initialize the application
 async function init() {
     try {
@@ -59,14 +125,21 @@ async function loadWorksheet(worksheetId) {
         const response = await fetch(`worksheets/${worksheet.file}?t=${Date.now()}`);
         currentWorksheet = await response.json();
         
-        // Reset progress
-        completedProblems.clear();
+        // Load saved progress
+        const savedProgress = loadProgress(worksheetId);
+        if (savedProgress) {
+            completedProblems = new Set(savedProgress.completedProblems || []);
+        } else {
+            completedProblems.clear();
+        }
         
         // Update page title
         document.title = `Python Learning Platform - ${currentWorksheet.title}`;
         
         // Show worksheet interface
         showWorksheetInterface();
+        
+
         
     } catch (error) {
         console.error('Error loading worksheet:', error);
@@ -98,6 +171,26 @@ function loadAllProblems() {
     // Initialize all code editors after DOM is ready
     setTimeout(() => {
         initAllCodeEditors();
+        
+        // Restore saved state if available
+        const savedProgress = loadProgress(currentWorksheet.id);
+        if (savedProgress && savedProgress.problems) {
+            savedProgress.problems.forEach((problemState, index) => {
+                // Restore code
+                if (codeEditors[index] && problemState.code) {
+                    codeEditors[index].setValue(problemState.code);
+                }
+                
+                // Restore output and status
+                if (problemState.output || problemState.message) {
+                    const outputElement = document.getElementById(`output-${index}`);
+                    if (outputElement) {
+                        displayOutput(outputElement, problemState.output || '', 
+                                   problemState.status || 'normal', problemState.message || null);
+                    }
+                }
+            });
+        }
         
         // Render LaTeX content in all problem elements
         currentWorksheet.problems.forEach((problem, index) => {
@@ -157,6 +250,7 @@ function createProblemElement(problem, index) {
                     <h4>Your Code</h4>
                     <div class="code-controls">
                         <button class="hint-btn" onclick="showHint(${index})">💡 Hint</button>
+                        <button class="reset-btn" onclick="resetProblem(${index})">🔄 Reset</button>
                     </div>
                 </div>
                 <div class="code-editor" id="code-editor-${index}"></div>
@@ -285,6 +379,9 @@ async function runCode(problemIndex) {
             }
         }
         
+        // Save progress after every run (success or failure)
+        saveProgress(currentWorksheet.id);
+        
     } catch (error) {
         const errorInfo = ErrorHandler.extractErrorInfo(error.message);
         displayOutput(output, errorInfo.fullMessage, 'error', '❌ There was an error running your code.');
@@ -310,6 +407,35 @@ function displayOutput(outputElement, content, type = 'normal', message = null) 
         messageDiv.className = `output-message ${type}`;
         messageDiv.textContent = message;
         outputElement.appendChild(messageDiv);
+    }
+}
+
+// Reset a specific problem to its default state
+function resetProblem(problemIndex) {
+    if (confirm('Are you sure you want to reset this problem? This will clear your code and output.')) {
+        const problem = currentWorksheet.problems[problemIndex];
+        const codeEditor = codeEditors[problemIndex];
+        const outputElement = document.getElementById(`output-${problemIndex}`);
+        
+        // Reset code to starter code
+        if (codeEditor) {
+            codeEditor.setValue(problem.starterCode || '');
+        }
+        
+        // Clear output
+        if (outputElement) {
+            outputElement.innerHTML = '<div class="output-placeholder">Click "Run Code" to see your output here</div>';
+            outputElement.className = 'output';
+        }
+        
+        // Remove from completed problems if it was completed
+        if (completedProblems.has(problemIndex)) {
+            completedProblems.delete(problemIndex);
+            updateProgress();
+        }
+        
+        // Save progress after reset
+        saveProgress(currentWorksheet.id);
     }
 }
 
@@ -416,6 +542,13 @@ function setupEventListeners() {
     // Back to selection
     document.getElementById('back-to-selection').onclick = () => {
         window.location.href = 'index.html';
+    };
+    
+    // Start over button
+    document.getElementById('start-over').onclick = () => {
+        if (confirm('Are you sure you want to start over? This will clear your progress for this worksheet.')) {
+            clearWorksheetProgress(currentWorksheet.id);
+        }
     };
     
     // Modal close buttons
