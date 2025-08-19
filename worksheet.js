@@ -389,7 +389,7 @@ async function runCode(problemIndex) {
             updateProgress();
             
             // Show and animate scroll hint if problem 1 is completed
-            if (problemIndex === 0 && !hasScrolled && currentWorksheet.problems.length > 1) {
+            if (problemIndex === 0 && currentWorksheet.problems.length > 1) {
                 showScrollHint();
                 animateScrollHint();
             }
@@ -622,7 +622,7 @@ function setupEventListeners() {
 // Show scroll hint
 function showScrollHint() {
     const scrollHint = document.getElementById('scroll-hint');
-    if (scrollHint && !hasScrolled) {
+    if (scrollHint) {
         scrollHint.style.display = 'flex';
     }
 }
@@ -630,7 +630,7 @@ function showScrollHint() {
 // Animate scroll hint
 function animateScrollHint() {
     const scrollHint = document.getElementById('scroll-hint');
-    if (scrollHint && !hasScrolled) {
+    if (scrollHint) {
         scrollHint.classList.add('animate');
     }
 }
