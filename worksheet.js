@@ -113,8 +113,13 @@ async function initPyodide() {
 // Load a specific worksheet
 async function loadWorksheet(worksheetId) {
     try {
+        // Detect dev mode and load appropriate index file
+        const isDevMode = window.location.pathname.includes('/dev/');
+        const basePath = isDevMode ? '../' : '';
+        const indexFile = isDevMode ? 'worksheets/dev-index.json' : 'worksheets/index.json';
+        
         // First, load the worksheets index to find the worksheet file
-        const indexResponse = await fetch('worksheets/index.json?t=' + Date.now());
+        const indexResponse = await fetch(basePath + indexFile + '?t=' + Date.now());
         const indexData = await indexResponse.json();
         
         const worksheet = indexData.worksheets.find(w => w.id === worksheetId);
@@ -123,7 +128,7 @@ async function loadWorksheet(worksheetId) {
         }
         
         // Load worksheet data
-        const response = await fetch(`worksheets/${worksheet.file}?t=${Date.now()}`);
+        const response = await fetch(`${basePath}worksheets/${worksheet.file}?t=${Date.now()}`);
         currentWorksheet = await response.json();
         
         // Load saved progress
