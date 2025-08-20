@@ -1,8 +1,12 @@
-# Python Learning Platform
+# Wavelet Zone - Interactive Python Learning Platform
 
-An innovative web-based Python learning platform designed specifically for upper primary students. The platform uses a unique "worksheet" approach with carefully balanced problem difficulty levels to ensure all students can make meaningful progress.
+**Wavelet Zone** is an innovative web-based Python learning platform designed specifically for upper primary students. The platform uses a unique "worksheet" approach with carefully balanced problem difficulty levels to ensure all students can make meaningful progress in their programming journey.
 
 🌐 **Live App**: [https://wavelet.zone/](https://wavelet.zone/)
+
+## About Wavelet Zone
+
+Wavelet Zone provides a comprehensive Python learning experience through interactive worksheets and real-time code execution. Our platform makes learning Python accessible, engaging, and effective for students of all skill levels.
 
 ## Key Features
 
@@ -16,7 +20,7 @@ An innovative web-based Python learning platform designed specifically for upper
 
 ## Educational Approach
 
-The platform addresses key limitations of traditional programming courses:
+The Wavelet Zone platform addresses key limitations of traditional programming courses:
 - **Multiple Practice Opportunities**: Unlike single-concept repetition
 - **Non-Linear Learning**: Students can work on different difficulty levels within the same worksheet
 - **Always Accessible**: Students always have problems they can solve, preventing frustration
@@ -24,14 +28,14 @@ The platform addresses key limitations of traditional programming courses:
 
 ## Learning Progression
 
-The curriculum follows a carefully designed progression where Worksheets 1-4 focus exclusively on numerical programming without string complexity, allowing students to build solid fundamentals while creating engaging interactive programs. Only after mastering core concepts do students encounter strings in Worksheet 5, introduced in a simplified manner that avoids common pitfalls and unnecessary complexity.
+The Wavelet Zone curriculum follows a carefully designed progression where Worksheets 1-4 focus exclusively on numerical programming without string complexity, allowing students to build solid fundamentals while creating engaging interactive programs. Only after mastering core concepts do students encounter strings in Worksheet 5, introduced in a simplified manner that avoids common pitfalls and unnecessary complexity.
 
 For detailed descriptions of each worksheet, see [WORKSHEETS.md](WORKSHEETS.md).
 
 ## Quick Start
 
 ### For Students
-1. Open the platform in your web browser
+1. Open Wavelet Zone in your web browser [https://wavelet.zone/](https://wavelet.zone/)
 2. Choose a worksheet from the selection screen
 3. Read the problem explanation and task
 4. Write your Python code in the editor
@@ -81,3 +85,5 @@ This software is for personal use only and is not to be copied, modified, or dis
 ---
 
 **Happy Coding! 🐍**
+
+*Wavelet Zone - Making Python Learning Accessible and Engaging*
