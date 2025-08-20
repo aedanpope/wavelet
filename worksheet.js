@@ -293,14 +293,14 @@ function initAllCodeEditors() {
             mode: 'python',
             theme: 'monokai',
             lineNumbers: true,
-            indentUnit: 4,
-            tabSize: 4,
+            indentUnit: 2,
+            tabSize: 2,
             lineWrapping: true,
             autoCloseBrackets: true,
             matchBrackets: true,
             extraKeys: {
                 "Tab": function(cm) {
-                    cm.replaceSelection("    ", "end");
+                    cm.replaceSelection("  ", "end");
                 }
             }
         });
