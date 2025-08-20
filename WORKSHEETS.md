@@ -91,8 +91,11 @@ The progression builds from simple variable assignment to creating fun interacti
 _Learn to use for loops to repeat actions and create cool visual patterns and fun programs._
 
 This worksheet introduces iteration through for loops, a powerful programming concept that allows students to repeat code blocks and create exciting visual outputs. Students learn to:
-- Use `for` loops with the `range()` function
+- Understand basic primitive lists
+- Use `for` loops to enumerate lists
+- Use the `range()` function to generate lists
 - Understand loop counters and iteration
+- Combine `range()` with for-loops to create longer & more dynamic outputs
 - Create fun visual patterns using repeated print statements
 - Perform repeated calculations and operations
 - Combine loops with variables and arithmetic
