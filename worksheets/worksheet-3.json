@@ -7,6 +7,7 @@
         "title": "The problem with repetition",
         "content": "Sometimes we want to do the same thing over and over. Typing it all out is a lot of work!",
         "task": "Run this code to see 'Hello' printed five times.",
+        "codeHeight": 5,
         "starterCode": "print(\"Hello\")\nprint(\"Hello\")\nprint(\"Hello\")\nprint(\"Hello\")\nprint(\"Hello\")",
         "hint": "Just press the 'Run Code' button to see the output.",
         "validation": { "rules": [{ "type": "output_line_count", "minLines": 5 }] }
@@ -135,6 +136,7 @@
         "title": "Summing numbers",
         "content": "Loops can be used to add up a list of numbers. We use a variable (here, `total`) to keep track of the sum as we go.",
         "task": "Run this code to calculate the sum of numbers from 1 to 5.",
+        "codeHeight": 5,
         "starterCode": "total = 0\nfor i in range(1, 6):\n    total = total + i\nprint(total)",
         "hint": "Watch how `total` grows with each loop: 0+1=1, then 1+2=3, then 3+3=6, and so on.",
         "validation": { "rules": [{ "type": "output_contains", "pattern": "15" }] }
@@ -151,6 +153,7 @@
         "title": "Challenge: Even numbers",
         "content": "You can use the 'step' in `range()` to skip numbers.",
         "task": "Write a program that prints all the even numbers from 2 to 20.",
+        "codeHeight": 5,
         "starterCode": "",
         "hint": "Use `range(2, 21, 2)`. This means: start at 2, end before 21, and count in steps of 2.",
         "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in range(2, 21, 2):\n    print(i)" }] }
@@ -159,6 +162,7 @@
         "title": "Interactive loops",
         "content": "Let's combine loops with user input from Worksheet 2! Now you can decide how many times the loop runs.",
         "task": "Enter a number in the input box and run the code to count up to it.",
+        "codeHeight": 4,
         "inputs": [{ "name": "limit", "label": "Enter a number:", "type": "number" }],
         "starterCode": "limit = get_input()\nfor i in range(limit):\n    print(i)",
         "hint": "The number you enter is stored in the `limit` variable, which is then used by `range()`.",
@@ -168,6 +172,7 @@
         "title": "Interactive times table",
         "content": "Now you can build your own times table generator.",
         "task": "Write a program that asks for a number, then prints its times table from 1 to 10.",
+        "codeHeight": 4,
         "inputs": [{ "name": "num", "label": "Which times table?", "type": "number" }],
         "starterCode": "n = get_input()",
         "hint": "You'll need a `for` loop from 1 to 11. Inside the loop, print `i * n`.",
@@ -177,6 +182,7 @@
         "title": "Interactive pattern maker",
         "content": "Let's let the user decide the size of our star pattern.",
         "task": "Write a program that asks for a size, then draws a triangle of that height.",
+        "codeHeight": 5,
         "inputs": [{ "name": "size", "label": "Enter triangle size:", "type": "number" }],
         "starterCode": "",
         "hint": "Get the input and store it in a variable called `size`. Use that variable in your `range()` like `range(1, size + 1)`.",
@@ -186,6 +192,7 @@
         "title": "Interactive sum calculator",
         "content": "Let's make our summing program interactive.",
         "task": "Ask the user for a number `n`, then calculate the sum of all numbers from 1 to `n`.",
+        "codeHeight": 6,
         "inputs": [{ "name": "n", "label": "Enter a number:", "type": "number" }],
         "starterCode": "n = get_input()\ntotal = 0\n# Your loop here\nprint(total)",
         "hint": "You need a loop that uses `range(1, n + 1)`.",
@@ -195,6 +202,7 @@
         "title": "Challenge: The Product",
         "content": "Multiplying a series of numbers is called finding the 'product'.",
         "task": "Modify the summing code to find the product of numbers from 1 to 5. What happens if `total` starts at 0?",
+        "codeHeight": 5,
         "starterCode": "total = 0\nfor i in range(1, 6):\n    total = total + i\nprint(total)",
         "hint": "You'll need to change the starting value of `total` to 1, and change the `+` to a `*`.",
         "validation": { "rules": [{ "type": "code_contains", "pattern": "total = 1" }, { "type": "output_contains", "pattern": "120" }] }
