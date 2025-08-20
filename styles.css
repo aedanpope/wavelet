@@ -869,3 +869,36 @@ code {
     margin: 10px 0;
     border: 1px solid #f5c6cb;
 }
+
+/* Development Banner */
+.dev-banner {
+    background: linear-gradient(135deg, #ff6b6b, #ffa500);
+    color: white;
+    text-align: center;
+    padding: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
+    position: relative;
+    z-index: 100;
+}
+
+.dev-banner span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Experimental Badge */
+.experimental-badge {
+    background: linear-gradient(135deg, #ff6b6b, #ffa500);
+    color: white;
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    margin-left: 8px;
+    display: inline-block;
+    vertical-align: middle;
+    box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
+}

@@ -1,5 +1,6 @@
 // Global variables
 let worksheets = [];
+const isDevMode = window.location.pathname.includes('/dev/');
 
 // Initialize the application
 async function init() {
@@ -16,10 +17,12 @@ async function init() {
     }
 }
 
-// Load worksheets from the index file
+// Load worksheets from the appropriate index file
 async function loadWorksheets() {
     try {
-        const response = await fetch('worksheets/index.json?t=' + Date.now());
+        const basePath = isDevMode ? '../' : '';
+        const indexFile = isDevMode ? 'worksheets/dev-index.json' : 'worksheets/index.json';
+        const response = await fetch(basePath + indexFile + '?t=' + Date.now());
         const data = await response.json();
         worksheets = data.worksheets;
     } catch (error) {
@@ -30,8 +33,6 @@ async function loadWorksheets() {
         throw new Error('Failed to load worksheets');
     }
 }
-
-
 
 // Show worksheet selection screen
 function showWorksheetSelection() {
@@ -54,21 +55,22 @@ function showWorksheetSelection() {
 function createWorksheetCard(worksheet) {
     const card = document.createElement('a');
     card.className = 'worksheet-card';
-    card.href = `worksheet.html?id=${worksheet.id}`;
+    
+    // Adjust href based on dev mode
+    const basePath = isDevMode ? '../' : '';
+    card.href = `${basePath}worksheet.html?id=${worksheet.id}`;
+    
+    // Add dev indicator for experimental worksheets in dev mode
+    const isExperimental = isDevMode && worksheet.id === 'worksheet-3';
+    const experimentalBadge = isExperimental ? '<span class="experimental-badge">🚧 Experimental</span>' : '';
     
     card.innerHTML = `
-        <h3>${worksheet.title}</h3>
+        <h3>${worksheet.title} ${experimentalBadge}</h3>
         <p>${worksheet.description}</p>
     `;
     
     return card;
 }
-
-
-
-
-
-
 
 // Show error message
 function showError(message) {

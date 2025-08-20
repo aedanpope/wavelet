@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Learning Platform - Development Version</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
+    <link rel="stylesheet" href="../styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Development Banner -->
+        <div class="dev-banner">
+            <span>🚧 Development Version - Includes experimental worksheets</span>
+        </div>
+        
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <h2>Loading Worksheets...</h2>
+                <p>Please wait while we load available worksheets</p>
+            </div>
+        </div>
+        
+        <!-- Worksheet Selection Screen -->
+        <div id="worksheet-selection" class="worksheet-selection" style="display: none;">
+            <header>
+                <h1>🐍 Python Learning Platform</h1>
+                <p>Choose a worksheet to get started with Python programming!</p>
+            </header>
+            
+            <div class="worksheets-grid" id="worksheets-grid">
+                <!-- Worksheets will be loaded here dynamically -->
+            </div>
+        </div>
+
+
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script src="../error-handler.js"></script>
+    <script src="../validation.js"></script>
+    <script src="../script.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "worksheets": [
+    {
+      "id": "worksheet-1",
+      "title": "Worksheet 1: The Python Calculator",
+      "description": "Learn to use Python for basic arithmetic with the print() function.",
+      "file": "worksheet-1.json"
+    },
+    {
+      "id": "worksheet-2",
+      "title": "Worksheet 2: Storing Your Numbers",
+      "description": "Learn to use variables to store and manipulate data in Python.",
+      "file": "worksheet-2.json"
+    },
+    {
+      "id": "worksheet-3",
+      "title": "Worksheet 3: Making Things Repeat",
+      "description": "Learn to use loops to repeat actions in Python.",
+      "file": "worksheet-3.json"
+    }
+  ],
+  "metadata": {
+    "version": "1.0-dev",
+    "lastUpdated": "2025-01-27",
+    "totalWorksheets": 3,
+    "environment": "development"
+  }
+}

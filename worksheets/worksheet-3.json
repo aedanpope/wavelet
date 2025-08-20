@@ -1,0 +1,216 @@
+{
+    "id": "worksheet-3",
+    "title": "Worksheet 3: Making Things Repeat",
+    "description": "Learn to use for loops to repeat actions and create cool visual patterns and fun programs.",
+    "problems": [
+      {
+        "title": "The problem with repetition",
+        "content": "Sometimes we want to do the same thing over and over. Typing it all out is a lot of work!",
+        "task": "Run this code to see 'Hello' printed five times.",
+        "starterCode": "print(\"Hello\")\nprint(\"Hello\")\nprint(\"Hello\")\nprint(\"Hello\")\nprint(\"Hello\")",
+        "hint": "Just press the 'Run Code' button to see the output.",
+        "validation": { "rules": [{ "type": "output_line_count", "minLines": 5 }] }
+      },
+      {
+        "title": "A better way: the for loop",
+        "content": "A `for` loop is a special command that repeats a block of code. Here, the code `print(\"Hello\")` is run for each number in the list `[1, 2, 3, 4, 5]`.",
+        "task": "Run the code to see the loop in action.",
+        "starterCode": "for i in [1, 2, 3, 4, 5]:\n    print(\"Hello\")",
+        "hint": "The loop does the hard work of repeating the print command for you.",
+        "validation": { "rules": [{ "type": "output_contains", "pattern": "Hello" }, { "type": "output_line_count", "minLines": 5 }] }
+      },
+      {
+        "title": "Modify the loop",
+        "content": "The list in the `for` loop controls how many times it repeats.",
+        "task": "Edit the list so the loop only repeats three times.",
+        "starterCode": "for i in [1, 2, 3, 4, 5]:\n    print(\"Repeating!\")",
+        "hint": "Make the list shorter! It should only contain three numbers, like `[1, 2, 3]`.",
+        "validation": { "rules": [{ "type": "output_contains", "pattern": "Repeating!\nRepeating!\nRepeating!\n" }] }
+      },
+      {
+        "title": "Meet the loop variable",
+        "content": "The variable in the loop (we called it `number` here) holds the value of each item in the list, one by one.",
+        "task": "Run the code to see how the `number` variable changes on each repetition.",
+        "starterCode": "for number in [1, 2, 3]:\n    print(number)",
+        "hint": "The loop will first set number to 1 and print it, then 2, then 3.",
+        "validation": { "rules": [{ "type": "output_contains", "pattern": "1\n2\n3" }] }
+      },
+      {
+        "title": "Printing different numbers",
+        "content": "You can put any numbers you want in the list.",
+        "task": "Modify the list to print the numbers 5, 10, and 15.",
+        "starterCode": "for number in [1, 2, 3]:\n    print(number)",
+        "hint": "Change the numbers inside the square brackets `[]`.",
+        "validation": { "rules": [{ "type": "output_contains", "pattern": "5\n10\n15" }] }
+      },
+      {
+        "title": "Write your first loop",
+        "content": "Now it's your turn to write a loop from the beginning.",
+        "task": "Write a `for` loop that prints the numbers 1, 3, and 5.",
+        "starterCode": "",
+        "hint": "Start with `for num in [1, 3, 5]:` and then add the print statement on the next line.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for num in [1, 3, 5]:\n    print(num)" }] }
+      },
+      {
+        "title": "Looping over words",
+        "content": "Lists can hold words (strings) too, not just numbers.",
+        "task": "Run the code to see how the loop prints each word from the list.",
+        "starterCode": "for word in [\"I\", \"am\", \"learning\"]:\n    print(word)",
+        "hint": "The `word` variable will be \"I\", then \"am\", then \"learning\".",
+        "validation": { "rules": [{ "type": "output_contains", "pattern": "I\nam\nlearning" }] }
+      },
+      {
+        "title": "A shortcut: range()",
+        "content": "Typing out long lists of numbers is boring. The `range()` function is a shortcut to create a sequence of numbers.",
+        "task": "Run this code. Notice that `range(5)` creates numbers from 0 up to 4.",
+        "starterCode": "for i in range(5):\n    print(i)",
+        "hint": "Computer scientists often start counting from 0!",
+        "validation": { "rules": [{ "type": "output_contains", "pattern": "0\n1\n2\n3\n4" }] }
+      },
+      {
+        "title": "Modify the range",
+        "content": "You can change the number inside `range()` to create a longer or shorter sequence.",
+        "task": "Edit the code to print the numbers from 0 up to 9.",
+        "starterCode": "for i in range(5):\n    print(i)",
+        "hint": "What number should you put inside `range()` to get 10 numbers (0 to 9)?",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in range(10): print(i)" }] }
+      },
+      {
+        "title": "Write a loop with range",
+        "content": "Let's practice writing a loop with `range()` from scratch.",
+        "task": "Write a program that prints the numbers from 0 up to 6.",
+        "starterCode": "",
+        "hint": "You'll need `range(7)` to get numbers from 0 to 6.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in range(7): print(i)" }] }
+      },
+      {
+        "title": "Setting a start point",
+        "content": "`range()` can also take a starting number. `range(1, 6)` starts at 1 and ends at 5.",
+        "task": "Run the code to see how it prints numbers from 1 to 5.",
+        "starterCode": "for i in range(1, 6):\n    print(i)",
+        "hint": "The first number is where to start, the second number is where to stop (before reaching it).",
+        "validation": { "rules": [{ "type": "output_contains", "pattern": "1\n2\n3\n4\n5" }] }
+      },
+      {
+        "title": "Modify the start and stop",
+        "content": "You can choose any start and stop point you like.",
+        "task": "Edit the `range()` to print the numbers from 5 up to 10.",
+        "starterCode": "for i in range(1, 6):\n    print(i)",
+        "hint": "The range should be `range(5, 11)` to include 10.",
+        "validation": { "rules": [{ "type": "code_contains", "pattern": "range(5, 11)" }, { "type": "output_contains", "pattern": "5\n6\n7\n8\n9\n10" }] }
+      },
+      {
+        "title": "Write your own range",
+        "content": "Practice makes perfect! Write another loop with a start and stop.",
+        "task": "Write a program that prints all the whole numbers from 10 to 20.",
+        "starterCode": "",
+        "hint": "Remember, the stop number needs to be one higher than the last number you want.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in range(10, 21): print(i)" }] }
+      },
+      {
+        "title": "Loops and calculations",
+        "content": "You can do math inside a loop! Let's create the 5 times table.",
+        "task": "Run the code to see the 5 times table printed out.",
+        "starterCode": "for i in range(1, 11):\n    print(i * 5)",
+        "hint": "Each number from 1 to 10 is multiplied by 5.",
+        "validation": { "rules": [{ "type": "output_contains", "pattern": "5\n10\n15\n20\n25\n30\n35\n40\n45\n50" }] }
+      },
+      {
+        "title": "Creating patterns",
+        "content": "Loops are great for drawing simple patterns. In Python, multiplying a string (like \"*\") by a number repeats it.",
+        "task": "Run the code to draw a simple triangle.",
+        "starterCode": "for i in range(1, 6):\n    print(\"*\" * i)",
+        "hint": "First the loop prints one star, then two, then three, and so on.",
+        "validation": { "rules": [{ "type": "output_contains", "pattern": "*\n**\n***\n****\n*****" }] }
+      },
+      {
+        "title": "Modify the pattern",
+        "content": "You can use any character to create your pattern.",
+        "task": "Change the character from a star `*` to a hash `#`.",
+        "starterCode": "for i in range(1, 6):\n    print(\"*\" * i)",
+        "hint": "Just replace the `*` inside the `print()` function.",
+        "validation": { "rules": [{ "type": "code_contains", "pattern": "for" }, { "type": "solution_code", "solutionCode": "for i in range(1, 6): print('#'*i)" }] }
+      },
+      {
+        "title": "Summing numbers",
+        "content": "Loops can be used to add up a list of numbers. We use a variable (here, `total`) to keep track of the sum as we go.",
+        "task": "Run this code to calculate the sum of numbers from 1 to 5.",
+        "starterCode": "total = 0\nfor i in range(1, 6):\n    total = total + i\nprint(total)",
+        "hint": "Watch how `total` grows with each loop: 0+1=1, then 1+2=3, then 3+3=6, and so on.",
+        "validation": { "rules": [{ "type": "output_contains", "pattern": "15" }] }
+      },
+      {
+        "title": "Challenge: Countdown!",
+        "content": "`range()` can take a third number, called a 'step', to control how it counts. A negative step lets you count backwards!",
+        "task": "Run this code to see a countdown from 10 to 1.",
+        "starterCode": "for i in range(10, 0, -1):\n    print(i)\nprint(\"Blast off!\")",
+        "hint": "`range(10, 0, -1)` means: start at 10, go towards 0, and step by -1 each time.",
+        "validation": { "rules": [{ "type": "output_contains", "pattern": "10\n9\n8\n7\n6\n5\n4\n3\n2\n1\nBlast off!" }] }
+      },
+      {
+        "title": "Challenge: Even numbers",
+        "content": "You can use the 'step' in `range()` to skip numbers.",
+        "task": "Write a program that prints all the even numbers from 2 to 20.",
+        "starterCode": "",
+        "hint": "Use `range(2, 21, 2)`. This means: start at 2, end before 21, and count in steps of 2.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in range(2, 21, 2):\n    print(i)" }] }
+      },
+      {
+        "title": "Interactive loops",
+        "content": "Let's combine loops with user input from Worksheet 2! Now you can decide how many times the loop runs.",
+        "task": "Enter a number in the input box and run the code to count up to it.",
+        "inputs": [{ "name": "limit", "label": "Enter a number:", "type": "number" }],
+        "starterCode": "limit = get_input()\nfor i in range(limit):\n    print(i)",
+        "hint": "The number you enter is stored in the `limit` variable, which is then used by `range()`.",
+        "validation": { "rules": [{ "type": "code_contains", "pattern": "get_input" }, { "type": "code_contains", "pattern": "range(limit)" }] }
+      },
+      {
+        "title": "Interactive times table",
+        "content": "Now you can build your own times table generator.",
+        "task": "Write a program that asks for a number, then prints its times table from 1 to 10.",
+        "inputs": [{ "name": "num", "label": "Which times table?", "type": "number" }],
+        "starterCode": "n = get_input()",
+        "hint": "You'll need a `for` loop from 1 to 11. Inside the loop, print `i * n`.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "n = get_input()\nfor i in range(1, 11):\n    print(i * n)" }] }
+      },
+      {
+        "title": "Interactive pattern maker",
+        "content": "Let's let the user decide the size of our star pattern.",
+        "task": "Write a program that asks for a size, then draws a triangle of that height.",
+        "inputs": [{ "name": "size", "label": "Enter triangle size:", "type": "number" }],
+        "starterCode": "",
+        "hint": "Get the input and store it in a variable called `size`. Use that variable in your `range()` like `range(1, size + 1)`.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "size = get_input()\nfor i in range(1, size + 1):\n    print('*' * i)" }] }
+      },
+      {
+        "title": "Interactive sum calculator",
+        "content": "Let's make our summing program interactive.",
+        "task": "Ask the user for a number `n`, then calculate the sum of all numbers from 1 to `n`.",
+        "inputs": [{ "name": "n", "label": "Enter a number:", "type": "number" }],
+        "starterCode": "n = get_input()\ntotal = 0\n# Your loop here\nprint(total)",
+        "hint": "You need a loop that uses `range(1, n + 1)`.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "n = get_input()\ntotal = 0\nfor i in range(1, n + 1):\n    total = total + i\nprint(total)" }] }
+      },
+      {
+        "title": "Challenge: The Product",
+        "content": "Multiplying a series of numbers is called finding the 'product'.",
+        "task": "Modify the summing code to find the product of numbers from 1 to 5. What happens if `total` starts at 0?",
+        "starterCode": "total = 0\nfor i in range(1, 6):\n    total = total + i\nprint(total)",
+        "hint": "You'll need to change the starting value of `total` to 1, and change the `+` to a `*`.",
+        "validation": { "rules": [{ "type": "code_contains", "pattern": "total = 1" }, { "type": "output_contains", "pattern": "120" }] }
+      },
+      {
+        "title": "Creative challenge",
+        "content": "Now it's your turn to be creative! Use loops and inputs to build something interesting.",
+        "task": "Create a program that takes at least one number as input and uses a `for` loop to do something cool. It could be a pattern, calculator, countdown, or something else. Show your teacher!",
+        "codeHeight": 8,
+        "inputs": [{ "name": "x", "label": "Enter a number:", "type": "number" }, { "name": "y", "label": "Enter a number:", "type": "number" }],
+        "starterCode": "x = get_input()\n",
+        "hint": "Try combining a countdown with a pattern, or make a calculator for something like `x * x * x`.",
+        "validation": { "rules": [{ "type": "code_contains", "pattern": "for " }, { "type": "output_not_empty" }] }
+      }
+    ],
+    "metadata": {
+      "created": "2025-08-20"
+    }
+  }
