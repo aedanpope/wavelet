@@ -530,10 +530,12 @@ body {
     font-size: 13px;
     line-height: 1.6;
     min-height: 120px;
+    max-height: 400px; /* 20 lines * 20px line height */
     white-space: pre-wrap;
     border: none;
     position: relative;
     overflow-x: auto;
+    overflow-y: auto;
 }
 
 .output:empty::before {
@@ -616,6 +618,26 @@ body {
     color: #4a5568;
     font-style: italic;
     animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Truncation indicator */
+.output-truncated {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.output-truncated::before {
+    content: "⚠️";
+    font-size: 14px;
 }
 
 /* Responsive output */

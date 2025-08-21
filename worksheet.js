@@ -413,11 +413,29 @@ function displayOutput(outputElement, content, type = 'normal', message = null) 
     outputElement.className = `output ${type}`;
     
     if (content.trim()) {
+        // Truncate content after 1000 lines to prevent browser crashes
+        const lines = content.split('\n');
+        let truncatedContent = content;
+        let isTruncated = false;
+        
+        if (lines.length > 1000) {
+            truncatedContent = lines.slice(0, 1000).join('\n');
+            isTruncated = true;
+        }
+        
         // Show raw output content
         const contentDiv = document.createElement('div');
         contentDiv.className = 'output-content';
-        contentDiv.textContent = content;
+        contentDiv.textContent = truncatedContent;
         outputElement.appendChild(contentDiv);
+        
+        // Add truncation warning if content was truncated
+        if (isTruncated) {
+            const truncationDiv = document.createElement('div');
+            truncationDiv.className = 'output-truncated';
+            truncationDiv.textContent = `Output truncated after 1000 lines (${lines.length} total lines). This prevents browser crashes.`;
+            outputElement.appendChild(truncationDiv);
+        }
     }
     
     if (message) {

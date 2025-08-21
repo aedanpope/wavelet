@@ -72,6 +72,15 @@ async function validateAnswer(code, output, problem, problemIndex) {
 function generateHelpfulErrorMessage(code, output, problem, failedRule) {
     const outputTrimmed = output.trim();
     
+    // Check if the failed rule has a custom message
+    if (failedRule && failedRule.message) {
+        return {
+            isValid: false,
+            errorType: 'custom_message',
+            message: '❌ ' + failedRule.message
+        };
+    }
+    
     // Check for missing output when there should be some
     if (!outputTrimmed) {
         // Only suggest print() if there's an expected output rule
