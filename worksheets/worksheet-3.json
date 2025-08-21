@@ -14,7 +14,7 @@
       },
       {
         "title": "A better way: the for loop",
-        "content": "A `for` loop is a special command that repeats a block of code. Here, the code `print('Hello')` is run for each number in the list `[1, 2, 3, 4, 5]`.",
+        "content": "A <code>for</code> loop is a special command that repeats a block of code. Here, the code <code>print('Hello')</code> is run for each number in the list `[1, 2, 3, 4, 5]`.",
         "task": "Run the code to see the loop in action.",
         "starterCode": "for i in [1, 2, 3, 4, 5]:\n  print('Hello')",
         "hint": "The loop does the hard work of repeating the print command for you.",
@@ -26,7 +26,7 @@
         "task": "Edit the list so the loop only repeats three times.",
         "starterCode": "for i in [1, 2, 3, 4, 5]:\n  print('Repeating!')",
         "hint": "Make the list shorter! It should only contain three numbers, like `[1, 2, 3]`.",
-        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for _ in [1, 2, 3]: print('Repeating!')" }] }
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in [1, 2, 3]: print('Repeating!')" }] }
       },
       {
         "title": "Meet the loop variable",
@@ -37,7 +37,7 @@
         "validation": { "rules": [{ "type": "output_contains", "pattern": "1\n2\n3" }] }
       },
       {
-        "title": "Printing different numbers",
+        "title": "Your Own Number Sequence",
         "content": "You can put any numbers you want in the list.",
         "task": "Modify the list to print the numbers 5, 10, and 15.",
         "starterCode": "for number in [1, 2, 3]:\n  print(number)",
@@ -46,8 +46,8 @@
       },
       {
         "title": "Indentation matters!",
-        "content": "In Python, indentation (the spaces at the beginning of lines) is very important. It tells Python which lines belong inside the loop. Run the code first to see what happens!",
-        "task": "<p>First run the code and notice how many times 'and' is printed.</p><p>We want to print '1 and 2 and 3 and' instead.</p><p>Fix the indentation on the second print statement so both print statements are inside the loop. You need to add two spaces in front of the second print statement.</p>",
+        "content": "<p>In Python, indentation (the spaces at the beginning of lines) is very important. It tells Python which lines belong inside the loop.</p><p>Think of it like a recipe. The <code>for</code> loop is like a heading, for example 'To make the icing:', and all the indented lines are the steps that belong to that heading</p>",
+        "task": "<p>First run the code and notice how many times 'and' is printed.</p><p>We want to print '1 and 2 and 3 and' instead.</p><p>Add spaces in front of the second print statement so that it lines up perfectly under the first one.</p>",
         "starterCode": "for i in [1, 2, 3]:\n  print(i)\nprint('and')",
         "hint": "Both print statements should have the same indentation (2 spaces) to be inside the loop. The second print statement needs to be indented like the first one.",
         "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in [1, 2, 3]:\n  print(i)\n  print('and')" }] }
@@ -81,7 +81,7 @@
         "content": "You can change the number inside `range()` to create a longer or shorter sequence.",
         "task": "Edit the code to print the numbers from 0 up to 9.",
         "starterCode": "for i in range(5):\n  print(i)",
-        "hint": "What number should you put inside `range()` to get 10 numbers (0 to 9)? The range() function stops before the last number so you need to put 1 more than 9.",
+        "hint": "What number should you put inside `range()` to get 10 numbers (0 to 9)? The range() function stops <b>before</b> the number you give it, so you always need to go one number higher than the last number you want.",
         "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in range(10): print(i)" }] }
       },
       {
@@ -201,10 +201,10 @@
       {
         "title": "Challenge: The Product",
         "content": "Multiplying a series of numbers is called finding the 'product'.",
-        "task": "Modify the summing code to find the product of numbers from 1 to 5. What happens if `total` starts at 0?",
+        "task": "Modify this summing code to instead find the product of numbers from 1 to 5. What happens if `total` starts at 0?",
         "codeHeight": 5,
         "starterCode": "total = 0\nfor i in range(1, 6):\n  total = total + i\nprint(total)",
-        "hint": "You'll need to change the starting value of `total` to 1, and change the `+` to a `*`.",
+        "hint": "The task asks what happens if total starts at 0. After you change the <code>+</code> to a <code>*</code>, try running it to see the problem for yourself. What must the starting value be so that multiplying by it doesn't always result in zero?",
         "validation": { "rules": [{ "type": "code_contains", "pattern": "total = 1" }, { "type": "output_contains", "pattern": "120" }] }
       },
       {
@@ -213,8 +213,8 @@
         "task": "Create a program that takes at least one number as input and uses a `for` loop to do something cool. It could be a pattern, calculator, countdown, or something else. Show your teacher!",
         "codeHeight": 8,
         "inputs": [{ "name": "x", "label": "Enter a number:", "type": "number" }, { "name": "y", "label": "Enter a number:", "type": "number" }],
-        "starterCode": "x = get_input()\n",
-        "hint": "Try combining a countdown with a pattern, or make a calculator for something like `x * x * x`.",
+        "starterCode": "x = get_input('x')\ny = get_input('y')\n",
+        "hint": "What could you do with the two user inputs? What happens with a loop inside a loop?",
         "validation": { "rules": [{ "type": "code_contains", "pattern": "for " }, { "type": "output_not_empty" }] }
       }
     ],
