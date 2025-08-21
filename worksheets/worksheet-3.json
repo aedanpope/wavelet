@@ -181,7 +181,7 @@
       {
         "title": "Challenge: Interactive sum calculator",
         "content": "Let's make our summing program interactive.",
-        "task": "<p>Ask the user for a number <code>n</code>, then calculate the sum of all numbers from 1 to <code>n</code>.</p><p>Try different user inputs and calculate the sums yourself to see where your code might be going wrong. For example, if the user enters 3, the output should be 1+2+3=6.</p>",
+        "task": "<p>Ask the user for a number n, then calculate the sum of all numbers from 1 to n.</p><p>Try different user inputs and calculate the sums yourself to see where your code might be going wrong. For example, if the user enters 3, the output should be 1+2+3=6.</p>",
         "codeHeight": 7,
         "inputs": [{ "name": "n", "label": "Enter a number:", "type": "number" }],
         "starterCode": "",
