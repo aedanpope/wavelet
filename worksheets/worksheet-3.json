@@ -46,7 +46,7 @@
       },
       {
         "title": "Indentation matters!",
-        "content": "<p>In Python, indentation (the spaces at the beginning of lines) is very important. It tells Python which lines belong inside the loop.</p><p>Think of it like a recipe. The <code>for</code> loop is like a heading, for example 'To make the icing:', and all the indented lines are the steps that belong to that heading</p>",
+        "content": "<p>In Python, indentation (the spaces at the beginning of lines) is very important. It tells Python which lines belong inside the loop.</p><p>Think of it like a recipe. The <code>for</code> loop is like a heading, for example 'To make the icing:', and all the indented lines are the steps that belong to that heading.</p>",
         "task": "<p>First run the code and notice how many times 'and' is printed.</p><p>Instead we want to output <code><br/>1<br/>and<br/>2<br/>and<br/>3<br/>and</code></p><p>Add spaces in front of the second print statement so that it lines up perfectly under the first one.</p>",
         "starterCode": "for i in [1, 2, 3]:\n  print(i)\nprint('and')",
         "hint": "Both print statements should have the same indentation (2 spaces) to be inside the loop. The second print statement needs to be indented like the first one.",
@@ -106,7 +106,7 @@
         "task": "Edit the <code>range()</code> to print the numbers from 5 up to 10.",
         "starterCode": "for i in range(1, 6):\n  print(i)",
         "hint": "The range should be <code>range(5, 11)</code> to include 10.",
-        "validation": { "rules": [{ "type": "code_contains", "pattern": "range(5, 11)" }, { "type": "output_contains", "pattern": "5\n6\n7\n8\n9\n10" }] }
+        "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "range\\(.*\\)", "message": "Your code needs to use the 'range()' function" }, { "type": "solution_code", "solutionCode": "for i in range(5, 11):\n  print(i)" }] }
       },
       {
         "title": "Write your own range",
@@ -114,7 +114,7 @@
         "task": "Write a program that prints all the whole numbers from 10 to 20.",
         "starterCode": "",
         "hint": "Remember, the stop number needs to be one higher than the last number you want.",
-        "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "for.*:", "message": "Your code needs to use a 'for' loop" }, { "type": "code_contains", "pattern": "range", "message": "Your code needs to use the 'range()' function" }, { "type": "solution_code", "solutionCode": "for i in range(10, 21): print(i)" }] }
+        "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "for.*:", "message": "Your code needs to use a 'for' loop" }, { "type": "code_contains_regex", "pattern": "range\\(.*\\)", "message": "Your code needs to use the 'range()' function" }, { "type": "solution_code", "solutionCode": "for i in range(10, 21): print(i)" }] }
       },
       {
         "title": "Interactive loops",
@@ -151,7 +151,7 @@
         "inputs": [{ "name": "num", "label": "Which times table?", "type": "number" }],
         "starterCode": "n = get_input()",
         "hint": "You'll need a <code>for</code> loop from 1 to 11. Inside the loop, you need to multiply the current number by the number the user entered.",
-        "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "for.*:", "message": "Your code needs to use a 'for' loop" }, { "type": "code_contains", "pattern": "range", "message": "Your code needs to use the 'range()' function" }, { "type": "solution_code", "solutionCode": "n = get_input()\nfor i in range(1, 11):\n  print(i * n)" }] }
+        "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "for.*:", "message": "Your code needs to use a 'for' loop" }, { "type": "code_contains_regex", "pattern": "range\\(.*\\)", "message": "Your code needs to use the 'range()' function" }, { "type": "solution_code", "solutionCode": "n = get_input()\nfor i in range(1, 11):\n  print(i * n)" }] }
       },
       {
         "title": "Creating patterns",
@@ -186,7 +186,7 @@
         "inputs": [{ "name": "n", "label": "Enter a number:", "type": "number" }],
         "starterCode": "",
         "hint": "You need a loop that uses <code>range(1, n + 1)</code>, and a variable like 'total' to keep track of the sum.",
-        "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "for.*:", "message": "Your code needs to use a 'for' loop" }, { "type": "code_contains", "pattern": "range", "message": "Your code needs to use the 'range()' function" }, { "type": "solution_code", "solutionCode": "n = get_input()\ntotal = 0\nfor i in range(1, n + 1):\n  total = total + i\nprint(total)" }] }
+        "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "for.*:", "message": "Your code needs to use a 'for' loop" }, { "type": "code_contains_regex", "pattern": "range\\(.*\\)", "message": "Your code needs to use the 'range()' function" }, { "type": "solution_code", "solutionCode": "n = get_input()\ntotal = 0\nfor i in range(1, n + 1):\n  total = total + i\nprint(total)" }] }
       },
       {
         "title": "Challenge: Interactive pattern maker",
@@ -196,7 +196,7 @@
         "inputs": [{ "name": "size", "label": "Enter triangle size:", "type": "number" }],
         "starterCode": "",
         "hint": "Get the input and store it in a variable called <code>size</code>. Use that variable in your <code>range()</code> like <code>range(1, size + 1)</code>.",
-        "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "for.*:", "message": "Your code needs to use a 'for' loop" }, { "type": "code_contains", "pattern": "range", "message": "Your code needs to use the 'range()' function" }, { "type": "solution_code", "solutionCode": "size = get_input()\nfor i in range(1, size + 1):\n  print('*' * i)" }] }
+        "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "for.*:", "message": "Your code needs to use a 'for' loop" }, { "type": "code_contains_regex", "pattern": "range\\(.*\\)", "message": "Your code needs to use the 'range()' function" }, { "type": "solution_code", "solutionCode": "size = get_input()\nfor i in range(1, size + 1):\n  print('*' * i)" }] }
       },
       {
         "title": "Challenge: The Product",
@@ -205,7 +205,7 @@
         "codeHeight": 5,
         "starterCode": "total = 0\nfor i in range(1, 6):\n  total = total + i\nprint(total)",
         "hint": "The task asks what happens if total starts at 0. After you change the <code>+</code> to a <code>*</code>, try running it to see the problem for yourself. What must the starting value be so that multiplying by it doesn't always result in zero?",
-        "validation": { "rules": [{ "type": "code_contains", "pattern": "total = 1" }, { "type": "output_contains", "pattern": "120" }] }
+        "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "for.*:", "message": "Your code needs to use a 'for' loop" }, { "type": "output_contains", "pattern": "120" }] }
       },
       {
         "title": "Creative challenge",
@@ -215,7 +215,7 @@
         "inputs": [{ "name": "x", "label": "Enter a number:", "type": "number" }, { "name": "y", "label": "Enter a number:", "type": "number" }],
         "starterCode": "x = get_input('x')\ny = get_input('y')\n",
         "hint": "What could you do with the two user inputs? What happens with a loop inside a loop?",
-        "validation": { "rules": [{ "type": "code_contains", "pattern": "for " }, { "type": "output_not_empty" }] }
+        "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "for.*:" }, { "type": "output_not_empty" }] }
       }
     ],
     "metadata": {
