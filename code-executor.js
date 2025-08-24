@@ -41,11 +41,16 @@ class CodeExecutor {
         let printOutput = '';
         outputElement.innerHTML = ''; // Clear previous output
         
+        // Create a text container for print output
+        const textContainer = document.createElement('div');
+        textContainer.className = 'output-text';
+        outputElement.appendChild(textContainer);
+        
         // Capture print output incrementally
         const originalPrint = this.pyodide.globals.get('print');
         this.pyodide.globals.set('print', function(...args) {
             const text = args.join(' ');
-            outputElement.textContent += text + '\n';
+            textContainer.textContent += text + '\n';
             printOutput += text + '\n';
         });
 

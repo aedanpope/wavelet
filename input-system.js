@@ -45,9 +45,18 @@ function createGetInputFunction(problem, problemIndex) {
     };
 }
 
-
-
-
+/**
+ * Sets up the get_input function in the Pyodide environment
+ * @param {Object} pyodide - The Pyodide instance
+ * @param {Object} problem - The problem configuration object
+ * @param {number} problemIndex - The index of the problem
+ */
+function setupGetInputFunction(pyodide, problem, problemIndex) {
+    if (problem.inputs && problem.inputs.length > 0) {
+        const getInputFunction = createGetInputFunction(problem, problemIndex);
+        pyodide.globals.set('get_input', getInputFunction);
+    }
+}
 
 /**
  * Creates the choice UI with numbered buttons
@@ -79,33 +88,12 @@ function createChoiceUI(problemIndex, n) {
     // Insert the choice UI into the output area
     const outputElement = document.getElementById(`output-${problemIndex}`);
     if (outputElement) {
-        // Find the output content area
-        let outputContent = outputElement.querySelector('.output-content');
-        if (!outputContent) {
-            // If no output content exists, create one
-            outputContent = document.createElement('div');
-            outputContent.className = 'output-content';
-            outputElement.appendChild(outputContent);
-        }
-        
-        // Add the choice UI to the output content
-        outputContent.appendChild(choiceContainer);
+        // Add the choice UI directly to the output element
+        // This will place it after any existing text content
+        outputElement.appendChild(choiceContainer);
     }
     
     return choiceContainer;
-}
-
-/**
- * Sets up the get_input function in the Pyodide environment
- * @param {Object} pyodide - The Pyodide instance
- * @param {Object} problem - The problem configuration object
- * @param {number} problemIndex - The index of the problem
- */
-function setupGetInputFunction(pyodide, problem, problemIndex) {
-    if (problem.inputs && problem.inputs.length > 0) {
-        const getInputFunction = createGetInputFunction(problem, problemIndex);
-        pyodide.globals.set('get_input', getInputFunction);
-    }
 }
 
 /**
