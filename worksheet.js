@@ -3,7 +3,6 @@ let pyodide = null;
 let currentWorksheet = null;
 let codeEditors = []; // Array to hold multiple code editors
 let completedProblems = new Set();
-let hasScrolled = false; // Track if user has scrolled
 
 // Progress persistence functions
 function saveProgress(worksheetId) {
@@ -627,10 +626,7 @@ function setupEventListeners() {
     
     // Track scroll to hide scroll hint
     window.addEventListener('scroll', function() {
-        if (!hasScrolled) {
-            hasScrolled = true;
-            hideScrollHint();
-        }
+        hideScrollHint();
     });
 }
 
