@@ -466,6 +466,61 @@ body {
     }
 }
 
+/* Choice Input System */
+.choice-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 10px;
+}
+
+.choice-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 60px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.choice-btn:hover {
+    background: #5a67d8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.choice-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.choice-btn.selected {
+    background: #28a745;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+/* Responsive design for choice buttons */
+@media (max-width: 768px) {
+    .choice-buttons {
+        justify-content: flex-start;
+        gap: 8px;
+    }
+    
+    .choice-btn {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+        min-width: 50px;
+    }
+}
+
 /* Run Code Button */
 .run-btn {
     background: #28a745;
@@ -605,12 +660,12 @@ body {
 .output.running::after {
     content: "Running...";
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 10px;
+    right: 10px;
     color: #4a5568;
     font-style: italic;
     animation: pulse 1.5s ease-in-out infinite;
+    z-index: 1;
 }
 
 /* Truncation indicator */

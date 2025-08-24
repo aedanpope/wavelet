@@ -1,0 +1,18 @@
+{
+  "id": "test-get-choice",
+  "title": "Test Get Choice Function",
+  "description": "A simple test to verify the get_choice function works correctly",
+  "difficulty": "easy",
+  "problems": [
+    {
+      "id": "test-choice-1",
+      "title": "Simple Choice Test",
+      "content": "This problem tests the basic get_choice function. You'll see two buttons and need to click one.",
+      "task": "Run the code and click one of the buttons that appear. The program will tell you which choice you made.",
+      "hint": "The get_choice(2) function will show you 2 buttons numbered 1 and 2.",
+      "codeHeight": 12,
+      "starterCode": "print(\"You see two doors.\")\nprint(\"Which door will you choose?\")\n\n# get_choice(2) will show 2 buttons\nchoice = get_choice(2)\n\nif choice == 1:\n    print(\"You chose door 1!\")\nelse:\n    print(\"You chose door 2!\")\n\nprint(f\"The get_choice function returned: {choice}\")",
+      "expectedOutput": "You see two doors.\nWhich door will you choose?\nYou chose door 1!\nThe get_choice function returned: 1"
+    }
+  ]
+}

@@ -338,7 +338,7 @@ function validateInputs(problem, problemIndex) {
 
 // Run Python code for a specific problem
 async function runCode(problemIndex) {
-    const code = codeEditors[problemIndex].getValue();
+    let code = codeEditors[problemIndex].getValue();
     const output = document.getElementById(`output-${problemIndex}`);
     const problem = currentWorksheet.problems[problemIndex];
     
@@ -365,14 +365,32 @@ async function runCode(problemIndex) {
         // Set up the get_input() function if the problem has inputs
         InputSystem.setupGetInputFunction(pyodide, problem, problemIndex);
         
-        // Capture print output
+        // Set up the get_choice() function for all problems
+        InputSystem.setupGetChoiceFunction(pyodide, problemIndex);
+
+        // Use a regular expression to find calls to get_choice and wrap in them in await
+        // This is a hack to get the get_choice function to work without students having to write 'await'
+        // TODO: Use an AST based solution instead.
+        code = code.replace(
+          /get_choice\((.*?)\)/g, 
+          'await get_choice($1)'
+        );
+        
+        // Capture print output & incrementally print, so that users can see the output as it is generated & before interacting with any
+        // inputs added by the student program (e.g. get_choice)
+        // We also save all the output for a final refreshing call to displayOutput() below.
         let printOutput = '';
+        output.innerHTML = ''; // Clear previous output
         const originalPrint = pyodide.globals.get('print');
         pyodide.globals.set('print', function(...args) {
-            printOutput += args.join(' ') + '\n';
+            const text = args.join(' ');
+            output.textContent += text + '\n';
+            printOutput += text + '\n';
         });
+
         
-        await pyodide.runPythonAsync(code);
+        await pyodide.runPythonAsync(code); 
+        
         pyodide.globals.set('print', originalPrint);
         
         const validationResult = await Validation.validateAnswer(code, printOutput, problem, problemIndex);
