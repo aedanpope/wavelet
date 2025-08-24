@@ -107,8 +107,7 @@ function setupGetChoiceFunction(pyodide, problemIndex) {
         console.log(`asyncGetChoice ${n}.`);
         // Validate input
         if (!n || n <= 0 || n > 10) {
-            console.warn(`Invalid choice count: ${n}. Using 1 as fallback.`);
-            return Promise.resolve(1);
+            throw new Error(`Invalid choice count: ${n}. Please use a number between 1 and 10.`);
         }
         
         // Create choice UI
