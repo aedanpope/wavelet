@@ -17,12 +17,17 @@
       "title": "Worksheet 3: Making Things Repeat",
       "description": "Learn to use loops to repeat actions in Python.",
       "file": "worksheet-3.json"
+    },
+    {
+      "id": "test-get-choice",
+      "title": "Test: Get Choice Function",
+      "description": "Test the new get_choice() function for interactive buttons.",
+      "file": "test-get-choice.json"
     }
   ],
   "metadata": {
     "version": "1.0-dev",
     "lastUpdated": "2025-01-27",
-    "totalWorksheets": 3,
     "environment": "development"
   }
 }
