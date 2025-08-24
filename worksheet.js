@@ -1,8 +1,8 @@
 // Global variables
-let pyodide = null;
 let currentWorksheet = null;
 let codeEditors = []; // Array to hold multiple code editors
 let completedProblems = new Set();
+let codeExecutor = null;
 
 // Progress persistence functions
 function saveProgress(worksheetId) {
@@ -98,11 +98,14 @@ async function init() {
     }
 }
 
-// Initialize Pyodide
+// Initialize Pyodide and CodeExecutor
 async function initPyodide() {
     try {
-        pyodide = await loadPyodide();
-        console.log('Pyodide loaded successfully');
+        // Initialize the CodeExecutor
+        codeExecutor = new CodeExecutor();
+        await codeExecutor.initialize();
+        
+        console.log('Pyodide and CodeExecutor initialized successfully');
     } catch (error) {
         console.error('Error loading Pyodide:', error);
         throw new Error('Failed to load Python runtime');
@@ -360,42 +363,22 @@ async function runCode(problemIndex) {
         displayOutput(output, '', 'running');
         
         // Reset Python environment to clear previous state
-        await resetPythonEnvironment();
+        await codeExecutor.resetPythonEnvironment();
         
         // Set up the get_input() function if the problem has inputs
-        InputSystem.setupGetInputFunction(pyodide, problem, problemIndex);
-        
+        InputSystem.setupGetInputFunction(codeExecutor.getPyodide(), problem, problemIndex);
         // Set up the get_choice() function for all problems
-        InputSystem.setupGetChoiceFunction(pyodide, problemIndex);
+        InputSystem.setupGetChoiceFunction(codeExecutor.getPyodide(), problemIndex);
 
-        // Use a regular expression to find calls to get_choice and wrap in them in await
-        // This is a hack to get the get_choice function to work without students having to write 'await'
-        // TODO: Use an AST based solution instead.
-        code = code.replace(
-          /get_choice\((.*?)\)/g, 
-          'await get_choice($1)'
-        );
+        // Process code for async handling
+        code = codeExecutor.processCodeForAsync(code);
         
-        // Capture print output & incrementally print, so that users can see the output as it is generated & before interacting with any
-        // inputs added by the student program (e.g. get_choice)
-        // We also save all the output for a final refreshing call to displayOutput() below.
-        let printOutput = '';
-        output.innerHTML = ''; // Clear previous output
-        const originalPrint = pyodide.globals.get('print');
-        pyodide.globals.set('print', function(...args) {
-            const text = args.join(' ');
-            output.textContent += text + '\n';
-            printOutput += text + '\n';
-        });
-
+        // Execute code with output capture
+        const executionResult = await codeExecutor.executeCode(code, output);
         
-        await pyodide.runPythonAsync(code); 
+        const validationResult = await Validation.validateAnswer(code, executionResult.printOutput, problem, problemIndex);
         
-        pyodide.globals.set('print', originalPrint);
-        
-        const validationResult = await Validation.validateAnswer(code, printOutput, problem, problemIndex);
-        
-        displayOutput(output, printOutput, validationResult.isValid ? 'success' : 'error', validationResult.message);
+        displayOutput(output, executionResult.printOutput, validationResult.isValid ? 'success' : 'error', validationResult.message);
         
         // Update progress if problem is completed
         if (validationResult.isValid && !completedProblems.has(problemIndex)) {
@@ -512,67 +495,7 @@ function showCompletionModal() {
     modal.style.display = 'flex';
 }
 
-// Reset Python environment to clear all variables and state
-async function resetPythonEnvironment() {
-    try {
-        // Use a much simpler approach that's more compatible with Pyodide
-        await pyodide.runPythonAsync(`
-# Simple environment reset - just clear user-defined variables
-try:
-    # Get current globals
-    current_globals = list(globals().keys())
-    
-    # Define built-in names that should be preserved
-    builtin_names = {
-        '__builtins__', '__name__', '__doc__', '__package__', '__loader__', 
-        '__spec__', '__annotations__', '__all__', '__file__', '__cached__',
-        'print', 'input', 'len', 'str', 'int', 'float', 'list', 'dict', 'tuple',
-        'set', 'bool', 'type', 'range', 'enumerate', 'zip', 'map', 'filter',
-        'sum', 'min', 'max', 'abs', 'round', 'pow', 'divmod', 'bin', 'oct', 'hex',
-        'chr', 'ord', 'ascii', 'repr', 'eval', 'exec', 'compile', 'open',
-        'help', 'dir', 'vars', 'getattr', 'setattr', 'hasattr', 'delattr',
-        'isinstance', 'issubclass', 'super', 'property', 'staticmethod', 'classmethod',
-        'all', 'any', 'next', 'iter', 'reversed', 'sorted', 'hash', 'id',
-        'callable', 'format', 'breakpoint', 'copyright', 'credits', 'license',
-        'exit', 'quit', 'True', 'False', 'None', 'NotImplemented', 'Ellipsis',
-        'Exception', 'BaseException', 'StopIteration', 'GeneratorExit',
-        'ArithmeticError', 'BufferError', 'LookupError', 'AssertionError',
-        'AttributeError', 'EOFError', 'FloatingPointError', 'OSError',
-        'ImportError', 'ModuleNotFoundError', 'IndexError', 'KeyError',
-        'KeyboardInterrupt', 'MemoryError', 'NameError', 'OverflowError',
-        'RecursionError', 'ReferenceError', 'RuntimeError', 'SyntaxError',
-        'IndentationError', 'TabError', 'SystemError', 'TypeError',
-        'UnboundLocalError', 'UnicodeError', 'UnicodeEncodeError',
-        'UnicodeDecodeError', 'UnicodeTranslateError', 'ValueError',
-        'ZeroDivisionError', 'BlockingIOError', 'BrokenPipeError',
-        'ChildProcessError', 'ConnectionError', 'BrokenPipeError',
-        'ConnectionAbortedError', 'ConnectionRefusedError', 'ConnectionResetError',
-        'FileExistsError', 'FileNotFoundError', 'InterruptedError',
-        'IsADirectoryError', 'NotADirectoryError', 'PermissionError',
-        'ProcessLookupError', 'TimeoutError', 'Warning', 'UserWarning',
-        'DeprecationWarning', 'PendingDeprecationWarning', 'SyntaxWarning',
-        'RuntimeWarning', 'FutureWarning', 'ImportWarning', 'UnicodeWarning',
-        'BytesWarning', 'ResourceWarning'
-    }
-    
-    # Remove user-defined variables (those not in builtin_names and not starting with '_')
-    for var_name in current_globals:
-        if var_name not in builtin_names and not var_name.startswith('_'):
-            try:
-                del globals()[var_name]
-            except:
-                pass
-                
-except Exception as e:
-    # If anything goes wrong, just continue
-    pass
-`);
-        
-    } catch (error) {
-        console.warn('Error resetting Python environment:', error);
-        // Continue anyway - the environment will be mostly clean
-    }
-}
+
 
 // Render LaTeX content in a problem element
 function renderLatexInElement(element) {
