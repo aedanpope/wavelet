@@ -60,12 +60,8 @@ function createWorksheetCard(worksheet) {
     const basePath = isDevMode ? '../' : '';
     card.href = `${basePath}worksheet.html?id=${worksheet.id}`;
     
-    // Add dev indicator for experimental worksheets in dev mode
-    const isExperimental = isDevMode && worksheet.id === 'worksheet-3';
-    const experimentalBadge = isExperimental ? '<span class="experimental-badge">🚧 Experimental</span>' : '';
-    
     card.innerHTML = `
-        <h3>${worksheet.title} ${experimentalBadge}</h3>
+        <h3>${worksheet.title}</h3>
         <p>${worksheet.description}</p>
     `;
     

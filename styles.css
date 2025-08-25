@@ -959,16 +959,3 @@ code {
     gap: 8px;
 }
 
-/* Experimental Badge */
-.experimental-badge {
-    background: linear-gradient(135deg, #ff6b6b, #ffa500);
-    color: white;
-    font-size: 0.7rem;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-weight: 600;
-    margin-left: 8px;
-    display: inline-block;
-    vertical-align: middle;
-    box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
-}
