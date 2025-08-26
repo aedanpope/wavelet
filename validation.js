@@ -13,7 +13,7 @@ function normalizeNumericalComparison(output, pattern) {
 }
 
 // Validate the student's answer using validation rules from the problem definition
-async function validateAnswer(code, output, problem, problemIndex) {
+async function validateAnswer(code, output, problem, problemIndex, pyodideInstance) {
     const codeTrimmed = code.trim();
     const outputTrimmed = output.trim();
     
@@ -52,7 +52,7 @@ async function validateAnswer(code, output, problem, problemIndex) {
     const validationRules = problem.validation.rules;
     
     for (const rule of validationRules) {
-        const ruleResult = await validateRule(code, output, rule, problem, problemIndex);
+        const ruleResult = await validateRule(code, output, rule, problem, problemIndex, pyodideInstance);
         if (!ruleResult) {
             console.log(`Validation failed for rule: ${rule.type} - ${rule.pattern}`);
             // Use helpful error message generation instead of generic message
@@ -120,7 +120,7 @@ function generateHelpfulErrorMessage(code, output, problem, failedRule) {
 }
 
 // Validate a single validation rule
-async function validateRule(code, output, rule, problem, problemIndex) {
+async function validateRule(code, output, rule, problem, problemIndex, pyodideInstance) {
     switch (rule.type) {
         case 'code_contains':
             let result;
@@ -178,7 +178,7 @@ async function validateRule(code, output, rule, problem, problemIndex) {
             return inputMatches.length >= rule.minCount;
             
         case 'solution_code':
-            return await validateSolutionCode(code, output, rule, problem, problemIndex);
+            return await validateSolutionCode(code, output, rule, problem, problemIndex, pyodideInstance);
             
         default:
             console.warn(`Unknown validation rule type: ${rule.type}`);
@@ -187,7 +187,7 @@ async function validateRule(code, output, rule, problem, problemIndex) {
 }
 
 // Validate student code against a solution program
-async function validateSolutionCode(studentCode, studentOutput, rule, problem, problemIndex) {
+async function validateSolutionCode(studentCode, studentOutput, rule, problem, problemIndex, pyodideInstance) {
     try {
         const solutionCode = rule.solutionCode;
         if (!solutionCode) {
@@ -202,8 +202,8 @@ async function validateSolutionCode(studentCode, studentOutput, rule, problem, p
         const testInputs = generateTestInputs(problem);
         
         // Test with current inputs
-        const currentResult = await testCodeWithInputs(studentCode, currentInputs, problem);
-        const currentSolutionResult = await testCodeWithInputs(solutionCode, currentInputs, problem);
+        const currentResult = await testCodeWithInputs(studentCode, currentInputs, problem, pyodideInstance);
+        const currentSolutionResult = await testCodeWithInputs(solutionCode, currentInputs, problem, pyodideInstance);
         
         if (!currentResult.success || !currentSolutionResult.success) {
             console.log('Code execution failed with current inputs');
@@ -211,8 +211,8 @@ async function validateSolutionCode(studentCode, studentOutput, rule, problem, p
         }
         
         // Test with generated inputs
-        const testResult = await testCodeWithInputs(studentCode, testInputs, problem);
-        const testSolutionResult = await testCodeWithInputs(solutionCode, testInputs, problem);
+        const testResult = await testCodeWithInputs(studentCode, testInputs, problem, pyodideInstance);
+        const testSolutionResult = await testCodeWithInputs(solutionCode, testInputs, problem, pyodideInstance);
         
         if (!testResult.success || !testSolutionResult.success) {
             console.log('Code execution failed with test inputs');
@@ -268,10 +268,8 @@ function generateTestInputs(problem) {
 }
 
 // Test code with specific input values
-async function testCodeWithInputs(code, inputValues, problem) {
+async function testCodeWithInputs(code, inputValues, problem, pyodideInstance) {
     try {
-        // Get the global pyodide instance
-        const pyodideInstance = window.pyodide || pyodide;
         if (!pyodideInstance) {
             console.error('Pyodide instance not available');
             return { success: false, output: '', error: 'Pyodide not available' };

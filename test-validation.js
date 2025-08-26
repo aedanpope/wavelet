@@ -4,6 +4,15 @@
 // Import the shared validation functions
 const { validateAnswer } = require('./validation.js');
 
+// Mock Pyodide instance for testing
+const mockPyodide = {
+    globals: {
+        get: () => {},
+        set: () => {}
+    },
+    runPythonAsync: async () => {}
+};
+
 // Common problem definitions that can be reused across test cases
 const problemDefinitions = {
     helloWorld: {
@@ -753,7 +762,7 @@ let failed = 0;
 testCases.forEach(async (testCase, index) => {
     console.log(`Test ${index + 1}: ${testCase.name}`);
     
-    const result = await validateAnswer(testCase.code, testCase.output, testCase.problem, 0);
+    const result = await validateAnswer(testCase.code, testCase.output, testCase.problem, 0, mockPyodide);
     
     // Check if the result matches expected validation outcome
     const validationPassed = result.isValid === testCase.expected;
