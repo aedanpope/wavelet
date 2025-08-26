@@ -754,60 +754,68 @@ const testCases = [
 ];
 
 // Run tests
-console.log("Testing validation system...\n");
+async function runTests() {
+    console.log("Testing validation system...\n");
 
-let passed = 0;
-let failed = 0;
+    let passed = 0;
+    let failed = 0;
 
-testCases.forEach(async (testCase, index) => {
-    console.log(`Test ${index + 1}: ${testCase.name}`);
-    
-    const result = await validateAnswer(testCase.code, testCase.output, testCase.problem, 0, mockPyodide);
-    
-    // Check if the result matches expected validation outcome
-    const validationPassed = result.isValid === testCase.expected;
-    
-    // Check error type if specified
-    let errorTypePassed = true;
-    if (testCase.expectedErrorType && !result.isValid) {
-        errorTypePassed = result.errorType === testCase.expectedErrorType;
-    }
-    
-    // Check for specific error messages
-    let messagePassed = true;
-    if (testCase.expectedMessage) {
-        messagePassed = result.message.includes(testCase.expectedMessage);
-    }
-    
-    if (validationPassed && errorTypePassed && messagePassed) {
-        console.log(`✅ PASSED - Expected: ${testCase.expected}, Got: ${result.isValid}`);
-        if (testCase.expectedErrorType) {
-            console.log(`   Error Type: ${result.errorType}`);
+    for (let i = 0; i < testCases.length; i++) {
+        const testCase = testCases[i];
+        console.log(`Test ${i + 1}: ${testCase.name}`);
+        
+        const result = await validateAnswer(testCase.code, testCase.output, testCase.problem, 0, mockPyodide);
+        
+        // Check if the result matches expected validation outcome
+        const validationPassed = result.isValid === testCase.expected;
+        
+        // Check error type if specified
+        let errorTypePassed = true;
+        if (testCase.expectedErrorType && !result.isValid) {
+            errorTypePassed = result.errorType === testCase.expectedErrorType;
         }
-        passed++;
+        
+        // Check for specific error messages
+        let messagePassed = true;
+        if (testCase.expectedMessage) {
+            messagePassed = result.message.includes(testCase.expectedMessage);
+        }
+        
+        if (validationPassed && errorTypePassed && messagePassed) {
+            console.log(`✅ PASSED - Expected: ${testCase.expected}, Got: ${result.isValid}`);
+            if (testCase.expectedErrorType) {
+                console.log(`   Error Type: ${result.errorType}`);
+            }
+            passed++;
+        } else {
+            console.log(`❌ FAILED - Expected: ${testCase.expected}, Got: ${result.isValid}`);
+            if (testCase.expectedErrorType) {
+                console.log(`   Expected Error Type: ${testCase.expectedErrorType}, Got: ${result.errorType}`);
+            }
+            if (!messagePassed) {
+                console.log(`   ❌ Message assertion failed:`);
+                console.log(`      Expected: "${testCase.expectedMessage}"`);
+                console.log(`      Got:      "${result.message}"`);
+            }
+            failed++;
+        }
+        
+        console.log(`   Code: "${testCase.code}"`);
+        console.log(`   Output: "${testCase.output}"`);
+        console.log(`   Message: "${result.message}"`);
+        console.log("");
+    }
+
+    console.log(`\nTest Results: ${passed} passed, ${failed} failed`);
+
+    if (failed === 0) {
+        console.log("🎉 All tests passed! The validation system is working correctly.");
     } else {
-        console.log(`❌ FAILED - Expected: ${testCase.expected}, Got: ${result.isValid}`);
-        if (testCase.expectedErrorType) {
-            console.log(`   Expected Error Type: ${testCase.expectedErrorType}, Got: ${result.errorType}`);
-        }
-        if (!messagePassed) {
-            console.log(`   ❌ Message assertion failed:`);
-            console.log(`      Expected: "${testCase.expectedMessage}"`);
-            console.log(`      Got:      "${result.message}"`);
-        }
-        failed++;
+        console.log("⚠️  Some tests failed. Please check the validation logic.");
     }
-    
-    console.log(`   Code: "${testCase.code}"`);
-    console.log(`   Output: "${testCase.output}"`);
-    console.log(`   Message: "${result.message}"`);
-    console.log("");
-});
-
-console.log(`\nTest Results: ${passed} passed, ${failed} failed`);
-
-if (failed === 0) {
-    console.log("🎉 All tests passed! The validation system is working correctly.");
-} else {
-    console.log("⚠️  Some tests failed. Please check the validation logic.");
 }
+
+// Run the tests
+runTests().catch(error => {
+    console.error('Test execution failed:', error);
+});
