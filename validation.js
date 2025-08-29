@@ -60,6 +60,14 @@ async function validateAnswer(code, output, problem, problemIndex, pyodideInstan
             console.log(`Validation failed for rule: ${rule.type} - ${rule.pattern}`);
             // Use helpful error message generation instead of generic message
             return generateHelpfulErrorMessage(code, output, problem, rule);
+        } else if (typeof ruleResult === 'object' && ruleResult.isValid === false) {
+            // Enhanced validation returned a detailed error message,
+            // just prepend the 'X '
+            return {
+                isValid: ruleResult.isValid,
+                errorType: ruleResult.errorType,
+                message: '❌ ' + ruleResult.message
+            };
         }
     }
     
@@ -123,6 +131,8 @@ function generateHelpfulErrorMessage(code, output, problem, failedRule) {
 }
 
 // Validate a single validation rule
+// TODO: All validation rules should eventually return detailed error messages instead of just booleans
+// This would provide better educational feedback for students, similar to how solution_code validation works
 async function validateRule(code, output, rule, problem, problemIndex, pyodideInstance) {
     switch (rule.type) {
         case 'code_contains':

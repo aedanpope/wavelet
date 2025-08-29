@@ -14,22 +14,23 @@
       },
       {
         "title": "The Height Rule <",
-        "content": "Just as we can check if a number is greater than another, we can use <code><</code> to check if it's less than another. This is useful for checking if a value is below a certain limit.",
-        "task": "Modify this code to check if a person's height is less than 150cm. If it is, the program should print \"You can go on the smaller ride!\".",
+        "content": "Just as we can check if a number is greater than another, we can use <code><</code> to check if it's less than another. This is useful for checking if a value is below a certain limit.<br><br>Now let's make our program interactive! Instead of hardcoding values, we can use <code>get_input()</code> to ask the user for information. When you call <code>get_input()</code>, the program will show an input box where the user can type a number. The function returns whatever number they enter, which we can then use in our comparisons.",
+        "task": "Modify this code to use <code>get_input()</code> and check if a person's height is less than 150cm. If it is, the program should print \"You can go on the smaller ride!\".",
+        "inputs": [{ "name": "height", "label": "Enter height:", "type": "number" }],
         "codeHeight": 4,
-        "starterCode": "height = 160\n\nif height > 150:\n  print(\"You can go on the big ride!\")",
-        "hint": "You'll need to change both the symbol from `>` to `<` and the message inside the `print()` function.",
-        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "height = 160\n\nif height < 150:\n  print(\"You can go on the smaller ride!\")" }] }
+        "starterCode": "height = get_input()\n\nif height > 150:\n  print(\"You can go on the big ride!\")",
+        "hint": "You'll need to change the symbol from `>` to `<` and the message inside the `print()` function.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "height = get_input()\n\nif height < 150:\n  print(\"You can go on the smaller ride!\")", "maxRuns": 5, "testInputs": [{ "inputs": {"height": 149} }, { "inputs": {"height": 150} }, { "inputs": {"height": 151} }] }] }
       },
       {
         "title": "Rollercoaster Entry",
-        "content": "Now let's combine an <code>if</code> statement with user input! We can ask the user for a number and then make a decision based on what they enter.",
+        "content": "Great! Now you know how to use <code>get_input()</code> and the <code><</code> operator. Let's practice with a different scenario.",
         "task": "Write a program that uses <code>get_input()</code> to ask for your height. If your height is greater than 140, it should print \"You can ride!\"",
         "inputs": [{ "name": "height", "label": "Enter your height:", "type": "number" }],
         "codeHeight": 4,
-        "starterCode": "# Your code here",
-        "hint": "First, get the input and store it in a variable. Then, use an `if` statement to check if that variable is `> 140`.",
-        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "height = get_input()\nif height > 140:\n  print(\"You can ride!\")" }] }
+        "starterCode": "height = get_input()\n",
+        "hint": "You already know how to use `get_input()` and `if` statements. Just check if the height is greater than 140.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "height = get_input()\nif height > 140:\n  print(\"You can ride!\")", "maxRuns": 5, "testInputs": [{ "inputs": {"height": 130} }, { "inputs": {"height": 150} }] }] }
       },
       {
         "title": "Is It Equal? ==",
