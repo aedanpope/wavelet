@@ -17,6 +17,12 @@
       "title": "Worksheet 3: Making Things Repeat",
       "description": "Learn to use loops to repeat actions in Python.",
       "file": "worksheet-3.json"
+    },
+    {
+      "id": "worksheet-4",
+      "title": "Worksheet 4: Making Decisions",
+      "description": "Learn to use if, elif, and else statements to create programs that can make choices and respond to different conditions.",
+      "file": "worksheet-4.json"
     }
   ],
   "metadata": {
