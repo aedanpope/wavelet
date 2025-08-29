@@ -4,14 +4,23 @@
 // Import the shared validation functions
 const { validateAnswer } = require('./validation.js');
 
-// Mock Pyodide instance for testing
-const mockPyodide = {
-    globals: {
-        get: () => {},
-        set: () => {}
-    },
-    runPythonAsync: async () => {}
-};
+// Initialize Pyodide for testing
+let mockPyodide = null;
+
+async function initializePyodide() {
+    if (typeof window !== 'undefined') {
+        // Browser environment - Pyodide should already be loaded
+        mockPyodide = window.pyodide;
+    } else {
+        // Node.js environment - load real Pyodide from node_modules
+        console.log('Loading Pyodide from node_modules...');
+        const { loadPyodide } = require('pyodide');
+        mockPyodide = await loadPyodide({
+            indexURL: "./node_modules/pyodide/"
+        });
+        console.log('Pyodide loaded successfully');
+    }
+}
 
 // Common problem definitions that can be reused across test cases
 const problemDefinitions = {
@@ -750,12 +759,118 @@ const testCases = [
         code: 'print(100/10)',
         output: '10',
         expected: true
+    },
+    // Solution code validation tests
+    {
+        name: "Solution Code - Simple print statement (should pass)",
+        problem: {
+            id: "test-solution-code-simple",
+            validation: {
+                rules: [
+                    {
+                        type: "solution_code",
+                        solutionCode: 'print("Hello, World!")'
+                    }
+                ]
+            }
+        },
+        code: 'print("Hello, World!")',
+        output: 'Hello, World!\n',
+        expected: true
+    },
+    {
+        name: "Solution Code - Different print statement (should fail)",
+        problem: {
+            id: "test-solution-code-different",
+            validation: {
+                rules: [
+                    {
+                        type: "solution_code",
+                        solutionCode: 'print("Hello, World!")'
+                    }
+                ]
+            }
+        },
+        code: 'print("Hello, Python!")',
+        output: 'Hello, Python!\n',
+        expected: false
+    },
+    {
+        name: "Solution Code - Variable assignment (should pass)",
+        problem: {
+            id: "test-solution-code-variable",
+            validation: {
+                rules: [
+                    {
+                        type: "solution_code",
+                        solutionCode: 'name = "Alice"\nprint("Hello, " + name)'
+                    }
+                ]
+            }
+        },
+        code: 'name = "Alice"\nprint("Hello, " + name)',
+        output: 'Hello, Alice\n',
+        expected: true
+    },
+    {
+        name: "Solution Code - Variable assignment with different variable name (should pass)",
+        problem: {
+            id: "test-solution-code-variable-different-name",
+            validation: {
+                rules: [
+                    {
+                        type: "solution_code",
+                        solutionCode: 'name = "Alice"\nprint("Hello, " + name)'
+                    }
+                ]
+            }
+        },
+        code: 'person = "Alice"\nprint("Hello, " + person)',
+        output: 'Hello, Alice\n',
+        expected: true
+    },
+    {
+        name: "Solution Code - Math calculation (should pass)",
+        problem: {
+            id: "test-solution-code-math",
+            validation: {
+                rules: [
+                    {
+                        type: "solution_code",
+                        solutionCode: 'result = 10 + 5\nprint(result)'
+                    }
+                ]
+            }
+        },
+        code: 'result = 10 + 5\nprint(result)',
+        output: '15\n',
+        expected: true
+    },
+    {
+        name: "Solution Code - Math calculation with different variable name (should pass)",
+        problem: {
+            id: "test-solution-code-math-different-name",
+            validation: {
+                rules: [
+                    {
+                        type: "solution_code",
+                        solutionCode: 'result = 10 + 5\nprint(result)'
+                    }
+                ]
+            }
+        },
+        code: 'answer = 10 + 5\nprint(answer)',
+        output: '15\n',
+        expected: true
     }
 ];
 
 // Run tests
 async function runTests() {
     console.log("Testing validation system...\n");
+
+    // Initialize Pyodide
+    await initializePyodide();
 
     let passed = 0;
     let failed = 0;

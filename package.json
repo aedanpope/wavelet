@@ -36,5 +36,8 @@
   "bugs": {
     "url": "https://github.com/yourusername/python-browser-editor/issues"
   },
-  "homepage": "https://github.com/yourusername/python-browser-editor#readme"
+  "homepage": "https://github.com/yourusername/python-browser-editor#readme",
+  "dependencies": {
+    "pyodide": "^0.28.2"
+  }
 }

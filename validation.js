@@ -1,6 +1,9 @@
 // Shared validation logic for the Python learning platform
 // This module contains the validation functions used by both script.js and test files
 
+// Import solution_code validation from standalone module
+// Note: In browser environment, this will be loaded via script tag before validation.js
+
 // Helper function to normalize numerical comparisons
 function normalizeNumericalComparison(output, pattern) {
     // Normalize numerical comparisons for all operations
@@ -178,7 +181,17 @@ async function validateRule(code, output, rule, problem, problemIndex, pyodideIn
             return inputMatches.length >= rule.minCount;
             
         case 'solution_code':
-            return await validateSolutionCode(code, output, rule, problem, problemIndex, pyodideInstance);
+            // Use the imported validateSolutionCode function
+            if (typeof window !== 'undefined' && window.SolutionCodeValidator) {
+                return await window.SolutionCodeValidator.validateSolutionCode(code, output, rule, problem, problemIndex, pyodideInstance);
+            } else if (typeof module !== 'undefined' && module.exports) {
+                // Node.js environment - import dynamically
+                const { validateSolutionCode } = require('./validate-solution-code.js');
+                return await validateSolutionCode(code, output, rule, problem, problemIndex, pyodideInstance);
+            } else {
+                console.error('SolutionCodeValidator not available');
+                return false;
+            }
             
         default:
             console.warn(`Unknown validation rule type: ${rule.type}`);
@@ -186,126 +199,7 @@ async function validateRule(code, output, rule, problem, problemIndex, pyodideIn
     }
 }
 
-// Validate student code against a solution program
-async function validateSolutionCode(studentCode, studentOutput, rule, problem, problemIndex, pyodideInstance) {
-    try {
-        const solutionCode = rule.solutionCode;
-        if (!solutionCode) {
-            console.warn('Solution code not provided for solution_code validation rule');
-            return false;
-        }
-        
-        // Get the current input values from the student's run
-        const currentInputs = getCurrentInputValues(problem, problemIndex);
-        
-        // Generate test inputs (i * 17 + 31 for each input)
-        const testInputs = generateTestInputs(problem);
-        
-        // Test with current inputs
-        const currentResult = await testCodeWithInputs(studentCode, currentInputs, problem, pyodideInstance);
-        const currentSolutionResult = await testCodeWithInputs(solutionCode, currentInputs, problem, pyodideInstance);
-        
-        if (!currentResult.success || !currentSolutionResult.success) {
-            console.log('Code execution failed with current inputs');
-            return false;
-        }
-        
-        // Test with generated inputs
-        const testResult = await testCodeWithInputs(studentCode, testInputs, problem, pyodideInstance);
-        const testSolutionResult = await testCodeWithInputs(solutionCode, testInputs, problem, pyodideInstance);
-        
-        if (!testResult.success || !testSolutionResult.success) {
-            console.log('Code execution failed with test inputs');
-            return false;
-        }
-        
-        // Compare outputs - both current and test inputs should match
-        const currentMatch = currentResult.output.trim() === currentSolutionResult.output.trim();
-        console.log('currentResult.output.trim():', currentResult.output.trim());
-        console.log('currentSolutionResult.output.trim():', currentSolutionResult.output.trim());
-        console.log('Current match:', currentMatch);
-        const testMatch = testResult.output.trim() === testSolutionResult.output.trim();
-        console.log('Test match:', testMatch);
-        
-        return currentMatch && testMatch;
-        
-    } catch (error) {
-        console.error('Error in solution_code validation:', error);
-        return false;
-    }
-}
-
-// Get current input values from the student's run
-function getCurrentInputValues(problem, problemIndex) {
-    const inputs = {};
-    if (problem.inputs) {
-        for (const input of problem.inputs) {
-            const inputElement = document.getElementById(`input-${problemIndex}-${input.name}`);
-            if (inputElement) {
-                let value = inputElement.value;
-                if (input.type === 'number') {
-                    value = parseFloat(value) || 0;
-                }
-                inputs[input.name] = value;
-            }
-        }
-    }
-    return inputs;
-}
-
-// Generate test input values
-function generateTestInputs(problem) {
-    const inputs = {};
-    if (problem.inputs) {
-        for (let i = 0; i < problem.inputs.length; i++) {
-            const input = problem.inputs[i];
-            // Use (i * 17) + 31 for variety and noise
-            const testValue = (i * 17) + 31;
-            inputs[input.name] = testValue;
-        }
-    }
-    return inputs;
-}
-
-// Test code with specific input values
-async function testCodeWithInputs(code, inputValues, problem, pyodideInstance) {
-    try {
-        if (!pyodideInstance) {
-            console.error('Pyodide instance not available');
-            return { success: false, output: '', error: 'Pyodide not available' };
-        }
-        
-        // Create a mock get_input function for testing
-        const mockGetInput = function(inputName) {
-            if (inputName === undefined || inputName === null) {
-                // Return first input value if no argument provided
-                const firstInputName = Object.keys(inputValues)[0];
-                return firstInputName ? inputValues[firstInputName] : null;
-            }
-            return inputValues[inputName] || null;
-        };
-        
-        // Set up the mock get_input function
-        pyodideInstance.globals.set('get_input', mockGetInput);
-        
-        // Capture print output
-        let printOutput = '';
-        const originalPrint = pyodideInstance.globals.get('print');
-        pyodideInstance.globals.set('print', function(...args) {
-            printOutput += args.join(' ') + '\n';
-        });
-        
-        // Run the code
-        await pyodideInstance.runPythonAsync(code);
-        pyodideInstance.globals.set('print', originalPrint);
-        
-        return { success: true, output: printOutput };
-        
-    } catch (error) {
-        console.error('Error testing code with inputs:', error);
-        return { success: false, output: '', error: error.message };
-    }
-}
+// Note: validateSolutionCode and related functions have been moved to validate-solution-code.js
 
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
