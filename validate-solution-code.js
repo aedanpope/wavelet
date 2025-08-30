@@ -101,7 +101,7 @@ function generateValueFromSeed(type, seed) {
     switch (type) {
         case 'number':
             // Prioritize simple values for low seeds (better error messages)
-            const simpleNumbers = [0, 1, 2, 5, 10, -1, -5, 100, -100, 50];
+            const simpleNumbers = [2, 3, 5, 1, 10, 0, -1, -5, 100, -100, 50];
             
             if (seed <= simpleNumbers.length) {
                 return simpleNumbers[seed - 1]; // seed 1 = 0, seed 2 = 1, etc.
@@ -301,9 +301,9 @@ function generateFailureMessage(result, problem) {
     }
     
     if (inputDescription) {
-        return `With ${inputDescription}, your program output: "${studentOutput}" but expected output: "${expectedOutput}"`;
+        return `With ${inputDescription}, your program output:\n"${studentOutput}"\nbut expected output:\n"${expectedOutput}"`;
     } else {
-        return `Your program output: "${studentOutput}" but expected output: "${expectedOutput}"`;
+        return `Your program output:\n"${studentOutput}"\nbut expected output:\n"${expectedOutput}"`;
     }
 }
 
@@ -502,9 +502,6 @@ async function testCodeWithInputs(code, inputs, problem, pyodideInstance) {
 
 // Main solution_code validation function
 async function validateSolutionCode(studentCode, studentOutput, rule, problem, problemIndex, pyodideInstance) {
-    // Check if we should use new seed-based approach
-    // if (rule.maxRuns) {
-    
     // Run manual test cases if specified
     const manualResults = await runManualTests(studentCode, rule.solutionCode, rule, problem, pyodideInstance);
     
@@ -530,10 +527,6 @@ async function validateSolutionCode(studentCode, studentOutput, rule, problem, p
             message: feedback.message
         };
     }
-    // } else {
-    //     // Use existing approach for backward compatibility
-    //     return await validateWithLegacyApproach(studentCode, studentOutput, rule, problem, problemIndex, pyodideInstance);
-    // }
 }
 
 // Export for use in validation.js

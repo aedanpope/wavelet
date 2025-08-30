@@ -18,8 +18,7 @@
           },
           {
             "type": "output_contains",
-            "pattern": "8",
-            "description": "Output must contain '8'"
+            "pattern": "8"
           }
         ]
       }
@@ -39,8 +38,7 @@
           },
           {
             "type": "output_contains",
-            "pattern": "12",
-            "description": "Output must contain '12'"
+            "pattern": "12"
           }
         ]
       }
@@ -60,8 +58,7 @@
           },
           {
             "type": "output_contains",
-            "pattern": "35",
-            "description": "Output must contain '35'"
+            "pattern": "35"
           }
         ]
       }
@@ -81,8 +78,7 @@
           },
           {
             "type": "output_contains",
-            "pattern": "75",
-            "description": "Output must contain '75'"
+            "pattern": "75"
           },
           {
             "type": "code_contains",
@@ -117,8 +113,7 @@
           },
           {
             "type": "output_contains",
-            "pattern": "20",
-            "description": "Output must contain '20'"
+            "pattern": "20"
           },
           {
             "type": "code_contains",
@@ -153,23 +148,19 @@
           },
           {
             "type": "output_contains",
-            "pattern": "15",
-            "description": "Output must contain '15'"
+            "pattern": "15"
           },
           {
             "type": "code_contains",
-            "pattern": "6",
-            "description": "Code must contain the number 6"
+            "pattern": "6"
           },
           {
             "type": "code_contains",
-            "pattern": "9",
-            "description": "Code must contain the number 9"
+            "pattern": "9"
           },
           {
             "type": "code_contains",
-            "pattern": "+",
-            "description": "Code must contain the addition operator"
+            "pattern": "+"
           }
         ]
       }
@@ -184,13 +175,11 @@
         "rules": [
           {
             "type": "code_contains_regex",
-            "pattern": "print\\s*\\(\\s*10\\s*\\-\\s*4\\s*\\)",
-            "description": "Code must contain a print statement with 10 - 4"
+            "pattern": "print\\s*\\(\\s*10\\s*\\-\\s*4\\s*\\)"
           },
           {
             "type": "output_contains",
-            "pattern": "6",
-            "description": "Output must contain '6'"
+            "pattern": "6"
           }
         ]
       }
@@ -205,28 +194,23 @@
         "rules": [
           {
             "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
+            "pattern": "print"
           },
           {
             "type": "output_contains",
-            "pattern": "5",
-            "description": "Output must contain '5'"
+            "pattern": "5"
           },
           {
             "type": "code_contains",
-            "pattern": "12",
-            "description": "Code must contain the number 12"
+            "pattern": "12"
           },
           {
             "type": "code_contains",
-            "pattern": "7",
-            "description": "Code must contain the number 7"
+            "pattern": "7"
           },
           {
             "type": "code_contains",
-            "pattern": "-",
-            "description": "Code must contain the subtraction operator"
+            "pattern": "-"
           }
         ]
       }
@@ -241,28 +225,23 @@
         "rules": [
           {
             "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
+            "pattern": "print"
           },
           {
             "type": "output_contains",
-            "pattern": "15",
-            "description": "Output must contain '15'"
+            "pattern": "15"
           },
           {
             "type": "code_contains",
-            "pattern": "30",
-            "description": "Code must contain the number 30"
+            "pattern": "30"
           },
           {
             "type": "code_contains",
-            "pattern": "15",
-            "description": "Code must contain the number 15"
+            "pattern": "15"
           },
           {
             "type": "code_contains",
-            "pattern": "-",
-            "description": "Code must contain the subtraction operator"
+            "pattern": "-"
           }
         ]
       }
@@ -277,28 +256,23 @@
         "rules": [
           {
             "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
+            "pattern": "print"
           },
           {
             "type": "output_contains",
-            "pattern": "17",
-            "description": "Output must contain '17'"
+            "pattern": "17"
           },
           {
             "type": "code_contains",
-            "pattern": "25",
-            "description": "Code must contain the number 25"
+            "pattern": "25"
           },
           {
             "type": "code_contains",
-            "pattern": "8",
-            "description": "Code must contain the number 8"
+            "pattern": "8"
           },
           {
             "type": "code_contains",
-            "pattern": "-",
-            "description": "Code must contain the subtraction operator"
+            "pattern": "-"
           }
         ]
       }
@@ -313,13 +287,11 @@
         "rules": [
           {
             "type": "code_contains_regex",
-            "pattern": "print\\s*\\(\\s*4\\s*\\*\\s*6\\s*\\)",
-            "description": "Code must contain a print statement with 4 * 6"
+            "pattern": "print\\s*\\(\\s*4\\s*\\*\\s*6\\s*\\)"
           },
           {
             "type": "output_contains",
-            "pattern": "24",
-            "description": "Output must contain '24'"
+            "pattern": "24"
           }
         ]
       }
@@ -334,23 +306,19 @@
         "rules": [
           {
             "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
+            "pattern": "print"
           },
           {
             "type": "output_contains",
-            "pattern": "64",
-            "description": "Output must contain '64'"
+            "pattern": "64"
           },
           {
             "type": "code_contains",
-            "pattern": "8",
-            "description": "Code must contain the number 8"
+            "pattern": "8"
           },
           {
             "type": "code_contains",
-            "pattern": "*",
-            "description": "Code must contain the multiplication operator"
+            "pattern": "*"
           }
         ]
       }
@@ -370,8 +338,7 @@
           },
           {
             "type": "output_contains",
-            "pattern": "90",
-            "description": "Output must contain '90'"
+            "pattern": "90"
           },
           {
             "type": "code_contains",
@@ -401,13 +368,11 @@
         "rules": [
           {
             "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
+            "pattern": "print"
           },
           {
             "type": "output_contains",
-            "pattern": "84",
-            "description": "Output must contain '84'"
+            "pattern": "84"
           },
           {
             "type": "code_contains",
@@ -442,8 +407,7 @@
           },
           {
             "type": "output_contains",
-            "pattern": "5.0",
-            "description": "Output must contain '5.0'"
+            "pattern": "5.0"
           }
         ]
       }
@@ -463,23 +427,19 @@
           },
           {
             "type": "output_contains",
-            "pattern": "8",
-            "description": "Output must contain '8'"
+            "pattern": "8"
           },
           {
             "type": "code_contains",
-            "pattern": "48",
-            "description": "Code must contain the number 48"
+            "pattern": "48"
           },
           {
             "type": "code_contains",
-            "pattern": "6",
-            "description": "Code must contain the number 6"
+            "pattern": "6"
           },
           {
             "type": "code_contains",
-            "pattern": "/",
-            "description": "Code must contain the division operator"
+            "pattern": "/"
           }
         ]
       }
@@ -494,28 +454,23 @@
         "rules": [
           {
             "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
+            "pattern": "print"
           },
           {
             "type": "output_contains",
-            "pattern": "10",
-            "description": "Output must contain '10'"
+            "pattern": "10"
           },
           {
             "type": "code_contains",
-            "pattern": "100",
-            "description": "Code must contain the number 100"
+            "pattern": "100"
           },
           {
             "type": "code_contains",
-            "pattern": "10",
-            "description": "Code must contain the number 10"
+            "pattern": "10"
           },
           {
             "type": "code_contains",
-            "pattern": "/",
-            "description": "Code must contain the division operator"
+            "pattern": "/"
           }
         ]
       }
@@ -530,28 +485,23 @@
         "rules": [
           {
             "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
+              "pattern": "print"
           },
           {
             "type": "output_contains",
-            "pattern": "6",
-            "description": "Output must contain '6'"
+            "pattern": "6"
           },
           {
             "type": "code_contains",
-            "pattern": "36",
-            "description": "Code must contain the number 36"
+            "pattern": "36"
           },
           {
             "type": "code_contains",
-            "pattern": "6",
-            "description": "Code must contain the number 6"
+            "pattern": "6"
           },
           {
             "type": "code_contains",
-            "pattern": "/",
-            "description": "Code must contain the division operator"
+            "pattern": "/"
           }
         ]
       }
@@ -566,13 +516,11 @@
         "rules": [
           {
             "type": "code_contains_regex",
-            "pattern": "print\\s*\\(\\s*20\\s*\\-\\s*5\\s*\\*\\s*2\\s*\\)",
-            "description": "Code must contain a print statement with 20 - 5 * 2"
+            "pattern": "print\\s*\\(\\s*20\\s*\\-\\s*5\\s*\\*\\s*2\\s*\\)"
           },
           {
             "type": "output_contains",
-            "pattern": "10",
-            "description": "Output must contain '10'"
+            "pattern": "10"
           }
         ]
       }
@@ -587,48 +535,39 @@
         "rules": [
           {
             "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
+            "pattern": "print"
           },
           {
             "type": "output_contains",
-            "pattern": "5",
-            "description": "Output must contain '5'"
+            "pattern": "5"
           },
           {
             "type": "code_contains",
-            "pattern": "10",
-            "description": "Code must contain the number 10"
+            "pattern": "10"
           },
           {
             "type": "code_contains",
-            "pattern": "5",
-            "description": "Code must contain the number 5"
+            "pattern": "5"
           },
           {
             "type": "code_contains",
-            "pattern": "3",
-            "description": "Code must contain the number 3"
+            "pattern": "3"
           },
           {
             "type": "code_contains",
-            "pattern": "+",
-            "description": "Code must contain the addition operator"
+            "pattern": "+"
           },
           {
             "type": "code_contains",
-            "pattern": "/",
-            "description": "Code must contain the division operator"
+            "pattern": "/"
           },
           {
             "type": "code_contains",
-            "pattern": "(",
-            "description": "Code must contain an opening parenthesis"
+            "pattern": "("
           },
           {
             "type": "code_contains",
-            "pattern": ")",
-            "description": "Code must contain a closing parenthesis"
+            "pattern": ")"
           }
         ]
       }
@@ -643,48 +582,39 @@
         "rules": [
           {
             "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
+            "pattern": "print"
           },
           {
             "type": "output_contains",
-            "pattern": "20",
-            "description": "Output must contain '20'"
+            "pattern": "20"
           },
           {
             "type": "code_contains",
-            "pattern": "10",
-            "description": "Code must contain the number 10"
+            "pattern": "10"
           },
           {
             "type": "code_contains",
-            "pattern": "5",
-            "description": "Code must contain the number 5"
+            "pattern": "5"
           },
           {
             "type": "code_contains",
-            "pattern": "3",
-            "description": "Code must contain the number 3"
+            "pattern": "3"
           },
           {
             "type": "code_contains",
-            "pattern": "*",
-            "description": "Code must contain the multiplication operator"
+            "pattern": "*"
           },
           {
             "type": "code_contains",
-            "pattern": "-",
-            "description": "Code must contain the subtraction operator"
+            "pattern": "-"
           },
           {
             "type": "code_contains",
-            "pattern": "(",
-            "description": "Code must contain an opening parenthesis"
+            "pattern": "("
           },
           {
             "type": "code_contains",
-            "pattern": ")",
-            "description": "Code must contain a closing parenthesis"
+            "pattern": ")"
           }
         ]
       }
@@ -699,38 +629,31 @@
         "rules": [
           {
             "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
+            "pattern": "print"
           },
           {
             "type": "output_contains",
-            "pattern": "40",
-            "description": "Output must contain '40'"
+            "pattern": "40"
           },
           {
             "type": "code_contains",
-            "pattern": "15",
-            "description": "Code must contain the number 15"
+            "pattern": "15"
           },
           {
             "type": "code_contains",
-            "pattern": "3",
-            "description": "Code must contain the number 3"
+            "pattern": "3"
           },
           {
             "type": "code_contains",
-            "pattern": "5",
-            "description": "Code must contain the number 5"
+            "pattern": "5"
           },
           {
             "type": "code_contains",
-            "pattern": "*",
-            "description": "Code must contain the multiplication operator"
+            "pattern": "*"
           },
           {
             "type": "code_contains",
-            "pattern": "-",
-            "description": "Code must contain the subtraction operator"
+            "pattern": "-"
           }
         ]
       }
@@ -745,48 +668,39 @@
         "rules": [
           {
             "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
+            "pattern": "print"
           },
           {
             "type": "output_contains",
-            "pattern": "11.0",
-            "description": "Output must contain '11.0'"
+            "pattern": "11.0"
           },
           {
             "type": "code_contains",
-            "pattern": "8",
-            "description": "Code must contain the number 8"
+            "pattern": "8"
           },
           {
             "type": "code_contains",
-            "pattern": "12",
-            "description": "Code must contain the number 12"
+            "pattern": "12"
           },
           {
             "type": "code_contains",
-            "pattern": "4",
-            "description": "Code must contain the number 4"
+            "pattern": "4"
           },
           {
             "type": "code_contains",
-            "pattern": "+",
-            "description": "Code must contain the addition operator"
+            "pattern": "+"
           },
           {
             "type": "code_contains",
-            "pattern": "/",
-            "description": "Code must contain the division operator"
+            "pattern": "/"
           },
           {
             "type": "code_contains",
-            "pattern": "(",
-            "description": "Code must contain an opening parenthesis"
+            "pattern": "("
           },
           {
             "type": "code_contains",
-            "pattern": ")",
-            "description": "Code must contain a closing parenthesis"
+            "pattern": ")"
           }
         ]
       }
@@ -801,38 +715,31 @@
         "rules": [
           {
             "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
+            "pattern": "print"
           },
           {
             "type": "output_contains",
-            "pattern": "27",
-            "description": "Output must contain '27'"
+            "pattern": "27"
           },
           {
             "type": "code_contains",
-            "pattern": "12",
-            "description": "Code must contain the number 12"
+            "pattern": "12"
           },
           {
             "type": "code_contains",
-            "pattern": "2",
-            "description": "Code must contain the number 2"
+            "pattern": "2"
           },
           {
             "type": "code_contains",
-            "pattern": "3",
-            "description": "Code must contain the number 3"
+            "pattern": "3"
           },
           {
             "type": "code_contains",
-            "pattern": "*",
-            "description": "Code must contain the multiplication operator"
+            "pattern": "*"
           },
           {
             "type": "code_contains",
-            "pattern": "+",
-            "description": "Code must contain the addition operator"
+            "pattern": "+"
           }
         ]
       }
@@ -847,38 +754,31 @@
         "rules": [
           {
             "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
+            "pattern": "print"
           },
           {
             "type": "output_contains",
-            "pattern": "9",
-            "description": "Output must contain '9'"
+            "pattern": "9.0"
           },
           {
             "type": "code_contains",
-            "pattern": "6",
-            "description": "Code must contain the number 6"
+            "pattern": "6"
           },
           {
             "type": "code_contains",
-            "pattern": "3",
-            "description": "Code must contain the number 3"
+            "pattern": "3"
           },
           {
             "type": "code_contains",
-            "pattern": "2",
-            "description": "Code must contain the number 2"
+            "pattern": "2"
           },
           {
             "type": "code_contains",
-            "pattern": "*",
-            "description": "Code must contain the multiplication operator"
+            "pattern": "*"
           },
           {
             "type": "code_contains",
-            "pattern": "/",
-            "description": "Code must contain the division operator"
+            "pattern": "/"
           }
         ]
       }
@@ -893,38 +793,31 @@
         "rules": [
           {
             "type": "code_contains",
-            "pattern": "print",
-            "description": "Code must contain a print statement"
+            "pattern": "print"
           },
           {
             "type": "output_contains",
-            "pattern": "38",
-            "description": "Output must contain '38'"
+            "pattern": "38.0"
           },
           {
             "type": "code_contains",
-            "pattern": "4",
-            "description": "Code must contain the number 4"
+            "pattern": "4"
           },
           {
             "type": "code_contains",
-            "pattern": "12",
-            "description": "Code must contain the number 12"
+            "pattern": "12"
           },
           {
             "type": "code_contains",
-            "pattern": "10",
-            "description": "Code must contain the number 10"
+            "pattern": "10"
           },
           {
             "type": "code_contains",
-            "pattern": "*",
-            "description": "Code must contain the multiplication operator"
+            "pattern": "*"
           },
           {
             "type": "code_contains",
-            "pattern": "-",
-            "description": "Code must contain the subtraction operator"
+            "pattern": "-"
           }
         ]
       }
