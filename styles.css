@@ -114,7 +114,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
     gap: 15px;
 }
 
@@ -127,6 +126,7 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 0.9rem;
+    white-space: nowrap;
 }
 
 .back-btn:hover {
@@ -144,6 +144,7 @@ body {
     font-size: 0.9rem;
     font-weight: 600;
     box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+    white-space: nowrap;
 }
 
 .start-over-btn:hover {
@@ -156,11 +157,15 @@ body {
 .worksheet-info h1 {
     font-size: 1.8rem;
     margin-bottom: 5px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .worksheet-info p {
     opacity: 0.9;
     font-size: 1rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 
