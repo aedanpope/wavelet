@@ -89,7 +89,7 @@ function generateTestValuesFromSeed(inputs, seed) {
     inputs.forEach(input => {
         if (input && input.name) {
             values[input.name] = generateValueFromSeed(input.type, currentSeed);
-            currentSeed = Math.floor(currentSeed / 20) + 1;
+            currentSeed = currentSeed + 1;
         }
     });
     
@@ -100,10 +100,11 @@ function generateTestValuesFromSeed(inputs, seed) {
 function generateValueFromSeed(type, seed) {
     switch (type) {
         case 'number':
+            console.log('seed:', seed);
             // Prioritize simple values for low seeds (better error messages)
-            const simpleNumbers = [2, 3, 5, 1, 10, 0, -1, -5, 100, -100, 50];
+            const simpleNumbers = [2, 3, 5, 1, 10, 0, -1, -5];
             
-            if (seed <= simpleNumbers.length) {
+            if ((seed - 1) < simpleNumbers.length) {
                 return simpleNumbers[seed - 1]; // seed 1 = 0, seed 2 = 1, etc.
             } else {
                 // For higher seeds, use RNG for more variety
@@ -295,15 +296,16 @@ function generateFailureMessage(result, problem) {
         expectedOutput = (result.solutionResult.output || '').trim();
     } else {
         // Handle seed-based test cases
-        inputDescription = describeInputsForSeed(result.seed, problem, result.studentResult.inputsUsed);
+        // Use solution's input usage to show what inputs should have been used
+        inputDescription = describeInputsForSeed(result.seed, problem, result.solutionResult.inputsUsed);
         studentOutput = (result.studentResult.output || '').trim();
         expectedOutput = (result.solutionResult.output || '').trim();
     }
     
     if (inputDescription) {
-        return `With ${inputDescription}, your program output:\n"${studentOutput}"\nbut expected output:\n"${expectedOutput}"`;
+        return `With ${inputDescription}, your program output:\n${studentOutput}\nbut expected output:\n${expectedOutput}`;
     } else {
-        return `Your program output:\n"${studentOutput}"\nbut expected output:\n"${expectedOutput}"`;
+        return `Your program output:\n${studentOutput}\nbut expected output:\n${expectedOutput}`;
     }
 }
 

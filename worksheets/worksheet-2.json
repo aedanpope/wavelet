@@ -20,8 +20,8 @@
             "pattern": "print\\s*\\(\\s*age\\s*\\)"
           },
           {
-            "type": "output_contains",
-            "pattern": "7"
+            "type": "solution_code",
+            "solutionCode": "age = 7\nprint(age)"
           }
         ]
       }
@@ -40,7 +40,8 @@
           },
           {
             "type": "output_contains_regex",
-            "pattern": "^(?!100\\n$).+"
+            "pattern": "^(?!100\\n$).+",
+            "description": "Output must not be 100"
           }
         ]
       }
@@ -55,12 +56,8 @@
       "validation": {
         "rules": [
           {
-            "type": "output_contains",
-            "pattern": "5"
-          },
-          {
-            "type": "output_contains",
-            "pattern": "3"
+            "type": "solution_code",
+            "solutionCode": "apples = 5\nbananas = 3\nprint(apples)\nprint(bananas)"
           }
         ]
       }
@@ -75,8 +72,8 @@
       "validation": {
         "rules": [
           {
-            "type": "output_contains",
-            "pattern": "8"
+            "type": "solution_code",
+            "solutionCode": "apples = 5\nbananas = 3\ntotal = apples + bananas\nprint(total)"
           }
         ]
       }
@@ -91,8 +88,8 @@
       "validation": {
         "rules": [
           {
-            "type": "output_contains",
-            "pattern": "20"
+            "type": "solution_code",
+            "solutionCode": "apples = 12\nbananas = 8\ntotal = apples + bananas\nprint(total)"
           }
         ]
       }
@@ -537,7 +534,7 @@
      {
        "title": "Rectangle area and perimeter",
        "content": "<p>Now let's work with rectangles! A rectangle has two different sides - length and width. The area is length × width, and the perimeter is 2 × (length + width).</p><p>Why 2 × (length + width)? Imagine you have to walk all the way around a rectangular room - you walk one length, then one width, then another length, then another width. So you walk length + width + length + width = 2 × (length + width).</p><p>For example, a rectangle with length 6 and width 4 has area = 6 × 4 = 24 and perimeter = 2 × (6 + 4) = 2 × 10 = 20.</p>",
-       "task": "Write a program that calculates both the area and perimeter of a rectangle. Use descriptive variable names 'length' and 'width' for the inputs.",
+       "task": "Write a program that calculates both the area and perimeter of a rectangle. Use descriptive variable names 'length' and 'width' for the inputs. Print the area on the first line and the perimeter on the second line.",
        "codeHeight": 7,
        "inputs": [
          {

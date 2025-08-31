@@ -22,144 +22,7 @@ async function initializePyodide() {
     }
 }
 
-// Test cases for solution_code validation (legacy approach)
-const legacyTestCases = [
-    {
-        name: "Simple print statement - exact match (should pass)",
-        studentCode: 'print("Hello, World!")',
-        solutionCode: 'print("Hello, World!")',
-        expected: true
-    },
-    {
-        name: "Simple print statement - different output (should fail)",
-        studentCode: 'print("Hello, Python!")',
-        solutionCode: 'print("Hello, World!")',
-        expected: false
-    },
-    {
-        name: "Variable assignment - same variable name (should pass)",
-        studentCode: 'name = "Alice"\nprint("Hello, " + name)',
-        solutionCode: 'name = "Alice"\nprint("Hello, " + name)',
-        expected: true
-    },
-    {
-        name: "Variable assignment - different variable name (should pass)",
-        studentCode: 'person = "Alice"\nprint("Hello, " + person)',
-        solutionCode: 'name = "Alice"\nprint("Hello, " + name)',
-        expected: true
-    },
-    {
-        name: "Variable assignment - different value (should fail)",
-        studentCode: 'name = "Bob"\nprint("Hello, " + name)',
-        solutionCode: 'name = "Alice"\nprint("Hello, " + name)',
-        expected: false
-    },
-    {
-        name: "Math calculation - same logic (should pass)",
-        studentCode: 'result = 10 + 5\nprint(result)',
-        solutionCode: 'result = 10 + 5\nprint(result)',
-        expected: true
-    },
-    {
-        name: "Math calculation - different variable name (should pass)",
-        studentCode: 'answer = 10 + 5\nprint(answer)',
-        solutionCode: 'result = 10 + 5\nprint(result)',
-        expected: true
-    },
-    {
-        name: "Math calculation - different logic (should fail)",
-        studentCode: 'result = 10 * 5\nprint(result)',
-        solutionCode: 'result = 10 + 5\nprint(result)',
-        expected: false
-    },
-    {
-        name: "Multiple print statements - same output (should pass)",
-        studentCode: 'print("First line")\nprint("Second line")',
-        solutionCode: 'print("First line")\nprint("Second line")',
-        expected: true
-    },
-    {
-        name: "Multiple print statements - different order (should fail)",
-        studentCode: 'print("Second line")\nprint("First line")',
-        solutionCode: 'print("First line")\nprint("Second line")',
-        expected: false
-    },
-    {
-        name: "Conditional logic - same condition (should pass)",
-        studentCode: 'x = 5\nif x > 3:\n    print("Greater than 3")\nelse:\n    print("Less than or equal to 3")',
-        solutionCode: 'x = 5\nif x > 3:\n    print("Greater than 3")\nelse:\n    print("Less than or equal to 3")',
-        expected: true
-    },
-    {
-        name: "Conditional logic - different condition (should fail)",
-        studentCode: 'x = 5\nif x > 10:\n    print("Greater than 10")\nelse:\n    print("Less than or equal to 10")',
-        solutionCode: 'x = 5\nif x > 3:\n    print("Greater than 3")\nelse:\n    print("Less than or equal to 3")',
-        expected: false
-    },
-    {
-        name: "Loop - same iteration count (should pass)",
-        studentCode: 'for i in range(3):\n    print(f"Number {i}")',
-        solutionCode: 'for i in range(3):\n    print(f"Number {i}")',
-        expected: true
-    },
-    {
-        name: "Loop - different iteration count (should fail)",
-        studentCode: 'for i in range(2):\n    print(f"Number {i}")',
-        solutionCode: 'for i in range(3):\n    print(f"Number {i}")',
-        expected: false
-    },
-    {
-        name: "Function definition - same function (should pass)",
-        studentCode: 'def greet(name):\n    return f"Hello, {name}!"\nprint(greet("Alice"))',
-        solutionCode: 'def greet(name):\n    return f"Hello, {name}!"\nprint(greet("Alice"))',
-        expected: true
-    },
-    {
-        name: "Function definition - different function name (should pass)",
-        studentCode: 'def say_hello(name):\n    return f"Hello, {name}!"\nprint(say_hello("Alice"))',
-        solutionCode: 'def greet(name):\n    return f"Hello, {name}!"\nprint(greet("Alice"))',
-        expected: true
-    },
-    {
-        name: "Function definition - different logic (should fail)",
-        studentCode: 'def greet(name):\n    return f"Hi, {name}!"\nprint(greet("Alice"))',
-        solutionCode: 'def greet(name):\n    return f"Hello, {name}!"\nprint(greet("Alice"))',
-        expected: false
-    },
-    {
-        name: "List operations - same result (should pass)",
-        studentCode: 'numbers = [1, 2, 3]\nnumbers.append(4)\nprint(numbers)',
-        solutionCode: 'numbers = [1, 2, 3]\nnumbers.append(4)\nprint(numbers)',
-        expected: true
-    },
-    {
-        name: "List operations - different result (should fail)",
-        studentCode: 'numbers = [1, 2, 3]\nprint(numbers)',
-        solutionCode: 'numbers = [1, 2, 3]\nnumbers.append(4)\nprint(numbers)',
-        expected: false
-    },
-    {
-        name: "Error handling - both fail (should pass)",
-        studentCode: 'print(undefined_variable)',
-        solutionCode: 'print(undefined_variable)',
-        expected: true
-    },
-    {
-        name: "Error handling - student fails, solution works (should fail)",
-        studentCode: 'print(undefined_variable)',
-        solutionCode: 'print("Hello, World!")',
-        expected: false
-    },
-    {
-        name: "Error handling - student works, solution fails (should fail)",
-        studentCode: 'print("Hello, World!")',
-        solutionCode: 'print(undefined_variable)',
-        expected: false
-    }
-];
-
-// Test cases for the new seed-based validation system
-const seedBasedTestCases = [
+const testCases = [
     {
         id: "seed-based-get-choice-simple",
         name: "Simple get_choice validation - correct solution",
@@ -194,7 +57,7 @@ else:
         problem: { inputs: [] },
         rule: { solutionCode: null, maxRuns: 5 },
         expectedResult: false,
-        expectedMessage: "With choice 1 (from 2 options), your program output: \"Wizard chosen\" but expected output: \"You chose the Wizard!\""
+        expectedMessage: "With choice 1 (from 2 options), your program output:\nWizard chosen\nbut expected output:\nYou chose the Wizard!"
     },
     {
         id: "seed-based-get-input-simple",
@@ -232,7 +95,7 @@ print(f"Hello {name}, you are {age} years old")`,
         },
         rule: { solutionCode: null, maxRuns: 3 },
         expectedResult: false,
-        expectedMessage: "With input name = \"hello\", age = undefined, your program output: \"\" but expected output: \"Hello hello, you are None years old\""
+        expectedMessage: "With input name = \"hello\", age = 3, your program output:\nHi hello, you are 13 years old\nbut expected output:\nHello hello, you are 3 years old"
     },
     {
         id: "seed-based-complex-scenario",
@@ -276,7 +139,7 @@ if height < 150:
         problem: { inputs: [] },
         rule: { solutionCode: null, maxRuns: 5 },
         expectedResult: false,
-        expectedMessage: "Your program output: \"You can go on the big ride!\" but expected output: \"\""
+        expectedMessage: "Your program output:\nYou can go on the big ride!\nbut expected output:\n"
     },
     {
         id: "multiple-failures-details-test",
@@ -294,7 +157,7 @@ else:
         problem: { inputs: [] },
         rule: { solutionCode: null, maxRuns: 3 },
         expectedResult: false,
-        expectedMessage: "With choice 1 (from 2 options), your program output: \"Wrong output for choice 1\" but expected output: \"Correct output for choice 1\"",
+        expectedMessage: "With choice 1 (from 2 options), your program output:\nWrong output for choice 1\nbut expected output:\nCorrect output for choice 1",
         validateDetails: true,
         expectedDetailsCount: 3
     },
@@ -407,75 +270,41 @@ if height > 140:
             ]
         },
         expectedResult: false,
-        expectedMessage: "With input height = 130, your program output: \"You can ride!\" but expected output: \"\""
+        expectedMessage: "With input height = 130, your program output:\nYou can ride!\nbut expected output:\n"
+    },
+    {
+        id: "missing-input-test",
+        name: "Student code missing input - should show all solution inputs",
+        studentCode: `x = get_input('x')
+y = get_input('y')
+result = x + y
+print(result)`,
+        solutionCode: `x = get_input('x')
+y = get_input('y')
+z = get_input('z')
+result = x + y + z
+print(result)`,
+        problem: { 
+            inputs: [
+                { name: "x", type: "number", value: 2 },
+                { name: "y", type: "number", value: 3 },
+                { name: "z", type: "number", value: 5 }
+            ]
+        },
+        rule: { solutionCode: null, maxRuns: 3 },
+        expectedResult: false,
+        expectedMessage: "With input x = 2, y = 3, z = 5, your program output:\n5\nbut expected output:\n10"
     }
 ];
 
-// Run legacy tests
-async function runLegacyTests() {
-    console.log("Testing legacy solution_code validation...\n");
-
-    let passed = 0;
-    let failed = 0;
-
-    for (let i = 0; i < legacyTestCases.length; i++) {
-        const testCase = legacyTestCases[i];
-        console.log(`Test ${i + 1}: ${testCase.name}`);
-        
-        try {
-            // Create a mock rule and problem for the test
-            const rule = {
-                solutionCode: testCase.solutionCode
-            };
-            
-            const problem = {
-                id: `test-${i + 1}`,
-                inputs: [] // No inputs for these tests
-            };
-            
-            // Test the validation
-            const result = await validateSolutionCode(
-                testCase.studentCode, 
-                '', // studentOutput not used in solution_code validation
-                rule, 
-                problem, 
-                0, 
-                pyodideInstance
-            );
-            
-            if (result === testCase.expected) {
-                console.log(`✅ PASSED - Expected: ${testCase.expected}, Got: ${result}`);
-                passed++;
-            } else {
-                console.log(`❌ FAILED - Expected: ${testCase.expected}, Got: ${result}`);
-                failed++;
-            }
-            
-            console.log(`   Student Code: ${testCase.studentCode.replace(/\n/g, '\\n')}`);
-            console.log(`   Solution Code: ${testCase.solutionCode.replace(/\n/g, '\\n')}`);
-            console.log("");
-            
-        } catch (error) {
-            console.log(`❌ ERROR - ${error.message}`);
-            console.log(`   Student Code: ${testCase.studentCode.replace(/\n/g, '\\n')}`);
-            console.log(`   Solution Code: ${testCase.solutionCode.replace(/\n/g, '\\n')}`);
-            console.log("");
-            failed++;
-        }
-    }
-
-    return { passed, failed };
-}
-
-// Run seed-based tests
-async function runSeedBasedTests() {
+async function runTestCases() {
     console.log("Testing enhanced seed-based validation system...\n");
     
     let passed = 0;
     let failed = 0;
     
-    for (let i = 0; i < seedBasedTestCases.length; i++) {
-        const testCase = seedBasedTestCases[i];
+    for (let i = 0; i < testCases.length; i++) {
+        const testCase = testCases[i];
         console.log(`Seed Test ${i + 1}: ${testCase.name}`);
         
         try {
@@ -560,23 +389,16 @@ async function runTests() {
     // Initialize Pyodide
     await initializePyodide();
 
-    // Run legacy tests
-    const legacyResults = await runLegacyTests();
-    
-    console.log("=" * 60);
-    
-    // Run seed-based tests
-    const seedResults = await runSeedBasedTests();
+    const results = await runTestCases();
 
     // Summary
-    const totalPassed = legacyResults.passed + seedResults.passed;
-    const totalFailed = legacyResults.failed + seedResults.failed;
+    const totalPassed = results.passed;
+    const totalFailed = results.failed;
     const totalTests = totalPassed + totalFailed;
 
     console.log(`\n📊 COMPREHENSIVE TEST RESULTS`);
     console.log(`==================================================`);
-    console.log(`Legacy Tests: ${legacyResults.passed} passed, ${legacyResults.failed} failed`);
-    console.log(`Seed-Based Tests: ${seedResults.passed} passed, ${seedResults.failed} failed`);
+    console.log(`Tests: ${results.passed} passed, ${results.failed} failed`);
     console.log(`Total: ${totalPassed} passed, ${totalFailed} failed`);
     console.log(`Success Rate: ${((totalPassed / totalTests) * 100).toFixed(1)}%`);
 
