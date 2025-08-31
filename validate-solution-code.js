@@ -303,9 +303,11 @@ function generateFailureMessage(result, problem) {
     }
     
     if (inputDescription) {
+        // Since the inputs are different, we need to print the student output on the generated inputs to show what went wrong.
         return `With ${inputDescription}, your program output:\n${studentOutput}\nbut expected output:\n${expectedOutput}`;
     } else {
-        return `Your program output:\n${studentOutput}\nbut expected output:\n${expectedOutput}`;
+        // We don't need to print the student output because it's visible already in the UI above.
+        return `Output does not match the expected output:\n${expectedOutput}`;
     }
 }
 

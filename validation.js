@@ -170,7 +170,7 @@ async function validateRule(code, output, rule, problem, problemIndex, pyodideIn
                 if (rule.description) {
                     message = rule.description;
                 } else {
-                    message = `Output must contain '${rule.pattern}'`;
+                    message = `Output must contain \n'${rule.pattern}'`;
                 }
                 
                 return {
