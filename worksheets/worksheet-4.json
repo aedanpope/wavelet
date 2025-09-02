@@ -119,13 +119,13 @@
     },
     {
       "title": "Magic Potions",
-      "content": "Decisions can change the value of variables! This is how games keep track of things like health or score. Here, your health starts at 10.",
-      "task": "Write a program that uses <code>get_choice(2)</code>. If choice 1 is picked, add 5 to health. If choice 2 is picked, subtract 3 from health. Then, print the final health.",
+      "content": "Decisions can change the value of variables! This is how games keep track of things like health or score. The line <code>health = health + 5</code> takes the current value of health, adds 5, and then saves the result back into the health variable.",
+      "task": "Complete the program. Add an <code>else</code> block that subtracts 3 from health if the second choice is picked.",
       "interactionType": "buttons",
       "codeHeight": 8,
-      "starterCode": "health = 10\nprint(\"Your health is 10\")\n\n\nprint(\"Your health is now\", health)",
-      "hint": "After getting the choice, use `if choice == 1:` and an `else:` block. Inside them, update the health variable with `health = health + 5` or `health = health - 3`.",
-      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "health = 10\nprint(\"Your health is 10\")\nchoice = get_choice(2)\nif choice == 1:\n  health = health + 5\nelse:\n  health = health - 3\nprint(\"Your health is now\", health)" }] }
+      "starterCode": "health = 10\nprint(\"Your health is 10\")\nchoice = get_choice(2)\n\nif choice == 1:\n  health = health + 5\n\nprint(\"Your health is now\", health)",
+      "hint": "Add an `else:` block. Inside it, write the line `health = health - 3`.",
+      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "health = 10\nprint(\"Your health is 10\")\nchoice = get_choice(2)\n\nif choice == 1:\n  health = health + 5\nelse:\n  health = health - 3\n\nprint(\"Your health is now\", health)" }] }
     },
     {
       "title": "Two Conditions with 'and'",
@@ -166,62 +166,32 @@
       "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "number\\s*%\\s*2\\s*==\\s*0" }] }
     },
     {
-      "title": "Your Turn: Multiple of 3",
-      "content": "The same logic for checking even numbers works for checking if a number is a multiple of any other number. A number is a multiple of 3 if the remainder is 0 when you divide it by 3.",
-      "task": "Modify this program to check if a number is a multiple of 3. It should print 'Multiple of 3' or 'Not a multiple of 3'.",
-      "inputs": [{ "name": "num", "label": "Number:", "type": "number" }],
-      "codeHeight": 6,
-      "starterCode": "number = get_input()\n\nif number % 2 == 0:\n  print(\"Even\")\nelse:\n  print(\"Odd\")",
-      "hint": "You'll need to change the condition to check the remainder when dividing by 3, and update the print messages.",
-      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "number = get_input()\n\nif number % 3 == 0:\n  print(\"Multiple of 3\")\nelse:\n  print(\"Not a multiple of 3\")" }] }
-    },
-    {
-      "title": "Your Turn: Multiple of 5",
-      "content": "Let's practice the modulo operator one more time from scratch.",
-      "task": "Write a program that asks for a number and checks if it is a multiple of 5. It should print 'Multiple of 5' or 'Not a multiple of 5'.",
-      "inputs": [{ "name": "num", "label": "Number:", "type": "number" }],
+      "title": "Loop with Modulo",
+      "content": "Let's combine loops from Worksheet 3 with the modulo operator we just learned! This program loops through numbers from 1 to 20 and uses an <code>if</code> statement to check which ones are multiples of 3.",
+      "task": "Run the code to see it print all the multiples of 3. Then, change the code to print the multiples of 4 instead.",
       "codeHeight": 5,
-      "starterCode": "",
-      "hint": "The condition you need to check is `number % 5 == 0`.",
-      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "number = get_input()\nif number % 5 == 0:\n  print(\"Multiple of 5\")\nelse:\n  print(\"Not a multiple of 5\")" }] }
-    },
-    {
-      "title": "Loop and Modulo",
-      "content": "Let's combine loops from Worksheet 3 with the modulo operator we just learned!",
-      "task": "Write a program that uses a <code>for</code> loop to go through numbers from 1 to 20. Inside the loop, use an <code>if</code> statement to print only the numbers that are multiples of 3.",
-      "codeHeight": 5,
-      "starterCode": "",
-      "hint": "Start with `for i in range(1, 21):`. Inside the loop, use `if i % 3 == 0:` to check the number.",
-      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in range(1, 21):\n  if i % 3 == 0:\n    print(i)" }] }
-    },
-    {
-      "title": "Nested If Statements",
-      "content": "You can put an <code>if</code> statement inside another <code>if</code> statement. This is called a **nested if**. It's useful for checking a second condition after the first one is already true.",
-      "task": "Run the code. Try changing the `age` and `has_permission` variables to see how both `if` statements must be true to get the final message.",
-      "codeHeight": 8,
-      "starterCode": "age = 15\nhas_permission = True\n\nif age > 12:\n  print(\"Old enough\")\n  if has_permission == True:\n    print(\"Can go to party\")",
-      "hint": "The second `if` is indented, which means it's inside the first one. It only gets checked if the first condition (`age > 12`) is true.",
-      "validation": { "rules": [{ "type": "code_contains", "pattern": "if age > 12:" }, { "type": "code_contains", "pattern": "if has_permission == True:" }] }
-    },
-    {
-      "title": "The Smart Shopkeeper",
-      "content": "Let's make our shopkeeper smarter. What if you don't have enough gold? We can use a nested `if` to first check what you want to buy, and then check if you can afford it.",
-      "task": "Write a program where you start with <code>gold = 20</code>. Use <code>get_choice(2)</code> to offer a sword (cost 15) or a shield (cost 25). Use a nested <code>if</code> to check if you have enough gold *after* a choice is made.",
-      "interactionType": "buttons",
-      "codeHeight": 11,
-      "starterCode": "gold = 20\nprint(\"You have\", gold, \"gold\")\nchoice = get_choice(2) # 1=Sword (15), 2=Shield (25)\n",
-      "hint": "After your `if choice == 1:`, add another indented `if gold >= 15:` to check if you can afford the sword.",
-      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "gold = 20\nprint(\"You have\", gold, \"gold\")\nchoice = get_choice(2)\nif choice == 1:\n  if gold >= 15:\n    print(\"Bought sword\")\n  else:\n    print(\"Not enough gold\")\nelse:\n  if gold >= 25:\n    print(\"Bought shield\")\n  else:\n    print(\"Not enough gold\")" }] }
+      "starterCode": "for i in range(1, 21):\n  if i % 3 == 0:\n    print(i)",
+      "hint": "You only need to change one number in the `if` statement.",
+      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in range(1, 21):\n  if i % 4 == 0:\n    print(i)" }] }
     },
     {
       "title": "Challenge: Dance Party",
-      "content": "Let's combine loops and decisions to create an interactive dance sequence!",
+      "content": "Now that you've practiced loops and decisions, let's combine them to create an interactive dance sequence!",
       "task": "Write a program that uses a <code>for</code> loop to run 4 times. Inside the loop, use <code>get_choice(3)</code> to pick a dance move ('Spin', 'Jump', or 'Wiggle') and print a message for each move.",
       "interactionType": "buttons",
       "codeHeight": 8,
       "starterCode": "",
       "hint": "Use `for i in range(4):`. Inside that loop, get a choice and use an `if/elif/else` structure to print the chosen move.",
       "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in range(4):\n  choice = get_choice(3)\n  if choice == 1:\n    print(\"You spin around\")\n  elif choice == 2:\n    print(\"You jump up high\")\n  else:\n    print(\"You wiggle\")" }] }
+    },
+    {
+      "title": "Challenge: FizzBuzz Intro",
+      "content": "This is a classic programming challenge! The goal is to loop through numbers and print 'Fizz' for multiples of 3. It's a great way to practice loops and the modulo operator.",
+      "task": "Write a program that loops from 1 to 20. Inside the loop, if a number is a multiple of 3, print 'Fizz'. Otherwise, just print the number itself.",
+      "codeHeight": 6,
+      "starterCode": "",
+      "hint": "Use a `for` loop and an `if/else` statement. The condition to check is `i % 3 == 0`.",
+      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in range(1, 21):\n  if i % 3 == 0:\n    print('Fizz')\n  else:\n    print(i)" }] }
     },
     {
       "title": "Creative Challenge",
