@@ -294,6 +294,31 @@ print(result)`,
         rule: { solutionCode: null, maxRuns: 3 },
         expectedResult: false,
         expectedMessage: "With input x = 2, y = 3, z = 5, your program output:\n5\nbut expected output:\n10"
+    },
+    {
+        id: "debugging-print-statements",
+        name: "Student code with debugging print statements - should pass validation",
+        studentCode: `print("Debug: Starting calculation")
+x = get_input('x')
+print(f"Debug: Got x = {x}")
+y = get_input('y')
+print(f"Debug: Got y = {y}")
+result = x + y
+print(f"Debug: Calculated result = {result}")
+print(f"Final result: {result}")`,
+        solutionCode: `x = get_input('x')
+y = get_input('y')
+result = x + y
+print(f"Final result: {result}")`,
+        problem: { 
+            inputs: [
+                { name: "x", type: "number", value: 5 },
+                { name: "y", type: "number", value: 7 }
+            ]
+        },
+        rule: { solutionCode: null, maxRuns: 3 },
+        expectedResult: true,
+        expectedMessage: null
     }
 ];
 

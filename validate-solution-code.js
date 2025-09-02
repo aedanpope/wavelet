@@ -1,6 +1,21 @@
 // Enhanced Solution Code Validation System
 // Implements seed-based black-box testing with dynamic input generation
 
+// Helper function to check if solution output is contained within student output
+// This allows students to have debugging print statements while still validating correctness
+function isOutputMatch(studentOutput, solutionOutput) {
+    const student = (studentOutput || '').trim();
+    const solution = (solutionOutput || '').trim();
+    
+    // If solution output is empty, student output should also be empty
+    if (solution === '') {
+        return student === '';
+    }
+    
+    // Check if solution output is a substring of student output
+    return student.includes(solution);
+}
+
 // Simple but effective PRNG for deterministic testing
 function nextRandom(seed, index = 0) {
     const state = seed * 1000 + index;
@@ -206,7 +221,7 @@ async function runMultipleTests(studentCode, solutionCode, problem, maxRuns, pyo
             studentResult,
             solutionResult,
             passed: (studentResult.success && solutionResult.success && 
-                   (studentResult.output || '').trim() === (solutionResult.output || '').trim()) ||
+                   isOutputMatch(studentResult.output, solutionResult.output)) ||
                    sameError
         });
     }
@@ -249,7 +264,7 @@ async function runManualTests(studentCode, solutionCode, rule, problem, pyodideI
         // Determine if this test case passed
         const passed = studentResult.success && 
                       solutionResult.success && 
-                      studentOutput === solutionOutput;
+                      isOutputMatch(studentOutput, solutionOutput);
         
         results.push({
             testCaseIndex: i,
@@ -395,114 +410,7 @@ function generateHint(seed, studentOutput, solutionOutput, problem) {
     return "Your program's output doesn't match the expected output. Check your logic and print statements.";
 }
 
-// Legacy validation approach for backward compatibility
-async function validateWithLegacyApproach(studentCode, studentOutput, rule, problem, problemIndex, pyodideInstance) {
-    // Get current input values
-    const currentInputs = getCurrentInputValues(problem);
-    
-    // Generate test inputs
-    const testInputs = generateTestInputs(problem);
-    
-    // Test with current inputs
-    const currentResult = await testCodeWithInputs(studentCode, currentInputs, problem, pyodideInstance);
-    const currentSolutionResult = await testCodeWithInputs(rule.solutionCode, currentInputs, problem, pyodideInstance);
-    
-    // Handle execution failures
-    if (!currentResult.success || !currentSolutionResult.success) {
-        // If both fail with the same error, consider it a match
-        if (!currentResult.success && !currentSolutionResult.success) {
-            return currentResult.error === currentSolutionResult.error;
-        }
-        console.log('Code execution failed with current inputs');
-        return false;
-    }
-    
-    // Test with generated inputs
-    const testResult = await testCodeWithInputs(studentCode, testInputs, problem, pyodideInstance);
-    const testSolutionResult = await testCodeWithInputs(rule.solutionCode, testInputs, problem, pyodideInstance);
-    
-    // Handle execution failures
-    if (!testResult.success || !testSolutionResult.success) {
-        // If both fail with the same error, consider it a match
-        if (!testResult.success && !testSolutionResult.success) {
-            return testResult.error === testSolutionResult.error;
-        }
-        console.log('Code execution failed with test inputs');
-        return false;
-    }
-    
-    // Compare outputs
-    const currentMatch = currentResult.output.trim() === currentSolutionResult.output.trim();
-    const testMatch = testResult.output.trim() === testSolutionResult.output.trim();
-    
-    console.log('currentResult.output.trim():', currentResult.output.trim());
-    console.log('currentSolutionResult.output.trim():', currentSolutionResult.output.trim());
-    console.log('Current match:', currentMatch);
-    console.log('testResult.output.trim():', testResult.output.trim());
-    console.log('testSolutionResult.output.trim():', testSolutionResult.output.trim());
-    console.log('Test match:', testMatch);
-    
-    return currentMatch && testMatch;
-}
 
-// Legacy helper functions
-function getCurrentInputValues(problem) {
-    const inputs = {};
-    if (problem.inputs) {
-        problem.inputs.forEach(input => {
-            inputs[input.name] = input.value;
-        });
-    }
-    return inputs;
-}
-
-function generateTestInputs(problem) {
-    const inputs = {};
-    if (problem.inputs) {
-        problem.inputs.forEach(input => {
-            inputs[input.name] = generateTestValue(input);
-        });
-    }
-    return inputs;
-}
-
-function generateTestValue(input) {
-    switch (input.type) {
-        case 'number':
-            return Math.floor(Math.random() * 100);
-        case 'string':
-            return 'test';
-        case 'boolean':
-            return Math.random() > 0.5;
-        default:
-            return input.value;
-    }
-}
-
-async function testCodeWithInputs(code, inputs, problem, pyodideInstance) {
-    try {
-        // Set up input values
-        Object.keys(inputs).forEach(key => {
-            pyodideInstance.globals.set(key, inputs[key]);
-        });
-        
-        // Capture print output
-        let printOutput = '';
-        const originalPrint = pyodideInstance.globals.get('print');
-        pyodideInstance.globals.set('print', function(...args) {
-            printOutput += args.join(' ') + '\n';
-        });
-        
-        // Run the code
-        await pyodideInstance.runPythonAsync(code);
-        
-        pyodideInstance.globals.set('print', originalPrint);
-        
-        return { success: true, output: printOutput };
-    } catch (error) {
-        return { success: false, error: error.message };
-    }
-}
 
 // Main solution_code validation function
 async function validateSolutionCode(studentCode, studentOutput, rule, problem, problemIndex, pyodideInstance) {
