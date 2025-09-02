@@ -1,10 +1,14 @@
 # Worksheet Validation System
 
-This document explains the self-contained validation system used in the Elve-Cursor worksheets.
+This document explains the enhanced validation system used in the Wavelet-Zone worksheets, which now prioritizes **black-box testing** over pattern matching for more robust and educational validation.
 
 ## Overview
 
-Each worksheet problem now includes its own validation logic, making worksheets completely self-contained. This eliminates the need for hardcoded validation in the main application code and makes it easier to create new worksheets.
+The validation system has been designed to focus on **"testing what the code does, not how it's written"**. This approach eliminates the fragility of regex patterns and provides students with better feedback about their solutions.
+
+## Core Philosophy
+
+**Black-Box First Approach**: Instead of checking syntax patterns, we test the actual behavior of student code against expected outputs across multiple scenarios using seed-based deterministic testing.
 
 ## Validation Structure
 
@@ -25,7 +29,46 @@ Each problem in a worksheet can include a `validation` object with the following
 }
 ```
 
-## Validation Types
+## New: Solution Code Validation (Recommended)
+
+The most powerful validation type is `solution_code`, which compares student code behavior against a reference solution:
+
+```json
+{
+  "validation": {
+    "rules": [
+      {
+        "type": "solution_code",
+        "solutionCode": "choice = get_choice(2)\nif choice == 1:\n  print(\"You chose the Wizard!\")\nelse:\n  print(\"You chose the Warrior!\")",
+        "maxRuns": 10
+      }
+    ]
+  }
+}
+```
+
+### How Solution Code Validation Works
+
+1. **Seed-Based Testing**: Executes both student and solution code with the same deterministic inputs
+2. **Dynamic Input Generation**: `get_choice()` and `get_input()` functions generate test values from seeds
+3. **Behavioral Comparison**: Compares outputs across multiple test scenarios
+4. **Educational Feedback**: Provides specific information about which test cases failed
+
+### Example Test Execution
+
+**Seed 1**: `get_choice(2)` returns 1 → Expected: "You chose the Wizard!"
+**Seed 2**: `get_choice(2)` returns 2 → Expected: "You chose the Warrior!"
+**Seed 3**: `get_choice(2)` returns 1 → Expected: "You chose the Wizard!"
+... (continues with different seeds)
+
+### Benefits of Solution Code Validation
+
+- **Robust**: Works regardless of variable names, spacing, or syntax variations
+- **Educational**: Students see exactly which scenarios their code fails
+- **Maintainable**: No need to update regex patterns when requirements change
+- **Comprehensive**: Tests multiple execution paths automatically
+
+## Traditional Validation Types (Legacy)
 
 ### `exact_match`
 Used when the code must match specific patterns exactly. All rules must pass for validation to succeed.
@@ -43,6 +86,17 @@ Checks if the student's code contains a specific pattern.
   "type": "code_contains",
   "pattern": "print(",
   "description": "Code must contain a print statement"
+}
+```
+
+### `code_contains_regex`
+Checks if the student's code matches a regex pattern (more flexible than `code_contains`).
+
+```json
+{
+  "type": "code_contains_regex",
+  "pattern": "get_input\\s*\\(\\s*['\"]name['\"]\\s*\\)",
+  "description": "Code must use get_input() with the parameter 'name'"
 }
 ```
 
@@ -153,190 +207,105 @@ Checks that the output doesn't contain error messages.
 }
 ```
 
-## Example Problem with Validation
+## Example Problem with Enhanced Validation
 
 ```json
 {
-  "id": "1.2",
+  "id": "4.1",
   "type": "practice",
-  "title": "Your First Print",
-  "content": "Now try printing your own message!",
-  "task": "Write a program that prints \"My name is [your name]\"",
+  "title": "Height Checker",
+  "content": "Write a program that checks if someone can ride based on their height.",
+  "task": "Get the user's height and print 'You can ride!' if they are tall enough (over 140cm).",
   "starterCode": "# Write your code here\n",
-  "expectedOutput": "My name is [any name]",
-  "hint": "Replace [your name] with your actual name in quotes",
+  "expectedOutput": "You can ride!",
+  "hint": "Use get_input() to get the height, then use an if statement to check if it's greater than 140.",
   "validation": {
-    "type": "pattern_match",
     "rules": [
       {
-        "type": "code_contains",
-        "pattern": "print",
-        "description": "Code must contain a print statement"
-      },
-      {
-        "type": "code_contains",
-        "pattern": "My name is",
-        "description": "Code must contain 'My name is'"
-      },
-      {
-        "type": "output_contains",
-        "pattern": "My name is",
-        "description": "Output must contain 'My name is'"
-      },
-      {
-        "type": "code_min_length",
-        "minLength": 20,
-        "description": "Code must be substantial (not just comments)"
+        "type": "solution_code",
+        "solutionCode": "height = get_input()\nif height > 140:\n  print(\"You can ride!\")",
+        "maxRuns": 5
       }
     ]
   }
 }
 ```
 
+## Enhanced Error Messages
+
+The new system provides much better feedback when validation fails:
+
+### Single Test Failure
+```
+❌ With input height = 150: got "You can ride!", expected "You can ride!"
+```
+
+### Multiple Test Failures
+```
+❌ Your program doesn't work correctly in 3 different test scenarios.
+
+- With input height = 130: got "", expected "You can ride!"
+- With input height = 150: got "You can ride!", expected "You can ride!"
+- With input height = 200: got "You can ride!", expected "You can ride!"
+
+Hint: Check your if condition - it should check if height > 140.
+```
+
+### Complex Scenarios (with choices and inputs)
+```
+❌ Your program doesn't work correctly in 2 different test scenarios.
+
+- With input age = 15 and choice 1 (from 3 options): got "You are young", expected "You are a teenager"
+- With input age = 25 and choice 2 (from 3 options): got "You are old", expected "You are an adult"
+```
+
 ## Creating New Worksheets
 
+### Recommended Approach (Solution Code Validation)
+1. **Write the solution code** that demonstrates the expected behavior
+2. **Add the solution_code validation rule** with appropriate `maxRuns` (default: 10)
+3. **Test thoroughly** with different input scenarios
+4. **Provide clear hints** that guide students toward the solution
+
+### Legacy Approach (Pattern Matching)
 1. Use the `template.json` file as a starting point
 2. Add validation rules to each problem based on the learning objectives
 3. Test the validation rules thoroughly
 4. Ensure the validation is neither too strict nor too lenient
 
-## Benefits
+## Benefits of the New System
 
-- **Self-contained**: Each worksheet contains its own validation logic
-- **Maintainable**: No need to modify main application code for new worksheets
-- **Flexible**: Easy to create custom validation rules for specific problems
-- **Documented**: Clear descriptions of what each validation rule checks
-- **Extensible**: New validation rule types can be easily added
+- **Robust**: No more false negatives due to syntax variations
+- **Educational**: Students see exactly what went wrong and why
+- **Maintainable**: No need to update regex patterns when requirements change
+- **Comprehensive**: Automatically tests multiple execution paths
+- **Fast**: Efficient seed-based testing with early termination
+- **Flexible**: Works with any code structure or logic
 
-## Design Principles
+## Technical Implementation
 
-### User Experience Considerations
+### Core Components
+- **`validate-solution-code.js`**: Standalone module for solution code validation
+- **`validation.js`**: Main validation orchestration (imports validate-solution-code)
+- **Seed-based testing**: Deterministic input generation for reproducible tests
+- **Dynamic function overrides**: `get_choice()` and `get_input()` during test execution
 
-#### Quote Flexibility
-**Problem**: Users may use different quote styles (single vs double quotes) in their code, which can cause validation failures and frustration.
-
-**Solution**: When creating validation rules, consider the following approaches:
-
-1. **Use `code_contains_regex` for flexible quote matching**:
-   ```json
-   {
-     "type": "code_contains_regex",
-     "pattern": "get_input\\('a'\\)|get_input\\(\"a\"\\)",
-     "description": "Code must use get_input() with either single or double quotes"
-   }
-   ```
-
-2. **Focus on the essential pattern, not quote style**:
-   ```json
-   {
-     "type": "code_contains_regex", 
-     "pattern": "get_input\\s*\\(\\s*['\"]a['\"]\\s*\\)",
-     "description": "Code must use get_input() with the parameter 'a'"
-   }
-   ```
-
-3. **For simple string matching, use `code_contains` with the most common pattern**:
-   ```json
-   {
-     "type": "code_contains",
-     "pattern": "print(",
-     "description": "Code must contain a print statement"
-   }
-   ```
-
-#### Whitespace Flexibility
-**Problem**: Users may use different spacing patterns (e.g., `x=2` vs `x = 2`) that don't affect program correctness but can cause validation failures.
-
-**Solution**: Use regex patterns that account for optional whitespace around operators and assignments:
-
-1. **Flexible assignment patterns**:
-   ```json
-   {
-     "type": "code_contains_regex",
-     "pattern": "x\\s*=\\s*2",
-     "description": "Code must assign the value 2 to variable x"
-   }
-   ```
-
-2. **Flexible operator patterns**:
-   ```json
-   {
-     "type": "code_contains_regex",
-     "pattern": "num1\\s*\\+\\s*num2",
-     "description": "Code must add num1 and num2"
-   }
-   ```
-
-3. **Flexible function call patterns**:
-   ```json
-   {
-     "type": "code_contains_regex",
-     "pattern": "print\\s*\\(\\s*['\"]Hello['\"]\\s*\\)",
-     "description": "Code must print 'Hello'"
-   }
-   ```
-
-**Common whitespace patterns to consider**:
-- `\\s*` - Zero or more whitespace characters
-- `\\s+` - One or more whitespace characters  
-- `\\s*=\\s*` - Assignment with optional spaces around `=`
-- `\\s*[+\\-*/]\\s*` - Operators with optional spaces
-- `\\s*\\(\\s*` - Function calls with optional spaces around parentheses
-
-#### Best Practices for Validation Rules
-
-- **Be flexible with syntax variations** that don't affect learning objectives
-- **Focus on conceptual understanding** rather than exact syntax matching
-- **Test validation rules** with different user input styles
-- **Provide clear error messages** that guide users toward the correct approach
-- **Consider edge cases** like extra spaces, different quote styles, and alternative syntax
-
-#### Examples of User-Friendly Validation
-
-**Good**: Flexible with quote styles
-```json
-{
-  "type": "code_contains_regex",
-  "pattern": "name\\s*=\\s*['\"][^'\"]*['\"]",
-  "description": "Code must assign a string value to a variable called 'name'"
-}
+### File Structure
+```
+validation/
+├── validate-solution-code.js   # Enhanced solution_code validation
+├── validation.js               # Main validation orchestration
+└── VALIDATION.md               # This documentation
 ```
 
-**Good**: Flexible with whitespace
-```json
-{
-  "type": "code_contains_regex",
-  "pattern": "x\\s*=\\s*5\\s*\\+\\s*y",
-  "description": "Code must assign the sum of 5 and y to variable x"
-}
-```
+## Migration from Old System
 
-**Good**: Flexible with both quotes and whitespace
-```json
-{
-  "type": "code_contains_regex",
-  "pattern": "result\\s*=\\s*get_input\\s*\\(\\s*['\"]number['\"]\\s*\\)",
-  "description": "Code must use get_input() to get a value and assign it to result"
-}
-```
+The new system is **fully backward compatible**. Existing worksheets with pattern-based validation will continue to work exactly as before. To upgrade:
 
-**Avoid**: Too strict with specific quote requirements
-```json
-{
-  "type": "code_contains",
-  "pattern": "name = \"John\"",
-  "description": "Code must exactly match this pattern"
-}
-```
-
-**Avoid**: Too strict with whitespace requirements
-```json
-{
-  "type": "code_contains",
-  "pattern": "x = 2 + y",
-  "description": "Code must exactly match this spacing pattern"
-}
-```
+1. **Replace pattern-based rules** with `solution_code` rules
+2. **Add `maxRuns` parameter** to control test coverage (optional)
+3. **Test the new validation** to ensure it catches the same issues
+4. **Remove old pattern rules** once confident in the new approach
 
 ## Fallback Behavior
 
@@ -344,3 +313,16 @@ If a problem doesn't include validation rules, the system falls back to basic va
 - Code must be at least 10 characters long (excluding comments)
 - Output must not be empty
 - No Python errors should occur
+
+## Future Enhancements
+
+### Phase 4: AST-Based Validation (Planned)
+- **Code parsing and analysis**: Parse Python code into AST
+- **Semantic validation**: Check for required code structures
+- **Hybrid validation system**: Combine AST analysis with black-box testing
+
+### Benefits of Future AST System
+- **Structural validation**: Check for required code constructs regardless of formatting
+- **Educational insights**: Identify specific misconceptions (e.g., using `=` instead of `==`)
+- **Performance**: Fast structural checks before expensive behavioral tests
+- **Maintainability**: Declarative validation rules instead of regex patterns

@@ -1,0 +1,257 @@
+{
+    "id": "worksheet-4",
+    "title": "Worksheet 4: Making Decisions",
+    "description": "Learn to use if, elif, and else statements to create programs that can make choices and respond to different conditions.",
+    "problems": [
+      {
+        "title": "Greater Than >",
+        "content": "So far, our programs have run the same way every time. But what if we want our code to make decisions? The <code>if</code> statement lets us run code only when a condition is true. We can use math symbols like <code>></code> (greater than) to create these conditions.",
+        "task": "Run this code. It will print a message because 19 is greater than 18. Now, change the age to 10 and run it again. What happens?",
+        "codeHeight": 4,
+        "starterCode": "age = 19\n\nif age > 18:\n  print(\"You are old enough to vote!\")",
+        "hint": "When the condition `age > 18` is false, the indented code under the `if` statement is skipped.",
+        "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "age\\s*=\\s*\\d+" }, { "type": "code_contains_regex", "pattern": "if age > 18:" }] }
+      },
+      {
+        "title": "The Height Rule <",
+        "content": "Just as we can check if a number is greater than another, we can use <code><</code> to check if it's less than another. This is useful for checking if a value is below a certain limit.<br><br>Now let's make our program interactive! Instead of hardcoding values, we can use <code>get_input()</code> to ask the user for information. When you call <code>get_input()</code>, the program will show an input box where the user can type a number. The function returns whatever number they enter, which we can then use in our comparisons.",
+        "task": "Modify this code to use <code>get_input()</code> and check if a person's height is less than 150cm. If it is, the program should print \"You can go on the smaller ride!\".",
+        "inputs": [{ "name": "height", "label": "Enter height:", "type": "number" }],
+        "codeHeight": 4,
+        "starterCode": "height = get_input()\n\nif height > 150:\n  print(\"You can go on the big ride!\")",
+        "hint": "You'll need to change the symbol from `>` to `<` and the message inside the `print()` function.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "height = get_input()\n\nif height < 150:\n  print(\"You can go on the smaller ride!\")", "maxRuns": 5, "testInputs": [{ "inputs": {"height": 149} }, { "inputs": {"height": 150} }, { "inputs": {"height": 151} }] }] }
+      },
+      {
+        "title": "Rollercoaster Entry",
+        "content": "Great! Now you know how to use <code>get_input()</code> and the <code><</code> operator. Let's practice with a different scenario.",
+        "task": "Write a program that uses <code>get_input()</code> to ask for your height. If your height is greater than 140, it should print \"You can ride!\"",
+        "inputs": [{ "name": "height", "label": "Enter your height:", "type": "number" }],
+        "codeHeight": 4,
+        "starterCode": "height = get_input()\n",
+        "hint": "You already know how to use `get_input()` and `if` statements. Just check if the height is greater than 140.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "height = get_input()\nif height > 140:\n  print(\"You can ride!\")", "maxRuns": 5, "testInputs": [{ "inputs": {"height": 130} }, { "inputs": {"height": 150} }] }] }
+      },
+      {
+        "title": "Is It Equal? ==",
+        "content": "To check if two numbers are exactly the same, we use two equals signs: <code>==</code>. This is one of the most important symbols in programming! <br><br>It's easy to get confused: <br><code>=</code> (one equals) is for **giving a variable its value**. <br><code>==</code> (two equals) is for **asking a question** (are these two things equal?).",
+        "task": "Run this code to see the <code>==</code> operator in action. Try changing the `secret_number` to 5 and see what happens when you run it again.",
+        "codeHeight": 4,
+        "starterCode": "secret_number = 7\n\nif secret_number == 7:\n  print(\"That's the one!\")",
+        "hint": "The code inside the `if` statement will only run if the two values are exactly equal.",
+        "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "secret_number\\s*==\\s*7" }] }
+      },
+      {
+        "title": "Fix the Bug! == vs =",
+        "content": "Oh no! This program has a bug. The programmer accidentally used a single <code>=</code> inside the <code>if</code> statement, which causes a <code>SyntaxError</code>. This is a very common mistake for new programmers!",
+        "task": "Run the code to see the error. Then, fix the bug so the program correctly checks if the choice is equal to 5 and prints the success message.",
+        "codeHeight": 4,
+        "starterCode": "choice = 5\n\nif choice = 5:\n  print(\"You fixed the bug!\")",
+        "hint": "Remember, to ask if two things are equal, you need to use two equals signs: `==`.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "choice = 5\n\nif choice == 5:\n  print(\"You fixed the bug!\")" }] }
+      },
+      {
+        "title": "The Secret Code",
+        "content": "Now it's your turn to write a program that uses the <code>==</code> operator to check for a correct number.",
+        "task": "Write a program that uses <code>get_input()</code> to ask for a code. If the code is exactly equal to 42, it should print \"Access Granted.\"",
+        "inputs": [{ "name": "code", "label": "Enter code:", "type": "number" }],
+        "codeHeight": 4,
+        "starterCode": "# Your code here",
+        "hint": "Create a variable to store the input, then use an `if` statement to check if that variable `== 42`.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "code = get_input()\nif code == 42:\n  print(\"Access Granted.\")" }] }
+      },
+      {
+        "title": "Adding an else",
+        "content": "What if we want to do something when the <code>if</code> condition is *not* true? For that, we can add an <code>else</code> block. The code inside the <code>else</code> block will run only when the <code>if</code> statement is false.",
+        "task": "Run this program and try entering different numbers. If you enter a number greater than 20, the first message prints. For any other number, the second message prints.",
+        "inputs": [{ "name": "temp", "label": "Enter temperature:", "type": "number" }],
+        "codeHeight": 6,
+        "starterCode": "temperature = get_input()\n\nif temperature > 20:\n  print(\"It's warm!\")\nelse:\n  print(\"It's cold.\")",
+        "hint": "One of the two blocks (`if` or `else`) will always run, but never both.",
+        "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "if temperature > 20:" }, { "type": "code_contains", "pattern": "else:" }] }
+      },
+      {
+        "title": "Digital Pet Happiness",
+        "content": "Let's create a fun program to check on a digital pet. We'll ask for its happiness level and print a message based on how happy it is.",
+        "task": "Write a program that takes a <code>happiness</code> level from <code>get_input()</code>. If the happiness is greater than 8, it should print \"Your pet is purring with joy! ❤️\". Otherwise (<code>else</code>), it should print \"Your pet looks a bit sad.\"",
+        "inputs": [{ "name": "happiness", "label": "Pet's happiness (1-10):", "type": "number" }],
+        "codeHeight": 5,
+        "starterCode": "# Your code here",
+        "hint": "You'll need an `if` to check for `> 8`, and an `else` to handle all other cases.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "happiness = get_input()\nif happiness > 8:\n  print(\"Your pet is purring with joy! ❤️\")\nelse:\n  print(\"Your pet looks a bit sad.\")" }] }
+      },
+      {
+        "title": "The Two Paths",
+        "content": "For some problems, typing a number isn't very fun. Let's use a new function, <code>get_choice()</code>, which shows buttons for the user to click! <code>get_choice(2)</code> will show two buttons. If you click the first button, it gives back the number 1. If you click the second, it gives back 2.",
+        "task": "Run this code. When the buttons appear, click one and see what happens. Then run it again and click the other button.",
+        "interactionType": "buttons",
+        "codeHeight": 7,
+        "starterCode": "print(\"You come to a fork in the road.\")\nchoice = get_choice(2)\n\nif choice == 1:\n  print(\"You chose the left path!\")\nelse:\n  print(\"You chose the right path!\")",
+        "hint": "The `get_choice(2)` function will pause the program and wait for you to click a button.",
+        "validation": { "rules": [{ "type": "code_contains", "pattern": "get_choice(2)" }, { "type": "code_contains", "pattern": "if choice == 1:" }, { "type": "code_contains", "pattern": "else:" }] }
+      },
+      {
+        "title": "Choose Your Character",
+        "content": "Now it's your turn to use <code>get_choice()</code> to create a simple choice.",
+        "task": "Write a program that uses <code>get_choice(2)</code> to let the user choose between two characters. If they choose 1, print \"You chose the Wizard!\". If they choose 2, print \"You chose the Warrior!\".",
+        "interactionType": "buttons",
+        "codeHeight": 5,
+        "starterCode": "# Your code here",
+        "hint": "Use an `if choice == 1:` statement and an `else` block.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "choice = get_choice(2)\nif choice == 1:\n  print(\"You chose the Wizard!\")\nelse:\n  print(\"You chose the Warrior!\")" }] }
+      },
+      {
+        "title": "The Four Chests",
+        "content": "What if we have more than two options? We can use <code>elif</code>, which is short for \"else if\". This lets us check for another condition. You can have as many <code>elif</code> statements as you need!",
+        "task": "Run this program and try clicking each of the four buttons to see the different outcomes.",
+        "interactionType": "buttons",
+        "codeHeight": 10,
+        "starterCode": "print(\"You find four treasure chests.\")\nchoice = get_choice(4)\n\nif choice == 1:\n  print(\"You found 10 gold coins!\")\nelif choice == 2:\n  print(\"You found a rusty sword.\")\nelif choice == 3:\n  print(\"It was empty...\")\nelse:\n  print(\"A tiny dragon pops out!\")",
+        "hint": "The program checks each condition from top to bottom. As soon as one is true, it runs that code and skips the rest.",
+        "validation": { "rules": [{ "type": "code_contains", "pattern": "get_choice(4)" }, { "type": "code_contains", "pattern": "if choice == 1:" }, { "type": "code_contains", "pattern": "elif choice == 2:" }, { "type": "code_contains", "pattern": "elif choice == 3:" }, { "type": "code_contains", "pattern": "else:" }] }
+      },
+      {
+        "title": "Add a Fifth Chest",
+        "content": "Let's practice adding a new option to our program. If we want to add another choice, we just need to add another <code>elif</code> block.",
+        "task": "Modify this program to handle 5 choices instead of 4. First, change <code>get_choice(4)</code> to <code>get_choice(5)</code>. Then, add a new <code>elif</code> block to check for choice 4 that prints \"You found a magic map!\".",
+        "interactionType": "buttons",
+        "codeHeight": 12,
+        "starterCode": "print(\"You find four treasure chests.\")\nchoice = get_choice(4)\n\nif choice == 1:\n  print(\"You found 10 gold coins!\")\nelif choice == 2:\n  print(\"You found a rusty sword.\")\nelif choice == 3:\n  print(\"It was empty...\")\nelse:\n  print(\"A tiny dragon pops out!\")",
+        "hint": "Add your new `elif choice == 4:` block just before the final `else:`.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "print(\"You find four treasure chests.\")\nchoice = get_choice(5)\n\nif choice == 1:\n  print(\"You found 10 gold coins!\")\nelif choice == 2:\n  print(\"You found a rusty sword.\")\nelif choice == 3:\n  print(\"It was empty...\")\nelif choice == 4:\n  print(\"You found a magic map!\")\nelse:\n  print(\"A tiny dragon pops out!\")" }] }
+      },
+      {
+        "title": "Simple Drink Machine",
+        "content": "Your turn to build a program with multiple choices from scratch!",
+        "task": "Write a program that simulates a drink machine using <code>get_choice(3)</code>. <br>If choice is 1, print \"Dispensing Lemonade...\".<br>If choice is 2, print \"Dispensing Water...\".<br>For any other choice, print \"Out of stock!\".",
+        "interactionType": "buttons",
+        "codeHeight": 6,
+        "starterCode": "# Your code here",
+        "hint": "You will need one `if`, one `elif`, and one `else`.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "choice = get_choice(3)\nif choice == 1:\n  print(\"Dispensing Lemonade...\")\nelif choice == 2:\n  print(\"Dispensing Water...\")\nelse:\n  print(\"Out of stock!\")" }] }
+      },
+      {
+        "title": "The Quiz Question",
+        "content": "You can use decision-making to create a simple quiz. We can print a question and then use <code>get_choice()</code> to get the user's answer.",
+        "task": "Write a program that asks a quiz question and provides three multiple-choice answers using <code>get_choice(3)</code>.<br>The question is: \"What is 10 + 5?\"<br>The choices are: 1) 12, 2) 15, 3) 20.<br>Your program should print \"Correct!\" for the right answer, and \"Not quite.\" for the wrong ones.",
+        "interactionType": "buttons",
+        "codeHeight": 7,
+        "starterCode": "print(\"What is 10 + 5?\")\nprint(\"1) 12\")\nprint(\"2) 15\")\nprint(\"3) 20\")\n\n# Your code here",
+        "hint": "The correct answer is choice 2. You can use an `if choice == 2:` block for the correct message and an `else` block for the incorrect message.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "print(\"What is 10 + 5?\")\nprint(\"1) 12\")\nprint(\"2) 15\")\nprint(\"3) 20\")\n\nchoice = get_choice(3)\nif choice == 2:\n  print(\"Correct!\")\nelse:\n  print(\"Not quite.\")" }] }
+      },
+      {
+        "title": "The Treasure Map",
+        "content": "Let's write a program that simulates searching for treasure on a map.",
+        "task": "Write a program where <code>get_choice(4)</code> represents four locations on a map (1, 2, 3, or 4). The treasure is hidden at location 3. If the user chooses 3, print \"You found the treasure! 💎\". For any other choice, print \"Nothing here...\".",
+        "interactionType": "buttons",
+        "codeHeight": 5,
+        "starterCode": "print(\"You look at the treasure map. Where will you dig?\")\n# Your code here",
+        "hint": "Use an `if choice == 3:` for the treasure and an `else` for all other locations.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "print(\"You look at the treasure map. Where will you dig?\")\nchoice = get_choice(4)\nif choice == 3:\n  print(\"You found the treasure! 💎\")\nelse:\n  print(\"Nothing here...\")" }] }
+      },
+      {
+        "title": "The Magic Potions",
+        "content": "Decisions can also change the value of variables! This is how games keep track of things like health or score. Here, we start with 10 health and the choice of potion will either increase or decrease it.",
+        "task": "Run this program. Notice how the final health changes depending on which button you click.",
+        "interactionType": "buttons",
+        "codeHeight": 11,
+        "starterCode": "health = 10\nprint(\"Your health is\", health)\nprint(\"You find two potions. Which do you drink?\")\n\nchoice = get_choice(2) # 1=Red, 2=Green\n\nif choice == 1:\n  print(\"You drank the Red Potion. You feel stronger!\")\n  health = health + 5\nelse:\n  print(\"You drank the Green Potion. It tasted funny...\")\n  health = health - 3\n\nprint(\"Your health is now\", health)",
+        "hint": "The line `health = health + 5` updates the variable with a new value.",
+        "validation": { "rules": [{ "type": "code_contains", "pattern": "health = 10" }, { "type": "code_contains", "pattern": "health = health + 5" }, { "type": "code_contains", "pattern": "health = health - 3" }] }
+      },
+      {
+        "title": "The Shopkeeper",
+        "content": "Let's practice modifying a program that uses variables. This shopkeeper sells two items, but you can change the prices.",
+        "task": "Modify the program to change the price of the sword to 25 gold and the price of the shield to 10 gold.",
+        "interactionType": "buttons",
+        "codeHeight": 11,
+        "starterCode": "gold = 50\nprint(\"You have\", gold, \"gold.\")\nprint(\"Welcome to the shop! What will you buy?\")\n\nchoice = get_choice(2) # 1=Sword, 2=Shield\n\nif choice == 1:\n  print(\"You bought a sword for 20 gold.\")\n  gold = gold - 20\nelse:\n  print(\"You bought a shield for 30 gold.\")\n  gold = gold - 30\n\nprint(\"You have\", gold, \"gold left.\")",
+        "hint": "You need to change the numbers in two places: the `print` message and the calculation where the gold is subtracted.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "gold = 50\nprint(\"You have\", gold, \"gold.\")\nprint(\"Welcome to the shop! What will you buy?\")\n\nchoice = get_choice(2)\n\nif choice == 1:\n  print(\"You bought a sword for 25 gold.\")\n  gold = gold - 25\nelse:\n  print(\"You bought a shield for 10 gold.\")\n  gold = gold - 10\n\nprint(\"You have\", gold, \"gold left.\")" }] }
+      },
+      {
+        "title": "Dance Party!",
+        "content": "We can combine decisions with loops from Worksheet 3! This lets our program make choices over and over again. This program will ask you to pick a dance move four times to create a unique dance sequence.",
+        "task": "Run the code and choose four dance moves by clicking the buttons. See how the output shows a different sequence every time you run it!",
+        "interactionType": "buttons",
+        "codeHeight": 11,
+        "starterCode": "for i in range(4):\n  print(\"Pick a dance move!\")\n  choice = get_choice(4) # 1=Spin, 2=Jump, 3=Clap, 4=Wiggle\n\n  if choice == 1:\n    print(\"You spin around!\")\n  elif choice == 2:\n    print(\"You jump up high!\")\n  elif choice == 3:\n    print(\"You clap your hands!\")\n  else:\n    print(\"You wiggle!\")\n\nprint(\"What a great dance!\")",
+        "hint": "The `for` loop makes the code inside it repeat 4 times.",
+        "validation": { "rules": [{ "type": "code_contains", "pattern": "for i in range(4):" }] }
+      },
+      {
+        "title": "Fruit Picking",
+        "content": "Now it's your turn to write a program that uses a loop to make choices. Let's go fruit picking!",
+        "task": "Write a program that uses a <code>for</code> loop to run 3 times. Inside the loop, use <code>get_choice(3)</code> to let the user pick a fruit. The program should print which fruit was picked each time.<br><br>Expected output for one run might be:<code><br>You picked an Apple!<br>You picked a Pear!<br>You picked an Apple!</code>",
+        "interactionType": "buttons",
+        "codeHeight": 7,
+        "starterCode": "# Your code here",
+        "hint": "Start with `for i in range(3):`. Inside the loop, call `get_choice(3)` and use an `if/elif/else` to print the name of the fruit chosen.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in range(3):\n  choice = get_choice(3)\n  if choice == 1:\n    print(\"You picked an Apple!\")\n  elif choice == 2:\n    print(\"You picked an Orange!\")\n  else:\n    print(\"You picked a Pear!\")" }] }
+      },
+      {
+        "title": "The Smart Shopkeeper",
+        "content": "Let's make our shopkeeper smarter. What if you don't have enough gold to buy something? We can use an <code>if</code> statement *inside* another <code>if</code> statement. This is called a **nested if**.",
+        "task": "Write a program where you start with <code>gold = 20</code>. Use <code>get_choice(2)</code> to offer a sword (cost 15) or a shield (cost 25). After the user makes a choice, a **nested if** must check if they have enough gold. If they do, subtract the cost. If not, print \"You don't have enough gold!\"",
+        "interactionType": "buttons",
+        "codeHeight": 13,
+        "starterCode": "gold = 20\nprint(\"You have\", gold, \"gold.\")\n\nchoice = get_choice(2) # 1=Sword (15g), 2=Shield (25g)\n\n# Your code here\n\nprint(\"You have\", gold, \"gold left.\")",
+        "hint": "After your `if choice == 1:`, add another indented `if gold >= 15:` to check if you can afford the sword.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "gold = 20\nprint(\"You have\", gold, \"gold.\")\n\nchoice = get_choice(2)\n\nif choice == 1:\n  if gold >= 15:\n    print(\"You bought a sword!\")\n    gold = gold - 15\n  else:\n    print(\"You don't have enough gold!\")\nelse:\n  if gold >= 25:\n    print(\"You bought a shield!\")\n    gold = gold - 25\n  else:\n    print(\"You don't have enough gold!\")\n\nprint(\"You have\", gold, \"gold left.\")" }] }
+      },
+      {
+        "title": "Challenge: Shopping Spree",
+        "content": "Let's combine everything: variables, loops, and nested decisions! This program will let you visit the shop multiple times, but your gold will decrease as you buy things.",
+        "task": "Wrap the \"Smart Shopkeeper\" code from the previous problem inside a <code>for</code> loop that runs 3 times. This will let you try to buy up to three items from the shop.",
+        "interactionType": "buttons",
+        "codeHeight": 15,
+        "starterCode": "gold = 50\n\n# Add a loop here to run 3 times\n\nprint(\"You have\", gold, \"gold.\")\nchoice = get_choice(2) # 1=Sword (15g), 2=Shield (25g)\n\nif choice == 1:\n  if gold >= 15:\n    print(\"You bought a sword!\")\n    gold = gold - 15\n  else:\n    print(\"You can't afford that.\")\nelse:\n  if gold >= 25:\n    print(\"You bought a shield!\")\n    gold = gold - 25\n  else:\n    print(\"You can't afford that.\")",
+        "hint": "The `for i in range(3):` should be at the top. All the other code (from `print(\"You have...\"`) needs to be indented inside it.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "gold = 50\n\nfor i in range(3):\n  print(\"You have\", gold, \"gold.\")\n  choice = get_choice(2)\n\n  if choice == 1:\n    if gold >= 15:\n      print(\"You bought a sword!\")\n      gold = gold - 15\n    else:\n      print(\"You can't afford that.\")\n  else:\n    if gold >= 25:\n      print(\"You bought a shield!\")\n      gold = gold - 25\n    else:\n      print(\"You can't afford that.\")" }] }
+      },
+      {
+        "title": "Challenge: Even or Odd",
+        "content": "There is a special math operator called **modulo** <code>%</code> that gives you the remainder of a division. For example, <code>10 % 3</code> is 1 because 10 divided by 3 is 3 with a remainder of 1. We can use this to check if a number is even or odd! Any even number divided by 2 has a remainder of 0.",
+        "task": "Run this program and enter different numbers. See how it correctly identifies even and odd numbers using the condition <code>number % 2 == 0</code>.",
+        "inputs": [{ "name": "num", "label": "Enter a whole number:", "type": "number" }],
+        "codeHeight": 6,
+        "starterCode": "number = get_input()\n\nif number % 2 == 0:\n  print(\"That number is even.\")\nelse:\n  print(\"That number is odd.\")",
+        "hint": "Try it with big numbers, small numbers, and zero!",
+        "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "number\\s*%\\s*2\\s*==\\s*0" }] }
+      },
+      {
+        "title": "Challenge: Multiple of Three",
+        "content": "Let's practice using the modulo operator <code>%</code>. The same logic we used to check for even numbers can be used to check if a number is a multiple of any other number.",
+        "task": "Modify this program to check if a number is a multiple of 3. If it is, it should print \"That number is a multiple of 3.\" Otherwise, it should print \"That number is not a multiple of 3.\"",
+        "inputs": [{ "name": "num", "label": "Enter a whole number:", "type": "number" }],
+        "codeHeight": 6,
+        "starterCode": "number = get_input()\n\nif number % 2 == 0:\n  print(\"That number is even.\")\nelse:\n  print(\"That number is odd.\")",
+        "hint": "To check if a number is a multiple of 3, the remainder when you divide by 3 should be 0. You'll need to change the condition to `number % 3 == 0`.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "number = get_input()\n\nif number % 3 == 0:\n  print(\"That number is a multiple of 3.\")\nelse:\n  print(\"That number is not a multiple of 3.\")" }] }
+      },
+      {
+        "title": "Challenge: Even/Odd Counter",
+        "content": "Let's combine our knowledge of loops and the modulo operator to check a whole range of numbers.",
+        "task": "Write a program that uses a <code>for</code> loop to go from 1 to 10. Inside the loop, it must check if each number is even or odd and print the result. The expected output is:<code><br>1 is odd.<br>2 is even.<br>3 is odd.<br>...and so on up to 10.</code>",
+        "codeHeight": 5,
+        "starterCode": "# Your code here",
+        "hint": "Use `for i in range(1, 11):`. Inside the loop, use an `if i % 2 == 0:` statement.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in range(1, 11):\n  if i % 2 == 0:\n    print(i, \"is even.\")\n  else:\n    print(i, \"is odd.\")" }] }
+      },
+      {
+        "title": "Creative Challenge",
+        "content": "You've learned about variables, loops, and now decisions! These are the three main building blocks of almost every program. Now it's your turn to combine them in a creative way.",
+        "task": "Create your own interesting program. It could be a simple game, an interactive story, or a cool calculator. Use at least one variable, one loop, and one `if` statement. Be creative and show your teacher!",
+        "interactionType": "buttons",
+        "inputs": [{ "name": "x", "label": "Input X:", "type": "number" }],
+        "codeHeight": 8,
+        "starterCode": "# Be creative!",
+        "hint": "You could make a guessing game with limited lives, a story where choices affect your score, or a program that asks for a number and then draws a pattern of that size.",
+        "validation": { "rules": [{ "type": "code_contains", "pattern": "=" }, { "type": "code_contains", "pattern": "for " }, { "type": "code_contains", "pattern": "if " }, { "type": "output_not_empty" }] }
+      }
+    ],
+    "metadata": {
+      "created": "2025-08-27"
+    }
+  }
