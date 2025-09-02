@@ -376,7 +376,7 @@ async function runCode(problemIndex) {
         // Execute code with output capture
         const executionResult = await codeExecutor.executeCode(code, output);
         
-        const validationResult = await Validation.validateAnswer(code, executionResult.printOutput, problem, problemIndex, codeExecutor.getPyodide());
+        const validationResult = await Validation.validateAnswer(code, executionResult.printOutput, problem, problemIndex, codeExecutor);
         
         displayOutput(output, executionResult.printOutput, validationResult.isValid ? 'success' : 'error', validationResult.message);
         

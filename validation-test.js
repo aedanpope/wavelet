@@ -5,19 +5,62 @@
 const { validateAnswer } = require('./validation.js');
 
 // Initialize Pyodide for testing
-let mockPyodide = null;
+let mockCodeExecutor = null;
 
 async function initializePyodide() {
     if (typeof window !== 'undefined') {
         // Browser environment - Pyodide should already be loaded
-        mockPyodide = window.pyodide;
+        mockCodeExecutor = {
+            getPyodide: () => window.pyodide,
+            resetPythonEnvironment: async () => {
+                // Mock reset for browser tests
+                try {
+                    await window.pyodide.runPythonAsync(`
+                        try:
+                            current_globals = list(globals().keys())
+                            for var_name in current_globals:
+                                if not var_name.startswith("_"):
+                                    try:
+                                        del globals()[var_name]
+                                    except:
+                                        pass
+                        except:
+                            pass
+                    `);
+                } catch (error) {
+                    console.warn('Mock reset failed:', error);
+                }
+            }
+        };
     } else {
         // Node.js environment - load real Pyodide from node_modules
         console.log('Loading Pyodide from node_modules...');
         const { loadPyodide } = require('pyodide');
-        mockPyodide = await loadPyodide({
+        const pyodide = await loadPyodide({
             indexURL: "./node_modules/pyodide/"
         });
+        mockCodeExecutor = {
+            getPyodide: () => pyodide,
+            resetPythonEnvironment: async () => {
+                // Mock reset for Node.js tests
+                try {
+                    await pyodide.runPythonAsync(`
+                        try:
+                            current_globals = list(globals().keys())
+                            for var_name in current_globals:
+                                if not var_name.startswith("_"):
+                                    try:
+                                        del globals()[var_name]
+                                    except:
+                                        pass
+                        except:
+                            pass
+                    `);
+                } catch (error) {
+                    console.warn('Mock reset failed:', error);
+                }
+            }
+        };
         console.log('Pyodide loaded successfully');
     }
 }
@@ -879,7 +922,7 @@ async function runTests() {
         const testCase = testCases[i];
         console.log(`Test ${i + 1}: ${testCase.name}`);
         
-        const result = await validateAnswer(testCase.code, testCase.output, testCase.problem, 0, mockPyodide);
+        const result = await validateAnswer(testCase.code, testCase.output, testCase.problem, 0, mockCodeExecutor);
         
         // Check if the result matches expected validation outcome
         const validationPassed = result.isValid === testCase.expected;

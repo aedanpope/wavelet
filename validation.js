@@ -16,7 +16,7 @@ function normalizeNumericalComparison(output, pattern) {
 }
 
 // Validate the student's answer using validation rules from the problem definition
-async function validateAnswer(code, output, problem, problemIndex, pyodideInstance) {
+async function validateAnswer(code, output, problem, problemIndex, codeExecutor) {
     const codeTrimmed = code.trim();
     const outputTrimmed = output.trim();
     
@@ -55,7 +55,7 @@ async function validateAnswer(code, output, problem, problemIndex, pyodideInstan
     const validationRules = problem.validation.rules;
     
     for (const rule of validationRules) {
-        const ruleResult = await validateRule(code, output, rule, problem, problemIndex, pyodideInstance);
+        const ruleResult = await validateRule(code, output, rule, problem, problemIndex, codeExecutor);
         
         if (typeof ruleResult === 'object' && ruleResult.isValid === false) {
             // Rule failed - return the detailed error message
@@ -81,7 +81,7 @@ async function validateAnswer(code, output, problem, problemIndex, pyodideInstan
 
 // Validate a single validation rule
 // Returns detailed error message objects for better educational feedback
-async function validateRule(code, output, rule, problem, problemIndex, pyodideInstance) {
+async function validateRule(code, output, rule, problem, problemIndex, codeExecutor) {
     switch (rule.type) {
         case 'code_contains':
             let result;
@@ -319,11 +319,11 @@ async function validateRule(code, output, rule, problem, problemIndex, pyodideIn
         case 'solution_code':
             // Use the imported validateSolutionCode function
             if (typeof window !== 'undefined' && window.SolutionCodeValidator) {
-                return await window.SolutionCodeValidator.validateSolutionCode(code, output, rule, problem, problemIndex, pyodideInstance);
+                return await window.SolutionCodeValidator.validateSolutionCode(code, output, rule, problem, problemIndex, codeExecutor);
             } else if (typeof module !== 'undefined' && module.exports) {
                 // Node.js environment - import dynamically
                 const { validateSolutionCode } = require('./validate-solution-code.js');
-                return await validateSolutionCode(code, output, rule, problem, problemIndex, pyodideInstance);
+                return await validateSolutionCode(code, output, rule, problem, problemIndex, codeExecutor);
             } else {
                 console.error('SolutionCodeValidator not available');
                 return {

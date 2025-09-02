@@ -18,8 +18,9 @@ function isOutputMatch(studentOutput, solutionOutput) {
 
 // Simple but effective PRNG for deterministic testing
 function nextRandom(seed, index = 0) {
-    const state = seed * 1000 + index;
-    return ((state * 9301 + 49297) % 233280) / 233280;
+    const state = (seed * 9301 + 49297) % 233280;
+    const indexState = (state + index * 1000) % 233280;
+    return indexState / 233280;
 }
 
 // Override get_choice during test execution
@@ -27,9 +28,14 @@ function createTestGetChoice(seed, maxRuns = 10) {
     let choiceIndex = 0;
     const choicesUsed = []; // Track choices made
 
-    const choiceFunction = function(n) {
+    const choiceFunction = async function(n) {
         const randomValue = nextRandom(seed, choiceIndex);
+        // Ensure we get values 1 through n, not 1 through n+1
         const choice = Math.floor(randomValue * n) + 1;
+        // Safety check to ensure choice is within valid range
+        if (choice > n) {
+            choice = n;
+        }
         choicesUsed.push({ choice: choice, maxChoices: n, index: choiceIndex }); // Track
         choiceIndex++;
         return choice;
@@ -151,7 +157,18 @@ function generateValueFromSeed(type, seed) {
 }
 
 // Execute code with specific seed
-async function executeWithSeed(code, problem, seed, pyodideInstance, useManualInputs = false) {
+async function executeWithSeed(code, problem, seed, codeExecutor, useManualInputs = false) {
+    // Reset Python environment to ensure clean state between executions
+    try {
+        await codeExecutor.resetPythonEnvironment();
+    } catch (error) {
+        // If reset fails, continue anyway - this is not critical
+        console.warn('Failed to reset Python environment:', error);
+    }
+    
+    // Get the Pyodide instance from the code executor
+    const pyodideInstance = codeExecutor.getPyodide();
+    
     // Override get_choice and get_input for this test run
     const testGetChoice = createTestGetChoice(seed);
     const testGetInput = createTestGetInput(problem, seed, useManualInputs);
@@ -168,6 +185,7 @@ async function executeWithSeed(code, problem, seed, pyodideInstance, useManualIn
     });
     
     try {
+        code = codeExecutor.processCodeForAsync(code);
         await pyodideInstance.runPythonAsync(code);
         
         // Capture the inputs that were actually used
@@ -200,12 +218,12 @@ async function executeWithSeed(code, problem, seed, pyodideInstance, useManualIn
 }
 
 // Run multiple tests with different seeds
-async function runMultipleTests(studentCode, solutionCode, problem, maxRuns, pyodideInstance) {
+async function runMultipleTests(studentCode, solutionCode, problem, maxRuns, codeExecutor) {
     const results = [];
     
     for (let seed = 1; seed <= maxRuns; seed++) {
-        const studentResult = await executeWithSeed(studentCode, problem, seed, pyodideInstance);
-        const solutionResult = await executeWithSeed(solutionCode, problem, seed, pyodideInstance);
+        const studentResult = await executeWithSeed(studentCode, problem, seed, codeExecutor);
+        const solutionResult = await executeWithSeed(solutionCode, problem, seed, codeExecutor);
         
         // Handle the case where both student and solution code fail with the same error
         const bothFailed = !studentResult.success && !solutionResult.success;
@@ -215,14 +233,14 @@ async function runMultipleTests(studentCode, solutionCode, problem, maxRuns, pyo
         if (bothFailed) {
             console.log(`[ERROR] Both student and solution code failed with error:`, studentResult.error);
         }
+
+        passed = (studentResult.success && solutionResult.success &&  isOutputMatch(studentResult.output, solutionResult.output)) || sameError
         
         results.push({
             seed,
             studentResult,
             solutionResult,
-            passed: (studentResult.success && solutionResult.success && 
-                   isOutputMatch(studentResult.output, solutionResult.output)) ||
-                   sameError
+            passed: passed
         });
     }
     
@@ -230,7 +248,7 @@ async function runMultipleTests(studentCode, solutionCode, problem, maxRuns, pyo
 }
 
 // Run manual test cases specified in the validation rule
-async function runManualTests(studentCode, solutionCode, rule, problem, pyodideInstance) {
+async function runManualTests(studentCode, solutionCode, rule, problem, codeExecutor) {
     if (!rule.testInputs || !Array.isArray(rule.testInputs)) {
         return []; // No manual tests specified
     }
@@ -254,8 +272,8 @@ async function runManualTests(studentCode, solutionCode, rule, problem, pyodideI
         };
         
         // Execute both codes with the test inputs
-        const studentResult = await executeWithSeed(studentCode, testProblem, 0, pyodideInstance, true);
-        const solutionResult = await executeWithSeed(solutionCode, testProblem, 0, pyodideInstance, true);
+        const studentResult = await executeWithSeed(studentCode, testProblem, 0, codeExecutor, true);
+        const solutionResult = await executeWithSeed(solutionCode, testProblem, 0, codeExecutor, true);
         
         // Check if outputs match expected
         const studentOutput = (studentResult.output || '').trim();
@@ -413,13 +431,13 @@ function generateHint(seed, studentOutput, solutionOutput, problem) {
 
 
 // Main solution_code validation function
-async function validateSolutionCode(studentCode, studentOutput, rule, problem, problemIndex, pyodideInstance) {
+async function validateSolutionCode(studentCode, studentOutput, rule, problem, problemIndex, codeExecutor) {
     // Run manual test cases if specified
-    const manualResults = await runManualTests(studentCode, rule.solutionCode, rule, problem, pyodideInstance);
+    const manualResults = await runManualTests(studentCode, rule.solutionCode, rule, problem, codeExecutor);
     
     // Use new seed-based testing
     const maxRuns = rule.maxRuns || 10;
-    const seedResults = await runMultipleTests(studentCode, rule.solutionCode, problem, maxRuns, pyodideInstance);
+    const seedResults = await runMultipleTests(studentCode, rule.solutionCode, problem, maxRuns, codeExecutor);
     
     // Combine all results, prioritizing manual test failures
     const allResults = [...manualResults, ...seedResults];

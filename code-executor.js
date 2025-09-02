@@ -137,7 +137,8 @@ except Exception as e:
         // Use a regular expression to find calls to get_choice and wrap them in await
         // This is a hack to get the get_choice function to work without students having to write 'await'
         // TODO: Use an AST based solution instead.
-        return code.replace(/get_choice\((.*?)\)/g, 'await get_choice($1)');
+        // Only add 'await' if it's not already present
+        return code.replace(/(?<!await\s+)get_choice\((.*?)\)/g, 'await get_choice($1)');
     }
 
     /**
