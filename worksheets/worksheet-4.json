@@ -4,175 +4,118 @@
   "description": "Learn to use if, elif, and else statements to create programs that can make choices and respond to different conditions.",
   "problems": [
     {
-      "title": "Greater Than (print‑debug)",
-      "content": "In programming, an \"if\" lets your code decide what to do. Before we decide, we can print helpful clues (debug prints). The first print shows the number. The second print shows whether the test is True or False.",
-      "task": "Run the code. Then change age to 3, 5, or 7 and run again. Read the two debug lines to predict whether the message will appear.",
-      "codeHeight": 8,
-      "starterCode": "age = 6\nprint(age)              # debug: see the value\nprint(age > 5)          # debug: see the test result\n\nif age > 5:\n  print(\"OK\")",
-      "hint": "The boolean line (True/False) tells you if the if-block will run.",
-      "validation": {
-        "rules": [
-          { "type": "no_errors" },
-          { "type": "code_contains_regex", "pattern": "print\\s*\\(\\s*age\\s*\\)" },
-          { "type": "code_contains_regex", "pattern": "print\\s*\\(\\s*age\\s*>\\s*5\\s*\\)" },
-          { "type": "code_contains_regex", "pattern": "if\\s*age\\s*>\\s*5\\s*:" }
-        ]
-      }
-    },
-    {
-      "title": "Less Than (print‑debug)",
-      "content": "Now try the < (less than) comparison. We’ll keep the same style of debug prints so you can see the value and the test result.",
-      "task": "Run the code. Change toys to 2, 5, or 8 and run again. Which values make the message print?",
-      "codeHeight": 8,
-      "starterCode": "toys = 4\nprint(toys)             # debug\nprint(toys < 5)         # debug\n\nif toys < 5:\n  print(\"Few\")",
-      "hint": "Try a number right on the edge (5).",
-      "validation": {
-        "rules": [
-          { "type": "no_errors" },
-          { "type": "code_contains_regex", "pattern": "print\\s*\\(\\s*toys\\s*\\)" },
-          { "type": "code_contains_regex", "pattern": "print\\s*\\(\\s*toys\\s*<\\s*5\\s*\\)" },
-          { "type": "code_contains_regex", "pattern": "if\\s*toys\\s*<\\s*5\\s*:" }
-        ]
-      }
-    },
-    {
-      "title": "Equal To == (print‑debug)",
-      "content": "One equals (=) gives a value to a variable. Two equals (==) asks a question: are these equal? The debug prints show the value and whether the equality test is True or False.",
-      "task": "Run the code. Change target to 6, 7, or 9 and run again. When does the message appear?",
-      "codeHeight": 8,
-      "starterCode": "target = 7\nprint(target)           # debug\nprint(target == 7)      # debug\n\nif target == 7:\n  print(\"Win\")",
-      "hint": "Remember: == is a question; = is assignment.",
-      "validation": {
-        "rules": [
-          { "type": "no_errors" },
-          { "type": "code_contains_regex", "pattern": "print\\s*\\(\\s*target\\s*\\)" },
-          { "type": "code_contains_regex", "pattern": "print\\s*\\(\\s*target\\s*==\\s*7\\s*\\)" },
-          { "type": "code_contains_regex", "pattern": "if\\s*target\\s*==\\s*7\\s*:" }
-        ]
-      }
-    },
-    {
-      "title": "Fix the bug (= vs ==)",
-      "content": "This program has a common bug: using = inside an if. Run it to see the error, then fix it so the program checks equality correctly.",
-      "task": "Fix the if-line to use == so the message prints.",
+      "title": "Greater Than >",
+      "content": "So far, our programs have always run the same way. But what if we want our code to make decisions? The <code>if</code> statement runs code only when a condition is true. We can use math symbols like <code>></code> (greater than) to create these conditions.",
+      "task": "Run the code. Then, change the number in the <code>age</code> variable to 3 and run it again. Notice how the <code>True</code>/<code>False</code> line changes and predicts whether 'OK' will be printed.",
       "codeHeight": 6,
-      "starterCode": "choice = 5\n\nif choice = 5:\n  print(\"Fixed!\")",
-      "hint": "Inside an if you need two equals signs: ==.",
-      "validation": {
-        "rules": [
-          {
-            "type": "solution_code",
-            "solutionCode": "choice = 5\nif choice == 5:\n  print(\"Fixed!\")",
-            "maxRuns": 3
-          }
-        ]
-      }
+      "starterCode": "age = 6\nprint(age > 5)   # This line shows if the condition is True or False\n\nif age > 5:\n  print(\"OK\")",
+      "hint": "The code inside the `if` block only runs when the condition next to the `if` is `True`.",
+      "validation": { "rules": [{ "type": "no_errors" }, { "type": "code_contains_regex", "pattern": "print\\s*\\(\\s*age\\s*>\\s*5\\s*\\)" }, { "type": "code_contains_regex", "pattern": "if\\s*age\\s*>\\s*5\\s*:" }] }
     },
     {
-      "title": "Add an else (with input)",
-      "content": "Sometimes the condition is False. An else gives us the \"other path\". We’ll also keep the debug prints so you can see what’s happening.",
-      "task": "Enter a number. If it’s greater than 5 you’ll see \"High\". Otherwise you’ll see \"Low\". Try 4 and 6 to see both paths.",
+      "title": "Less Than <",
+      "content": "Just like we use <code>></code> for 'greater than', we can use <code><</code> for 'less than'. Let's use our debug print to see how it works.",
+      "task": "Run the code. Then, change the number of <code>toys</code> to 5 and run it again. What happens when <code>toys < 5</code> is <code>False</code>?",
+      "codeHeight": 6,
+      "starterCode": "toys = 4\nprint(toys < 5)   # Is the number of toys less than 5?\n\nif toys < 5:\n  print(\"Not too many toys\")",
+      "hint": "Try the number 5. Is 5 less than 5? The debug line will tell you!",
+      "validation": { "rules": [{ "type": "no_errors" }, { "type": "code_contains_regex", "pattern": "print\\s*\\(\\s*toys\\s*<\\s*5\\s*\\)" }, { "type": "code_contains_regex", "pattern": "if\\s*toys\\s*<\\s*5\\s*:" }] }
+    },
+    {
+      "title": "Equal To ==",
+      "content": "This is a very important one! To ask if two things are equal, we use two equals signs: <code>==</code>. A single equals sign <code>=</code> is for giving a value to a variable.",
+      "task": "Run the code. Change the <code>secret_number</code> to 6 and run it again. Watch the <code>True</code>/<code>False</code> line to predict the result.",
+      "codeHeight": 6,
+      "starterCode": "secret_number = 7\nprint(secret_number == 7)  # Is the secret number equal to 7?\n\nif secret_number == 7:\n  print(\"You guessed it\")",
+      "hint": "Remember: one equals `=` gives a value, two equals `==` asks a question.",
+      "validation": { "rules": [{ "type": "no_errors" }, { "type": "code_contains_regex", "pattern": "print\\s*\\(\\s*secret_number\\s*==\\s*7\\s*\\)" }, { "type": "code_contains_regex", "pattern": "if\\s*secret_number\\s*==\\s*7\\s*:" }] }
+    },
+    {
+      "title": "Fix the Bug! (= vs ==)",
+      "content": "Oh no! A classic bug. This program uses a single <code>=</code> inside the <code>if</code> statement, which causes an error. This is one of the most common mistakes for new programmers!",
+      "task": "Run the code to see the error. Then, fix the bug by changing the single <code>=</code> to a double <code>==</code> so the program works correctly.",
+      "codeHeight": 4,
+      "starterCode": "choice = 5\n\nif choice = 5:\n  print(\"Bug fixed\")",
+      "hint": "To ask a question inside an `if` statement, you need two equals signs: `==`.",
+      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "choice = 5\nif choice == 5:\n  print(\"Bug fixed\")" }] }
+    },
+    {
+      "title": "Greater Than or Equal To >=",
+      "content": "What if you want to include the number in your check? You can use <code>>=</code> which means 'greater than or equal to'.",
+      "task": "Run the code with the score set to 50. It says 'Try again'. Change the <code>></code> to <code>>=</code> so that a score of 50 is also a pass.",
+      "codeHeight": 6,
+      "starterCode": "score = 50\n\nif score > 50:\n  print(\"You passed\")\nelse:\n  print(\"Try again\")",
+      "hint": "Just add an equals sign `=` after the greater than sign `>`.",
+      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "score = 50\nif score >= 50:\n  print(\"You passed\")\nelse:\n  print(\"Try again\")" }] }
+    },
+    {
+      "title": "Adding an else",
+      "content": "What if we want to do something when the <code>if</code> condition is *not* true? We can add an <code>else</code> block. The code in the <code>else</code> block only runs if the <code>if</code> condition is `False`.",
+      "task": "Enter different numbers to see both paths. If you enter a number greater than 10, 'Big number' prints. For any other number, 'Small number' prints.",
       "inputs": [ { "name": "n", "label": "Number:", "type": "number" } ],
-      "codeHeight": 10,
-      "starterCode": "n = get_input()\nprint(n)                # debug\nprint(n > 5)            # debug\n\nif n > 5:\n  print(\"High\")\nelse:\n  print(\"Low\")",
-      "hint": "Only one branch runs each time.",
-      "validation": {
-        "rules": [
-          {
-            "type": "solution_code",
-            "solutionCode": "n = get_input()\nprint(n)\nprint(n > 5)\nif n > 5:\n  print(\"High\")\nelse:\n  print(\"Low\")",
-            "maxRuns": 4,
-            "testInputs": [ { "inputs": { "n": 4 } }, { "inputs": { "n": 6 } } ]
-          }
-        ]
-      }
+      "codeHeight": 6,
+      "starterCode": "n = get_input()\n\nif n > 10:\n  print(\"Big number\")\nelse:\n  print(\"Small number\")",
+      "hint": "The `if` block and the `else` block are like two different paths. The program will only ever go down one of them.",
+      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "n = get_input()\nif n > 10:\n  print(\"Big number\")\nelse:\n  print(\"Small number\")" }] }
     },
     {
-      "title": "Input + tiny numbers (explore)",
-      "content": "Use an input box (no big strings needed). The debug prints help you predict which branch will run.",
-      "task": "Enter 3, 5, or 7 and see how the boolean line guides the branch.",
+      "title": "Two Buttons",
+      "content": "Let's use buttons instead of typing numbers! The function <code>get_choice(2)</code> shows two buttons. It gives back the number 1 for the first button and 2 for the second.",
+      "task": "Run the code. Click the first button. Then run it again and click the second button to see the different messages.",
+      "interactionType": "buttons",
+      "codeHeight": 6,
+      "starterCode": "choice = get_choice(2)\n\nif choice == 1:\n  print(\"Left path\")\nelse:\n  print(\"Right path\")",
+      "hint": "`get_choice(2)` pauses the program and waits for you to click a button.",
+      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "choice = get_choice(2)\nif choice == 1:\n  print(\"Left path\")\nelse:\n  print(\"Right path\")" }] }
+    },
+    {
+      "title": "Your Turn: Add an else",
+      "content": "Here is a program with an <code>if</code> statement, but it's missing the <code>else</code> part. Let's add it!",
+      "task": "The code below only prints a message if you have enough coins. Add an <code>else</code> block that prints 'Not enough coins' if the condition is false.",
+      "codeHeight": 6,
+      "starterCode": "coins = 15\n\nif coins > 20:\n  print(\"Can buy item\")",
+      "hint": "Add `else:` on a new line (make sure it lines up with `if`). Then add your new print statement indented underneath it.",
+      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "coins = 15\n\nif coins > 20:\n  print(\"Can buy item\")\nelse:\n  print(\"Not enough coins\")" }] }
+    },
+    {
+      "title": "More Than Two Choices: elif",
+      "content": "What if we have more than two options? We can use <code>elif</code>, which is short for 'else if'. It lets us check another condition.",
+      "task": "Enter numbers like 2, 5, and 8. See how the program prints 'Low', 'Mid', or 'High' depending on the number.",
       "inputs": [ { "name": "n", "label": "Number:", "type": "number" } ],
-      "codeHeight": 10,
-      "starterCode": "n = get_input()\nprint(n)                # debug\nprint(n < 5)            # debug\n\nif n < 5:\n  print(\"Small\")",
-      "hint": "Try values on both sides of 5.",
-      "validation": {
-        "rules": [
-          { "type": "no_errors" },
-          { "type": "code_contains_regex", "pattern": "get_input\\s*\\(" },
-          { "type": "code_contains_regex", "pattern": "print\\s*\\(\\s*n\\s*<\\s*5\\s*\\)" },
-          { "type": "code_contains_regex", "pattern": "if\\s*n\\s*<\\s*5\\s*:" }
-        ]
-      }
-    },
-    {
-      "title": "Boundary: make > into >=",
-      "content": "Is 5 included or excluded? Change the comparison to include 5. Keep the debug prints so you can see the difference.",
-      "task": "Edit the if so that 5 also passes (use >=).",
-      "codeHeight": 10,
-      "starterCode": "score = 5\nprint(score)            # debug\nprint(score > 5)        # debug\n\nif score > 5:\n  print(\"Pass\")\nelse:\n  print(\"Try\")",
-      "hint": "Replace > with >= in the if-line.",
-      "validation": {
-        "rules": [
-          {
-            "type": "solution_code",
-            "solutionCode": "score = 5\nprint(score)\nprint(score >= 5)\nif score >= 5:\n  print(\"Pass\")\nelse:\n  print(\"Try\")",
-            "maxRuns": 2
-          }
-        ]
-      }
-    },
-    {
-      "title": "Two buttons: if/else",
-      "content": "Buttons mean less typing. Click a button; the program checks which one you chose.",
-      "task": "Run, click button 1 or 2, then run again and choose the other button.",
-      "codeHeight": 8,
-      "starterCode": "choice = get_choice(2)\n\nif choice == 1:\n  print(\"Left\")\nelse:\n  print(\"Right\")",
-      "hint": "`get_choice(2)` returns 1 for the first button or 2 for the second.",
-      "validation": {
-        "rules": [
-          {
-            "type": "solution_code",
-            "solutionCode": "choice = get_choice(2)\nif choice == 1:\n  print(\"Left\")\nelse:\n  print(\"Right\")",
-            "maxRuns": 6
-          }
-        ]
-      }
-    },
-    {
-      "title": "Three-way with elif (input)",
-      "content": "Now add a middle path with elif. The first true branch wins and the rest are skipped.",
-      "task": "Enter numbers like 2, 3, 5, and 6 to see Low/Mid/High.",
-      "inputs": [ { "name": "n", "label": "Number:", "type": "number" } ],
-      "codeHeight": 10,
+      "codeHeight": 7,
       "starterCode": "n = get_input()\n\nif n < 3:\n  print(\"Low\")\nelif n < 6:\n  print(\"Mid\")\nelse:\n  print(\"High\")",
-      "hint": "Check the smaller test first.",
-      "validation": {
-        "rules": [
-          {
-            "type": "solution_code",
-            "solutionCode": "n = get_input()\nif n < 3:\n  print(\"Low\")\nelif n < 6:\n  print(\"Mid\")\nelse:\n  print(\"High\")",
-            "maxRuns": 6,
-            "testInputs": [ { "inputs": { "n": 2 } }, { "inputs": { "n": 5 } }, { "inputs": { "n": 6 } } ]
-          }
-        ]
-      }
+      "hint": "The program checks each condition from top to bottom. As soon as one is true, it runs that code and skips the rest.",
+      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "n = get_input()\nif n < 3:\n  print(\"Low\")\nelif n < 6:\n  print(\"Mid\")\nelse:\n  print(\"High\")" }] }
     },
     {
-      "title": "Buttons + elif (menu)",
-      "content": "Use three buttons to choose a path. Each button prints a short label.",
-      "task": "Run three times and click 1, then 2, then 3 to see A, B, C.",
-      "codeHeight": 10,
-      "starterCode": "c = get_choice(3)\n\nif c == 1:\n  print(\"A\")\nelif c == 2:\n  print(\"B\")\nelse:\n  print(\"C\")",
-      "hint": "elif means \"else if\" — a second check.",
-      "validation": {
-        "rules": [
-          {
-            "type": "solution_code",
-            "solutionCode": "c = get_choice(3)\nif c == 1:\n  print(\"A\")\nelif c == 2:\n  print(\"B\")\nelse:\n  print(\"C\")",
-            "maxRuns": 6
-          }
-        ]
-      }
+      "title": "Your Turn: Add an elif",
+      "content": "Let's practice by adding another choice to an existing program. This treasure hunt has three options, but we want to add a fourth!",
+      "task": "We've added a fourth treasure chest. First, change <code>get_choice(3)</code> to <code>get_choice(4)</code>. Then, add a new <code>elif</code> that checks if the choice is 3 and prints 'Found a map'.",
+      "interactionType": "buttons",
+      "codeHeight": 8,
+      "starterCode": "choice = get_choice(3)\n\nif choice == 1:\n  print(\"Found gold coins\")\nelif choice == 2:\n  print(\"Found a rusty sword\")\nelse:\n  print(\"A dragon pops out\")",
+      "hint": "Your new `elif choice == 3:` block should go just before the final `else:`.",
+      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "choice = get_choice(4)\n\nif choice == 1:\n  print(\"Found gold coins\")\nelif choice == 2:\n  print(\"Found a rusty sword\")\nelif choice == 3:\n  print(\"Found a map\")\nelse:\n  print(\"A dragon pops out\")" }] }
+    },
+    {
+      "title": "The Drink Machine",
+      "content": "Your turn to build a program with multiple choices from scratch!",
+      "task": "Write a program that uses <code>get_choice(3)</code> to simulate a drink machine. <br>If choice is 1, print 'Water'.<br>If choice is 2, print 'Juice'.<br>For any other choice, print 'Lemonade'.",
+      "interactionType": "buttons",
+      "codeHeight": 6,
+      "starterCode": "",
+      "hint": "You will need one `if`, one `elif`, and one `else`. Look at the code from the previous two problems for help.",
+      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "choice = get_choice(3)\nif choice == 1:\n  print(\"Water\")\nelif choice == 2:\n  print(\"Juice\")\nelse:\n  print(\"Lemonade\")" }] }
+    },
+    {
+      "title": "Quiz Question",
+      "content": "You can use decision-making to create a simple quiz. We can print a question and then use <code>get_choice()</code> to get the user's answer.",
+      "task": "Write a program that asks a quiz question and provides three multiple-choice answers using <code>get_choice(3)</code>.<br>The question is: \"What is 10 + 5?\"<br>The choices are: 1) 12, 2) 15, 3) 20.<br>Your program should print \"Correct\" for the right answer, and \"Not quite\" for the wrong ones.",
+      "interactionType": "buttons",
+      "codeHeight": 7,
+      "starterCode": "print(\"What is 10 + 5?\")\nprint(\"1) 12\")\nprint(\"2) 15\")\nprint(\"3) 20\")\n",
+      "hint": "The correct answer is choice 2. You can use an `if choice == 2:` block for the correct message and an `else` block for the incorrect message.",
+      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "print(\"What is 10 + 5?\")\nprint(\"1) 12\")\nprint(\"2) 15\")\nprint(\"3) 20\")\n\nchoice = get_choice(3)\nif choice == 2:\n  print(\"Correct\")\nelse:\n  print(\"Not quite\")" }] }
     }
   ]
 }

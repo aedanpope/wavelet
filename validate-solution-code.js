@@ -4,15 +4,15 @@
 // Helper function to check if solution output is contained within student output
 // This allows students to have debugging print statements while still validating correctness
 function isOutputMatch(studentOutput, solutionOutput) {
-    const student = (studentOutput || '').trim();
-    const solution = (solutionOutput || '').trim();
+    const student = (studentOutput || '').trim().toLowerCase();
+    const solution = (solutionOutput || '').trim().toLowerCase();
     
     // If solution output is empty, student output should also be empty
     if (solution === '') {
         return student === '';
     }
     
-    // Check if solution output is a substring of student output
+    // Check if solution output is a substring of student output (case-insensitive)
     return student.includes(solution);
 }
 
