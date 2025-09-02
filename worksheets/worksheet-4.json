@@ -116,6 +116,123 @@
       "starterCode": "print(\"What is 10 + 5?\")\nprint(\"1) 12\")\nprint(\"2) 15\")\nprint(\"3) 20\")\n",
       "hint": "The correct answer is choice 2. You can use an `if choice == 2:` block for the correct message and an `else` block for the incorrect message.",
       "validation": { "rules": [{ "type": "solution_code", "solutionCode": "print(\"What is 10 + 5?\")\nprint(\"1) 12\")\nprint(\"2) 15\")\nprint(\"3) 20\")\n\nchoice = get_choice(3)\nif choice == 2:\n  print(\"Correct\")\nelse:\n  print(\"Not quite\")" }] }
+    },
+    {
+      "title": "Magic Potions",
+      "content": "Decisions can change the value of variables! This is how games keep track of things like health or score. Here, your health starts at 10.",
+      "task": "Write a program that uses <code>get_choice(2)</code>. If choice 1 is picked, add 5 to health. If choice 2 is picked, subtract 3 from health. Then, print the final health.",
+      "interactionType": "buttons",
+      "codeHeight": 8,
+      "starterCode": "health = 10\nprint(\"Your health is 10\")\n\n\nprint(\"Your health is now\", health)",
+      "hint": "After getting the choice, use `if choice == 1:` and an `else:` block. Inside them, update the health variable with `health = health + 5` or `health = health - 3`.",
+      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "health = 10\nprint(\"Your health is 10\")\nchoice = get_choice(2)\nif choice == 1:\n  health = health + 5\nelse:\n  health = health - 3\nprint(\"Your health is now\", health)" }] }
+    },
+    {
+      "title": "Two Conditions with 'and'",
+      "content": "Sometimes you need to check if two things are true at the same time. For this, we can use the word <code>and</code>. The code inside the <code>if</code> will only run if the condition on the left AND the condition on the right are both true.",
+      "task": "Run this code. Try changing the variables. For the message to print, <code>age</code> must be 12 or more AND <code>has_ticket</code> must be `True`.",
+      "codeHeight": 6,
+      "starterCode": "age = 14\nhas_ticket = True\n\nif age >= 12 and has_ticket == True:\n  print(\"Welcome to the movie\")",
+      "hint": "If you change age to 10, the first part is false, so the message won't print. If you change `has_ticket` to `False`, the second part is false, so it also won't print.",
+      "validation": { "rules": [{ "type": "code_contains", "pattern": "and" }] }
+    },
+    {
+      "title": "Secret Password",
+      "content": "Let's use the <code>and</code> operator to check two inputs from the user.",
+      "task": "Write a program that asks for a number and a code. If the number is 7 AND the code is 123, print 'Access granted'. Otherwise, print 'Access denied'.",
+      "inputs": [ { "name": "num", "label": "Number:", "type": "number" }, { "name": "code", "label": "Code:", "type": "number" } ],
+      "codeHeight": 6,
+      "starterCode": "num = get_input('num')\ncode = get_input('code')\n",
+      "hint": "Your `if` statement will look like this: `if num == 7 and code == 123:`.",
+      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "num = get_input('num')\ncode = get_input('code')\nif num == 7 and code == 123:\n  print('Access granted')\nelse:\n  print('Access denied')" }] }
+    },
+    {
+      "title": "Finding the Remainder %",
+      "content": "In programming, there's a special math symbol called **modulo**, which is a percent sign <code>%</code>. It gives you the remainder of a division. For example, if you share 10 sweets between 3 friends, each gets 3 and there is 1 left over. So, <code>10 % 3</code> is 1.",
+      "task": "Run the code to see the remainder of 14 divided by 4. Change the numbers to see how it works with different values.",
+      "codeHeight": 2,
+      "starterCode": "print(14 % 4)",
+      "hint": "14 divided by 4 is 3 with a remainder of 2.",
+      "validation": { "rules": [{ "type": "code_contains", "pattern": "%" }] }
+    },
+    {
+      "title": "Even or Odd?",
+      "content": "We can use the modulo operator <code>%</code> to see if a number is even or odd. Any even number can be divided by 2 with no remainder! So, if <code>number % 2</code> is 0, the number is even.",
+      "task": "Enter different numbers, both even and odd, and run the code to see if the program gets it right.",
+      "inputs": [{ "name": "num", "label": "Number:", "type": "number" }],
+      "codeHeight": 6,
+      "starterCode": "number = get_input()\n\nif number % 2 == 0:\n  print(\"Even\")\nelse:\n  print(\"Odd\")",
+      "hint": "Try entering 10, then try 5. See how the result of `number % 2` changes the outcome.",
+      "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "number\\s*%\\s*2\\s*==\\s*0" }] }
+    },
+    {
+      "title": "Your Turn: Multiple of 3",
+      "content": "The same logic for checking even numbers works for checking if a number is a multiple of any other number. A number is a multiple of 3 if the remainder is 0 when you divide it by 3.",
+      "task": "Modify this program to check if a number is a multiple of 3. It should print 'Multiple of 3' or 'Not a multiple of 3'.",
+      "inputs": [{ "name": "num", "label": "Number:", "type": "number" }],
+      "codeHeight": 6,
+      "starterCode": "number = get_input()\n\nif number % 2 == 0:\n  print(\"Even\")\nelse:\n  print(\"Odd\")",
+      "hint": "You'll need to change the condition to check the remainder when dividing by 3, and update the print messages.",
+      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "number = get_input()\n\nif number % 3 == 0:\n  print(\"Multiple of 3\")\nelse:\n  print(\"Not a multiple of 3\")" }] }
+    },
+    {
+      "title": "Your Turn: Multiple of 5",
+      "content": "Let's practice the modulo operator one more time from scratch.",
+      "task": "Write a program that asks for a number and checks if it is a multiple of 5. It should print 'Multiple of 5' or 'Not a multiple of 5'.",
+      "inputs": [{ "name": "num", "label": "Number:", "type": "number" }],
+      "codeHeight": 5,
+      "starterCode": "",
+      "hint": "The condition you need to check is `number % 5 == 0`.",
+      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "number = get_input()\nif number % 5 == 0:\n  print(\"Multiple of 5\")\nelse:\n  print(\"Not a multiple of 5\")" }] }
+    },
+    {
+      "title": "Loop and Modulo",
+      "content": "Let's combine loops from Worksheet 3 with the modulo operator we just learned!",
+      "task": "Write a program that uses a <code>for</code> loop to go through numbers from 1 to 20. Inside the loop, use an <code>if</code> statement to print only the numbers that are multiples of 3.",
+      "codeHeight": 5,
+      "starterCode": "",
+      "hint": "Start with `for i in range(1, 21):`. Inside the loop, use `if i % 3 == 0:` to check the number.",
+      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in range(1, 21):\n  if i % 3 == 0:\n    print(i)" }] }
+    },
+    {
+      "title": "Nested If Statements",
+      "content": "You can put an <code>if</code> statement inside another <code>if</code> statement. This is called a **nested if**. It's useful for checking a second condition after the first one is already true.",
+      "task": "Run the code. Try changing the `age` and `has_permission` variables to see how both `if` statements must be true to get the final message.",
+      "codeHeight": 8,
+      "starterCode": "age = 15\nhas_permission = True\n\nif age > 12:\n  print(\"Old enough\")\n  if has_permission == True:\n    print(\"Can go to party\")",
+      "hint": "The second `if` is indented, which means it's inside the first one. It only gets checked if the first condition (`age > 12`) is true.",
+      "validation": { "rules": [{ "type": "code_contains", "pattern": "if age > 12:" }, { "type": "code_contains", "pattern": "if has_permission == True:" }] }
+    },
+    {
+      "title": "The Smart Shopkeeper",
+      "content": "Let's make our shopkeeper smarter. What if you don't have enough gold? We can use a nested `if` to first check what you want to buy, and then check if you can afford it.",
+      "task": "Write a program where you start with <code>gold = 20</code>. Use <code>get_choice(2)</code> to offer a sword (cost 15) or a shield (cost 25). Use a nested <code>if</code> to check if you have enough gold *after* a choice is made.",
+      "interactionType": "buttons",
+      "codeHeight": 11,
+      "starterCode": "gold = 20\nprint(\"You have\", gold, \"gold\")\nchoice = get_choice(2) # 1=Sword (15), 2=Shield (25)\n",
+      "hint": "After your `if choice == 1:`, add another indented `if gold >= 15:` to check if you can afford the sword.",
+      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "gold = 20\nprint(\"You have\", gold, \"gold\")\nchoice = get_choice(2)\nif choice == 1:\n  if gold >= 15:\n    print(\"Bought sword\")\n  else:\n    print(\"Not enough gold\")\nelse:\n  if gold >= 25:\n    print(\"Bought shield\")\n  else:\n    print(\"Not enough gold\")" }] }
+    },
+    {
+      "title": "Challenge: Dance Party",
+      "content": "Let's combine loops and decisions to create an interactive dance sequence!",
+      "task": "Write a program that uses a <code>for</code> loop to run 4 times. Inside the loop, use <code>get_choice(3)</code> to pick a dance move ('Spin', 'Jump', or 'Wiggle') and print a message for each move.",
+      "interactionType": "buttons",
+      "codeHeight": 8,
+      "starterCode": "",
+      "hint": "Use `for i in range(4):`. Inside that loop, get a choice and use an `if/elif/else` structure to print the chosen move.",
+      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in range(4):\n  choice = get_choice(3)\n  if choice == 1:\n    print(\"You spin around\")\n  elif choice == 2:\n    print(\"You jump up high\")\n  else:\n    print(\"You wiggle\")" }] }
+    },
+    {
+      "title": "Creative Challenge",
+      "content": "You've learned about variables, loops, and now decisions! These are the three main building blocks of almost every program. Now it's your turn to combine them in a creative way.",
+      "task": "Create your own interesting program. It could be a simple game, an interactive story, or a cool calculator. Use at least one variable, one loop, and one <code>if</code> statement. Be creative!",
+      "interactionType": "buttons",
+      "inputs": [{ "name": "x", "label": "Input X:", "type": "number" }],
+      "codeHeight": 8,
+      "starterCode": "",
+      "hint": "You could make a guessing game with limited lives, a story where choices affect your score, or a program that asks for a number and then draws a pattern of that size.",
+      "validation": { "rules": [{ "type": "code_contains", "pattern": "=" }, { "type": "code_contains", "pattern": "for " }, { "type": "code_contains", "pattern": "if " }, { "type": "output_not_empty" }] }
     }
   ]
 }
