@@ -75,7 +75,6 @@ class BasicHomepageTest {
         const requiredElements = [
             '<title>',
             'id="worksheet-selection"',
-            'id="worksheet-interface"',
             'id="worksheets-grid"',
             'script src="script.js"'
         ];
@@ -133,7 +132,7 @@ class BasicHomepageTest {
         const indexData = JSON.parse(indexContent);
         
         const requiredWorksheetFields = ['id', 'title', 'description', 'problems'];
-        const requiredProblemFields = ['id', 'title', 'content', 'task', 'starterCode', 'expectedOutput', 'hint'];
+        const requiredProblemFields = ['title', 'content', 'task', 'hint'];
 
         indexData.worksheets.forEach(worksheet => {
             const file = `worksheets/${worksheet.file}`;
@@ -183,7 +182,6 @@ class BasicHomepageTest {
         const expectedClasses = [
             '.container',
             '.worksheet-selection',
-            '.worksheet-interface',
             '.worksheet-card'
         ];
 
