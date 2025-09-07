@@ -112,6 +112,28 @@ try {
 - Mobile-first responsive design
 - Modern CSS (Grid, Flexbox)
 
+## Task Planning Requirements
+
+**MANDATORY**: Before starting any fix, enhancement, or development task, Claude must:
+
+1. **Create a task plan file** named `TASK_N.md` where N is an incrementing number (starting from 0)
+2. **Propose a detailed plan** that includes:
+   - Problem analysis and root cause identification
+   - Step-by-step implementation approach
+   - Files that will be modified or created
+   - Testing strategy
+   - Potential risks or considerations
+3. **Wait for user approval** before proceeding with implementation
+
+The doc should be written in such a way that a new agent session with /clear could read the doc and pick up the task.
+
+### Task File Naming Convention
+- First task: `TASK_0.md`
+- Second task: `TASK_1.md` 
+- And so on...
+
+This ensures clear communication and prevents unnecessary work on incorrect approaches.
+
 ## Important Notes
 
 - User is on Windows/WSL2 - use PowerShell-compatible commands when needed
