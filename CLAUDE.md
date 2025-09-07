@@ -2,6 +2,56 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚠️ MANDATORY TASK PLANNING REQUIREMENT ⚠️
+
+**BEFORE STARTING ANY FIX, ENHANCEMENT, OR DEVELOPMENT TASK, CLAUDE MUST:**
+
+1. **Create a task plan file** named `TASK_N.md` where N is an incrementing number (starting from 0)
+2. **Propose a detailed plan** that includes:
+   - Problem analysis and root cause identification (for fixes) OR feature requirements and user value (for new capabilities)
+   - Step-by-step implementation approach
+   - Files that will be modified or created
+   - Testing strategy
+   - Potential risks or considerations
+3. **Review the plan with the `arch` agent** to ensure strategic design alignment
+4. **Wait for user approval** before proceeding with implementation
+
+**TASK FILE COMPLETENESS REQUIREMENTS:**
+
+Each TASK_N.md must enable a fresh agent session to implement without additional research:
+
+1. **Complete Context**
+   - **For fixes**: Current broken/suboptimal behavior with specific examples, user impact, root cause analysis with key code locations (file:line)
+   - **For features**: User requirements, business/educational value, acceptance criteria, integration with existing workflows
+
+2. **Implementation Scope**
+   - Key files and functions that need modification
+   - New components/files that need creation
+   - Configuration or data structure changes
+   - Integration points with existing systems
+
+3. **Testing Strategy**
+   - New unit test cases to be written (with TDD where appropriate)
+   - Existing tests that need updates
+   - Integration/end-to-end test requirements
+   - User acceptance criteria for manual testing
+
+4. **Success Criteria & Risks**
+   - Clear definition of "done"
+   - Potential side effects and mitigation strategies
+   - Rollback considerations
+
+The doc should be written in such a way that a new agent session with /clear could read the doc and pick up the task.
+
+### Task File Naming Convention
+- First task: `TASK_0.md`
+- Second task: `TASK_1.md` 
+- And so on...
+
+**This ensures clear communication and prevents unnecessary work on incorrect approaches.**
+
+---
+
 ## Project Overview
 
 Wavelet Zone is an interactive Python learning platform for upper primary students. It uses a worksheet-based approach with problems across three difficulty levels (easy/medium/hard) to ensure all students can make progress. The platform runs Python code directly in the browser using Pyodide (WebAssembly).
@@ -112,27 +162,6 @@ try {
 - Mobile-first responsive design
 - Modern CSS (Grid, Flexbox)
 
-## Task Planning Requirements
-
-**MANDATORY**: Before starting any fix, enhancement, or development task, Claude must:
-
-1. **Create a task plan file** named `TASK_N.md` where N is an incrementing number (starting from 0)
-2. **Propose a detailed plan** that includes:
-   - Problem analysis and root cause identification
-   - Step-by-step implementation approach
-   - Files that will be modified or created
-   - Testing strategy
-   - Potential risks or considerations
-3. **Wait for user approval** before proceeding with implementation
-
-The doc should be written in such a way that a new agent session with /clear could read the doc and pick up the task.
-
-### Task File Naming Convention
-- First task: `TASK_0.md`
-- Second task: `TASK_1.md` 
-- And so on...
-
-This ensures clear communication and prevents unnecessary work on incorrect approaches.
 
 ## Important Notes
 
@@ -142,3 +171,7 @@ This ensures clear communication and prevents unnecessary work on incorrect appr
 - Worksheets 1-4 focus on numerical programming; strings introduced in Worksheet 5
 - When creating new worksheets, follow the structure in `template.json`
 - Always test worksheet problems across different difficulty levels
+
+## Critical Workflow Reminders
+
+**⚠️ STOP BEFORE IMPLEMENTING**: If you are starting ANY implementation, enhancement, bug fix, or development task WITHOUT first creating a TASK_N.md file, STOP IMMEDIATELY and create the required task plan file first. This is MANDATORY per the project guidelines above.
