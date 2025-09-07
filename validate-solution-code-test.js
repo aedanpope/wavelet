@@ -314,6 +314,108 @@ print(f"Final result: {result}")`,
         rule: { solutionCode: null, maxRuns: 3 },
         expectedResult: true,
         expectedMessage: null
+    },
+    // Test cases from TODO.md - Problem 15: Secret Password validation fix
+    {
+        id: "todo-secret-password-wrong-numbers",
+        name: "TODO.md Test Case 1 - Wrong numbers (should fail)",
+        studentCode: `num = get_input('num')
+code = get_input('code')
+
+if num >= 12 and code == 43:
+  print("Welcome to the movie")
+else:
+  print('access denied')`,
+        solutionCode: `num = get_input('num')
+code = get_input('code')
+if num == 7 and code == 123:
+  print('Access granted')
+else:
+  print('Access denied')`,
+        problem: { 
+            inputs: [
+                { name: "num", type: "number", value: 7 },
+                { name: "code", type: "number", value: 123 }
+            ]
+        },
+        rule: { 
+            solutionCode: null, 
+            maxRuns: 3,
+            testInputs: [
+                {"inputs": {"num": 7, "code": 123}, "expectedOutput": "Access granted"},
+                {"inputs": {"num": 5, "code": 123}, "expectedOutput": "Access denied"},
+                {"inputs": {"num": 7, "code": 456}, "expectedOutput": "Access denied"},
+                {"inputs": {"num": 12, "code": 43}, "expectedOutput": "Access denied"}
+            ]
+        },
+        expectedResult: false,
+        expectedMessage: "With input num = 7, code = 123, your program output:\naccess denied\nbut expected output:\nAccess granted"
+    },
+    {
+        id: "todo-secret-password-no-logic",
+        name: "TODO.md Test Case 2 - No conditional logic (should fail)",
+        studentCode: `num = get_input('num')
+code = get_input('code')
+
+print('Access denied')`,
+        solutionCode: `num = get_input('num')
+code = get_input('code')
+if num == 7 and code == 123:
+  print('Access granted')
+else:
+  print('Access denied')`,
+        problem: { 
+            inputs: [
+                { name: "num", type: "number", value: 7 },
+                { name: "code", type: "number", value: 123 }
+            ]
+        },
+        rule: { 
+            solutionCode: null, 
+            maxRuns: 3,
+            testInputs: [
+                {"inputs": {"num": 7, "code": 123}, "expectedOutput": "Access granted"},
+                {"inputs": {"num": 5, "code": 123}, "expectedOutput": "Access denied"},
+                {"inputs": {"num": 7, "code": 456}, "expectedOutput": "Access denied"},
+                {"inputs": {"num": 12, "code": 43}, "expectedOutput": "Access denied"}
+            ]
+        },
+        expectedResult: false,
+        expectedMessage: "With input num = 7, code = 123, your program output:\nAccess denied\nbut expected output:\nAccess granted"
+    },
+    {
+        id: "todo-secret-password-correct",
+        name: "TODO.md Test Case 3 - Correct solution (should pass)",
+        studentCode: `num = get_input('num')
+code = get_input('code')
+if num == 7 and code == 123:
+  print('Access granted')
+else:
+  print('Access denied')`,
+        solutionCode: `num = get_input('num')
+code = get_input('code')
+if num == 7 and code == 123:
+  print('Access granted')
+else:
+  print('Access denied')`,
+        problem: { 
+            inputs: [
+                { name: "num", type: "number", value: 7 },
+                { name: "code", type: "number", value: 123 }
+            ]
+        },
+        rule: { 
+            solutionCode: null, 
+            maxRuns: 3,
+            testInputs: [
+                {"inputs": {"num": 7, "code": 123}, "expectedOutput": "Access granted"},
+                {"inputs": {"num": 5, "code": 123}, "expectedOutput": "Access denied"},
+                {"inputs": {"num": 7, "code": 456}, "expectedOutput": "Access denied"},
+                {"inputs": {"num": 12, "code": 43}, "expectedOutput": "Access denied"}
+            ]
+        },
+        expectedResult: true,
+        expectedMessage: null
     }
 ];
 

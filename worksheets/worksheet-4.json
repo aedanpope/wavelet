@@ -144,7 +144,18 @@
       "codeHeight": 6,
       "starterCode": "num = get_input('num')\ncode = get_input('code')\n",
       "hint": "Your `if` statement will look like this: `if num == 7 and code == 123:`.",
-      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "num = get_input('num')\ncode = get_input('code')\nif num == 7 and code == 123:\n  print('Access granted')\nelse:\n  print('Access denied')" }] }
+      "validation": { 
+        "rules": [{ 
+          "type": "solution_code", 
+          "solutionCode": "num = get_input('num')\ncode = get_input('code')\nif num == 7 and code == 123:\n  print('Access granted')\nelse:\n  print('Access denied')",
+          "testInputs": [
+            {"inputs": {"num": 7, "code": 123}, "expectedOutput": "Access granted"},
+            {"inputs": {"num": 5, "code": 123}, "expectedOutput": "Access denied"},
+            {"inputs": {"num": 7, "code": 456}, "expectedOutput": "Access denied"},
+            {"inputs": {"num": 12, "code": 43}, "expectedOutput": "Access denied"}
+          ]
+        }] 
+      }
     },
     {
       "title": "Finding the Remainder %",
