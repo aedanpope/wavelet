@@ -1,5 +1,18 @@
 # Development Guide
 
+## Development Environment
+
+This project is configured to run in **WSL2 (Windows Subsystem for Linux)** with Ubuntu. The npm configuration uses bash instead of PowerShell for cross-platform compatibility.
+
+### Recommended Setup
+- **OS**: WSL2 with Ubuntu (or native Linux)
+- **Development Tool**: Claude Code from the command line in Ubuntu/WSL2
+- **Node.js**: v18+ (tested with v22.19.0)
+- **npm**: v10+ (tested with v10.9.3)
+
+### Why WSL2?
+The project's `.npmrc` is configured for bash shell execution, making it ideal for Linux environments. While it can run on Windows, WSL2 provides the optimal development experience.
+
 ## Local Development
 
 ### Setup
@@ -32,7 +45,12 @@ The application is a static web app deployable to any web hosting service:
 ## Quick Commands
 
 ### Submit changes to github
-... ask the agent
+```bash
+# Use Claude Code from WSL2/Ubuntu command line
+git add .
+git commit -m "Your commit message"
+git push
+```
 
 ### Run tests
 ```bash
