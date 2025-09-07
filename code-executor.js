@@ -18,10 +18,19 @@ class CodeExecutor {
         if (this.isInitialized) return;
 
         try {
-            // Load Pyodide
-            this.pyodide = await loadPyodide({
-                indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/"
-            });
+            // Load Pyodide with environment-specific configuration
+            if (typeof module !== 'undefined' && module.exports) {
+                // Node.js environment (testing)
+                const { loadPyodide } = require('pyodide');
+                this.pyodide = await loadPyodide({
+                    indexURL: "./node_modules/pyodide/"
+                });
+            } else {
+                // Browser environment (production)
+                this.pyodide = await loadPyodide({
+                    indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/"
+                });
+            }
             
             this.isInitialized = true;
             console.log('Pyodide initialized successfully');

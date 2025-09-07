@@ -95,36 +95,41 @@ async function validateRule(code, output, rule, problem, problemIndex, codeExecu
             if (!result) {
                 // Generate appropriate error message
                 let message;
+                let errorType = 'code_contains_failed';
+                
                 if (rule.description) {
                     message = rule.description;
-                } else if (rule.pattern === 'int(') {
-                    message = "Code must contain an int() function call";
-                } else if (rule.pattern === 'print') {
-                    message = "Code must contain a print statement";
-                } else if (rule.pattern === '+') {
-                    message = "Code must contain the addition operator (+)";
-                } else if (rule.pattern === '-') {
-                    message = "Code must contain the subtraction operator (-)";
-                } else if (rule.pattern === '*') {
-                    message = "Code must contain the multiplication operator (*)";
-                } else if (rule.pattern === '/') {
-                    message = "Code must contain the division operator (/)";
-                } else if (rule.pattern === '(') {
-                    message = "Code must contain an opening parenthesis";
-                } else if (rule.pattern === ')') {
-                    message = "Code must contain a closing parenthesis";
-                } else if (/^\d+$/.test(rule.pattern)) {
-                    message = `Code must contain the number ${rule.pattern}`;
                 } else {
-                    message = `Code must contain '${rule.pattern}'`;
+                    if (rule.pattern === 'int(') {
+                        message = "Code must contain an int() function call";
+                    } else if (rule.pattern === 'print') {
+                        message = "Code must contain a print statement";
+                    } else if (rule.pattern === '+') {
+                        message = "Code must contain the addition operator (+)";
+                    } else if (rule.pattern === '-') {
+                        message = "Code must contain the subtraction operator (-)";
+                    } else if (rule.pattern === '*') {
+                        message = "Code must contain the multiplication operator (*)";
+                    } else if (rule.pattern === '/') {
+                        message = "Code must contain the division operator (/)";
+                    } else if (rule.pattern === '(') {
+                        message = "Code must contain an opening parenthesis";
+                    } else if (rule.pattern === ')') {
+                        message = "Code must contain a closing parenthesis";
+                    } else if (/^\d+$/.test(rule.pattern)) {
+                        message = `Code must contain the number ${rule.pattern}`;
+                    } else {
+                        message = `Code must contain '${rule.pattern}'`;
+                    }
                 }
                 
                 return {
                     isValid: false,
-                    errorType: 'code_contains_failed',
+                    errorType: errorType,
                     message: message
                 };
             }
+            
             return { isValid: true };
             
         case 'code_contains_regex':
@@ -167,15 +172,29 @@ async function validateRule(code, output, rule, problem, problemIndex, codeExecu
             
             if (!outputResult) {
                 let message;
+                let errorType = 'output_contains_failed';
+                
                 if (rule.description) {
                     message = rule.description;
                 } else {
-                    message = `Output must contain \n'${rule.pattern}'`;
+                    // Special case: if output is empty and we expected output, suggest adding print()
+                    if (output.trim() === '') {
+                        errorType = 'missing_print';
+                        message = 'Your program should produce some output. Try adding a print() statement.';
+                    }
+                    // Special case: if output is a different number than expected
+                    else if (/^\d+(\.\d+)?\n?$/.test(output.trim()) && /^\d+(\.\d+)?$/.test(rule.pattern)) {
+                        errorType = 'wrong_number';
+                        message = `Expected output: ${rule.pattern}, but your program output: ${output.trim()}`;
+                    }
+                    else {
+                        message = `Output must contain \n'${rule.pattern}'`;
+                    }
                 }
                 
                 return {
                     isValid: false,
-                    errorType: 'output_contains_failed',
+                    errorType: errorType,
                     message: message
                 };
             }

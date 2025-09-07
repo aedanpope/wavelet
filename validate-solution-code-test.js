@@ -4,22 +4,17 @@
 // Import the solution code validator directly
 const { validateSolutionCode } = require('./validate-solution-code.js');
 
-// Initialize Pyodide
-let pyodideInstance = null;
+// Import the real CodeExecutor
+const { CodeExecutor } = require('./code-executor.js');
+
+// Initialize CodeExecutor for testing
+let codeExecutor = null;
 
 async function initializePyodide() {
-    if (typeof window !== 'undefined') {
-        // Browser environment - Pyodide should already be loaded
-        pyodideInstance = window.pyodide;
-    } else {
-        // Node.js environment - load real Pyodide from node_modules
-        console.log('Loading Pyodide from node_modules...');
-        const { loadPyodide } = require('pyodide');
-        pyodideInstance = await loadPyodide({
-            indexURL: "./node_modules/pyodide/"
-        });
-        console.log('Pyodide loaded successfully');
-    }
+    console.log('Initializing CodeExecutor...');
+    codeExecutor = new CodeExecutor();
+    await codeExecutor.initialize();
+    console.log('CodeExecutor initialized successfully');
 }
 
 const testCases = [
@@ -139,7 +134,7 @@ if height < 150:
         problem: { inputs: [] },
         rule: { solutionCode: null, maxRuns: 5 },
         expectedResult: false,
-        expectedMessage: "Your program output:\nYou can go on the big ride!\nbut expected output:\n"
+        expectedMessage: "Output does not match the expected output:\n"
     },
     {
         id: "multiple-failures-details-test",
@@ -342,7 +337,7 @@ async function runTestCases() {
                 testCase.rule,
                 testCase.problem,
                 0, // problemIndex
-                pyodideInstance
+                codeExecutor
             );
             
             // Check if result matches expected

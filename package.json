@@ -13,7 +13,8 @@
     "test:homepage:basic": "node homepage-basic-test.js",
     "test:validation": "node validation-test.js",
     "test:input-system": "node input-system-test.js",
-    "test:all": "npm run test; npm run test:homepage:basic; npm run test:validation; npm run test:input-system"
+    "test:all": "for f in *-test.js; do echo \"\\n🧪 Running $f...\"; node \"$f\" || exit 1; done",
+    "test:solution-code": "node validate-solution-code-test.js"
   },
   "keywords": [
     "python",

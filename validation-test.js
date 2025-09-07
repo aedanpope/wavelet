@@ -4,65 +4,17 @@
 // Import the shared validation functions
 const { validateAnswer } = require('./validation.js');
 
-// Initialize Pyodide for testing
-let mockCodeExecutor = null;
+// Import the real CodeExecutor
+const { CodeExecutor } = require('./code-executor.js');
+
+// Initialize CodeExecutor for testing
+let codeExecutor = null;
 
 async function initializePyodide() {
-    if (typeof window !== 'undefined') {
-        // Browser environment - Pyodide should already be loaded
-        mockCodeExecutor = {
-            getPyodide: () => window.pyodide,
-            resetPythonEnvironment: async () => {
-                // Mock reset for browser tests
-                try {
-                    await window.pyodide.runPythonAsync(`
-                        try:
-                            current_globals = list(globals().keys())
-                            for var_name in current_globals:
-                                if not var_name.startswith("_"):
-                                    try:
-                                        del globals()[var_name]
-                                    except:
-                                        pass
-                        except:
-                            pass
-                    `);
-                } catch (error) {
-                    console.warn('Mock reset failed:', error);
-                }
-            }
-        };
-    } else {
-        // Node.js environment - load real Pyodide from node_modules
-        console.log('Loading Pyodide from node_modules...');
-        const { loadPyodide } = require('pyodide');
-        const pyodide = await loadPyodide({
-            indexURL: "./node_modules/pyodide/"
-        });
-        mockCodeExecutor = {
-            getPyodide: () => pyodide,
-            resetPythonEnvironment: async () => {
-                // Mock reset for Node.js tests
-                try {
-                    await pyodide.runPythonAsync(`
-                        try:
-                            current_globals = list(globals().keys())
-                            for var_name in current_globals:
-                                if not var_name.startswith("_"):
-                                    try:
-                                        del globals()[var_name]
-                                    except:
-                                        pass
-                        except:
-                            pass
-                    `);
-                } catch (error) {
-                    console.warn('Mock reset failed:', error);
-                }
-            }
-        };
-        console.log('Pyodide loaded successfully');
-    }
+    console.log('Initializing CodeExecutor...');
+    codeExecutor = new CodeExecutor();
+    await codeExecutor.initialize();
+    console.log('CodeExecutor initialized successfully');
 }
 
 // Common problem definitions that can be reused across test cases
@@ -679,11 +631,11 @@ const testCases = [
         code: 'print("hello")',
         output: '',
         expected: false,
-        expectedErrorType: 'general_error',
-        expectedMessage: 'Not quite right! Check the task requirements and try again.'
+        expectedErrorType: 'output_not_empty_failed',
+        expectedMessage: 'Your program should produce some output'
     },
     {
-        name: "Helpful Error - Right number but wrong operations should get generic message",
+        name: "Helpful Error - Right number but wrong operations should get specific message",
         problem: {
             id: "test-divide-problem",
             validation: {
@@ -702,11 +654,11 @@ const testCases = [
         code: 'print(100)',
         output: '100',
         expected: false,
-        expectedErrorType: 'general_error',
-        expectedMessage: 'Not quite right! Check the task requirements and try again.'
+        expectedErrorType: 'code_contains_failed',
+        expectedMessage: 'Code must contain the division operator (/)'
     },
     {
-        name: "Helpful Error - Write to divide problem exact scenario",
+        name: "Helpful Error - Write to divide problem gives specific message",
         problem: {
             id: "write-to-divide",
             validation: {
@@ -737,8 +689,8 @@ const testCases = [
         code: 'print(100)',
         output: '100',
         expected: false,
-        expectedErrorType: 'general_error',
-        expectedMessage: 'Not quite right! Check the task requirements and try again.'
+        expectedErrorType: 'code_contains_failed',
+        expectedMessage: 'Code must contain the division operator (/)'
     },
     {
         name: "Normalized numerical comparison - Multiplication with .0 pattern",
@@ -922,7 +874,7 @@ async function runTests() {
         const testCase = testCases[i];
         console.log(`Test ${i + 1}: ${testCase.name}`);
         
-        const result = await validateAnswer(testCase.code, testCase.output, testCase.problem, 0, mockCodeExecutor);
+        const result = await validateAnswer(testCase.code, testCase.output, testCase.problem, 0, codeExecutor);
         
         // Check if the result matches expected validation outcome
         const validationPassed = result.isValid === testCase.expected;
