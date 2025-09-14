@@ -13,16 +13,22 @@ model: opus
    - Date and participants (step, zoom, teac, helm)
    - Agenda: 3 rounds of evaluation
 
+2. **Context Preparation**: All agents must first review the established worksheet design principles in `WORKSHEETS.md` before beginning evaluation, particularly:
+   - **30/30/30 difficulty distribution** (~20 problems: Easy/Medium/Hard)
+   - **Self-contained learning** (comprehensive within single worksheet)
+   - **Three problem types**: Observation → Modification → Creation
+   - **Rapid concept introduction** prioritizing engagement over perfection
+
 ## 3-Round Debate Process
 
 Execute **3 rounds** of parallel agent consultations. Use multiple Task tool calls in a single message for parallel execution.
 
 ### Round 1: Initial Reactions
 **Parallel Task Invocations** (use 4 Task tools simultaneously):
-- **step**: "I need your perspective on this worksheet evaluation: $1. As a struggling student, what are your immediate concerns or support needs? What would worry you about this content?"
-- **zoom**: "I need your perspective on this worksheet evaluation: $1. As an advanced learner, what engagement and challenge opportunities do you see? What excites or concerns you?"  
-- **teac**: "I need your perspective on this worksheet evaluation: $1. From your classroom teaching experience, what are your initial thoughts and practical concerns?"
-- **helm**: "I need your perspective on this worksheet evaluation: $1. From a strategic product perspective, how does this align with our vision for transformative programming education?"
+- **step**: "First review WORKSHEETS.md design principles, then evaluate: $1. As a struggling student, what are your immediate concerns or support needs? What would worry you about this content? Consider the established 30/30/30 difficulty distribution and self-contained learning approach."
+- **zoom**: "First review WORKSHEETS.md design principles, then evaluate: $1. As an advanced learner, what engagement and challenge opportunities do you see? What excites or concerns you? Consider how this fits the three problem types (Observation → Modification → Creation)."  
+- **teac**: "First review WORKSHEETS.md design principles, then evaluate: $1. From your classroom teaching experience, what are your initial thoughts and practical concerns? Consider the self-contained learning philosophy and rapid concept introduction approach."
+- **helm**: "First review WORKSHEETS.md design principles, then evaluate: $1. From a strategic product perspective, how does this align with our vision for transformative programming education? Consider whether changes should work within the established worksheet framework."
 
 **Document in meeting notes**: Capture each agent's initial reactions and key concerns.
 
