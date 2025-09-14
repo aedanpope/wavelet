@@ -3,17 +3,25 @@
 
 // Helper function to check if solution output is contained within student output
 // This allows students to have debugging print statements while still validating correctness
-function isOutputMatch(studentOutput, solutionOutput) {
-    const student = (studentOutput || '').trim().toLowerCase();
-    const solution = (solutionOutput || '').trim().toLowerCase();
+// When exactMatch is true, outputs must match exactly (after trimming)
+function isOutputMatch(studentOutput, solutionOutput, exactMatch = false) {
+    const student = (studentOutput || '').trim();
+    const solution = (solutionOutput || '').trim();
     
     // If solution output is empty, student output should also be empty
     if (solution === '') {
         return student === '';
     }
     
-    // Check if solution output is a substring of student output (case-insensitive)
-    return student.includes(solution);
+    if (exactMatch) {
+        // For exact matching, require outputs to be identical (preserving case)
+        return student === solution;
+    }
+    
+    // Default behavior: check if solution output is a substring of student output (case-insensitive)
+    const studentLower = student.toLowerCase();
+    const solutionLower = solution.toLowerCase();
+    return studentLower.includes(solutionLower);
 }
 
 // Simple but effective PRNG for deterministic testing
@@ -218,7 +226,7 @@ async function executeWithSeed(code, problem, seed, codeExecutor, useManualInput
 }
 
 // Run multiple tests with different seeds
-async function runMultipleTests(studentCode, solutionCode, problem, maxRuns, codeExecutor) {
+async function runMultipleTests(studentCode, solutionCode, problem, maxRuns, codeExecutor, rule) {
     const results = [];
     
     for (let seed = 1; seed <= maxRuns; seed++) {
@@ -234,7 +242,7 @@ async function runMultipleTests(studentCode, solutionCode, problem, maxRuns, cod
             console.log(`[ERROR] Both student and solution code failed with error:`, studentResult.error);
         }
 
-        passed = (studentResult.success && solutionResult.success &&  isOutputMatch(studentResult.output, solutionResult.output)) || sameError
+        passed = (studentResult.success && solutionResult.success &&  isOutputMatch(studentResult.output, solutionResult.output, rule.exactMatch)) || sameError
         
         results.push({
             seed,
@@ -282,7 +290,7 @@ async function runManualTests(studentCode, solutionCode, rule, problem, codeExec
         // Determine if this test case passed
         const passed = studentResult.success && 
                       solutionResult.success && 
-                      isOutputMatch(studentOutput, solutionOutput);
+                      isOutputMatch(studentOutput, solutionOutput, rule.exactMatch);
         
         results.push({
             testCaseIndex: i,
@@ -437,7 +445,7 @@ async function validateSolutionCode(studentCode, studentOutput, rule, problem, p
     
     // Use new seed-based testing
     const maxRuns = rule.maxRuns || 10;
-    const seedResults = await runMultipleTests(studentCode, rule.solutionCode, problem, maxRuns, codeExecutor);
+    const seedResults = await runMultipleTests(studentCode, rule.solutionCode, problem, maxRuns, codeExecutor, rule);
     
     // Combine all results, prioritizing manual test failures
     const allResults = [...manualResults, ...seedResults];

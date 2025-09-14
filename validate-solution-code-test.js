@@ -416,6 +416,69 @@ else:
         },
         expectedResult: true,
         expectedMessage: null
+    },
+    // Test cases for exact matching feature
+    {
+        id: "exact-match-basic-pass",
+        name: "Exact matching - identical output (should pass)",
+        studentCode: `for i in [1, 2, 3]:
+  print('Repeating!')`,
+        solutionCode: `for i in [1, 2, 3]:
+  print('Repeating!')`,
+        problem: { inputs: [] },
+        rule: { solutionCode: null, maxRuns: 3, exactMatch: true },
+        expectedResult: true,
+        expectedMessage: null
+    },
+    {
+        id: "exact-match-basic-fail",
+        name: "Exact matching - different output (should fail)",
+        studentCode: `for i in [1, 2, 3, 4, 5]:
+  print('Repeating!')`,
+        solutionCode: `for i in [1, 2, 3]:
+  print('Repeating!')`,
+        problem: { inputs: [] },
+        rule: { solutionCode: null, maxRuns: 3, exactMatch: true },
+        expectedResult: false,
+        expectedMessage: "Output does not match the expected output:\nRepeating!\nRepeating!\nRepeating!"
+    },
+    {
+        id: "exact-match-case-sensitive",
+        name: "Exact matching - case sensitivity (should fail)",
+        studentCode: `print('hello world')`,
+        solutionCode: `print('Hello World')`,
+        problem: { inputs: [] },
+        rule: { solutionCode: null, maxRuns: 3, exactMatch: true },
+        expectedResult: false,
+        expectedMessage: "Output does not match the expected output:\nHello World"
+    },
+    {
+        id: "substring-match-with-debug",
+        name: "Substring matching (default) - debug statements allowed (should pass)",
+        studentCode: `print("Debug: starting calculation")
+for i in [1, 2, 3]:
+  print('Repeating!')
+print("Debug: done")`,
+        solutionCode: `for i in [1, 2, 3]:
+  print('Repeating!')`,
+        problem: { inputs: [] },
+        rule: { solutionCode: null, maxRuns: 3 }, // exactMatch not set - defaults to false
+        expectedResult: true,
+        expectedMessage: null
+    },
+    {
+        id: "exact-match-no-debug-allowed",
+        name: "Exact matching - debug statements not allowed (should fail)",
+        studentCode: `print("Debug: starting calculation")
+for i in [1, 2, 3]:
+  print('Repeating!')
+print("Debug: done")`,
+        solutionCode: `for i in [1, 2, 3]:
+  print('Repeating!')`,
+        problem: { inputs: [] },
+        rule: { solutionCode: null, maxRuns: 3, exactMatch: true },
+        expectedResult: false,
+        expectedMessage: "Output does not match the expected output:\nRepeating!\nRepeating!\nRepeating!"
     }
 ];
 

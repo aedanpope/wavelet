@@ -26,7 +26,7 @@
         "task": "Edit the list so the loop only repeats three times.",
         "starterCode": "for i in [1, 2, 3, 4, 5]:\n  print('Repeating!')",
         "hint": "Make the list shorter! It should only contain three numbers, like <code>[1, 2, 3]</code>.",
-        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in [1, 2, 3]: print('Repeating!')" }] }
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in [1, 2, 3]: print('Repeating!')", "exactMatch": true }] }
       },
       {
         "title": "Meet the loop variable",
