@@ -13,7 +13,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
    - Files that will be modified or created
    - Testing strategy
    - Potential risks or considerations
-3. **Review the plan with the `arch` agent** to ensure strategic design alignment
+3. **Review the plan with the `arch` agent** to ensure strategic design alignment.
+4. Update the TASK_N document to incorporate the feedback from `arch`, and append revision notes at the bottom of the doc with the feedback from `arch` & a log of the corresponding changes made.
 4. **Wait for user approval** before proceeding with implementation
 
 **TASK FILE COMPLETENESS REQUIREMENTS:**
