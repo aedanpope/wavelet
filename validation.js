@@ -4,7 +4,7 @@
 // Import solution_code validation from standalone module
 // Note: In browser environment, this will be loaded via script tag before validation.js
 
-// Helper function to normalize numerical comparisons
+// Helper function to normalize numerical comparisons with case-insensitive text matching
 function normalizeNumericalComparison(output, pattern) {
     // Normalize numerical comparisons for all operations
     if (/^\d+\.0$/.test(pattern)) {
@@ -12,7 +12,9 @@ function normalizeNumericalComparison(output, pattern) {
         const integerVersion = pattern.replace('.0', '');
         return output.includes(pattern) || output.includes(integerVersion);
     }
-    return output.includes(pattern);
+    
+    // Make all text matching case-insensitive
+    return output.toLowerCase().includes(pattern.toLowerCase());
 }
 
 // Validate the student's answer using validation rules from the problem definition
