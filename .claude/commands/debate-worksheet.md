@@ -1,7 +1,7 @@
 ---
 argument-hint: [topic/worksheet] 
 description: Orchestrate 3-round multi-agent debate to evaluate worksheet content, with meeting notes captured in meetings/MEETING_N.md
-model: sonnet
+model: opus
 ---
 
 # Multi-Agent Worksheet Content Debate: **$1**
