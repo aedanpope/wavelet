@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **BEFORE STARTING ANY FIX, ENHANCEMENT, OR DEVELOPMENT TASK, CLAUDE MUST:**
 
-1. **Create a task plan file** named `tasks/TASK_N.md` where N is an incrementing number (starting from 0)
+1. **Create a task plan file** named `tasks/TASK_N.md` where N is an incrementing number (starting from 0). Run `ls tasks` first to see what to use for N.
 2. **Propose a detailed plan** that includes:
    - Problem analysis and root cause identification (for fixes) OR feature requirements and user value (for new capabilities)
    - Step-by-step implementation approach
