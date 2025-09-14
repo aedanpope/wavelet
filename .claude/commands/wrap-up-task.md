@@ -1,0 +1,1 @@
+We have reached a good wrap-up point. take some notes in the current TASK_N.md of our additioanl conversation & dialogue to get to this point, in particular places where I provided feedback & guidance - so we can use these as a future reference for the type of feedback & guidance I provide.
