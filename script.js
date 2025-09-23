@@ -2,9 +2,35 @@
 let worksheets = [];
 const isDevMode = window.location.pathname.includes('/dev/');
 
+// Check version and clear outdated storage
+function checkAndClearOutdatedStorage() {
+    try {
+        if (typeof window.APP_VERSION === 'undefined') {
+            console.warn('App version not available, skipping version check');
+            return;
+        }
+
+        const currentVersion = window.APP_VERSION;
+        const storedVersion = localStorage.getItem('appVersion');
+
+        if (storedVersion && storedVersion !== currentVersion) {
+            console.log(`📚 App updated (${storedVersion.substring(0,8)} → ${currentVersion.substring(0,8)}), clearing storage`);
+            localStorage.clear();
+        }
+
+        localStorage.setItem('appVersion', currentVersion);
+    } catch (error) {
+        console.warn('Version check failed:', error);
+        // Continue without version checking rather than breaking the app
+    }
+}
+
 // Initialize the application
 async function init() {
     try {
+        // Check version and clear storage if needed
+        checkAndClearOutdatedStorage();
+
         // Load worksheets index
         await loadWorksheets();
         

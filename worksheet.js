@@ -70,19 +70,45 @@ function clearWorksheetProgress(worksheetId) {
     }
 }
 
+// Check version and clear outdated storage
+function checkAndClearOutdatedStorage() {
+    try {
+        if (typeof window.APP_VERSION === 'undefined') {
+            console.warn('App version not available, skipping version check');
+            return;
+        }
+
+        const currentVersion = window.APP_VERSION;
+        const storedVersion = localStorage.getItem('appVersion');
+
+        if (storedVersion && storedVersion !== currentVersion) {
+            console.log(`📚 App updated (${storedVersion.substring(0,8)} → ${currentVersion.substring(0,8)}), clearing storage`);
+            localStorage.clear();
+        }
+
+        localStorage.setItem('appVersion', currentVersion);
+    } catch (error) {
+        console.warn('Version check failed:', error);
+        // Continue without version checking rather than breaking the app
+    }
+}
+
 // Initialize the application
 async function init() {
     try {
+        // Check version and clear storage if needed
+        checkAndClearOutdatedStorage();
+
         // Get worksheet ID from URL
         const urlParams = new URLSearchParams(window.location.search);
         const worksheetId = urlParams.get('id');
-        
+
         if (!worksheetId) {
             // Redirect to home page if no worksheet ID
             window.location.href = 'index.html';
             return;
         }
-        
+
         // Initialize Pyodide
         await initPyodide();
         

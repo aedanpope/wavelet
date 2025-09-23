@@ -1,0 +1,1 @@
+window.APP_VERSION = 'b64507d2b9d182d07fffc066346ce1be55dc3481';

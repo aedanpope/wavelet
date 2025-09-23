@@ -88,11 +88,14 @@ npm run test:input-system       # input system tests
 ### Deployment
 ```bash
 # Build for deployment (static files)
+# IMPORTANT: Always run before pushing to GitHub for deployment
 npm run build
 
 # Deploy with Docker
 npm run deploy:docker
 ```
+
+**⚠️ GitHub Pages Deployment**: Before pushing worksheet changes to GitHub, always run `npm run build` to update the version file. This ensures localStorage is automatically cleared for users when worksheet content changes, preventing broken saved states.
 
 ## Architecture
 

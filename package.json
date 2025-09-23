@@ -4,9 +4,12 @@
   "description": "An interactive Python learning platform with structured worksheets for classroom use",
   "main": "index.html",
   "scripts": {
+    "prestart": "node scripts/generate-version.js --dev",
     "start": "npx http-server -p 8000 -o",
     "serve": "npx http-server -p 8000",
+    "predev": "node scripts/generate-version.js --dev",
     "dev": "npx live-server --port=8000",
+    "prebuild": "node scripts/generate-version.js",
     "build": "echo 'Static build complete - files ready for deployment'",
     "deploy:docker": "docker build -t python-editor . && docker run -p 80:80 python-editor",
     "test": "node error-handler-test.js",

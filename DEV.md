@@ -46,11 +46,16 @@ The application is a static web app deployable to any web hosting service:
 
 ### Submit changes to github
 ```bash
+# IMPORTANT: Before pushing worksheet changes, run build to update version
+npm run build
+
 # Use Claude Code from WSL2/Ubuntu command line
 git add .
 git commit -m "Your commit message"
 git push
 ```
+
+**⚠️ Critical for GitHub Pages**: Always run `npm run build` before pushing worksheet content changes. This updates the version file which automatically clears users' localStorage when they visit the updated site, preventing broken saved states.
 
 ### Run tests
 ```bash
