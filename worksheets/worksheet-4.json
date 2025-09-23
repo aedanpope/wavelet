@@ -68,12 +68,38 @@
     },
     {
       "title": "Greater Than or Equal To >=",
-      "content": "What if you want to include the number in your check? You can use <code>>=</code> which means 'greater than or equal to'.",
-      "task": "Run the code with the score set to 50. It says 'Try again'. Change the <code>></code> to <code>>=</code> so that a score of 50 is also a pass.",
+      "content": "What if you want to include the number in your check? You can use <code>>=</code> which means 'greater than or equal to'. This problem will help you practice using >= specifically.",
+      "task": "Run the code with the score set to 50. It says 'Try again'. Change the <code>></code> to <code>>=</code> so that a score of exactly 50 is also a pass. Keep the score as 50 to practice how >= works differently from >.",
       "codeHeight": 6,
       "starterCode": "score = 50\n\nif score > 50:\n  print(\"You passed\")\nelse:\n  print(\"Try again\")",
-      "hint": "Just add an equals sign `=` after the greater than sign `>`.",
-      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "score = 50\nif score >= 50:\n  print(\"You passed\")\nelse:\n  print(\"Try again\")" }] }
+      "hint": "Just add an equals sign = after the greater than sign >. Notice how >= includes the boundary value (50) while > excludes it.",
+      "validation": {
+        "rules": [
+          {
+            "type": "no_errors"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "score = 50",
+            "description": "Keep the score as 50 to practice the >= operator. Don't change the score value."
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "if\\s+score\\s*>=\\s*50\\s*:",
+            "description": "Use the >= operator in your if statement: 'if score >= 50:'"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "^(?!.*score\\s*=\\s*(?!50\\b)\\d+)",
+            "description": "Don't change the score value. Keep it as 50 to learn how >= works."
+          },
+          {
+            "type": "output_contains",
+            "pattern": "You passed",
+            "description": "Your code should print 'You passed' when the score is 50 and you use >=."
+          }
+        ]
+      }
     },
     {
       "title": "Adding an else",
