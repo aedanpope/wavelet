@@ -2,12 +2,40 @@
 
 This document captures best practices and lessons learned from developing Wavelet worksheets, particularly from Worksheet 5 development.
 
+## Target Audience
+
+Wavelet is designed for **Year 6 students (11-year-olds)** learning Python and programming for the first time. Students only know concepts from earlier worksheets, so we must build incrementally.
+
+**Device constraints:**
+- Students use a mix of old laptops and iPads
+- Minimize unnecessary typing to avoid frustrating iPad users
+- Keep code examples short and manageable
+
 ## Table of Contents
+- [Target Audience](#target-audience)
+- [Content Guidelines](#content-guidelines)
 - [Question Structure & Flow](#question-structure--flow)
 - [Validation Best Practices](#validation-best-practices)
 - [Pedagogical Principles](#pedagogical-principles)
 - [Common Pitfalls to Avoid](#common-pitfalls-to-avoid)
 - [Code Examples](#code-examples)
+
+---
+
+## Content Guidelines
+
+### Writing Style
+- **Use `<code>` tags** for inline code in task and content fields
+- **Explain concepts eloquently** - task and content fields should teach clearly
+- **Avoid excessive punctuation** - don't overuse '!' or other punctuation in strings, tasks, and content
+- **Simple data** - use small numbers and simple strings to reduce cognitive load
+  - Good: `name = "Ali"`, `score = 15`
+  - Bad: `name = "Bartholomew"`, `score = 9847`
+
+### Code Examples
+- **Use lots of examples** with small, incremental changes
+- **Build gradually** - avoid big conceptual jumps
+- **Show variations** - demonstrate different uses of the same concept
 
 ---
 
@@ -288,7 +316,9 @@ if found:
 ```
 
 ### 2. Wrong codeHeight
-**Always count the lines in your solution code including blank lines:**
+**Always set codeHeight to give students enough space:**
+- Count lines in your solution code including blank lines
+- Add extra space for students to debug and experiment
 - Starter code with 10 lines → `codeHeight: 10`
 - Solution has 12 lines → `codeHeight: 12`
 
@@ -420,11 +450,21 @@ Just right: Give structure, student implements logic
 
 Before adding a question to a worksheet, verify:
 
+**Content Quality:**
+- [ ] Uses simple strings and small numbers (avoid cognitive overload)
+- [ ] Uses `<code>` tags for inline code in task/content fields
+- [ ] Avoids excessive punctuation or exclamation marks
+- [ ] Minimizes unnecessary typing (especially for iPad users)
+
+**Learning Design:**
 - [ ] Question has clear learning objective (what concept does it teach/practice?)
 - [ ] Difficulty is appropriate for its position in the worksheet
 - [ ] Follows Run→Edit→Write progression for new concepts
+- [ ] Only uses concepts from current or earlier worksheets
 - [ ] Starter code is provided when needed (complex syntax, focus on one skill)
-- [ ] codeHeight matches the actual solution line count
+
+**Technical:**
+- [ ] codeHeight provides enough space for solution + debugging
 - [ ] Validation uses solution_code with testInputs
 - [ ] Regex patterns have clear description fields (if used)
 - [ ] Boundary cases are tested in testInputs
@@ -461,5 +501,18 @@ Before adding a question to a worksheet, verify:
 
 ---
 
+## Remember
+
+**You can propose:**
+- Re-ordering questions
+- Adding new questions
+- Rewriting tasks for clarity
+- Removing questions that don't add value
+
+**Goal:** Make content work best for median 11-year-old students learning programming for the first time.
+
+---
+
 *Last updated: 2025-01-27*
 *Based on: Worksheet 5 development session*
+*Integrated with: WORKSHEETS_PROMPT.md content*
