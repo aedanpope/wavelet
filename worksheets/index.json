@@ -23,6 +23,12 @@
       "title": "Worksheet 4: Making Decisions",
       "description": "Learn to use if, elif, and else statements to create programs that can make choices and respond to different conditions.",
       "file": "worksheet-4.json"
+    },
+    {
+      "id": "worksheet-5",
+      "title": "Worksheet 5: Working with Text",
+      "description": "Learn to use strings to work with text and create more expressive programs.",
+      "file": "worksheet-5.json"
     }
   ],
   "metadata": {

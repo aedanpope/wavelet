@@ -1,0 +1,635 @@
+{
+  "id": "worksheet-5",
+  "title": "Worksheet 5: Working with Text",
+  "description": "Learn to use strings to work with text and create more expressive programs.",
+  "problems": [
+    {
+      "title": "Hello World!",
+      "content": "Welcome back! So far, we've been working with numbers. Now let's learn to work with text! In programming, we call text <code>strings</code>. A string is text wrapped in quotation marks.",
+      "task": "Run this code to see your first string printed.",
+      "starterCode": "print(\"Hello World\")",
+      "hint": "Just press the 'Run Code' button!",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "print(\"Hello World\")"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Meet the f-string",
+      "content": "Python has a cool feature called <code>f-strings</code> that lets you put variables inside text! Put an <code>f</code> before the opening quote and use <code>{}</code> curly braces around variable names.",
+      "task": "Run this code to see how the variable <code>name</code> appears in the greeting.",
+      "starterCode": "name = \"Sam\"\nprint(f\"Hello {name}\")",
+      "hint": "Notice how the {name} part gets replaced with the value of the name variable.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "name = \"Sam\"\nprint(f\"Hello {name}\")"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Change the greeting",
+      "content": "Now it's your turn to make a small change!",
+      "task": "Edit the greeting from <code>\"Hello\"</code> to <code>\"Hi\"</code> but keep the rest of the f-string the same.",
+      "starterCode": "name = \"Sam\"\nprint(f\"Hello {name}\")",
+      "hint": "Just change the word Hello to Hi, but don't change the {name} part.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "name = \"Sam\"\nprint(f\"Hi {name}\")"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Single quotes work too!",
+      "content": "So far we've used double quotes <code>\"</code> for our strings. Python also lets you use single quotes <code>'</code> - they work exactly the same!",
+      "task": "Run this code to see that single quotes work just like double quotes.",
+      "starterCode": "print('Hello World')",
+      "hint": "Both 'Hello World' and \"Hello World\" produce the same output.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "print('Hello World')"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Quote bug - mixing quotes!",
+      "content": "This is a common mistake that everyone makes when learning Python! If you start a string with one type of quote, you must end it with the same type.",
+      "task": "Run this code to see the error. The string starts with a double quote <code>\"</code> but ends with a single quote <code>'</code>. Fix it by making both quotes match.",
+      "starterCode": "print(\"Welcome')",
+      "hint": "Change the ending single quote ' to a double quote \" so they match. Both quotes should be the same type.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "print(\"Welcome\")"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Numbers in f-strings",
+      "content": "F-strings work with numbers too! You can put any variable inside the <code>{}</code> curly braces.",
+      "task": "Run this code to see how a number variable works in an f-string.",
+      "starterCode": "age = 10\nprint(f\"I am {age} years old\")",
+      "hint": "The {age} part gets replaced with the number 10.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "age = 10\nprint(f\"I am {age} years old\")"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Loop reminder",
+      "content": "Remember loops from Worksheet 3? They help us repeat code!",
+      "task": "Run this loop to see the numbers 1 to 5 printed.",
+      "starterCode": "for i in range(1, 6):\n  print(i)",
+      "hint": "The loop runs 5 times, printing each number.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "for i in range(1, 6):\n  print(i)"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Loops meet f-strings!",
+      "content": "Now let's combine loops with f-strings! This is where things get exciting.",
+      "task": "Write a loop that counts from 1 to 5. For each number, print <code>\"Number {i}\"</code> using an f-string.",
+      "codeHeight": 3,
+      "starterCode": "",
+      "hint": "Use: for i in range(1, 6): and then print(f\"Number {i}\").",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains_regex",
+            "pattern": "for.*range",
+            "description": "Use a for loop with range()"
+          },
+          {
+            "type": "solution_code",
+            "solutionCode": "for i in range(1, 6):\n  print(f\"Number {i}\")"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Your name f-string",
+      "content": "Now let's write our own f-string from scratch!",
+      "task": "Write a program that sets a variable called <code>name</code> to your name (in quotes), then uses an f-string to print <code>\"My name is {name}\"</code>.",
+      "starterCode": "",
+      "hint": "First line: name = \"YourName\". Second line: print(f\"My name is {name}\").",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "name ="
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "print\\s*\\(\\s*f\".*\\{name\\}.*\"\\s*\\)",
+            "description": "Use an f-string with {name} in the print statement"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "My name is"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Age f-string with input",
+      "content": "Let's combine f-strings with user input!",
+      "task": "Write a program that gets a number using <code>get_input()</code>, stores it in a variable called <code>age</code>, then uses an f-string to print <code>\"I am {age}\"</code>.",
+      "inputs": [
+        {
+          "name": "age",
+          "label": "Enter your age:",
+          "type": "number"
+        }
+      ],
+      "codeHeight": 3,
+      "starterCode": "",
+      "hint": "First get the input: age = get_input(). Then print with an f-string: print(f\"I am {age}\").",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "get_input()"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "print\\s*\\(\\s*f\".*\\{age\\}.*\"\\s*\\)",
+            "description": "Use an f-string with {age} in the print statement"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "I am"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Combining strings",
+      "content": "You can also join strings together using the <code>+</code> operator. This is called <code>concatenation</code>.",
+      "task": "Change the words in this program to create a different sentence. Try your own words!",
+      "starterCode": "print(\"Hello\" + \" \" + \"World\")",
+      "hint": "Replace 'Hello' and 'World' with any words you like. Don't forget the space in the middle!",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "+"
+          },
+          {
+            "type": "output_not_empty"
+          }
+        ]
+      }
+    },
+    {
+      "title": "If statement reminder",
+      "content": "Remember if statements from Worksheet 4? They let our programs make decisions based on conditions!",
+      "task": "Run this code. Try entering different numbers like 30, then 60, and see how the output changes.",
+      "inputs": [
+        {
+          "name": "score",
+          "label": "Enter a score:",
+          "type": "number"
+        }
+      ],
+      "codeHeight": 4,
+      "starterCode": "score = get_input()\n\nif score >= 50:\n  print(\"Pass\")",
+      "hint": "When score is 50 or more, it prints 'Pass'. Otherwise, nothing is printed.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "score = get_input()\n\nif score >= 50:\n  print(\"Pass\")"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Add an else block",
+      "content": "The code above only prints something when the condition is true. Let's make it print something for both cases!",
+      "task": "Add an <code>else:</code> block after the if block that prints <code>\"Try again\"</code>. Test it with different score values!",
+      "inputs": [
+        {
+          "name": "score",
+          "label": "Enter a score:",
+          "type": "number"
+        }
+      ],
+      "codeHeight": 6,
+      "starterCode": "score = get_input()\n\nif score >= 50:\n  print(\"Pass\")",
+      "hint": "After the print(\"Pass\") line, add: else: on a new line (at the same indentation as if), then print(\"Try again\") indented under it.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "score = get_input()\n\nif score >= 50:\n  print(\"Pass\")\nelse:\n  print(\"Try again\")",
+            "testInputs": [
+              {"inputs": {"score": 50}},
+              {"inputs": {"score": 49}},
+              {"inputs": {"score": 60}},
+              {"inputs": {"score": 0}}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "If statements with f-strings",
+      "content": "Now let's combine if statements with f-strings to make more interesting messages!",
+      "task": "Complete the program: If <code>n</code> is greater than 10, print <code>\"{n} is big\"</code>, otherwise print <code>\"{n} is small\"</code> using f-strings.",
+      "inputs": [
+        {
+          "name": "n",
+          "label": "Enter a number:",
+          "type": "number"
+        }
+      ],
+      "codeHeight": 6,
+      "starterCode": "n = get_input()\n",
+      "hint": "Add the if/else structure: if n > 10: print(f\"{n} is big\") else: print(f\"{n} is small\").",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "get_input()"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "if"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "print\\s*\\(\\s*f\".*\\{.*n.*\\}.*\"\\s*\\)",
+            "description": "Use an f-string with {n} in the print statement"
+          },
+          {
+            "type": "solution_code",
+            "solutionCode": "n = get_input()\n\nif n > 10:\n  print(f\"{n} is big\")\nelse:\n  print(f\"{n} is small\")",
+            "testInputs": [
+              {"inputs": {"n": 11}},
+              {"inputs": {"n": 10}},
+              {"inputs": {"n": 5}},
+              {"inputs": {"n": 100}}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Greeting with input",
+      "content": "Now let's get a name from the user and create a personalized greeting!",
+      "task": "Write a program that gets a name input and prints <code>\"Welcome {name}\"</code> using an f-string. Note: For text inputs, you still use <code>get_input()</code> the same way.",
+      "inputs": [
+        {
+          "name": "name",
+          "label": "Enter your name:",
+          "type": "text"
+        }
+      ],
+      "codeHeight": 3,
+      "starterCode": "",
+      "hint": "Get the input: name = get_input(). Then use an f-string: print(f\"Welcome {name}\").",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "get_input()"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "print\\s*\\(\\s*f\".*\\{name\\}.*\"\\s*\\)",
+            "description": "Use an f-string with {name} in the print statement"
+          },
+          {
+            "type": "solution_code",
+            "solutionCode": "name = get_input()\nprint(f\"Welcome {name}\")",
+            "testInputs": [
+              {"inputs": {"name": "Alice"}},
+              {"inputs": {"name": "Bob"}}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Full introduction",
+      "content": "Now let's put multiple variables in one f-string!",
+      "task": "Write a program that gets a name and an age as inputs, then prints them both in one sentence: <code>\"My name is {name} and I am {age}\"</code>.",
+      "inputs": [
+        {
+          "name": "name",
+          "label": "Enter your name:",
+          "type": "text"
+        },
+        {
+          "name": "age",
+          "label": "Enter your age:",
+          "type": "number"
+        }
+      ],
+      "codeHeight": 4,
+      "starterCode": "",
+      "hint": "Get both inputs: name = get_input('name') and age = get_input('age'). Then use an f-string with both: print(f\"My name is {name} and I am {age}\").",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains_regex",
+            "pattern": "get_input\\s*\\(\\s*['\"]name['\"]\\s*\\)",
+            "description": "Get the name input using get_input('name')"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "get_input\\s*\\(\\s*['\"]age['\"]\\s*\\)",
+            "description": "Get the age input using get_input('age')"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "print\\s*\\(\\s*f\".*\\{name\\}.*\\{age\\}.*\"\\s*\\)",
+            "description": "Use an f-string with both {name} and {age}"
+          },
+          {
+            "type": "solution_code",
+            "solutionCode": "name = get_input('name')\nage = get_input('age')\nprint(f\"My name is {name} and I am {age}\")",
+            "testInputs": [
+              {"inputs": {"name": "Alice", "age": 10}},
+              {"inputs": {"name": "Bob", "age": 12}}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Three greetings",
+      "content": "Let's create a program that prints multiple different messages with the same name!",
+      "task": "Get a name as input, then print three different greetings using f-strings: <code>\"Hello {name}\"</code>, <code>\"Welcome {name}\"</code>, and <code>\"Goodbye {name}\"</code>.",
+      "inputs": [
+        {
+          "name": "name",
+          "label": "Enter a name:",
+          "type": "text"
+        }
+      ],
+      "codeHeight": 5,
+      "starterCode": "",
+      "hint": "Get the input once, then use three separate print statements with f-strings.",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "get_input()"
+          },
+          {
+            "type": "solution_code",
+            "solutionCode": "name = get_input()\nprint(f\"Hello {name}\")\nprint(f\"Welcome {name}\")\nprint(f\"Goodbye {name}\")",
+            "testInputs": [
+              {"inputs": {"name": "Alice"}},
+              {"inputs": {"name": "Bob"}}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Finding the Remainder %",
+      "content": "In programming, there's a special math symbol called **modulo**, which is a percent sign <code>%</code>. It gives you the remainder of a division. For example, if you share 10 sweets between 3 friends, each gets 3 and there is 1 left over. So, <code>10 % 3</code> is 1.",
+      "task": "Run the code to see the remainder of 14 divided by 4. Change the numbers to see how it works with different values.",
+      "codeHeight": 2,
+      "starterCode": "print(14 % 4)",
+      "hint": "14 divided by 4 is 3 with a remainder of 2.",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "%"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Even or Odd?",
+      "content": "We can use the modulo operator <code>%</code> to see if a number is even or odd. Any even number can be divided by 2 with no remainder! So, if <code>number % 2</code> is 0, the number is even.",
+      "task": "Enter different numbers, both even and odd, and run the code to see if the program gets it right.",
+      "inputs": [
+        {
+          "name": "num",
+          "label": "Number:",
+          "type": "number"
+        }
+      ],
+      "codeHeight": 6,
+      "starterCode": "number = get_input()\n\nif number % 2 == 0:\n  print(\"Even\")\nelse:\n  print(\"Odd\")",
+      "hint": "Try entering 10, then try 5. See how the result of `number % 2` changes the outcome.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "number = get_input()\n\nif number % 2 == 0:\n  print(\"Even\")\nelse:\n  print(\"Odd\")",
+            "testInputs": [
+              {"inputs": {"num": 10}},
+              {"inputs": {"num": 5}},
+              {"inputs": {"num": 2}},
+              {"inputs": {"num": 7}}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Even or odd with f-strings",
+      "content": "Now let's make the even/odd checker more descriptive by using f-strings! Edit the print statements to include the number in the message.",
+      "task": "Change both print statements to use f-strings. Instead of <code>\"Even\"</code>, print <code>\"{num} is even\"</code>. Instead of <code>\"Odd\"</code>, print <code>\"{num} is odd\"</code>.",
+      "inputs": [
+        {
+          "name": "num",
+          "label": "Enter a number:",
+          "type": "number"
+        }
+      ],
+      "codeHeight": 6,
+      "starterCode": "num = get_input()\n\nif num % 2 == 0:\n  print(\"Even\")\nelse:\n  print(\"Odd\")",
+      "hint": "Change print(\"Even\") to print(f\"{num} is even\") and print(\"Odd\") to print(f\"{num} is odd\"). Don't forget the f before the quote!",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "%"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "print\\s*\\(\\s*f\".*\\{.*num.*\\}.*\"\\s*\\)",
+            "description": "Use an f-string with {num} in the print statement"
+          },
+          {
+            "type": "solution_code",
+            "solutionCode": "num = get_input()\n\nif num % 2 == 0:\n  print(f\"{num} is even\")\nelse:\n  print(f\"{num} is odd\")",
+            "testInputs": [
+              {"inputs": {"num": 10}},
+              {"inputs": {"num": 5}},
+              {"inputs": {"num": 2}},
+              {"inputs": {"num": 7}}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Finding Factors",
+      "content": "A <strong>factor</strong> of a number is any number that divides into it evenly (with no remainder). For example, the factors of 12 are 1, 2, 3, 4, 6, and 12. We can use modulo to check if a number is a factor!",
+      "task": "This program loops through numbers 1 to n. Edit the code to only print <code>i</code> when it's a factor of <code>n</code> (when <code>n % i == 0</code>). Add an if statement inside the loop.",
+      "inputs": [
+        {
+          "name": "n",
+          "label": "Enter a number:",
+          "type": "number"
+        }
+      ],
+      "codeHeight": 6,
+      "starterCode": "n = get_input()\nprint(f\"Factors of {n}:\")\n\nfor i in range(1, n + 1):\n  print(i)",
+      "hint": "Add 'if n % i == 0:' after the for loop line, then indent the print(i) underneath it. This checks if i divides evenly into n.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "n = get_input()\nprint(f\"Factors of {n}:\")\n\nfor i in range(1, n + 1):\n  if n % i == 0:\n    print(i)",
+            "testInputs": [
+              {"inputs": {"n": 2}},
+              {"inputs": {"n": 3}},
+              {"inputs": {"n": 5}},
+              {"inputs": {"n": 12}},
+              {"inputs": {"n": 10}},
+              {"inputs": {"n": 7}}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "The break keyword",
+      "content": "Sometimes you want to exit a loop early before it finishes all its iterations. The <code>break</code> keyword stops a loop immediately and jumps to the code after the loop.",
+      "task": "Run this code and see how the loop stops at 3 instead of going all the way to 10.",
+      "codeHeight": 5,
+      "starterCode": "for i in range(1, 11):\n  print(i)\n  if i == 3:\n    break\nprint(\"Loop stopped!\")",
+      "hint": "The break happens when i equals 3, so it only prints 1, 2, 3 before exiting the loop.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "for i in range(1, 11):\n  print(i)\n  if i == 3:\n    break\nprint(\"Loop stopped!\")"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Your turn: Add a break",
+      "content": "Now practice adding <code>break</code> yourself! This loop counts from 1 to 20, but let's make it stop early.",
+      "task": "Add an if statement inside the loop that breaks when <code>i</code> equals 7. Don't forget to add <code>break</code> inside the if block!",
+      "codeHeight": 4,
+      "starterCode": "for i in range(1, 21):\n  print(i)",
+      "hint": "After the print(i) line, add: if i == 7: and then on the next line (indented): break",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "break"
+          },
+          {
+            "type": "solution_code",
+            "solutionCode": "for i in range(1, 21):\n  print(i)\n  if i == 7:\n    break"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Finding with a flag variable",
+      "content": "Sometimes we need to track whether we found something in a loop. We can use a <strong>flag variable</strong> - a variable that starts as <code>False</code> and becomes <code>True</code> when we find what we're looking for.",
+      "task": "This program has a break but doesn't set the flag! Add <code>found = True</code> before the break statement, so the program remembers that it found something.",
+      "inputs": [
+        {
+          "name": "target",
+          "label": "Target number:",
+          "type": "number"
+        }
+      ],
+      "codeHeight": 12,
+      "starterCode": "target = get_input()\nfound = False\n\nfor i in range(1, 100):\n  if i > target:\n    break\n\nif found:\n  print(\"Found it!\")\nelse:\n  print(\"Not found\")",
+      "hint": "Add 'found = True' on the line before 'break'. The flag variable tracks whether we found a number greater than target.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "target = get_input()\nfound = False\n\nfor i in range(1, 100):\n  if i > target:\n    found = True\n    break\n\nif found:\n  print(\"Found it!\")\nelse:\n  print(\"Not found\")",
+            "testInputs": [
+              {"inputs": {"target": 5}},
+              {"inputs": {"target": 10}},
+              {"inputs": {"target": 50}}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Challenge: Prime or Composite?",
+      "content": "A <strong>prime number</strong> has exactly two factors: 1 and itself. A <strong>composite number</strong> has more than two factors. Can you use what you've learned about factors, the <code>break</code> keyword, and flag variables to determine if a number is prime?",
+      "task": "Write a program that reads a number and prints <code>\"Prime\"</code> if it's prime or <code>\"Composite\"</code> if it's not. Use a flag variable like in the previous question!",
+      "inputs": [
+        {
+          "name": "n",
+          "label": "Enter a number:",
+          "type": "number"
+        }
+      ],
+      "codeHeight": 17,
+      "starterCode": "",
+      "hint": "Start with a flag variable set to False. Loop from 2 to n-1. If you find a factor (n % i == 0), set the flag to True and break. After the loop, check the flag to print either 'Prime' or 'Composite'.",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "break"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "%"
+          },
+          {
+            "type": "solution_code",
+            "solutionCode": "n = get_input()\nis_composite = False\n\nfor i in range(2, n):\n  if n % i == 0:\n    is_composite = True\n    break\n\nif is_composite:\n  print(\"Composite\")\nelse:\n  print(\"Prime\")",
+            "testInputs": [
+              {"inputs": {"n": 7}},
+              {"inputs": {"n": 12}},
+              {"inputs": {"n": 13}},
+              {"inputs": {"n": 9}},
+              {"inputs": {"n": 11}},
+              {"inputs": {"n": 15}}
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "metadata": {
+    "created": "2025-01-27"
+  }
+}

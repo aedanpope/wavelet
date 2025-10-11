@@ -4,7 +4,7 @@
 // Helper function to check if solution output is contained within student output
 // This allows students to have debugging print statements while still validating correctness
 // When exactMatch is true, outputs must match exactly (after trimming)
-function isOutputMatch(studentOutput, solutionOutput, exactMatch = false) {
+function isOutputMatch(studentOutput, solutionOutput, exactMatch = true) {
     const student = (studentOutput || '').trim();
     const solution = (solutionOutput || '').trim();
     
@@ -13,15 +13,17 @@ function isOutputMatch(studentOutput, solutionOutput, exactMatch = false) {
         return student === '';
     }
     
-    if (exactMatch) {
-        // For exact matching, require outputs to be identical (preserving case)
-        return student === solution;
-    }
-    
-    // Default behavior: check if solution output is a substring of student output (case-insensitive)
     const studentLower = student.toLowerCase();
     const solutionLower = solution.toLowerCase();
-    return studentLower.includes(solutionLower);
+    if (exactMatch) {
+        // For exact matching, require outputs to be identical (preserving case)
+        return studentLower === solutionLower;
+    }
+    else {
+        // Check if solution output is a substring of student output (case-insensitive)
+        // Allows for e.g. print debugging statements in student code.
+        return studentLower.includes(solutionLower);
+    }
 }
 
 // Simple but effective PRNG for deterministic testing
