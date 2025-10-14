@@ -9,14 +9,17 @@
     "serve": "npx http-server -p 8000",
     "predev": "node scripts/generate-version.js --dev",
     "dev": "npx live-server --port=8000",
-    "prebuild": "node scripts/generate-version.js",
+    "prebuild": "npm run validate:worksheets && node scripts/generate-version.js",
     "build": "echo 'Static build complete - files ready for deployment'",
     "deploy:docker": "docker build -t python-editor . && docker run -p 80:80 python-editor",
+    "validate:worksheets": "node scripts/validate-worksheets.js",
+    "lint": "eslint *.js",
+    "lint:fix": "eslint *.js --fix",
     "test": "node error-handler-test.js",
     "test:homepage:basic": "node homepage-basic-test.js",
     "test:validation": "node validation-test.js",
     "test:input-system": "node input-system-test.js",
-    "test:all": "for f in *-test.js; do echo \"\\n🧪 Running $f...\"; node \"$f\" || exit 1; done",
+    "test:all": "npm run validate:worksheets && for f in *-test.js; do echo \"\\n🧪 Running $f...\"; node \"$f\" || exit 1; done",
     "test:solution-code": "node validate-solution-code-test.js"
   },
   "keywords": [
@@ -30,6 +33,8 @@
   "author": "Python Browser Editor",
   "license": "MIT",
   "devDependencies": {
+    "ajv": "^8.17.1",
+    "eslint": "^9.37.0",
     "http-server": "^14.1.1",
     "live-server": "^1.2.2",
     "pyodide": "^0.28.2"

@@ -1,0 +1,322 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Wavelet Worksheet Schema",
+  "description": "JSON Schema for validating Wavelet worksheet structure",
+  "type": "object",
+  "required": ["id", "title", "description", "problems"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^worksheet-[0-9]+$",
+      "description": "Unique worksheet identifier (e.g., worksheet-1)"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Worksheet title displayed to students"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Brief description of what students will learn"
+    },
+    "problems": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Array of problem definitions",
+      "items": {
+        "$ref": "#/definitions/problem"
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Optional metadata about the worksheet",
+      "properties": {
+        "created": {
+          "type": "string",
+          "description": "Creation date (YYYY-MM-DD format)"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "description": "Last update date (YYYY-MM-DD format)"
+        },
+        "version": {
+          "type": "string",
+          "description": "Worksheet version"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "problem": {
+      "type": "object",
+      "required": ["title", "task"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Problem title"
+        },
+        "content": {
+          "type": "string",
+          "description": "Instructional content explaining concepts (supports HTML)"
+        },
+        "task": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Specific task instructions for the student"
+        },
+        "starterCode": {
+          "type": "string",
+          "description": "Pre-filled code in the editor"
+        },
+        "hint": {
+          "type": "string",
+          "description": "Hint text to help students"
+        },
+        "codeHeight": {
+          "type": "number",
+          "minimum": 1,
+          "description": "Number of visible lines in code editor"
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": ["easy", "medium", "hard"],
+          "description": "Problem difficulty level"
+        },
+        "inputs": {
+          "type": "array",
+          "description": "Input field configurations for interactive problems",
+          "items": {
+            "$ref": "#/definitions/input"
+          }
+        },
+        "validation": {
+          "$ref": "#/definitions/validation",
+          "description": "Validation rules for checking student answers"
+        }
+      }
+    },
+    "input": {
+      "type": "object",
+      "required": ["name", "label", "type"],
+      "description": "Input field configuration for get_input() function",
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z_][a-z0-9_]*$",
+          "description": "Input identifier used in get_input('name')"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Label displayed above the input field"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["number", "text"],
+          "description": "Input type (number or text)"
+        },
+        "placeholder": {
+          "type": "string",
+          "description": "Optional placeholder text"
+        },
+        "defaultValue": {
+          "oneOf": [
+            {"type": "number"},
+            {"type": "string"}
+          ],
+          "description": "Optional default value"
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "required": ["rules"],
+      "description": "Validation configuration",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Array of validation rules (all must pass)",
+          "items": {
+            "$ref": "#/definitions/validationRule"
+          }
+        },
+        "successMessage": {
+          "type": "string",
+          "description": "Custom success message (default: '✅ Correct! Well done!')"
+        }
+      }
+    },
+    "validationRule": {
+      "type": "object",
+      "required": ["type"],
+      "description": "Individual validation rule",
+      "oneOf": [
+        {
+          "properties": {
+            "type": {"const": "code_contains"},
+            "pattern": {"type": "string", "minLength": 1},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type", "pattern"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "code_not_contains"},
+            "pattern": {"type": "string", "minLength": 1},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type", "pattern"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "code_contains_regex"},
+            "pattern": {"type": "string", "minLength": 1},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type", "pattern"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "output_contains"},
+            "pattern": {"type": "string", "minLength": 1},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type", "pattern"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "output_contains_regex"},
+            "pattern": {"type": "string", "minLength": 1},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type", "pattern"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "output_not_empty"},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "solution_code"},
+            "solutionCode": {"type": "string", "minLength": 1},
+            "exactMatch": {"type": "boolean"},
+            "testInputs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "inputs": {"type": "object"},
+                  "expectedOutput": {"type": "string"}
+                },
+                "required": ["inputs"]
+              }
+            },
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type", "solutionCode"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "code_min_length"},
+            "minLength": {"type": "number", "minimum": 1},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type", "minLength"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "print_count"},
+            "minCount": {"type": "number", "minimum": 0},
+            "maxCount": {"type": "number", "minimum": 0},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "output_line_count"},
+            "minLines": {"type": "number", "minimum": 0},
+            "maxLines": {"type": "number", "minimum": 0},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "assignment_count"},
+            "minCount": {"type": "number", "minimum": 0},
+            "maxCount": {"type": "number", "minimum": 0},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "input_count"},
+            "count": {"type": "number", "minimum": 0},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type", "count"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "code_contains_number"},
+            "number": {"type": "number"},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type", "number"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "output_is_number"},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "no_errors"},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}
