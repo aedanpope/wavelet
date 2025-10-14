@@ -621,19 +621,76 @@ This change is more invasive and should only be pursued if:
 
 ## Implementation Priority & Phasing
 
-### Phase 1: Low-Risk, High-Value Improvements
+### Phase 1: Low-Risk, High-Value Improvements ✅ COMPLETED
 
-**Priority 1A: JSON Schema Validation**
+**Priority 1A: JSON Schema Validation** ✅
 - **Effort:** 2-3 hours
 - **Risk:** Very low (doesn't touch production code)
 - **Value:** Immediate - prevents malformed worksheets
 - **Impact:** Quality assurance for worksheet creation
+- **Status:** ✅ Complete - All 5 worksheets validate successfully
+- **Files:** `worksheets/schema.json`, `scripts/validate-worksheets.js`, `worksheets/README.md`
+- **Integration:** Runs in `prebuild` and `test:all`
 
-**Priority 1B: ESLint Basic Setup**
+**Priority 1B: ESLint Basic Setup** ✅
 - **Effort:** 1-2 hours
 - **Risk:** Very low (doesn't change code, only warns)
 - **Value:** Immediate feedback on common errors
 - **Impact:** Catches undefined variables, unused code
+- **Status:** ✅ Complete - 47 issues identified (29 errors, 18 warnings)
+- **Files:** `eslint.config.js`, `ESLINT_FINDINGS.md`
+- **Integration:** Runs in `test:all` (errors only, warnings allowed)
+
+### ESLint Build Integration Plan
+
+**Current State:**
+- ✅ ESLint runs in `test:all` with `lint:errors` (blocks on errors, allows warnings)
+- ⏳ ESLint does NOT run in `prebuild` yet
+
+**Rationale for Gradual Integration:**
+1. **Current errors exist** - 29 errors would block builds immediately
+2. **Educational priority** - Must not block urgent hotfixes for students
+3. **Test-first approach** - Catch issues during development, not deployment
+
+**Integration Timeline:**
+
+**Phase 1B-1: Test Suite Integration** ✅ DONE
+- Add `npm run lint:errors` to `test:all`
+- Blocks on errors, allows warnings
+- Encourages fixing issues during development
+- Doesn't block emergency deployments
+
+**Phase 1B-2: Fix Critical Errors** ⏳ NEXT
+- Fix undefined variables (validate-solution-code.js)
+- Fix const assignment (validate-solution-code.js)
+- Fix case block declarations (validation.js, validate-solution-code.js)
+- **Goal:** Get to zero errors
+
+**Phase 1B-3: Build Integration** 🔜 FUTURE
+- Once errors are fixed, add to `prebuild`:
+  ```json
+  {
+    "prebuild": "npm run validate:worksheets && npm run lint:errors && node scripts/generate-version.js"
+  }
+  ```
+- This will block deployment of code with linting errors
+- Warnings will still be allowed
+
+**Phase 1B-4: Strict Mode** 🔮 OPTIONAL
+- After team is comfortable, consider blocking on warnings too:
+  ```json
+  {
+    "lint:strict": "eslint *.js",
+    "prebuild": "npm run validate:worksheets && npm run lint:strict && node scripts/generate-version.js"
+  }
+  ```
+- Only do this when all warnings are addressed
+
+**Decision Point:**
+After Phase 1B-2 (critical errors fixed), evaluate:
+- Has ESLint caught real bugs?
+- Is the team comfortable with the workflow?
+- Should we add to `prebuild` or keep in `test:all` only?
 
 ### Phase 2: Documentation & Type Hints
 

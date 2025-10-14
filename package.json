@@ -15,11 +15,12 @@
     "validate:worksheets": "node scripts/validate-worksheets.js",
     "lint": "eslint *.js",
     "lint:fix": "eslint *.js --fix",
+    "lint:errors": "eslint *.js --max-warnings=999",
     "test": "node error-handler-test.js",
     "test:homepage:basic": "node homepage-basic-test.js",
     "test:validation": "node validation-test.js",
     "test:input-system": "node input-system-test.js",
-    "test:all": "npm run validate:worksheets && for f in *-test.js; do echo \"\\n🧪 Running $f...\"; node \"$f\" || exit 1; done",
+    "test:all": "npm run validate:worksheets && npm run lint:errors && for f in *-test.js; do echo \"\\n🧪 Running $f...\"; node \"$f\" || exit 1; done",
     "test:solution-code": "node validate-solution-code-test.js"
   },
   "keywords": [
