@@ -1,0 +1,55 @@
+{
+  "id": "worksheet-6",
+  "title": "Worksheet 6: Drawing with Code",
+  "description": "Learn to create visual patterns by drawing on a grid using coordinates.",
+  "problems": [
+    {
+      "title": "Your First Pixel",
+      "content": "Welcome to grid drawing! You can color cells on a grid using the `draw()` function. The grid uses coordinates like a graph in math class: (x, y). The bottom-left corner is (0, 0).\n\nTry running this code to see a single red cell appear!",
+      "task": "Run the code to draw a red cell at position (1, 1).",
+      "starterCode": "use_canvas(GRID3)\n\n# Draw a red cell in the center\ndraw(1, 1, 'red')",
+      "hint": "Just click 'Run Code' to see the cell appear on the canvas above!",
+      "canvas": true,
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "use_canvas(GRID3)\ndraw(1, 1, 'red')"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Draw a Horizontal Line",
+      "content": "Now let's draw multiple cells to create a line. A horizontal line goes from left to right at the same y-coordinate.\n\nThe grid is 3×3, so the coordinates go from (0, 0) to (2, 2). Let's draw a black line across the middle row at y=1.",
+      "task": "Draw a black horizontal line at y=1 by coloring cells (0, 1), (1, 1), and (2, 1).",
+      "starterCode": "use_canvas(GRID3)\n\n# Draw three cells to make a horizontal line\n# draw(x, y) draws black by default\n\n",
+      "hint": "You need three draw() calls: draw(0, 1), draw(1, 1), and draw(2, 1)",
+      "canvas": true,
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "use_canvas(GRID3)\ndraw(0, 1)\ndraw(1, 1)\ndraw(2, 1)"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Color the Corners",
+      "content": "Let's make a pattern by coloring the four corner cells of the grid. The corners are at coordinates: (0, 0), (2, 0), (0, 2), and (2, 2).\n\nYou can use different colors! Try 'blue', 'green', 'yellow', 'purple', or any color name you know.",
+      "task": "Draw blue cells in all four corners of the grid.",
+      "starterCode": "use_canvas(GRID3)\n\n# Color all four corners blue\n\n",
+      "hint": "You need four draw() calls for the corners: (0, 0), (2, 0), (0, 2), and (2, 2)",
+      "canvas": true,
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "use_canvas(GRID3)\ndraw(0, 0, 'blue')\ndraw(2, 0, 'blue')\ndraw(0, 2, 'blue')\ndraw(2, 2, 'blue')"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -44,17 +44,18 @@ class CodeExecutor {
      * Execute Python code with output capture
      * @param {string} code - Python code to execute
      * @param {HTMLElement} outputElement - Output element to display results
+     * @param {number} problemIndex - Index of the problem (for canvas support)
      * @returns {Promise<Object>} Execution result with captured output
      */
-    async executeCode(code, outputElement) {
+    async executeCode(code, outputElement, problemIndex = 0) {
         let printOutput = '';
         outputElement.innerHTML = ''; // Clear previous output
-        
+
         // Create a text container for print output
         const textContainer = document.createElement('div');
         textContainer.className = 'output-text';
         outputElement.appendChild(textContainer);
-        
+
         // Capture print output incrementally
         const originalPrint = this.pyodide.globals.get('print');
         this.pyodide.globals.set('print', function(...args) {
@@ -68,6 +69,11 @@ class CodeExecutor {
         } finally {
             // Restore original print function
             this.pyodide.globals.set('print', originalPrint);
+
+            // Auto-flush canvas if canvas system is available
+            if (typeof autoFlushCanvas !== 'undefined') {
+                autoFlushCanvas(this.pyodide, problemIndex);
+            }
         }
 
         return { printOutput };
@@ -76,8 +82,9 @@ class CodeExecutor {
 
     /**
      * Reset Python environment to clear all variables and state
+     * @param {number} problemIndex - Index of the problem (for canvas reset)
      */
-    async resetPythonEnvironment() {
+    async resetPythonEnvironment(problemIndex = 0) {
         try {
             // Use a much simpler approach that's more compatible with Pyodide
             await this.pyodide.runPythonAsync(`
@@ -85,10 +92,10 @@ class CodeExecutor {
 try:
     # Get current globals
     current_globals = list(globals().keys())
-    
+
     # Define built-in names that should be preserved
     builtin_names = {
-        '__builtins__', '__name__', '__doc__', '__package__', '__loader__', 
+        '__builtins__', '__name__', '__doc__', '__package__', '__loader__',
         '__spec__', '__annotations__', '__all__', '__file__', '__cached__',
         'print', 'input', 'len', 'str', 'int', 'float', 'list', 'dict', 'tuple',
         'set', 'bool', 'type', 'range', 'enumerate', 'zip', 'map', 'filter',
@@ -118,7 +125,7 @@ try:
         'RuntimeWarning', 'FutureWarning', 'ImportWarning', 'UnicodeWarning',
         'BytesWarning', 'ResourceWarning'
     }
-    
+
     # Remove user-defined variables (those not in builtin_names and not starting with '_')
     for var_name in current_globals:
         if var_name not in builtin_names and not var_name.startswith('_'):
@@ -126,7 +133,7 @@ try:
                 del globals()[var_name]
             except:
                 pass
-                
+
 except Exception as e:
     # If anything goes wrong, just continue
     pass
@@ -134,6 +141,11 @@ except Exception as e:
         } catch (error) {
             console.warn('Error resetting Python environment:', error);
             // Continue anyway - the environment will be mostly clean
+        }
+
+        // Reset canvas state if canvas system is available
+        if (typeof resetCanvasState !== 'undefined') {
+            resetCanvasState(problemIndex);
         }
     }
 

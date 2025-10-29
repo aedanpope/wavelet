@@ -29,10 +29,16 @@
       "title": "Worksheet 5: Working with Text",
       "description": "Learn to use strings to work with text and create more expressive programs.",
       "file": "worksheet-5.json"
+    },
+    {
+      "id": "worksheet-6",
+      "title": "Worksheet 6: Drawing with Code",
+      "description": "Learn to create visual patterns by drawing on a grid using coordinates.",
+      "file": "worksheet-6.json"
     }
   ],
   "metadata": {
     "version": "1.0",
-    "lastUpdated": "2025-01-27"
+    "lastUpdated": "2025-10-29"
   }
 }

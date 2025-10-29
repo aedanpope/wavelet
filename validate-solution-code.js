@@ -175,14 +175,20 @@ async function executeWithSeed(code, problem, seed, codeExecutor, useManualInput
         // If reset fails, continue anyway - this is not critical
         console.warn('Failed to reset Python environment:', error);
     }
-    
+
     // Get the Pyodide instance from the code executor
     const pyodideInstance = codeExecutor.getPyodide();
-    
+
+    // Set up canvas functions if this is a canvas problem
+    // Use -1 as problemIndex to indicate validation mode (don't manipulate DOM)
+    if (problem.canvas && typeof setupCanvasFunctions !== 'undefined') {
+        setupCanvasFunctions(pyodideInstance, -1); // -1 = validation mode, don't touch DOM
+    }
+
     // Override get_choice and get_input for this test run
     const testGetChoice = createTestGetChoice(seed);
     const testGetInput = createTestGetInput(problem, seed, useManualInputs);
-    
+
     // Set up the test environment
     pyodideInstance.globals.set('get_choice', testGetChoice);
     pyodideInstance.globals.set('get_input', testGetInput);

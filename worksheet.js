@@ -387,20 +387,25 @@ async function runCode(problemIndex) {
     try {
         // Show running state
         displayOutput(output, '', 'running');
-        
+
         // Reset Python environment to clear previous state
-        await codeExecutor.resetPythonEnvironment();
-        
+        await codeExecutor.resetPythonEnvironment(problemIndex);
+
         // Set up the get_input() function if the problem has inputs
         InputSystem.setupGetInputFunction(codeExecutor.getPyodide(), problem, problemIndex);
         // Set up the get_choice() function for all problems
         InputSystem.setupGetChoiceFunction(codeExecutor.getPyodide(), problemIndex);
 
+        // Set up canvas functions if the problem has canvas enabled
+        if (problem.canvas && typeof setupCanvasFunctions !== 'undefined') {
+            setupCanvasFunctions(codeExecutor.getPyodide(), problemIndex);
+        }
+
         // Process code for async handling
         code = codeExecutor.processCodeForAsync(code);
-        
+
         // Execute code with output capture
-        const executionResult = await codeExecutor.executeCode(code, output);
+        const executionResult = await codeExecutor.executeCode(code, output, problemIndex);
         
         const validationResult = await Validation.validateAnswer(code, executionResult.printOutput, problem, problemIndex, codeExecutor);
         
@@ -434,42 +439,57 @@ async function runCode(problemIndex) {
 
 // Enhanced output display function
 function displayOutput(outputElement, content, type = 'normal', message = null) {
+    // Preserve canvas if it exists
+    const existingCanvas = outputElement.querySelector('.canvas-container');
+
     // Clear previous content
     outputElement.innerHTML = '';
     outputElement.className = `output ${type}`;
-    
+
+    // Restore canvas at the top if it existed
+    if (existingCanvas) {
+        outputElement.appendChild(existingCanvas);
+    }
+
+    // Create scrollable text container
+    const textScrollContainer = document.createElement('div');
+    textScrollContainer.className = 'output-text-scroll';
+
     if (content.trim()) {
         // Truncate content after 1000 lines to prevent browser crashes
         const lines = content.split('\n');
         let truncatedContent = content;
         let isTruncated = false;
-        
+
         if (lines.length > 1000) {
             truncatedContent = lines.slice(0, 1000).join('\n');
             isTruncated = true;
         }
-        
+
         // Show raw output content
         const contentDiv = document.createElement('div');
         contentDiv.className = 'output-content';
         contentDiv.textContent = truncatedContent;
-        outputElement.appendChild(contentDiv);
-        
+        textScrollContainer.appendChild(contentDiv);
+
         // Add truncation warning if content was truncated
         if (isTruncated) {
             const truncationDiv = document.createElement('div');
             truncationDiv.className = 'output-truncated';
             truncationDiv.textContent = `Output truncated after 1000 lines (${lines.length} total lines). This prevents browser crashes.`;
-            outputElement.appendChild(truncationDiv);
+            textScrollContainer.appendChild(truncationDiv);
         }
     }
-    
+
     if (message) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `output-message ${type}`;
         messageDiv.textContent = message;
-        outputElement.appendChild(messageDiv);
+        textScrollContainer.appendChild(messageDiv);
     }
+
+    // Add text container to output (even if empty, for structure)
+    outputElement.appendChild(textScrollContainer);
 }
 
 // Reset a specific problem to its default state

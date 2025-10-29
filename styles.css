@@ -693,6 +693,155 @@ body {
     font-size: 14px;
 }
 
+/* ===========================
+   Canvas System Styles
+   =========================== */
+
+/* Canvas container - responsive sizing */
+.canvas-container {
+    width: 100%;
+    max-width: 550px;
+    margin: 0 auto 20px auto;
+}
+
+/* Grid wrapper for canvas + labels */
+.canvas-grid-wrapper {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: 1fr auto;
+    gap: 5px;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+/* Canvas element */
+canvas {
+    grid-column: 2;
+    grid-row: 1;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    image-rendering: pixelated;  /* Crisp pixels for GRID100 */
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    background: white;
+}
+
+/* GRID3 specific styling - larger cells */
+canvas.grid3 {
+    max-width: 360px;
+}
+
+/* GRID100 specific styling - smaller cells */
+canvas.grid100 {
+    max-width: 500px;
+}
+
+/* Y-axis labels - left column */
+.canvas-labels-y {
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    padding-right: 5px;
+}
+
+.canvas-labels-y span {
+    font-size: 14px;
+    font-weight: 500;
+    color: #4a5568;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* X-axis labels - bottom row */
+.canvas-labels-x {
+    grid-column: 2;
+    grid-row: 2;
+    display: flex;
+    justify-content: space-around;
+    padding-top: 5px;
+    width: 100%;
+}
+
+.canvas-labels-x span {
+    font-size: 14px;
+    font-weight: 500;
+    color: #4a5568;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+/* Spacer for grid alignment */
+.canvas-label-spacer {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+/* Scrollable text output container (separate from canvas) */
+.output-text-scroll {
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+/* Output text container */
+.output-text {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Remove scroll from main output when it has structure */
+.output {
+    overflow: visible;
+    max-height: none;
+}
+
+/* Responsive canvas */
+@media (max-width: 768px) {
+    .canvas-container {
+        max-width: 90vw;
+    }
+
+    canvas.grid3 {
+        max-width: 270px;  /* 90px per cell x 3 */
+    }
+
+    canvas.grid100 {
+        max-width: 400px;  /* 4px per cell x 100 */
+    }
+
+    .canvas-labels-x span,
+    .canvas-labels-y span {
+        font-size: 12px;
+    }
+
+    .canvas-labels-y {
+        left: -25px;
+    }
+}
+
+/* Mobile extra small screens */
+@media (max-width: 480px) {
+    canvas.grid3 {
+        max-width: 240px;  /* 80px per cell x 3 */
+    }
+
+    canvas.grid100 {
+        max-width: 320px;  /* 3.2px per cell x 100 */
+    }
+}
+
+/* ===========================
+   End Canvas System Styles
+   =========================== */
+
 /* Responsive output */
 @media (max-width: 768px) {
     .output {
