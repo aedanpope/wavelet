@@ -120,7 +120,7 @@ try {
 
 ## Important Notes
 
-- User is on Windows/WSL2 - use PowerShell-compatible commands when needed
+- User is on Windows (native, no WSL2) - use bash-compatible commands via Git Bash
 - All Python code execution happens in browser via Pyodide
 - Educational context is paramount - keep UI intuitive for beginners
 - Worksheets 1-4 focus on numerical programming; strings introduced in Worksheet 5
