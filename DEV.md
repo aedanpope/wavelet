@@ -19,6 +19,10 @@ Set VS Code's integrated terminal to Git Bash:
 
 Without this, `npm run dev` will fail with a `spawn /bin/bash ENOENT` error in PowerShell or cmd.exe.
 
+### Claude Code Memory
+
+Claude's memory is stored locally at `C:\Users\<you>\.claude\projects\...\memory\` and is **not** backed up to git. It will be lost on a fresh Windows install. Ideally this gets solved properly later (e.g. via symlink or a Claude Code config option).
+
 ### Fresh Windows Install — First-Time Setup
 
 ```bash
