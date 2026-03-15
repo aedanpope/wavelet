@@ -382,7 +382,7 @@ function generatePassingMessage(result, problem) {
     }
 
     if (!inputDescription) return null;
-    return `With ${inputDescription}, your output was correct:\n${output}`;
+    return `With ${inputDescription}, your program's output was correct:\n${output}`;
 }
 
 // Generate educational feedback for failures
