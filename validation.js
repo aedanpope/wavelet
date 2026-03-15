@@ -18,7 +18,7 @@ function normalizeNumericalComparison(output, pattern) {
 }
 
 // Validate the student's answer using validation rules from the problem definition
-async function validateAnswer(code, output, problem, problemIndex, codeExecutor) {
+async function validateAnswer(code, output, problem, problemIndex, codeExecutor, userInputValues = {}) {
     const codeTrimmed = code.trim();
     const outputTrimmed = output.trim();
     
@@ -57,7 +57,7 @@ async function validateAnswer(code, output, problem, problemIndex, codeExecutor)
     const validationRules = problem.validation.rules;
     
     for (const rule of validationRules) {
-        const ruleResult = await validateRule(code, output, rule, problem, problemIndex, codeExecutor);
+        const ruleResult = await validateRule(code, output, rule, problem, problemIndex, codeExecutor, userInputValues);
         
         if (typeof ruleResult === 'object' && ruleResult.isValid === false) {
             // Rule failed - return the detailed error message
@@ -83,7 +83,7 @@ async function validateAnswer(code, output, problem, problemIndex, codeExecutor)
 
 // Validate a single validation rule
 // Returns detailed error message objects for better educational feedback
-async function validateRule(code, output, rule, problem, problemIndex, codeExecutor) {
+async function validateRule(code, output, rule, problem, problemIndex, codeExecutor, userInputValues = {}) {
     switch (rule.type) {
         case 'code_contains':
             let result;
@@ -340,11 +340,11 @@ async function validateRule(code, output, rule, problem, problemIndex, codeExecu
         case 'solution_code':
             // Use the imported validateSolutionCode function
             if (typeof window !== 'undefined' && window.SolutionCodeValidator) {
-                return await window.SolutionCodeValidator.validateSolutionCode(code, output, rule, problem, problemIndex, codeExecutor);
+                return await window.SolutionCodeValidator.validateSolutionCode(code, output, rule, problem, problemIndex, codeExecutor, userInputValues);
             } else if (typeof module !== 'undefined' && module.exports) {
                 // Node.js environment - import dynamically
                 const { validateSolutionCode } = require('./validate-solution-code.js');
-                return await validateSolutionCode(code, output, rule, problem, problemIndex, codeExecutor);
+                return await validateSolutionCode(code, output, rule, problem, problemIndex, codeExecutor, userInputValues);
             } else {
                 console.error('SolutionCodeValidator not available');
                 return {

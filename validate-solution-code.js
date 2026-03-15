@@ -336,7 +336,13 @@ function generateFailureMessage(result, problem) {
     let studentOutput;
     let expectedOutput;
     
-    if (result.isManualTest) {
+    if (result.isUserInputTest) {
+        // Student's own entered values — use "your input" phrasing
+        const inputParts = Object.keys(result.userInputValues).map(name => `${name} = ${formatValue(result.userInputValues[name])}`);
+        inputDescription = inputParts.length > 0 ? `your input ${inputParts.join(', ')}` : null;
+        studentOutput = (result.studentResult.output || '').trim();
+        expectedOutput = (result.solutionResult.output || '').trim();
+    } else if (result.isManualTest) {
         // Handle manual test cases
         const testInputs = result.testInputs;
         const inputParts = Object.keys(testInputs).map(name => `${name} = ${formatValue(testInputs[name])}`);
@@ -447,16 +453,38 @@ function generateHint(seed, studentOutput, solutionOutput, problem) {
 
 
 // Main solution_code validation function
-async function validateSolutionCode(studentCode, studentOutput, rule, problem, problemIndex, codeExecutor) {
+async function validateSolutionCode(studentCode, studentOutput, rule, problem, problemIndex, codeExecutor, userInputValues = {}) {
+    // Run the student's own input as the first test (if inputs were provided)
+    let userInputResult = null;
+    if (userInputValues && Object.keys(userInputValues).length > 0 && problem.inputs && problem.inputs.length > 0) {
+        const userTestProblem = {
+            ...problem,
+            inputs: problem.inputs.map(input => ({
+                ...input,
+                value: userInputValues[input.name] !== undefined ? userInputValues[input.name] : input.value
+            }))
+        };
+        const studentUserResult = await executeWithSeed(studentCode, userTestProblem, 0, codeExecutor, true);
+        const solutionUserResult = await executeWithSeed(rule.solutionCode, userTestProblem, 0, codeExecutor, true);
+        const passed = (studentUserResult.success && solutionUserResult.success &&
+                        isOutputMatch(studentUserResult.output, solutionUserResult.output, rule.exactMatch)) ||
+                       (!studentUserResult.success && !solutionUserResult.success && studentUserResult.error === solutionUserResult.error);
+        userInputResult = { studentResult: studentUserResult, solutionResult: solutionUserResult, passed, isUserInputTest: true, userInputValues };
+    }
+
     // Run manual test cases if specified
     const manualResults = await runManualTests(studentCode, rule.solutionCode, rule, problem, codeExecutor);
-    
+
     // Use new seed-based testing
     const maxRuns = rule.maxRuns || 10;
     const seedResults = await runMultipleTests(studentCode, rule.solutionCode, problem, maxRuns, codeExecutor, rule);
-    
-    // Combine all results, prioritizing manual test failures
-    const allResults = [...manualResults, ...seedResults];
+
+    // Combine all results; user's own input test goes first so its failure is shown first
+    const allResults = [
+        ...(userInputResult ? [userInputResult] : []),
+        ...manualResults,
+        ...seedResults
+    ];
     const failedResults = allResults.filter(r => !r.passed);
     
     if (failedResults.length === 0) {

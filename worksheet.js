@@ -407,7 +407,20 @@ async function runCode(problemIndex) {
         // Execute code with output capture
         const executionResult = await codeExecutor.executeCode(code, output, problemIndex);
         
-        const validationResult = await Validation.validateAnswer(code, executionResult.printOutput, problem, problemIndex, codeExecutor);
+        // Collect user's actual input values for better first-failure error messages
+        const userInputValues = {};
+        if (problem.inputs && problem.inputs.length > 0) {
+            problem.inputs.forEach(input => {
+                const el = document.getElementById(`input-${problemIndex}-${input.name}`);
+                if (el) {
+                    let value = el.value;
+                    if (input.type === 'number') value = parseFloat(value) || 0;
+                    else if (input.type === 'boolean') value = value === 'true';
+                    userInputValues[input.name] = value;
+                }
+            });
+        }
+        const validationResult = await Validation.validateAnswer(code, executionResult.printOutput, problem, problemIndex, codeExecutor, userInputValues);
         
         displayOutput(output, executionResult.printOutput, validationResult.isValid ? 'success' : 'error', validationResult.message);
         
