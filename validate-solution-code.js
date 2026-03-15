@@ -366,24 +366,45 @@ function generateFailureMessage(result, problem) {
     }
 }
 
-// Generate educational feedback for failures
-function generateEducationalFeedback(failedResults, problem) {
-    if (failedResults.length === 1) {
-        const result = failedResults[0];
-        return {
-            type: 'specific_failure',
-            message: generateFailureMessage(result, problem),
-            hint: generateHint(result.seed, result.studentResult.output, result.solutionResult.output, problem)
-        };
+// Generate a brief "this input passed" message to show before a failure
+function generatePassingMessage(result, problem) {
+    let inputDescription;
+    const output = (result.studentResult.output || '').trim();
+
+    if (result.isUserInputTest) {
+        const inputParts = Object.keys(result.userInputValues).map(name => `${name} = ${formatValue(result.userInputValues[name])}`);
+        inputDescription = inputParts.length > 0 ? `your input ${inputParts.join(', ')}` : null;
+    } else if (result.isManualTest) {
+        const inputParts = Object.keys(result.testInputs).map(name => `${name} = ${formatValue(result.testInputs[name])}`);
+        inputDescription = inputParts.length > 0 ? `input ${inputParts.join(', ')}` : null;
     } else {
-        // Show the first failure scenario for immediate feedback
-        const firstFailure = failedResults[0];
-        return {
-            type: 'multiple_failures',
-            message: generateFailureMessage(firstFailure, problem),
-            details: failedResults.map(r => `- ${generateFailureMessage(r, problem)}`)
-        };
+        inputDescription = describeInputsForSeed(result.seed, problem, result.solutionResult.inputsUsed);
     }
+
+    if (!inputDescription) return null;
+    return `With ${inputDescription}, your output was correct:\n${output}`;
+}
+
+// Generate educational feedback for failures
+function generateEducationalFeedback(failedResults, passingResults, problem) {
+    const firstFailure = failedResults[0];
+    let failureMsg = generateFailureMessage(firstFailure, problem);
+
+    // Show one passing example first so students see their code works for some inputs but not all
+    if (passingResults && passingResults.length > 0) {
+        const passingMsg = generatePassingMessage(passingResults[0], problem);
+        if (passingMsg) {
+            // Make the failure read as a contrast: "But with input x = 2, ..."
+            const contrastMsg = failureMsg.startsWith('With ') ? 'But with' + failureMsg.slice(4) : failureMsg;
+            return { type: 'multiple_failures', message: passingMsg + '\n\n' + contrastMsg };
+        }
+    }
+
+    return {
+        type: failedResults.length === 1 ? 'specific_failure' : 'multiple_failures',
+        message: failureMsg,
+        hint: generateHint(firstFailure.seed, firstFailure.studentResult.output, firstFailure.solutionResult.output, problem)
+    };
 }
 
 // Describe inputs and choices for a specific seed
@@ -486,12 +507,16 @@ async function validateSolutionCode(studentCode, studentOutput, rule, problem, p
         ...seedResults
     ];
     const failedResults = allResults.filter(r => !r.passed);
-    
+
     if (failedResults.length === 0) {
         return true; // All tests passed
     } else {
+        // Pick one passing result to show before the failure (user's own input if it passed, else first seed)
+        const passingResults = allResults.filter(r => r.passed);
+        const bestPassing = passingResults.find(r => r.isUserInputTest) || passingResults[0] || null;
+
         // Generate educational feedback for failures
-        const feedback = generateEducationalFeedback(failedResults, problem);
+        const feedback = generateEducationalFeedback(failedResults, bestPassing ? [bestPassing] : [], problem);
         console.log('Validation failed:', feedback);
         
         // Return enhanced error message for the validation system
