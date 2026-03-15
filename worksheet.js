@@ -4,6 +4,11 @@ let codeEditors = []; // Array to hold multiple code editors
 let completedProblems = new Set();
 let codeExecutor = null;
 
+// Returns only actual coding problems (excludes concept cards etc.)
+function getProblems() {
+    return currentWorksheet.problems.filter(b => b.type !== 'concept');
+}
+
 // Progress persistence functions
 function saveProgress(worksheetId) {
     try {
@@ -14,7 +19,7 @@ function saveProgress(worksheetId) {
         };
         
         // Save state for each problem
-        currentWorksheet.problems.forEach((problem, index) => {
+        getProblems().forEach((problem, index) => {
             const codeEditor = codeEditors[index];
             const outputElement = document.getElementById(`output-${index}`);
             
@@ -198,9 +203,14 @@ function loadAllProblems() {
     container.innerHTML = '';
     codeEditors = [];
     
-    currentWorksheet.problems.forEach((problem, index) => {
-        const problemElement = createProblemElement(problem, index);
-        container.appendChild(problemElement);
+    let problemIndex = 0;
+    currentWorksheet.problems.forEach((block) => {
+        if (block.type === 'concept') {
+            container.appendChild(createConceptElement(block));
+        } else {
+            container.appendChild(createProblemElement(block, problemIndex));
+            problemIndex++;
+        }
     });
     
     // Initialize all code editors after DOM is ready
@@ -231,7 +241,7 @@ function loadAllProblems() {
         updateProgress();
         
         // Render LaTeX content in all problem elements
-        currentWorksheet.problems.forEach((problem, index) => {
+        getProblems().forEach((problem, index) => {
             const problemElement = document.getElementById(`problem-${index}`);
             if (problemElement) {
                 renderLatexInElement(problemElement);
@@ -313,9 +323,44 @@ function createProblemElement(problem, index) {
     return problemDiv;
 }
 
+// Create a concept card element (non-interactive, just explanation content)
+function createConceptElement(block) {
+    const div = document.createElement('div');
+    div.className = 'concept-card';
+
+    const examplesHTML = block.examples ? `
+        <div class="concept-examples">
+            ${block.examples.map(ex => `
+                <div class="concept-example">
+                    <span class="example-input">You type <strong>${ex.input}</strong></span>
+                    <span class="example-arrow">→</span>
+                    <span class="example-code">Python sees <code>${ex.substituted}</code></span>
+                    <span class="example-arrow">→</span>
+                    <span class="example-output">prints <strong>${ex.output}</strong></span>
+                </div>
+            `).join('')}
+        </div>
+    ` : '';
+
+    const footerHTML = block.footer ? `<p class="concept-footer">${block.footer}</p>` : '';
+
+    div.innerHTML = `
+        <div class="concept-header">
+            <span class="concept-icon">${block.icon || '💡'}</span>
+            <h3>${block.title}</h3>
+        </div>
+        <div class="concept-body">
+            ${block.content}
+            ${examplesHTML}
+            ${footerHTML}
+        </div>
+    `;
+    return div;
+}
+
 // Initialize all CodeMirror editors
 function initAllCodeEditors() {
-    currentWorksheet.problems.forEach((problem, index) => {
+    getProblems().forEach((problem, index) => {
         const editorElement = document.getElementById(`code-editor-${index}`);
         const editor = CodeMirror(editorElement, {
             mode: 'python',
@@ -369,8 +414,8 @@ function validateInputs(problem, problemIndex) {
 async function runCode(problemIndex) {
     let code = codeEditors[problemIndex].getValue();
     const output = document.getElementById(`output-${problemIndex}`);
-    const problem = currentWorksheet.problems[problemIndex];
-    
+    const problem = getProblems()[problemIndex];
+
     if (!code.trim()) {
         displayOutput(output, 'Please enter some code to run.', 'error', '❌ Please enter some code to run.');
         return;
@@ -430,13 +475,13 @@ async function runCode(problemIndex) {
             updateProgress();
             
             // Show and animate scroll hint if problem 1 is completed
-            if (problemIndex === 0 && currentWorksheet.problems.length > 1) {
+            if (problemIndex === 0 && getProblems().length > 1) {
                 showScrollHint();
                 animateScrollHint();
             }
             
             // Check if all problems are completed
-            if (completedProblems.size === currentWorksheet.problems.length) {
+            if (completedProblems.size === getProblems().length) {
                 showCompletionModal();
             }
         }
@@ -508,7 +553,7 @@ function displayOutput(outputElement, content, type = 'normal', message = null) 
 // Reset a specific problem to its default state
 function resetProblem(problemIndex) {
     if (confirm('Are you sure you want to reset this problem? This will clear your code and output.')) {
-        const problem = currentWorksheet.problems[problemIndex];
+        const problem = getProblems()[problemIndex];
         const codeEditor = codeEditors[problemIndex];
         const outputElement = document.getElementById(`output-${problemIndex}`);
         
@@ -536,7 +581,7 @@ function resetProblem(problemIndex) {
 
 // Show hint for a specific problem
 function showHint(problemIndex) {
-    const problem = currentWorksheet.problems[problemIndex];
+    const problem = getProblems()[problemIndex];
     const modal = document.getElementById('hint-modal');
     const hintText = document.getElementById('hint-text');
     
@@ -567,9 +612,9 @@ function renderLatexInElement(element) {
 
 // Update progress bar
 function updateProgress() {
-    const progress = (completedProblems.size / currentWorksheet.problems.length) * 100;
+    const progress = (completedProblems.size / getProblems().length) * 100;
     document.getElementById('progress-fill').style.width = `${progress}%`;
-    document.getElementById('progress-text').textContent = `${completedProblems.size} of ${currentWorksheet.problems.length} problems completed`;
+    document.getElementById('progress-text').textContent = `${completedProblems.size} of ${getProblems().length} problems completed`;
 }
 
 // Setup event listeners

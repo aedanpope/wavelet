@@ -139,6 +139,17 @@
       }
     },
     {
+      "type": "concept",
+      "icon": "💡",
+      "title": "Key Concept: x stores whatever you type",
+      "content": "<p>When Python runs <code>x = get_input()</code>, it waits for you to enter a number — then stores that number inside <code>x</code>.</p><p>From that point on, <strong>x IS that number</strong>. So when Python sees <code>print(x + 5)</code>, it swaps in whatever is stored:</p>",
+      "examples": [
+        { "input": "3",  "substituted": "print(3 + 5)",  "output": "8"  },
+        { "input": "10", "substituted": "print(10 + 5)", "output": "15" }
+      ],
+      "footer": "Same code, different answers — because <code>x</code> holds whatever you typed. This is what makes variables powerful!"
+    },
+    {
       "title": "Modify the calculation",
       "content": "Your turn - modify the code to add 10 instead of 5 to the user input.",
       "task": "Edit the code to print the user input plus 10 instead of plus 5.",
