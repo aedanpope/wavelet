@@ -1,1 +1,1 @@
-window.APP_VERSION = 'de5d682d64c10376a2dce0ff74983347e99684e8';
+window.APP_VERSION = '1.0.0-dev';

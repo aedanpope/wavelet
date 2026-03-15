@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080)",
+      "Bash(npx live-server:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8000)",
+      "Bash(node scripts/generate-version.js --dev)",
+      "Bash(powershell.exe -Command \"cd ''C:\\\\Users\\\\cobal\\\\Documents\\\\wavelet''; npm run dev\")",
+      "Bash(ls node_modules/.bin/live-server*)",
+      "Bash(powershell.exe -Command \"ls C:\\\\Users\\\\cobal\\\\Documents\\\\wavelet\\\\node_modules | Select-Object -First 5\")",
+      "Bash(powershell.exe -Command \"cd ''C:\\\\Users\\\\cobal\\\\Documents\\\\wavelet''; npm install\")",
+      "Bash(powershell.exe -Command \"npm config get script-shell\")",
+      "Bash(bash --version)",
+      "Read(//bin/**)",
+      "Bash(ls -la /bin)",
+      "Bash(cygpath -w -f -)",
+      "Bash(npm config:*)"
+    ]
+  }
+}
