@@ -50,7 +50,14 @@
   "definitions": {
     "problem": {
       "type": "object",
-      "required": ["title", "task"],
+      "required": ["title"],
+      "if": {
+        "properties": { "type": { "not": { "const": "concept" } } },
+        "required": ["title"]
+      },
+      "then": {
+        "required": ["task"]
+      },
       "properties": {
         "title": {
           "type": "string",
