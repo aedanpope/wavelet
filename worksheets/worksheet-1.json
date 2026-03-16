@@ -516,37 +516,6 @@
       }
     },
     {
-      "title": "Dividing Cookies",
-      "content": "Emma baked 36 cookies and wants to share them equally among 6 friends. How many cookies will each friend get?",
-      "task": "Write a program that divides thirty-six by six and prints the answer.",
-      "starterCode": "",
-      "hint": "Use the division operator (/) to divide 36 by 6.",
-      "validation": {
-        "rules": [
-          {
-            "type": "code_contains",
-              "pattern": "print"
-          },
-          {
-            "type": "solution_code",
-            "solutionCode": "print(36 / 6)"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "36"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "6"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "/"
-          }
-        ]
-      }
-    },
-    {
       "title": "Order of Operations",
       "content": "Python follows the order of operations (PEMDAS/BODMAS) just like in math. It does multiplication and division before addition and subtraction.",
       "task": "Run the program and find out the answer to $20 - 5 * 2$.",
@@ -593,8 +562,9 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "print"
+            "type": "code_contains_regex",
+            "pattern": "\\(\\s*4\\s*\\+\\s*6\\s*\\)",
+            "description": "Code must have brackets around 4 + 6"
           },
           {
             "type": "solution_code",
