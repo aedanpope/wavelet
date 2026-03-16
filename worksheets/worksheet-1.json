@@ -68,7 +68,7 @@
       "content": "Practice your addition skills by editing this code.",
       "task": "Edit the program to find and print the answer to $50 + 25$.",
       "starterCode": "print(10 + 10)",
-      "hint": "Change the numbers inside the parentheses to 50 and 25.",
+      "hint": "Change the numbers inside the brackets to 50 and 25.",
       "validation": {
         "rules": [
           {
@@ -94,6 +94,46 @@
             "type": "code_contains",
             "pattern": "+",
             "description": "Code must contain the addition operator"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Fix the brackets",
+      "content": "This program has a mistake — the brackets are missing from `print`. Run it to see the error, then fix it.",
+      "task": "Add the missing brackets to make the program work.",
+      "starterCode": "print 30 + 20",
+      "hint": "The `print` function needs brackets around what you want to print: `print(30 + 20)`.",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains_regex",
+            "pattern": "print\\s*\\(",
+            "description": "Code must use print with brackets"
+          },
+          {
+            "type": "solution_code",
+            "solutionCode": "print(30 + 20)"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Add the print",
+      "content": "This program calculates an answer but doesn't print it — so nothing appears when you run it. Try running it to see what happens, then fix it.",
+      "task": "Wrap the expression in a `print()` call so the answer is displayed.",
+      "starterCode": "40 + 15",
+      "hint": "Put `print(` before the expression and `)` at the end.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "print(40 + 15)"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "print\\s*\\(",
+            "description": "Code must use print with brackets"
           }
         ]
       }
@@ -189,7 +229,7 @@
       "content": "Now it's your turn to make a small change. Edit the code below to solve the new problem.",
       "task": "Edit the program to find and print the answer to $12 - 7$.",
       "starterCode": "print(20 - 5)",
-      "hint": "Change the numbers inside the parentheses to 12 and 7.",
+      "hint": "Change the numbers inside the brackets to 12 and 7.",
       "validation": {
         "rules": [
           {
@@ -417,7 +457,7 @@
       "content": "Practice your division skills by editing this code.",
       "task": "Edit the program below to find and print the answer to $48 / 6$.",
       "starterCode": "print(20 / 4)",
-      "hint": "Change the numbers inside the parentheses to 48 and 6.",
+      "hint": "Change the numbers inside the brackets to 48 and 6.",
       "validation": {
         "rules": [
           {
@@ -526,11 +566,30 @@
       }
     },
     {
-      "title": "Using Parentheses",
-      "content": "Parentheses `()` can be used to change the order of operations, just like in math.",
-      "task": "Edit the program to find and print the answer to $(10 + 5) / 3$.",
+      "title": "Change the order with brackets",
+      "content": "In the last problem, <code>print(20 - 5 * 2)</code> gave 10 because Python did the multiplication first.\n\nWe can add <strong>extra brackets inside</strong> the <code>print()</code> brackets to force a different order. Here, brackets around <code>20 - 5</code> make the subtraction happen first.",
+      "task": "Run the program and see how the answer changes when brackets are added around `20 - 5`.",
+      "starterCode": "print((20 - 5) * 2)",
+      "hint": "Just run the code and observe the output.",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains_regex",
+            "pattern": "print\\s*\\(\\s*\\(\\s*20\\s*\\-\\s*5\\s*\\)\\s*\\*\\s*2\\s*\\)"
+          },
+          {
+            "type": "solution_code",
+            "solutionCode": "print((20 - 5) * 2)"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Add brackets to change the answer",
+      "content": "Now it's your turn. The program below calculates <code>4 + 6 / 2</code> — but division happens first, so it doesn't give the answer you might expect.",
+      "task": "Add brackets around <code>4 + 6</code> so the addition happens first, giving the answer to $(4 + 6) / 2$.",
       "starterCode": "print(4 + 6 / 2)",
-      "hint": "Wrap the addition part in parentheses to make it happen first.",
+      "hint": "Wrap the addition part in brackets: `print((4 + 6) / 2)`.",
       "validation": {
         "rules": [
           {
@@ -539,45 +598,17 @@
           },
           {
             "type": "solution_code",
-            "solutionCode": "print((10 + 5) / 3)"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "10"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "5"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "3"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "+"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "/"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "("
-          },
-          {
-            "type": "code_contains",
-            "pattern": ")"
+            "solutionCode": "print((4 + 6) / 2)"
           }
         ]
       }
     },
     {
-      "title": "Write with Parentheses",
-      "content": "Write a complete program that uses parentheses to solve a problem.",
+      "title": "Write with brackets",
+      "content": "Write a complete program that uses brackets to control the order of operations.",
       "task": "Write a program to find and print the answer to $10 * (5 - 3)$.",
       "starterCode": "",
-      "hint": "Put the `5 - 3` part inside parentheses.",
+      "hint": "Put the `5 - 3` part inside brackets.",
       "validation": {
         "rules": [
           {
@@ -663,7 +694,7 @@
       "content": "Let's combine everything you've learned so far!",
       "task": "Write a program to find and print the answer to $8 + (12 / 4)$.",
       "starterCode": "",
-      "hint": "The division part `12 / 4` needs to go inside parentheses to happen before the addition.",
+      "hint": "The division part `12 / 4` needs to go inside brackets to happen before the addition.",
       "validation": {
         "rules": [
           {
@@ -710,7 +741,7 @@
       "content": "A pizza costs \\$12 and you want to buy 2 pizzas. There is also a \\$3 delivery fee. How much do you pay in total?",
       "task": "Write a program that multiplies twelve by two, then adds three, and prints the answer.",
       "starterCode": "",
-      "hint": "You can use parentheses to make the multiplication happen first: (12 * 2) + 3.",
+      "hint": "You can use brackets to make the multiplication happen first: (12 * 2) + 3.",
       "validation": {
         "rules": [
           {

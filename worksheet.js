@@ -513,6 +513,13 @@ function displayOutput(outputElement, content, type = 'normal', message = null) 
     const textScrollContainer = document.createElement('div');
     textScrollContainer.className = 'output-text-scroll';
 
+    if (!content.trim() && type !== 'running') {
+        const emptyDiv = document.createElement('div');
+        emptyDiv.className = 'output-empty';
+        emptyDiv.textContent = '<program ran and produced no output>';
+        textScrollContainer.appendChild(emptyDiv);
+    }
+
     if (content.trim()) {
         // Truncate content after 1000 lines to prevent browser crashes
         const lines = content.split('\n');

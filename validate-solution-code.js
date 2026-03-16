@@ -362,6 +362,9 @@ function generateFailureMessage(result, problem) {
         return `With ${inputDescription}, your program output:\n${studentOutput}\nbut expected output:\n${expectedOutput}`;
     } else {
         // We don't need to print the student output because it's visible already in the UI above.
+        if (studentOutput === '') {
+            return `Program produced no output.\nExpected output:\n${expectedOutput}`;
+        }
         return `Output does not match the expected output:\n${expectedOutput}`;
     }
 }
