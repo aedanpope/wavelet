@@ -12,6 +12,7 @@
     "prebuild": "npm run validate:worksheets && node scripts/generate-version.js",
     "build": "echo 'Static build complete - files ready for deployment'",
     "deploy:docker": "docker build -t python-editor . && docker run -p 80:80 python-editor",
+    "update-version": "node scripts/generate-version.js",
     "validate:worksheets": "node scripts/validate-worksheets.js",
     "lint": "eslint *.js",
     "lint:fix": "eslint *.js --fix",

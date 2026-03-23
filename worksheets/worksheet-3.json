@@ -45,6 +45,30 @@
         "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for number in [5, 10, 15]:\n  print(number)" }] }
       },
       {
+        "title": "Fix the loop spell (typo)",
+        "content": "A <code>for</code> loop only works if you spell the magic word correctly. Python is very strict about this!",
+        "task": "There's a typo in the loop below. Fix it so the code runs.",
+        "starterCode": "fro i in [1, 2, 3]:\n  print(i)",
+        "hint": "Look carefully at the first word. It should be <code>for</code>, not <code>fro</code>.",
+        "validation": { "rules": [{ "type": "code_contains", "pattern": "for", "message": "You need to fix the spelling of 'for'" }, { "type": "output_contains", "pattern": "1\n2\n3" }] }
+      },
+      {
+        "title": "Fix the loop spell (missing colon)",
+        "content": "Every <code>for</code> loop line must end with a colon <code>:</code>. Without it, Python doesn't know the loop has started.",
+        "task": "The colon is missing from the loop. Add it so the code runs.",
+        "starterCode": "for i in [1, 2, 3]\n  print(i)",
+        "hint": "The line <code>for i in [1, 2, 3]</code> needs a <code>:</code> at the very end.",
+        "validation": { "rules": [{ "type": "code_contains", "pattern": "for i in [1, 2, 3]:", "message": "The for line needs to end with a colon (:)" }, { "type": "output_contains", "pattern": "1\n2\n3" }] }
+      },
+      {
+        "title": "Two things in one loop",
+        "content": "You can put as many lines as you like inside a loop — they all just need to be indented the same amount.",
+        "task": "Run the code to see both print statements run on every repetition of the loop.",
+        "starterCode": "for i in [1, 2, 3]:\n  print(i)\n  print('---')",
+        "hint": "Both indented lines run each time the loop repeats.",
+        "validation": { "rules": [{ "type": "output_contains", "pattern": "1\n---\n2\n---\n3\n---" }] }
+      },
+      {
         "title": "Indentation matters!",
         "content": "<p>In Python, indentation (the spaces at the beginning of lines) is very important. It tells Python which lines belong inside the loop.</p><p>Think of it like a recipe. The <code>for</code> loop is like a heading, for example 'To make the icing:', and all the indented lines are the steps that belong to that heading.</p>",
         "task": "<p>First run the code and notice how many times 'and' is printed.</p><p>Instead we want to output <code><br/>1<br/>and<br/>2<br/>and<br/>3<br/>and</code></p><p>Add spaces in front of the second print statement so that it lines up perfectly under the first one.</p>",
@@ -53,12 +77,28 @@
         "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in [1, 2, 3]:\n  print(i)\n  print('and')" }] }
       },
       {
+        "title": "Move it outside the loop",
+        "content": "Just like adding indentation puts a line <em>inside</em> the loop, removing indentation puts it <em>outside</em> — so it only runs once, after the loop finishes.",
+        "task": "<p>Run the code and notice the output. Then remove the indentation from <code>print('done')</code> so it only prints once at the end.</p><p>The output should be: <code><br/>1<br/>2<br/>3<br/>done</code></p>",
+        "starterCode": "for i in [1, 2, 3]:\n  print(i)\n  print('done')",
+        "hint": "Delete the two spaces before <code>print('done')</code> so it lines up with the <code>for</code> keyword instead of the <code>print(i)</code> inside the loop.",
+        "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in [1, 2, 3]:\n  print(i)\nprint('done')" }] }
+      },
+      {
         "title": "Write your first loop",
-        "content": "Now it's your turn to write a loop from the beginning.",
-        "task": "Write a <code>for</code> loop that prints the numbers 1, 3, and 5.",
+        "content": "Now it's your turn to write a loop from the beginning. Remember, the list can contain any numbers you like — it doesn't have to be <code>[1, 2, 3]</code>!",
+        "task": "Write a <code>for</code> loop using the list <code>[1, 3, 5]</code> that prints each number.",
         "starterCode": "",
         "hint": "Start with <code>for num in [1, 3, 5]:</code> and then add the print statement on the next line.",
         "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "for.*:", "message": "Your code needs to use a 'for' loop" }, { "type": "solution_code", "solutionCode": "for num in [1, 3, 5]:\n  print(num)" }] }
+      },
+      {
+        "title": "Loop with two statements",
+        "content": "A loop can print as many things as you like on each repetition — just indent them all the same amount.",
+        "task": "Write a <code>for</code> loop that repeats 3 times and prints <code>'Hip'</code>, <code>'Hip'</code>, and then <code>'Hooray!'</code> each time, so the output looks like:<code><br/>Hip<br/>Hip<br/>Hooray!<br/>Hip<br/>Hip<br/>Hooray!<br/>Hip<br/>Hip<br/>Hooray!</code>",
+        "starterCode": "",
+        "hint": "Use a list with 3 items, like <code>[1, 2, 3]</code>. Inside the loop, add three <code>print</code> statements — two for <code>'Hip'</code> and one for <code>'Hooray!'</code>.",
+        "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "for.*:", "message": "Your code needs to use a 'for' loop" }, { "type": "output_contains", "pattern": "Hip\nHip\nHooray!\nHip\nHip\nHooray!\nHip\nHip\nHooray!" }] }
       },
       {
         "title": "Looping over words",
