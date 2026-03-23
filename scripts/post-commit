@@ -1,0 +1,14 @@
+#!/bin/bash
+# Prevent infinite loop: amending also triggers post-commit
+if [ "$WAVELET_AMENDING_VERSION" = "1" ]; then
+  exit 0
+fi
+
+# Stamp version.js with the new commit hash
+node scripts/generate-version.js
+
+# Amend the commit to include version.js (only if it changed)
+git add version.js
+if ! git diff --cached --quiet; then
+  WAVELET_AMENDING_VERSION=1 git commit --amend --no-edit
+fi

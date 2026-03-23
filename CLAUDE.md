@@ -10,11 +10,17 @@ Wavelet Zone is an interactive Python learning platform for upper primary studen
 
 ## Development Commands
 
-### Local Development
+### Setup (first time)
 ```bash
 # Install dependencies
 npm install
 
+# Install git hooks (auto-stamps version.js after every commit)
+npm run setup
+```
+
+### Local Development
+```bash
 # Start development server with live reload
 npm run dev
 
@@ -46,7 +52,7 @@ npm run build
 npm run deploy:docker
 ```
 
-**⚠️ GitHub Pages Deployment**: Before pushing worksheet changes to GitHub, always run `npm run build` to update the version file. This ensures localStorage is automatically cleared for users when worksheet content changes, preventing broken saved states.
+**Version stamping**: `version.js` is automatically updated on every commit via the git post-commit hook (installed by `npm run setup`). This ensures localStorage is cleared for users when content changes.
 
 ## Architecture
 
