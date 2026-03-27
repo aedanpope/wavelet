@@ -60,6 +60,13 @@
                         <span class="settings-label">Canvas</span>
                     </label>
                 </div>
+                <div class="settings-divider"></div>
+                <div class="settings-group">
+                    <label class="settings-toggle-label">
+                        <input type="checkbox" id="trace-toggle" class="settings-checkbox">
+                        <span class="settings-label">Trace</span>
+                    </label>
+                </div>
             </div>
 
             <!-- Inputs Configuration (shown when inputs enabled) -->
@@ -97,6 +104,37 @@
                         <!-- id="output-0" so canvas-system.js can find it -->
                         <div class="output" id="output-0">
                             <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                        </div>
+                    </div>
+
+                    <!-- Trace Player (shown after tracing a run) -->
+                    <div id="trace-player" class="trace-player" style="display: none;">
+                        <div class="trace-header">
+                            <span class="trace-title">Execution Trace</span>
+                            <span id="trace-step-count" class="trace-step-count">Step 0 / 0</span>
+                        </div>
+                        <div class="trace-controls">
+                            <button id="trace-first" class="trace-btn" title="First step">⏮</button>
+                            <button id="trace-prev" class="trace-btn" title="Previous step">← Prev</button>
+                            <input type="range" id="trace-slider" class="trace-slider" min="0" value="0">
+                            <button id="trace-next" class="trace-btn" title="Next step">Next →</button>
+                            <button id="trace-last" class="trace-btn" title="Last step">⏭</button>
+                            <button id="trace-play" class="trace-btn trace-play-btn">▶ Play</button>
+                            <select id="trace-speed" class="trace-speed">
+                                <option value="800">Slow</option>
+                                <option value="400" selected>Normal</option>
+                                <option value="150">Fast</option>
+                            </select>
+                        </div>
+                        <div class="trace-vars-panel">
+                            <div class="trace-panel-title">Variables</div>
+                            <div id="trace-vars" class="trace-vars">
+                                <span class="trace-empty">No variables yet</span>
+                            </div>
+                        </div>
+                        <div class="trace-output-panel" id="trace-output-panel" style="display: none;">
+                            <div class="trace-panel-title">Output so far</div>
+                            <div id="trace-output" class="trace-output-content"></div>
                         </div>
                     </div>
                 </div>
