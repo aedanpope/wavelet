@@ -1439,3 +1439,260 @@ code {
     gap: 8px;
 }
 
+/* When trace mode hides the output content, square off and remove shadow */
+.output-section.trace-active {
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* Seamlessly connect trace player to the output header above it */
+.output-section.trace-active + #trace-player {
+    margin-top: 0;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+}
+
+/* ── Trace Player ──────────────────────────────────────────────────────────── */
+
+.trace-player {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-top: 12px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.trace-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 12px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #495057;
+}
+
+.trace-step-count {
+    color: #6c757d;
+    font-weight: normal;
+    font-size: 0.8rem;
+}
+
+.trace-controls {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 10px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    flex-wrap: wrap;
+}
+
+.trace-btn {
+    padding: 3px 9px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.trace-btn:hover:not(:disabled) {
+    background: #e9ecef;
+}
+
+.trace-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.trace-play-btn {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    font-weight: 600;
+}
+
+.trace-play-btn:hover:not(:disabled) {
+    background: #5a6fd6;
+    border-color: #5a6fd6;
+}
+
+.trace-slider {
+    flex: 1;
+    min-width: 80px;
+    accent-color: #667eea;
+}
+
+.trace-speed {
+    padding: 3px 5px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    background: white;
+}
+
+.trace-vars-panel,
+.trace-output-panel {
+    padding: 8px 12px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.trace-output-panel,
+.trace-full-output-panel {
+    border-bottom: none;
+}
+
+.trace-full-output-panel {
+    border-top: 1px solid #e9ecef;
+    background: #fafbfc;
+}
+
+.trace-panel-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #6c757d;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+}
+
+.trace-vars {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    min-height: 24px;
+}
+
+.trace-empty {
+    color: #adb5bd;
+    font-size: 0.82rem;
+    font-style: italic;
+}
+
+.trace-ann {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: monospace;
+}
+
+.trace-ann-done   { background: #fef3c7; border: 1px solid #f59e0b; color: #92400e; }
+.trace-ann-assign { background: #d1fae5; border: 1px solid #34d399; color: #065f46; }
+.trace-ann-true   { background: #d1fae5; border: 1px solid #34d399; color: #065f46; }
+.trace-ann-false  { background: #fee2e2; border: 1px solid #f87171; color: #991b1b; }
+.trace-ann-print  { background: #ede9fe; border: 1px solid #a78bfa; color: #4c1d95; gap: 4px; }
+.trace-ann-print-val { font-weight: 700; color: #6d28d9; }
+.trace-ann-if     { background: #e0f2fe; border: 1px solid #38bdf8; color: #0c4a6e; }
+
+.trace-for-ctx {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-family: monospace;
+    font-size: 0.82rem;
+}
+
+.trace-for-kw {
+    color: #7c3aed;
+    font-weight: 700;
+}
+
+.trace-for-target {
+    color: #667eea;
+    font-weight: 700;
+}
+
+.trace-for-iter {
+    color: #2c3e50;
+}
+
+.trace-for-iter-items {
+    font-family: monospace;
+    color: #2c3e50;
+}
+
+.trace-iter-sep {
+    color: #9ca3af;
+}
+
+.trace-iter-item {
+    transition: all 0.15s;
+}
+
+.trace-iter-item.consumed {
+    text-decoration: line-through;
+    color: #9ca3af;
+}
+
+.trace-iter-item.current {
+    background: rgba(102, 126, 234, 0.15);
+    border-radius: 2px;
+    padding: 0 2px;
+    font-weight: 700;
+    color: #4338ca;
+}
+
+.trace-var-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: #f8f9fa;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-family: monospace;
+    font-size: 0.82rem;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.trace-var-row.trace-var-changed {
+    background: #fff3cd;
+    border-color: #ffc107;
+}
+
+.trace-var-name {
+    color: #667eea;
+    font-weight: 700;
+}
+
+.trace-var-eq {
+    color: #9ca3af;
+}
+
+.trace-var-value {
+    color: #2c3e50;
+}
+
+.trace-output-content {
+    font-family: 'Courier New', monospace;
+    font-size: 0.82rem;
+    white-space: pre-wrap;
+    color: #2c3e50;
+    background: #f8f9fa;
+    border-radius: 4px;
+    padding: 6px 8px;
+}
+
+/* CodeMirror line highlight for current trace step */
+.trace-current-line {
+    background: rgba(102, 126, 234, 0.12) !important;
+    outline: 1px solid rgba(102, 126, 234, 0.25);
+    outline-offset: -1px;
+}
+
+.trace-current-line-gutter {
+    background: rgba(102, 126, 234, 0.35) !important;
+    color: white !important;
+}
+
