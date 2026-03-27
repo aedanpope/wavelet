@@ -99,6 +99,225 @@ body {
     font-style: italic;
 }
 
+/* Section headings on the homepage (Worksheets / Playground) */
+.section-heading {
+    font-size: 1.3rem;
+    color: #495057;
+    font-weight: 600;
+    margin: 30px 0 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e9ecef;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+/* ── Scratchpad ──────────────────────────────────────────────── */
+
+/* Settings toolbar below the header */
+.scratchpad-settings {
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.settings-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.settings-divider {
+    width: 1px;
+    height: 24px;
+    background: #dee2e6;
+    flex-shrink: 0;
+}
+
+.settings-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #495057;
+    white-space: nowrap;
+}
+
+.settings-label-suffix {
+    color: #6c757d;
+    font-weight: 400;
+}
+
+.settings-toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.settings-checkbox {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: #667eea;
+}
+
+.height-control {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.height-btn {
+    width: 26px;
+    height: 26px;
+    border: 1px solid #ced4da;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #495057;
+    transition: background 0.15s;
+}
+
+.height-btn:hover {
+    background: #e9ecef;
+}
+
+.height-input {
+    width: 48px;
+    padding: 3px 6px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    text-align: center;
+    color: #495057;
+}
+
+.height-input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+/* Inputs configuration panel */
+.inputs-config {
+    background: #f1f3f5;
+    border-bottom: 1px solid #dee2e6;
+    padding: 14px 24px;
+}
+
+.inputs-config-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.inputs-config-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #495057;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.add-input-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.add-input-btn:hover {
+    background: #5a6fd8;
+}
+
+.inputs-config-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-config-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.input-config-name {
+    width: 120px;
+    padding: 5px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    color: #2d3748;
+}
+
+.input-config-type {
+    padding: 5px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    background: white;
+    color: #495057;
+}
+
+.input-config-placeholder {
+    flex: 1;
+    min-width: 120px;
+    padding: 5px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: #495057;
+}
+
+.input-config-name:focus,
+.input-config-type:focus,
+.input-config-placeholder:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.remove-input-btn {
+    background: none;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    color: #6c757d;
+    width: 26px;
+    height: 26px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+}
+
+.remove-input-btn:hover {
+    background: #fee2e2;
+    border-color: #f87171;
+    color: #dc2626;
+}
+
+/* Wrapper around the code section in the scratchpad */
+.scratchpad-body {
+    padding: 20px;
+}
+
 /* Worksheet Interface */
 .worksheet-interface {
     background: white;

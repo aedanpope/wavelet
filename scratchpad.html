@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Scratchpad</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="version.js" onerror="window.APP_VERSION='dev-fallback'"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <h2>Loading Python...</h2>
+                <p>Please wait while we set up the Python environment</p>
+            </div>
+        </div>
+
+        <!-- Scratchpad Interface -->
+        <div id="scratchpad-interface" class="worksheet-interface" style="display: none;">
+
+            <!-- Header -->
+            <header class="worksheet-header">
+                <button class="back-btn" onclick="window.location.href='index.html'">← Back</button>
+                <div class="worksheet-info">
+                    <h1>Python Scratchpad</h1>
+                    <p>Free-form Python workspace — no validation, just run and explore</p>
+                </div>
+                <button class="reset-btn" id="clear-code-btn">🔄 Clear Code</button>
+            </header>
+
+            <!-- Settings Bar -->
+            <div class="scratchpad-settings">
+                <div class="settings-group">
+                    <label class="settings-label">Height</label>
+                    <div class="height-control">
+                        <button class="height-btn" id="height-decrease">−</button>
+                        <input type="number" id="editor-height" value="10" min="3" max="50" class="height-input">
+                        <button class="height-btn" id="height-increase">+</button>
+                        <span class="settings-label settings-label-suffix">lines</span>
+                    </div>
+                </div>
+                <div class="settings-divider"></div>
+                <div class="settings-group">
+                    <label class="settings-toggle-label">
+                        <input type="checkbox" id="inputs-toggle" class="settings-checkbox">
+                        <span class="settings-label">Inputs</span>
+                    </label>
+                </div>
+                <div class="settings-group">
+                    <label class="settings-toggle-label">
+                        <input type="checkbox" id="canvas-toggle" class="settings-checkbox">
+                        <span class="settings-label">Canvas</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Inputs Configuration (shown when inputs enabled) -->
+            <div id="inputs-config" class="inputs-config" style="display: none;">
+                <div class="inputs-config-header">
+                    <span class="inputs-config-title">Configure Input Fields</span>
+                    <button class="add-input-btn" id="add-input-btn">+ Add Input</button>
+                </div>
+                <div id="inputs-config-list" class="inputs-config-list">
+                    <!-- Input config rows added dynamically -->
+                </div>
+            </div>
+
+            <!-- Code Area -->
+            <div class="scratchpad-body">
+                <div class="code-section">
+                    <div class="code-header">
+                        <h4>Your Code</h4>
+                    </div>
+
+                    <div class="code-editor" id="code-editor"></div>
+
+                    <!-- Runtime Input Fields (shown when inputs enabled and configured) -->
+                    <div id="input-section" class="input-section" style="display: none;">
+                        <div class="input-fields" id="input-fields">
+                            <!-- Dynamically generated -->
+                        </div>
+                    </div>
+
+                    <div class="output-section">
+                        <div class="output-header">
+                            <span>Output</span>
+                            <button class="run-btn" id="run-btn">▶ Run Code</button>
+                        </div>
+                        <!-- id="output-0" so canvas-system.js can find it -->
+                        <div class="output" id="output-0">
+                            <div class="output-placeholder">Click "Run Code" to see your output here</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script src="error-handler.js"></script>
+    <script src="input-system.js"></script>
+    <script src="canvas-system.js"></script>
+    <script src="code-executor.js"></script>
+    <script src="scratchpad.js"></script>
+</body>
+</html>
