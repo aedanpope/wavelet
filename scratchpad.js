@@ -111,11 +111,8 @@ class TracePlayer {
         panel.innerHTML = html;
     }
 
-    _renderOutput(upToStep) {
-        const text = this.prints
-            .filter(p => p.at_step <= upToStep)
-            .map(p => p.text)
-            .join('');
+    _renderOutput(n) {
+        const text = (this.steps[n] && this.steps[n].output) || '';
         const panel = document.getElementById('trace-output-panel');
         const content = document.getElementById('trace-output');
         if (text) {
@@ -665,7 +662,7 @@ def _tr_tracer(frame, event, arg):
                         ann = {'type': 'if_result', 'cond': ist['cond_src'], 'value': False}
 
                 _tr_steps.append({'line': pl, 'locals': snap, 'for_ctx': pend['for_ctx'],
-                                  'phase': 'after', 'ann': ann})
+                                  'phase': 'after', 'ann': ann, 'output': ''.join(_tr_output)})
                 _tr_pending[0] = None
 
             # ── Record 'before' step for current line ──
@@ -702,7 +699,7 @@ def _tr_tracer(frame, event, arg):
                 ann_before = {'type': 'if_test', 'cond': _tr_if_stmts[cur_line]['cond_src']}
 
             _tr_steps.append({'line': cur_line, 'locals': snap, 'for_ctx': for_ctx,
-                              'phase': 'before', 'ann': ann_before})
+                              'phase': 'before', 'ann': ann_before, 'output': ''.join(_tr_output)})
             _tr_pending[0] = {'line': cur_line, 'for_ctx': for_ctx}
 
     return _tr_tracer
@@ -720,7 +717,7 @@ if _tr_pending[0] is not None:
     pend = _tr_pending[0]
     final_snap = _tr_snap({k: v for k, v in _tr_ns.items() if not k.startswith('_')})
     _tr_steps.append({'line': pend['line'], 'locals': final_snap, 'for_ctx': pend['for_ctx'],
-                      'phase': 'after', 'ann': None})
+                      'phase': 'after', 'ann': None, 'output': ''.join(_tr_output)})
 
 _wavelet_trace_result = _json_tr.dumps({
     'steps': _tr_steps,
