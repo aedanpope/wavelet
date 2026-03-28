@@ -35,7 +35,7 @@ class TracePlayer {
         const lineTop = this.editor.heightAtLine(lineIdx, 'local');
         const lineHeight = this.editor.defaultTextHeight();
         const ov = this.highlightOverlay;
-        ov.style.transition = animate ? 'top 0.18s ease' : 'none';
+        ov.style.transition = animate ? 'top 0.28s ease' : 'none';
         ov.style.top = `${lineTop}px`;
         ov.style.height = `${lineHeight}px`;
         ov.style.display = 'block';
