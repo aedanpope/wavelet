@@ -1684,11 +1684,18 @@ code {
     padding: 6px 8px;
 }
 
-/* CodeMirror line highlight for current trace step */
-.trace-current-line {
-    background: rgba(102, 126, 234, 0.12) !important;
-    outline: 1px solid rgba(102, 126, 234, 0.25);
-    outline-offset: -1px;
+/* Sliding overlay for current trace step (background) */
+.trace-line-overlay {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    background: rgba(102, 126, 234, 0.12);
+    border-top: 1px solid rgba(102, 126, 234, 0.25);
+    border-bottom: 1px solid rgba(102, 126, 234, 0.25);
+    pointer-events: none;
+    z-index: 1;
+    will-change: top;
 }
 
 .trace-current-line-gutter {

@@ -18,23 +18,44 @@ class TracePlayer {
         this.highlightedLine = -1;
         this.playTimer = null;
         this.prevLocals = {};
+        this.highlightOverlay = null;
+    }
+
+    _ensureOverlay() {
+        if (this.highlightOverlay) return;
+        const scroller = this.editor.getScrollerElement();
+        const overlay = document.createElement('div');
+        overlay.className = 'trace-line-overlay';
+        scroller.appendChild(overlay);
+        this.highlightOverlay = overlay;
+    }
+
+    _moveOverlay(lineIdx, animate) {
+        this._ensureOverlay();
+        const lineTop = this.editor.heightAtLine(lineIdx, 'local');
+        const lineHeight = this.editor.defaultTextHeight();
+        const ov = this.highlightOverlay;
+        ov.style.transition = animate ? 'top 0.18s ease' : 'none';
+        ov.style.top = `${lineTop}px`;
+        ov.style.height = `${lineHeight}px`;
+        ov.style.display = 'block';
     }
 
     goToStep(n) {
         if (n < 0 || n >= this.steps.length) return;
 
-        // Remove previous line highlight
+        // Move gutter highlight
         if (this.highlightedLine >= 0) {
-            this.editor.removeLineClass(this.highlightedLine, 'background', 'trace-current-line');
             this.editor.removeLineClass(this.highlightedLine, 'gutter', 'trace-current-line-gutter');
         }
 
         this.currentStep = n;
         const step = this.steps[n];
         const lineIdx = step.line - 1; // CodeMirror is 0-indexed
+        const animate = this.highlightedLine >= 0 && this.highlightedLine !== lineIdx;
 
-        // Apply new line highlight
-        this.editor.addLineClass(lineIdx, 'background', 'trace-current-line');
+        // Slide background overlay to new line; jump gutter highlight
+        this._moveOverlay(lineIdx, animate);
         this.editor.addLineClass(lineIdx, 'gutter', 'trace-current-line-gutter');
         this.editor.scrollIntoView({ line: lineIdx, ch: 0 }, 80);
         this.highlightedLine = lineIdx;
@@ -155,9 +176,12 @@ class TracePlayer {
     cleanup() {
         this.pause();
         if (this.highlightedLine >= 0) {
-            this.editor.removeLineClass(this.highlightedLine, 'background', 'trace-current-line');
             this.editor.removeLineClass(this.highlightedLine, 'gutter', 'trace-current-line-gutter');
             this.highlightedLine = -1;
+        }
+        if (this.highlightOverlay) {
+            this.highlightOverlay.remove();
+            this.highlightOverlay = null;
         }
     }
 }
