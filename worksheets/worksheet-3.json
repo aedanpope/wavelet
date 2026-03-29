@@ -7,8 +7,37 @@
       "type": "concept",
       "icon": "🔁",
       "title": "How a for loop works",
-      "content": "<p>A <code>for</code> loop repeats code for you automatically. There are three parts:</p><img src='worksheets/diagrams/for-loop-anatomy.svg' alt='for loop anatomy diagram' style='width:100%;max-width:420px;display:block;margin:12px 0;'/><ul><li><strong>Loop statement</strong> — the <code>for</code> line ending in <code>:</code>. It sets up the loop and runs once.</li><li><strong>Body</strong> — the lines that start with 2 spaces. Python repeats all of them every time around the loop.</li><li><strong>After the loop</strong> — lines with no spaces at the start. They run once when the loop is finished.</li></ul><p>Those 2 spaces at the start of a line are called <strong>indentation</strong>. That's how Python knows which lines are inside the loop and which are outside. No spaces = outside.</p><img src='worksheets/diagrams/indentation.svg' alt='indentation diagram' style='width:100%;max-width:380px;display:block;margin:12px 0;'/><p>The variable <code>i</code> is updated automatically each time around the loop — it takes the next value from the list: first <code>1</code>, then <code>2</code>, then <code>3</code>.</p>",
+      "content": "<p>A <strong><code>for</code></strong> loop repeats code for you automatically. There are three parts:</p><img src='worksheets/diagrams/for-loop-anatomy.svg' alt='for loop anatomy diagram' style='width:100%;max-width:420px;display:block;margin:12px 0;'/><ul><li><strong>Loop statement</strong> — the <code>for</code> line ending in <code>:</code>. It sets up the loop and runs once.</li><li><strong>Body</strong> — the lines that start with 2 spaces. Python repeats all of them every time around the loop.</li><li><strong>After the loop</strong> — lines with no spaces at the start. They run once when the loop is finished.</li></ul><p>Those 2 spaces at the start of a line are called <strong>indentation</strong>. That's how Python knows which lines are inside the loop and which are outside. No spaces = outside.</p><img src='worksheets/diagrams/indentation.svg' alt='indentation diagram' style='width:100%;max-width:380px;display:block;margin:12px 0;'/><p>The <strong>variable</strong> <code>i</code> is updated automatically each time around the loop — it takes the next value from the list: first <code>1</code>, then <code>2</code>, then <code>3</code>.</p>",
       "footer": "2 spaces at the start = inside the loop. No spaces = outside."
+    },
+    {
+      "type": "trace",
+      "title": "Watch it run: step through the loop",
+      "code": "for i in [1,2,3]:\n  print(i)\n  print('---')\nprint('done')",
+      "steps": [
+        {"line":1,"locals":{},"for_ctx":{"target":"i","iter":"[1, 2, 3]","items":["1","2","3"],"iteration":0},"phase":"before","ann":null,"output":""},
+        {"line":1,"locals":{"i":"1"},"for_ctx":{"target":"i","iter":"[1, 2, 3]","items":["1","2","3"],"iteration":0},"phase":"after","ann":{"type":"loop_assigned","var":"i","value":"1"},"output":""},
+        {"line":2,"locals":{"i":"1"},"for_ctx":null,"phase":"before","ann":{"type":"print","preview":"1"},"output":""},
+        {"line":2,"locals":{"i":"1"},"for_ctx":null,"phase":"after","ann":null,"output":"1\n"},
+        {"line":3,"locals":{"i":"1"},"for_ctx":null,"phase":"before","ann":{"type":"print","preview":"---"},"output":"1\n"},
+        {"line":3,"locals":{"i":"1"},"for_ctx":null,"phase":"after","ann":null,"output":"1\n---\n"},
+        {"line":1,"locals":{"i":"1"},"for_ctx":{"target":"i","iter":"[1, 2, 3]","items":["1","2","3"],"iteration":1},"phase":"before","ann":null,"output":"1\n---\n"},
+        {"line":1,"locals":{"i":"2"},"for_ctx":{"target":"i","iter":"[1, 2, 3]","items":["1","2","3"],"iteration":1},"phase":"after","ann":{"type":"loop_assigned","var":"i","value":"2"},"output":"1\n---\n"},
+        {"line":2,"locals":{"i":"2"},"for_ctx":null,"phase":"before","ann":{"type":"print","preview":"2"},"output":"1\n---\n"},
+        {"line":2,"locals":{"i":"2"},"for_ctx":null,"phase":"after","ann":null,"output":"1\n---\n2\n"},
+        {"line":3,"locals":{"i":"2"},"for_ctx":null,"phase":"before","ann":{"type":"print","preview":"---"},"output":"1\n---\n2\n"},
+        {"line":3,"locals":{"i":"2"},"for_ctx":null,"phase":"after","ann":null,"output":"1\n---\n2\n---\n"},
+        {"line":1,"locals":{"i":"2"},"for_ctx":{"target":"i","iter":"[1, 2, 3]","items":["1","2","3"],"iteration":2},"phase":"before","ann":null,"output":"1\n---\n2\n---\n"},
+        {"line":1,"locals":{"i":"3"},"for_ctx":{"target":"i","iter":"[1, 2, 3]","items":["1","2","3"],"iteration":2},"phase":"after","ann":{"type":"loop_assigned","var":"i","value":"3"},"output":"1\n---\n2\n---\n"},
+        {"line":2,"locals":{"i":"3"},"for_ctx":null,"phase":"before","ann":{"type":"print","preview":"3"},"output":"1\n---\n2\n---\n"},
+        {"line":2,"locals":{"i":"3"},"for_ctx":null,"phase":"after","ann":null,"output":"1\n---\n2\n---\n3\n"},
+        {"line":3,"locals":{"i":"3"},"for_ctx":null,"phase":"before","ann":{"type":"print","preview":"---"},"output":"1\n---\n2\n---\n3\n"},
+        {"line":3,"locals":{"i":"3"},"for_ctx":null,"phase":"after","ann":null,"output":"1\n---\n2\n---\n3\n---\n"},
+        {"line":1,"locals":{"i":"3"},"for_ctx":{"target":"i","iter":"[1, 2, 3]","items":["1","2","3"],"iteration":3},"phase":"before","ann":null,"output":"1\n---\n2\n---\n3\n---\n"},
+        {"line":1,"locals":{"i":"3"},"for_ctx":{"target":"i","iter":"[1, 2, 3]","items":["1","2","3"],"iteration":3},"phase":"after","ann":{"type":"loop_done","var":"i"},"output":"1\n---\n2\n---\n3\n---\n"},
+        {"line":4,"locals":{"i":"3"},"for_ctx":null,"phase":"before","ann":{"type":"print","preview":"done"},"output":"1\n---\n2\n---\n3\n---\n"},
+        {"line":4,"locals":{"i":"3"},"for_ctx":null,"phase":"after","ann":null,"output":"1\n---\n2\n---\n3\n---\ndone\n"}
+      ]
     },
     {
       "title": "The problem with repetition",

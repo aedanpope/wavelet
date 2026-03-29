@@ -4,9 +4,9 @@ let codeEditors = []; // Array to hold multiple code editors
 let completedProblems = new Set();
 let codeExecutor = null;
 
-// Returns only actual coding problems (excludes concept cards etc.)
+// Returns only actual coding problems (excludes concept/trace cards etc.)
 function getProblems() {
-    return currentWorksheet.problems.filter(b => b.type !== 'concept');
+    return currentWorksheet.problems.filter(b => b.type !== 'concept' && b.type !== 'trace');
 }
 
 // Progress persistence functions
@@ -204,9 +204,13 @@ function loadAllProblems() {
     codeEditors = [];
     
     let problemIndex = 0;
+    let traceIndex = 0;
     currentWorksheet.problems.forEach((block) => {
         if (block.type === 'concept') {
             container.appendChild(createConceptElement(block));
+        } else if (block.type === 'trace') {
+            container.appendChild(createTraceElement(block, traceIndex));
+            traceIndex++;
         } else {
             container.appendChild(createProblemElement(block, problemIndex));
             problemIndex++;
@@ -216,6 +220,7 @@ function loadAllProblems() {
     // Initialize all code editors after DOM is ready
     setTimeout(() => {
         initAllCodeEditors();
+        initAllTraceEditors();
         
         // Restore saved state if available
         const savedProgress = loadProgress(currentWorksheet.id);
@@ -716,6 +721,243 @@ function showError(message) {
     } else {
         alert(message);
     }
+}
+
+// ── Embedded Trace Player ─────────────────────────────────────────────────────
+
+class EmbeddedTracePlayer {
+    constructor(id, steps, editor) {
+        this.id = id;
+        this.steps = steps;
+        this.editor = editor;
+        this.currentStep = -1;
+        this.highlightedLine = -1;
+        this.prevLocals = {};
+        this.highlightOverlay = null;
+        this.playTimer = null;
+    }
+
+    _el(name) {
+        return document.getElementById(`trace-card-${name}-${this.id}`);
+    }
+
+    _ensureOverlay() {
+        if (this.highlightOverlay) return;
+        const scroller = this.editor.getScrollerElement();
+        const overlay = document.createElement('div');
+        overlay.className = 'trace-line-overlay';
+        scroller.appendChild(overlay);
+        this.highlightOverlay = overlay;
+    }
+
+    _moveOverlay(lineIdx, animate) {
+        this._ensureOverlay();
+        const lineTop = this.editor.heightAtLine(lineIdx, 'local');
+        const lineHeight = this.editor.defaultTextHeight();
+        const ov = this.highlightOverlay;
+        ov.style.transition = animate ? 'top 0.28s ease' : 'none';
+        ov.style.top = `${lineTop}px`;
+        ov.style.height = `${lineHeight}px`;
+        ov.style.display = 'block';
+    }
+
+    goToStep(n) {
+        if (n < 0 || n >= this.steps.length) return;
+        if (this.highlightedLine >= 0) {
+            this.editor.removeLineClass(this.highlightedLine, 'gutter', 'trace-current-line-gutter');
+        }
+        this.currentStep = n;
+        const step = this.steps[n];
+        const lineIdx = step.line - 1;
+        const animate = this.highlightedLine >= 0 && this.highlightedLine !== lineIdx;
+        this._moveOverlay(lineIdx, animate);
+        this.editor.addLineClass(lineIdx, 'gutter', 'trace-current-line-gutter');
+        this.highlightedLine = lineIdx;
+        this._renderVars(step.locals, step.for_ctx, step.phase, step.ann);
+        this._renderOutput(n);
+        this._updateControls();
+        this.prevLocals = { ...step.locals };
+    }
+
+    _renderVars(locals, forCtx, phase, ann) {
+        const panel = this._el('vars');
+        const keys = Object.keys(locals);
+        let html = '';
+
+        if (forCtx) {
+            let iterHtml;
+            if (forCtx.items && forCtx.items.length > 0) {
+                const k = forCtx.iteration ?? 0;
+                const itemsHtml = forCtx.items.map((item, idx) => {
+                    let cls = 'trace-iter-item';
+                    if (idx < k)                           cls += ' consumed';
+                    else if (idx === k && phase === 'before') cls += ' current';
+                    else if (idx <= k && phase === 'after')   cls += ' consumed';
+                    return `<span class="${cls}">${escHtml(item)}</span>`;
+                }).join('<span class="trace-iter-sep">, </span>');
+                iterHtml = `[${itemsHtml}]`;
+            } else {
+                iterHtml = escHtml(forCtx.iter);
+            }
+            html += `<div class="trace-for-ctx">
+                <span class="trace-for-kw">for</span>
+                <span class="trace-for-target">${escHtml(forCtx.target)}</span>
+                <span class="trace-for-kw">in</span>
+                <span class="trace-for-iter-items">${iterHtml}</span>
+            </div>`;
+        }
+
+        if (ann) {
+            if (ann.type === 'loop_done') {
+                html += `<div class="trace-ann trace-ann-done">loop complete</div>`;
+            } else if (ann.type === 'loop_assigned') {
+                html += `<div class="trace-ann trace-ann-assign">${escHtml(ann.value)} → ${escHtml(ann.var)}</div>`;
+            } else if (ann.type === 'if_result') {
+                const cls = ann.value ? 'trace-ann-true' : 'trace-ann-false';
+                const icon = ann.value ? '✓ true' : '✗ false';
+                html += `<div class="trace-ann ${cls}">${escHtml(ann.cond)} → ${icon}</div>`;
+            } else if (ann.type === 'print') {
+                const preview = ann.preview != null
+                    ? ` → <span class="trace-ann-print-val">"${escHtml(ann.preview)}"</span>`
+                    : '';
+                html += `<div class="trace-ann trace-ann-print">print${preview}</div>`;
+            } else if (ann.type === 'if_test') {
+                html += `<div class="trace-ann trace-ann-if">if ${escHtml(ann.cond)}</div>`;
+            }
+        }
+
+        if (keys.length === 0 && !forCtx && !ann) {
+            html += '<span class="trace-empty">No variables yet</span>';
+        } else {
+            html += keys.map(k => {
+                const changed = this.prevLocals[k] !== locals[k];
+                return `<div class="trace-var-row${changed ? ' trace-var-changed' : ''}">
+                    <span class="trace-var-name">${escHtml(k)}</span>
+                    <span class="trace-var-eq">=</span>
+                    <span class="trace-var-value">${escHtml(locals[k])}</span>
+                </div>`;
+            }).join('');
+        }
+
+        panel.innerHTML = html;
+    }
+
+    _renderOutput(n) {
+        const text = (this.steps[n] && this.steps[n].output) || '';
+        this._el('output').textContent = text;
+    }
+
+    _updateControls() {
+        const n = this.currentStep;
+        const max = this.steps.length - 1;
+        this._el('first').disabled = n <= 0;
+        this._el('prev').disabled = n <= 0;
+        this._el('next').disabled = n >= max;
+        this._el('last').disabled = n >= max;
+        this._el('slider').value = n;
+        const phase = this.steps[n].phase === 'after' ? ' · after' : '';
+        this._el('count').textContent = `Step ${n + 1} / ${this.steps.length}${phase}`;
+        this._el('play').textContent = this.playTimer ? '⏸ Pause' : '▶ Play';
+    }
+
+    play() {
+        if (this.playTimer) return;
+        if (this.currentStep >= this.steps.length - 1) this.goToStep(0);
+        this._el('play').textContent = '⏸ Pause';
+        const advance = () => {
+            if (this.currentStep >= this.steps.length - 1) { this.pause(); return; }
+            this.goToStep(this.currentStep + 1);
+        };
+        this.playTimer = setInterval(advance, 600);
+    }
+
+    pause() {
+        if (this.playTimer) { clearInterval(this.playTimer); this.playTimer = null; }
+        this._el('play').textContent = '▶ Play';
+    }
+}
+
+const tracePlayerInstances = [];
+
+function createTraceElement(block, traceIndex) {
+    const id = traceIndex;
+    const div = document.createElement('div');
+    div.className = 'trace-card';
+    div.innerHTML = `
+        <div class="trace-card-header">
+            <span class="trace-card-icon">▶</span>
+            <h3>${block.title || 'Watch it run'}</h3>
+        </div>
+        <div class="trace-card-footer">
+            <div class="trace-step-count" id="trace-card-count-${id}">Step 1 / ${block.steps.length}</div>
+            <div class="trace-card-controls">
+                <button class="trace-btn" id="trace-card-first-${id}" title="First step">⏮</button>
+                <button class="trace-btn" id="trace-card-prev-${id}" title="Previous step">◀</button>
+                <button class="trace-btn" id="trace-card-next-${id}" title="Next step">▶</button>
+                <button class="trace-btn" id="trace-card-last-${id}" title="Last step">⏭</button>
+                <button class="trace-btn trace-btn-play" id="trace-card-play-${id}">▶ Play</button>
+                <input class="trace-slider" type="range" id="trace-card-slider-${id}" min="0" max="${block.steps.length - 1}" value="0">
+            </div>
+        </div>
+        <div class="trace-card-layout">
+            <div class="trace-card-editor-wrap">
+                <div id="trace-card-editor-${id}"></div>
+            </div>
+            <div class="trace-card-vars-col">
+                <div class="trace-panel-title">Variables</div>
+                <div class="trace-vars" id="trace-card-vars-${id}"><span class="trace-empty">No variables yet</span></div>
+            </div>
+            <div class="trace-card-output-col">
+                <div class="trace-panel-title">Output</div>
+                <div class="trace-output-content" id="trace-card-output-${id}"></div>
+            </div>
+        </div>
+    `;
+    return div;
+}
+
+function initAllTraceEditors() {
+    tracePlayerInstances.length = 0;
+    let traceIndex = 0;
+    currentWorksheet.problems.forEach(block => {
+        if (block.type !== 'trace') return;
+        const id = traceIndex++;
+        const editorEl = document.getElementById(`trace-card-editor-${id}`);
+        if (!editorEl) return;
+
+        const lineCount = block.code.split('\n').length;
+        const editorHeight = lineCount * 23 + 10;
+        const editor = CodeMirror(editorEl, {
+            mode: 'python',
+            theme: 'monokai',
+            lineNumbers: true,
+            readOnly: true,
+            value: block.code,
+            indentUnit: 2,
+            tabSize: 2,
+        });
+        editor.setSize(185, editorHeight);
+
+        const player = new EmbeddedTracePlayer(id, block.steps, editor);
+        tracePlayerInstances.push(player);
+
+        document.getElementById(`trace-card-first-${id}`).addEventListener('click', () => player.goToStep(0));
+        document.getElementById(`trace-card-prev-${id}`).addEventListener('click', () => player.goToStep(player.currentStep - 1));
+        document.getElementById(`trace-card-next-${id}`).addEventListener('click', () => player.goToStep(player.currentStep + 1));
+        document.getElementById(`trace-card-last-${id}`).addEventListener('click', () => player.goToStep(player.steps.length - 1));
+        document.getElementById(`trace-card-play-${id}`).addEventListener('click', () => player.playTimer ? player.pause() : player.play());
+        document.getElementById(`trace-card-slider-${id}`).addEventListener('input', e => player.goToStep(parseInt(e.target.value)));
+
+        player.goToStep(0);
+    });
+}
+
+function escHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
 }
 
 // Initialize when page loads
