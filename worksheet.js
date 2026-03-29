@@ -777,6 +777,16 @@ class EmbeddedTracePlayer {
         this._renderOutput(n);
         this._updateControls();
         this.prevLocals = { ...step.locals };
+        this._ratchetHeight('vars-col');
+        this._ratchetHeight('output-col');
+    }
+
+    _ratchetHeight(colId) {
+        const el = this._el(colId);
+        if (!el) return;
+        const current = Math.ceil(el.getBoundingClientRect().height);
+        const floor = parseInt(el.style.minHeight) || 0;
+        if (current > floor) el.style.minHeight = current + 'px';
     }
 
     _renderVars(locals, forCtx, phase, ann) {
@@ -903,11 +913,11 @@ function createTraceElement(block, traceIndex) {
             <div class="trace-card-editor-wrap">
                 <div id="trace-card-editor-${id}"></div>
             </div>
-            <div class="trace-card-vars-col">
+            <div class="trace-card-vars-col" id="trace-card-vars-col-${id}">
                 <div class="trace-panel-title">Variables</div>
                 <div class="trace-vars" id="trace-card-vars-${id}"><span class="trace-empty">No variables yet</span></div>
             </div>
-            <div class="trace-card-output-col">
+            <div class="trace-card-output-col" id="trace-card-output-col-${id}">
                 <div class="trace-panel-title">Output</div>
                 <div class="trace-output-content" id="trace-card-output-${id}"></div>
             </div>
@@ -936,7 +946,7 @@ function initAllTraceEditors() {
             indentUnit: 2,
             tabSize: 2,
         });
-        editor.setSize(185, editorHeight);
+        editor.setSize(215, editorHeight + 23);
 
         const player = new EmbeddedTracePlayer(id, block.steps, editor);
         tracePlayerInstances.push(player);

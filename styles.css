@@ -1794,31 +1794,29 @@ code {
 
 /* Column 1: code editor — fixed width set by CodeMirror, locked via CSS */
 .trace-card-editor-wrap {
-    flex: 0 0 185px;
-    width: 185px;
+    flex: 0 0 215px;
+    width: 215px;
     border-radius: 6px 0 0 6px;
     overflow: hidden;
     border: 1px solid #c7d2fe;
 }
 
-/* Column 2: variables — fixed width so chips never reflow */
+/* Column 2: variables — fixed width; height grows via JS ratchet, never shrinks */
 .trace-card-vars-col {
     flex: 0 0 210px;
     width: 210px;
     padding: 8px 12px;
     border: 1px solid #c7d2fe;
     border-left: none;
-    min-height: 60px; /* stable even when empty */
 }
 
 .trace-card-vars-col .trace-vars {
     display: flex;
     flex-direction: column;
     gap: 5px;
-    min-height: 24px;
 }
 
-/* Column 3: output — takes remaining space, no scroll */
+/* Column 3: output — height grows via JS ratchet, never shrinks */
 .trace-card-output-col {
     flex: 1;
     min-width: 0;
