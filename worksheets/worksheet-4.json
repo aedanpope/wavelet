@@ -36,7 +36,7 @@
         "rules": [
           { "type": "no_errors" },
           { "type": "code_contains", "pattern": ">" },
-          { "type": "output_contains", "pattern": "True" }
+          { "type": "output_contains", "pattern": "True\nTrue\nTrue\nTrue", "description": "All four comparisons should print True" }
         ]
       }
     },
