@@ -316,14 +316,16 @@
     {
       "type": "trace",
       "title": "else in action — the False path runs",
-      "code": "score = 3\nif score >= 5:\n  print('pass')\nelse:\n  print('fail')",
+      "code": "score = 3\nif score >= 5:\n  print('pass')\nelse:\n  print('fail')\nprint('done')",
       "steps": [
         {"line":1,"locals":{},"for_ctx":null,"phase":"before","ann":null,"output":""},
         {"line":1,"locals":{"score":"3"},"for_ctx":null,"phase":"after","ann":null,"output":""},
         {"line":2,"locals":{"score":"3"},"for_ctx":null,"phase":"before","ann":{"type":"if_test","cond":"score >= 5"},"output":""},
         {"line":2,"locals":{"score":"3"},"for_ctx":null,"phase":"after","ann":{"type":"if_result","cond":"score >= 5","value":false},"output":""},
         {"line":5,"locals":{"score":"3"},"for_ctx":null,"phase":"before","ann":{"type":"print","preview":"fail"},"output":""},
-        {"line":5,"locals":{"score":"3"},"for_ctx":null,"phase":"after","ann":null,"output":"fail\n"}
+        {"line":5,"locals":{"score":"3"},"for_ctx":null,"phase":"after","ann":null,"output":"fail\n"},
+        {"line":6,"locals":{"score":"3"},"for_ctx":null,"phase":"before","ann":{"type":"print","preview":"done"},"output":"fail\n"},
+        {"line":6,"locals":{"score":"3"},"for_ctx":null,"phase":"after","ann":null,"output":"fail\ndone\n"}
       ]
     },
     {
