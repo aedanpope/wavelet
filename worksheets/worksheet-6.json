@@ -60,7 +60,7 @@
       "task": "Use a for loop to draw a red horizontal line at y=50 across the entire width of the canvas.",
       "starterCode": "use_canvas(GRID100)\n\n# Use a for loop to draw across x from 0 to 99\nfor x in range(100):\n  # Your draw() call here\n  ",
       "hint": "Inside the loop, use draw(x, 50, 'red') to color each cell",
-      "codeHeight": 8,
+      "codeHeight": 6,
       "canvas": true,
       "validation": {
         "rules": [
@@ -77,7 +77,7 @@
       "task": "Use a for loop to draw a blue vertical line at x=30 from top to bottom.",
       "starterCode": "use_canvas(GRID100)\n\n# Use a for loop to draw from y=0 to y=99\n\n",
       "hint": "Use: for y in range(100): draw(30, y, 'blue')",
-      "codeHeight": 8,
+      "codeHeight": 4,
       "canvas": true,
       "validation": {
         "rules": [
@@ -111,7 +111,7 @@
       "task": "Draw a green square from (40, 40) to (59, 59) using nested loops.",
       "starterCode": "use_canvas(GRID100)\n\n# Loop through x from 40 to 59\nfor x in range(40, 60):\n  # Loop through y from 40 to 59\n  for y in range(40, 60):\n    # Draw each cell green\n    ",
       "hint": "Inside both loops, use draw(x, y, 'green')",
-      "codeHeight": 10,
+      "codeHeight": 8,
       "canvas": true,
       "validation": {
         "rules": [

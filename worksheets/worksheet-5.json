@@ -214,7 +214,7 @@
           "type": "number"
         }
       ],
-      "codeHeight": 4,
+      "codeHeight": 5,
       "starterCode": "score = get_input()\n\nif score >= 50:\n  print(\"Pass\")",
       "hint": "When score is 50 or more, it prints 'Pass'. Otherwise, nothing is printed.",
       "validation": {
@@ -237,7 +237,7 @@
           "type": "number"
         }
       ],
-      "codeHeight": 6,
+      "codeHeight": 7,
       "starterCode": "score = get_input()\n\nif score >= 50:\n  print(\"Pass\")",
       "hint": "After the print(\"Pass\") line, add: else: on a new line (at the same indentation as if), then print(\"Try again\") indented under it.",
       "validation": {
@@ -282,7 +282,7 @@
           "type": "number"
         }
       ],
-      "codeHeight": 6,
+      "codeHeight": 7,
       "starterCode": "n = get_input()\n",
       "hint": "Add the if/else structure: if n > 10: print(f\"{n} is big\") else: print(f\"{n} is small\").",
       "validation": {
@@ -473,7 +473,7 @@
       "title": "Finding the Remainder %",
       "content": "In programming, there's a special math symbol called <strong>modulo</strong>, which is a percent sign <code>%</code>. It gives you the remainder of a division. For example, if you share 10 sweets between 3 friends, each gets 3 and there is 1 left over. So, <code>10 % 3</code> is 1.",
       "task": "Run the code to see the remainder of 14 divided by 4. Change the numbers to see how it works with different values.",
-      "codeHeight": 2,
+      "codeHeight": 3,
       "starterCode": "print(14 % 4)",
       "hint": "14 divided by 4 is 3 with a remainder of 2.",
       "validation": {
@@ -496,7 +496,7 @@
           "type": "number"
         }
       ],
-      "codeHeight": 6,
+      "codeHeight": 7,
       "starterCode": "number = get_input()\n\nif number % 2 == 0:\n  print(\"Even\")\nelse:\n  print(\"Odd\")",
       "hint": "Try entering 10, then try 5. See how the result of <code>number % 2</code> changes the outcome.",
       "validation": {
@@ -541,7 +541,7 @@
           "type": "number"
         }
       ],
-      "codeHeight": 6,
+      "codeHeight": 7,
       "starterCode": "num = get_input()\n\nif num % 2 == 0:\n  print(\"Even\")\nelse:\n  print(\"Odd\")",
       "hint": "Change print(\"Even\") to print(f\"{num} is even\") and print(\"Odd\") to print(f\"{num} is odd\"). Don't forget the f before the quote!",
       "validation": {
@@ -595,7 +595,7 @@
           "type": "number"
         }
       ],
-      "codeHeight": 6,
+      "codeHeight": 7,
       "starterCode": "n = get_input()\nprint(f\"Factors of {n}:\")\n\nfor i in range(1, n + 1):\n  print(i)",
       "hint": "Add 'if n % i == 0:' after the for loop line, then indent the print(i) underneath it. This checks if i divides evenly into n.",
       "validation": {
@@ -643,7 +643,7 @@
       "title": "The break keyword",
       "content": "Sometimes you want to exit a loop early before it finishes all its iterations. The <code>break</code> keyword stops a loop immediately and jumps to the code after the loop.",
       "task": "Run this code and see how the loop stops at 3 instead of going all the way to 10.",
-      "codeHeight": 5,
+      "codeHeight": 6,
       "starterCode": "for i in range(1, 11):\n  print(i)\n  if i == 3:\n    break\nprint(\"Loop stopped!\")",
       "hint": "The break happens when i equals 3, so it only prints 1, 2, 3 before exiting the loop.",
       "validation": {
@@ -659,7 +659,7 @@
       "title": "Your turn: Add a break",
       "content": "Now practice adding <code>break</code> yourself! This loop counts from 1 to 20, but let's make it stop early.",
       "task": "Add an if statement inside the loop that breaks when <code>i</code> equals 7. Don't forget to add <code>break</code> inside the if block!",
-      "codeHeight": 4,
+      "codeHeight": 5,
       "starterCode": "for i in range(1, 21):\n  print(i)",
       "hint": "After the print(i) line, add: if i == 7: and then on the next line (indented): break",
       "validation": {
@@ -686,7 +686,7 @@
           "type": "number"
         }
       ],
-      "codeHeight": 12,
+      "codeHeight": 13,
       "starterCode": "target = get_input()\nfound = False\n\nfor i in range(1, 100):\n  if i > target:\n    break\n\nif found:\n  print(\"Found it!\")\nelse:\n  print(\"Not found\")",
       "hint": "Add 'found = True' on the line before 'break'. The flag variable tracks whether we found a number greater than target.",
       "validation": {
@@ -726,7 +726,7 @@
           "type": "number"
         }
       ],
-      "codeHeight": 17,
+      "codeHeight": 13,
       "starterCode": "",
       "hint": "Start with a flag variable set to False. Loop from 2 to n-1. If you find a factor (n % i == 0), set the flag to True and break. After the loop, check the flag to print either 'Prime' or 'Composite'.",
       "validation": {

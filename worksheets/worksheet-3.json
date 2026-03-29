@@ -7,7 +7,7 @@
       "title": "The problem with repetition",
       "content": "Sometimes we want to do the same thing over and over. Typing it all out is a lot of work!",
       "task": "Run this code to see 'Hello' printed five times.",
-      "codeHeight": 5,
+      "codeHeight": 6,
       "starterCode": "print('Hello')\nprint('Hello')\nprint('Hello')\nprint('Hello')\nprint('Hello')",
       "hint": "Just press the 'Run Code' button to see the output.",
       "validation": {
@@ -137,7 +137,8 @@
             "pattern": "1\n---\n2\n---\n3\n---"
           }
         ]
-      }
+      },
+      "codeHeight": 4
     },
     {
       "title": "Indentation matters!",
@@ -152,7 +153,8 @@
             "solutionCode": "for i in [1, 2, 3]:\n  print(i)\n  print('and')"
           }
         ]
-      }
+      },
+      "codeHeight": 4
     },
     {
       "title": "Move it outside the loop",
@@ -167,7 +169,8 @@
             "solutionCode": "for i in [1, 2, 3]:\n  print(i)\nprint('done')"
           }
         ]
-      }
+      },
+      "codeHeight": 4
     },
     {
       "title": "Write your first loop",
@@ -385,7 +388,7 @@
       "title": "Create your own times table",
       "content": "Now it's your turn to create a times table from scratch!",
       "task": "Write a program that prints the 12 times table from 1 to 10.",
-      "codeHeight": 5,
+      "codeHeight": 3,
       "starterCode": "",
       "hint": "You can use the code from the previous problem as a starting point.",
       "validation": {

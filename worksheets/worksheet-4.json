@@ -86,7 +86,7 @@
       "title": "Greater Than >",
       "content": "So far, our programs have always run the same way. But what if we want our code to make decisions? The <code>if</code> statement runs code only when a condition is true. We can use math symbols like <code>></code> (greater than) to create these conditions.",
       "task": "Run the code. Then, change the number in the <code>age</code> variable to 3 and run it again. Notice how the <code>True</code>/<code>False</code> line changes and predicts whether 'OK' will be printed.",
-      "codeHeight": 6,
+      "codeHeight": 7,
       "starterCode": "age = 6\nprint('What is (age > 5)?')\nprint(age > 5)\n\nif age > 5:\n  print(\"OK\")",
       "hint": "The code inside the <code>if</code> block only runs when the condition next to the <code>if</code> is <code>True</code>.",
       "validation": {
@@ -109,7 +109,7 @@
       "title": "Your Turn: Greater Than > Practice",
       "content": "Now it's your turn to practice! This code starts with a False condition. Can you change the age to make the condition True and see 'OK' printed?",
       "task": "The debug lines show this will print False. Change the <code>age</code> value to make the condition <code>age > 5</code> become True so 'OK' gets printed.",
-      "codeHeight": 6,
+      "codeHeight": 7,
       "starterCode": "age = 3\nprint('What is (age > 5)?')\nprint(age > 5)\n\nif age > 5:\n  print(\"OK\")",
       "hint": "Try changing age to 6 or any number greater than 5. Watch how the debug output changes to True!",
       "validation": {
@@ -136,7 +136,7 @@
       "title": "Less Than <",
       "content": "Just like we use <code>></code> for 'greater than', we can use <code><</code> for 'less than'. Let's use our debug print to see how it works.",
       "task": "Run the code. Then, change the number of <code>toys</code> to 5 and run it again. What happens when <code>toys < 5</code> is <code>False</code>?",
-      "codeHeight": 6,
+      "codeHeight": 7,
       "starterCode": "toys = 4\nprint('What is (toys < 5)?')\nprint(toys < 5)\n\nif toys < 5:\n  print(\"Not too many toys\")",
       "hint": "Try the number 5. Is 5 less than 5? The debug line will tell you!",
       "validation": {
@@ -159,7 +159,7 @@
       "title": "Your Turn: Less Than < Practice",
       "content": "Time to practice the less than operator! This code starts with a False condition because 6 is not less than 5.",
       "task": "The debug lines show this will print False. Change the <code>toys</code> value to make the condition <code>toys < 5</code> become True so the message gets printed.",
-      "codeHeight": 6,
+      "codeHeight": 7,
       "starterCode": "toys = 6\nprint('What is (toys < 5)?')\nprint(toys < 5)\n\nif toys < 5:\n  print(\"Not too many toys\")",
       "hint": "Try changing toys to 4 or any number less than 5. Watch the debug output change to True!",
       "validation": {
@@ -186,7 +186,7 @@
       "title": "Equal To ==",
       "content": "This is a very important one! To ask if two things are equal, we use two equals signs: <code>==</code>. A single equals sign <code>=</code> is for giving a value to a variable.",
       "task": "Run the code. Change the <code>secret_number</code> to 6 and run it again. Watch the <code>True</code>/<code>False</code> line to predict the result.",
-      "codeHeight": 6,
+      "codeHeight": 7,
       "starterCode": "secret_number = 7\nprint('What is (secret_number == 7)?')\nprint(secret_number == 7)\n\nif secret_number == 7:\n  print(\"You guessed it\")",
       "hint": "Remember: one equals <code>=</code> gives a value, two equals <code>==</code> asks a question.",
       "validation": {
@@ -209,7 +209,7 @@
       "title": "Your Turn: Equal To == Practice",
       "content": "Let's practice the equality operator! This code starts with a False condition because 5 does not equal 7.",
       "task": "The debug lines show this will print False. Change the <code>secret_number</code> value to make the condition <code>secret_number == 7</code> become True so the success message gets printed.",
-      "codeHeight": 6,
+      "codeHeight": 7,
       "starterCode": "secret_number = 5\nprint('What is (secret_number == 7)?')\nprint(secret_number == 7)\n\nif secret_number == 7:\n  print(\"You guessed it\")",
       "hint": "Try changing secret_number to 7. Remember, == checks if two values are exactly equal!",
       "validation": {
@@ -236,7 +236,7 @@
       "title": "Fix the Bug! (= vs ==)",
       "content": "Oh no! A classic bug. This program uses a single <code>=</code> inside the <code>if</code> statement, which causes an error. This is one of the most common mistakes for new programmers!",
       "task": "Run the code to see the error. Then, fix the bug by changing the single <code>=</code> to a double <code>==</code> so the program works correctly.",
-      "codeHeight": 4,
+      "codeHeight": 5,
       "starterCode": "choice = 5\n\nif choice = 5:\n  print(\"Bug fixed\")",
       "hint": "To ask a question inside an <code>if</code> statement, you need two equals signs: <code>==</code>.",
       "validation": {
@@ -296,7 +296,7 @@
           "type": "number"
         }
       ],
-      "codeHeight": 6,
+      "codeHeight": 7,
       "starterCode": "n = get_input()\n\nif n > 10:\n  print(\"Big number\")\nelse:\n  print(\"Small number\")",
       "hint": "The <code>if</code> block and the <code>else</code> block are like two different paths. The program will only ever go down one of them.",
       "validation": {
@@ -338,7 +338,7 @@
       "content": "Let's use buttons instead of typing numbers! The function <code>get_choice(2)</code> shows two buttons. It gives back the number 1 for the first button and 2 for the second.",
       "task": "Run the code. Click the first button. Then run it again and click the second button to see the different messages.",
       "interactionType": "buttons",
-      "codeHeight": 6,
+      "codeHeight": 7,
       "starterCode": "choice = get_choice(2)\n\nif choice == 1:\n  print(\"Left path\")\nelse:\n  print(\"Right path\")",
       "hint": "<code>get_choice(2)</code> pauses the program and waits for you to click a button.",
       "validation": {
@@ -402,7 +402,7 @@
           "type": "number"
         }
       ],
-      "codeHeight": 8,
+      "codeHeight": 9,
       "starterCode": "n = get_input()\n\nif n < 3:\n  print(\"Low\")\nelif n < 6:\n  print(\"Mid\")\nelse:\n  print(\"High\")",
       "hint": "The program checks each condition from top to bottom. As soon as one is true, it runs that code and skips the rest.",
       "validation": {
@@ -419,7 +419,7 @@
       "content": "Let's practice by adding another choice to an existing program. This treasure hunt has three options, but we want to add a fourth!",
       "task": "We've added a fourth treasure chest. First, change <code>get_choice(3)</code> to <code>get_choice(4)</code>. Then, add a new <code>elif</code> that checks if the choice is 3 and prints 'Found a map'.",
       "interactionType": "buttons",
-      "codeHeight": 8,
+      "codeHeight": 11,
       "starterCode": "choice = get_choice(3)\n\nif choice == 1:\n  print(\"Found gold coins\")\nelif choice == 2:\n  print(\"Found a rusty sword\")\nelse:\n  print(\"A dragon pops out\")",
       "hint": "Your new <code>elif choice == 3:</code> block should go just before the final <code>else:</code>.",
       "validation": {
@@ -443,7 +443,7 @@
       "content": "The <code>!=</code> operator checks if two values are <em>different</em>. It's the opposite of <code>==</code>.",
       "task": "Click both buttons. Button 1 is the secret button — clicking anything else should trigger the <code>!=</code> check. Run a few times to see both messages.",
       "interactionType": "buttons",
-      "codeHeight": 6,
+      "codeHeight": 7,
       "starterCode": "choice = get_choice(3)\n\nif choice != 1:\n  print(\"That is not the secret button\")\nelse:\n  print(\"You found it\")",
       "hint": "!= means 'not equal to'. The body runs whenever choice is anything other than 1.",
       "validation": {
@@ -487,7 +487,7 @@
       "title": "Greater Than or Equal To >=",
       "content": "What if you want to include the number in your check? You can use <code>>=</code> which means 'greater than or equal to'. This problem will help you practice using >= specifically.",
       "task": "Run the code with the score set to 50. It says 'Try again'. Change the <code>></code> to <code>>=</code> so that a score of exactly 50 is also a pass. Keep the score as 50 to practice how >= works differently from >.",
-      "codeHeight": 6,
+      "codeHeight": 7,
       "starterCode": "score = 50\n\nif score > 50:\n  print(\"You passed\")\nelse:\n  print(\"Try again\")",
       "hint": "Just add an equals sign = after the greater than sign >. Notice how >= includes the boundary value (50) while > excludes it.",
       "validation": {
@@ -523,7 +523,7 @@
       "content": "Your turn to build a program with multiple choices from scratch!",
       "task": "Write a program that uses <code>get_choice(3)</code> to simulate a drink machine. <br>If choice is 1, print 'Water'.<br>If choice is 2, print 'Juice'.<br>For any other choice, print 'Lemonade'.",
       "interactionType": "buttons",
-      "codeHeight": 6,
+      "codeHeight": 8,
       "starterCode": "",
       "hint": "You will need one <code>if</code>, one <code>elif</code>, and one <code>else</code>. Look at the code from the previous two problems for help.",
       "validation": {
@@ -540,7 +540,7 @@
       "content": "You can use decision-making to create a simple quiz. We can print a question and then use <code>get_choice()</code> to get the user's answer.",
       "task": "Write a program that asks a quiz question and provides three multiple-choice answers using <code>get_choice(3)</code>.<br>The question is: \"What is 10 + 5?\"<br>The choices are: 1) 12, 2) 15, 3) 20.<br>Your program should print \"Correct\" for the right answer, and \"Not quite\" for the wrong ones.",
       "interactionType": "buttons",
-      "codeHeight": 7,
+      "codeHeight": 11,
       "starterCode": "print(\"What is 10 + 5?\")\nprint(\"1) 12\")\nprint(\"2) 15\")\nprint(\"3) 20\")\n",
       "hint": "The correct answer is choice 2. You can use an <code>if choice == 2:</code> block for the correct message and an <code>else</code> block for the incorrect message.",
       "validation": {
@@ -557,7 +557,7 @@
       "content": "Decisions can change the value of variables! This is how games keep track of things like health or score. The line <code>health = health + 5</code> takes the current value of health, adds 5, and then saves the result back into the health variable.",
       "task": "Complete the program. Add an <code>else</code> block that subtracts 3 from health if the second choice is picked.",
       "interactionType": "buttons",
-      "codeHeight": 8,
+      "codeHeight": 11,
       "starterCode": "health = 10\nprint(\"Your health is 10\")\nchoice = get_choice(2)\n\nif choice == 1:\n  health = health + 5\n\nprint(\"Your health is now\", health)",
       "hint": "Add an <code>else:</code> block. Inside it, write the line <code>health = health - 3</code>.",
       "validation": {
@@ -601,7 +601,7 @@
           "type": "number"
         }
       ],
-      "codeHeight": 6,
+      "codeHeight": 7,
       "starterCode": "num = get_input('num')\ncode = get_input('code')\n",
       "hint": "Your <code>if</code> statement will look like this: <code>if num == 7 and code == 123:</code>.",
       "validation": {
@@ -647,7 +647,7 @@
       "title": "Finding the Remainder %",
       "content": "In programming, there's a special math symbol called <strong>modulo</strong>, which is a percent sign <code>%</code>. It gives you the remainder of a division. For example, if you share 10 sweets between 3 friends, each gets 3 and there is 1 left over. So, <code>10 % 3</code> is 1.",
       "task": "Run the code to see the remainder of 14 divided by 4. Change the numbers to see how it works with different values.",
-      "codeHeight": 2,
+      "codeHeight": 3,
       "starterCode": "print(14 % 4)",
       "hint": "14 divided by 4 is 3 with a remainder of 2.",
       "validation": {
@@ -670,7 +670,7 @@
           "type": "number"
         }
       ],
-      "codeHeight": 6,
+      "codeHeight": 7,
       "starterCode": "number = get_input()\n\nif number % 2 == 0:\n  print(\"Even\")\nelse:\n  print(\"Odd\")",
       "hint": "Try entering 10, then try 5. See how the result of <code>number % 2</code> changes the outcome.",
       "validation": {
@@ -703,7 +703,7 @@
       "content": "Now that you've practiced loops and decisions, let's combine them to create an interactive dance sequence!",
       "task": "Write a program that uses a <code>for</code> loop to run 4 times. Inside the loop, use <code>get_choice(3)</code> to pick a dance move ('Spin', 'Jump', or 'Wiggle') and print a message for each move.",
       "interactionType": "buttons",
-      "codeHeight": 8,
+      "codeHeight": 9,
       "starterCode": "",
       "hint": "Use <code>for i in range(4):</code>. Inside that loop, get a choice and use an <code>if/elif/else</code> structure to print the chosen move.",
       "validation": {
