@@ -28,10 +28,10 @@
     {
       "title": "Comparisons give True or False",
       "content": "Comparing two numbers also gives <code>True</code> or <code>False</code>. The <code>></code> sign asks 'is the left number greater than the right?'",
-      "task": "Run the code. The first two lines print <code>True</code>, the last two print <code>False</code>. Change the numbers in the last two lines so they also print <code>True</code>.",
+      "task": "Run the code. The first three lines print <code>True</code>, but the last one prints <code>False</code>. Change the numbers on the line <code>print(4 > 9)</code> to make it print <code>True</code>.",
       "codeHeight": 5,
-      "starterCode": "print(8 > 3)\nprint(10 > 1)\nprint(2 > 7)\nprint(4 > 9)",
-      "hint": "For `print(2 > 7)`, change the 7 to any number less than 2. For `print(4 > 9)`, change the 9 to any number less than 4.",
+      "starterCode": "print(8 > 3)\nprint(10 > 1)\nprint(7 > 2)\nprint(4 > 9)",
+      "hint": "Change the 9 in `print(4 > 9)` to any number less than 4.",
       "validation": {
         "rules": [
           { "type": "no_errors" },
