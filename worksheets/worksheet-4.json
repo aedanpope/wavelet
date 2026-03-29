@@ -83,6 +83,34 @@
       "footer": "Condition = the True/False question. Body = the code that runs when True."
     },
     {
+      "type": "trace",
+      "title": "When the condition is True — body runs",
+      "code": "n = 15\nif n > 10:\n  print('big number')\nprint('done')",
+      "steps": [
+        {"line":1,"locals":{},"for_ctx":null,"phase":"before","ann":null,"output":""},
+        {"line":1,"locals":{"n":"15"},"for_ctx":null,"phase":"after","ann":null,"output":""},
+        {"line":2,"locals":{"n":"15"},"for_ctx":null,"phase":"before","ann":{"type":"if_test","cond":"n > 10"},"output":""},
+        {"line":2,"locals":{"n":"15"},"for_ctx":null,"phase":"after","ann":{"type":"if_result","cond":"n > 10","value":true},"output":""},
+        {"line":3,"locals":{"n":"15"},"for_ctx":null,"phase":"before","ann":{"type":"print","preview":"big number"},"output":""},
+        {"line":3,"locals":{"n":"15"},"for_ctx":null,"phase":"after","ann":null,"output":"big number\n"},
+        {"line":4,"locals":{"n":"15"},"for_ctx":null,"phase":"before","ann":{"type":"print","preview":"done"},"output":"big number\n"},
+        {"line":4,"locals":{"n":"15"},"for_ctx":null,"phase":"after","ann":null,"output":"big number\ndone\n"}
+      ]
+    },
+    {
+      "type": "trace",
+      "title": "When the condition is False — body is skipped",
+      "code": "n = 8\nif n > 10:\n  print('big number')\nprint('done')",
+      "steps": [
+        {"line":1,"locals":{},"for_ctx":null,"phase":"before","ann":null,"output":""},
+        {"line":1,"locals":{"n":"8"},"for_ctx":null,"phase":"after","ann":null,"output":""},
+        {"line":2,"locals":{"n":"8"},"for_ctx":null,"phase":"before","ann":{"type":"if_test","cond":"n > 10"},"output":""},
+        {"line":2,"locals":{"n":"8"},"for_ctx":null,"phase":"after","ann":{"type":"if_result","cond":"n > 10","value":false},"output":""},
+        {"line":4,"locals":{"n":"8"},"for_ctx":null,"phase":"before","ann":{"type":"print","preview":"done"},"output":""},
+        {"line":4,"locals":{"n":"8"},"for_ctx":null,"phase":"after","ann":null,"output":"done\n"}
+      ]
+    },
+    {
       "title": "Greater Than >",
       "content": "So far, our programs have always run the same way. But what if we want our code to make decisions? The <code>if</code> statement runs code only when a condition is true. We can use math symbols like <code>></code> (greater than) to create these conditions.",
       "task": "Run the code. Then, change the number in the <code>age</code> variable to 3 and run it again. Notice how the <code>True</code>/<code>False</code> line changes and predicts whether 'OK' will be printed.",
@@ -284,6 +312,19 @@
       "title": "Two Paths: adding else",
       "content": "<p>So far, when the condition is <code>False</code>, nothing happens. But what if we want to do something in that case too? We add an <code>else</code> block — it runs when the condition is <code>False</code>.</p><img src='worksheets/diagrams/if-else-anatomy.svg' alt='if-else diagram' style='width:100%;max-width:440px;display:block;margin:12px 0;'/><p>Python always goes down <strong>exactly one</strong> path — never both, never neither.</p>",
       "footer": "if = runs when True. else = runs when False. Only one ever runs."
+    },
+    {
+      "type": "trace",
+      "title": "else in action — the False path runs",
+      "code": "score = 3\nif score >= 5:\n  print('pass')\nelse:\n  print('fail')",
+      "steps": [
+        {"line":1,"locals":{},"for_ctx":null,"phase":"before","ann":null,"output":""},
+        {"line":1,"locals":{"score":"3"},"for_ctx":null,"phase":"after","ann":null,"output":""},
+        {"line":2,"locals":{"score":"3"},"for_ctx":null,"phase":"before","ann":{"type":"if_test","cond":"score >= 5"},"output":""},
+        {"line":2,"locals":{"score":"3"},"for_ctx":null,"phase":"after","ann":{"type":"if_result","cond":"score >= 5","value":false},"output":""},
+        {"line":5,"locals":{"score":"3"},"for_ctx":null,"phase":"before","ann":{"type":"print","preview":"fail"},"output":""},
+        {"line":5,"locals":{"score":"3"},"for_ctx":null,"phase":"after","ann":null,"output":"fail\n"}
+      ]
     },
     {
       "title": "Adding an else",
