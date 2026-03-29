@@ -7,7 +7,7 @@
       "type": "concept",
       "icon": "✅",
       "title": "True and False: Python's Yes/No Values",
-      "content": "<p>You already know Python works with numbers. It also has two special yes/no values called <strong>booleans</strong>: <code>True</code> and <code>False</code>. You can print them just like numbers:</p><p><code>print(True)</code> &nbsp;&nbsp;→ prints <strong>True</strong><br><code>print(False)</code> &nbsp;→ prints <strong>False</strong></p><p>You can also print the result of comparing two numbers — Python will answer with <code>True</code> or <code>False</code>:</p><p><code>print(5 > 3)</code> &nbsp;&nbsp;→ <strong>True</strong> &nbsp;<em>(5 is greater than 3 ✓)</em><br><code>print(2 > 9)</code> &nbsp;&nbsp;→ <strong>False</strong> &nbsp;<em>(2 is not greater than 9 ✗)</em></p>",
+      "content": "<p>Python has two special yes/no values called <strong>booleans</strong>: <code>True</code> and <code>False</code>. You can print them just like numbers:</p><p><code>print(True)</code> &nbsp;&nbsp;→ prints <strong>True</strong><br><code>print(False)</code> &nbsp;→ prints <strong>False</strong></p><p>You can also print the result of comparing two numbers — Python will answer with <code>True</code> or <code>False</code>:</p><p><code>print(5 > 3)</code> &nbsp;&nbsp;→ <strong>True</strong> &nbsp;<em>(5 is greater than 3 ✓)</em><br><code>print(2 > 9)</code> &nbsp;&nbsp;→ <strong>False</strong> &nbsp;<em>(2 is not greater than 9 ✗)</em></p>",
       "footer": "The capital letter matters — Python knows True and False, but not true or false."
     },
     {
@@ -53,6 +53,13 @@
           { "type": "output_contains", "pattern": "True\nTrue\nTrue\nTrue", "description": "All four comparisons should print True" }
         ]
       }
+    },
+    {
+      "type": "concept",
+      "icon": "🔀",
+      "title": "Making Decisions: the if statement",
+      "content": "<p>So far, every line of your code always ran. The <code>if</code> statement changes that — it only runs the indented code <strong>when the condition is <code>True</code></strong>.</p><p><code>if age > 5:</code><br>&nbsp;&nbsp;&nbsp;&nbsp;<code>print(\"OK\")</code></p><p>Python checks whether <code>age > 5</code> is <code>True</code> or <code>False</code>. If it's <code>True</code>, the indented line runs. If it's <code>False</code>, Python skips it entirely.</p><p>Notice the <strong>colon</strong> <code>:</code> at the end of the <code>if</code> line, and the <strong>indent</strong> (spaces) before the code inside — just like loops in Worksheet 3.</p>",
+      "footer": "Any code that is indented under the if only runs when the condition is True."
     },
     {
       "title": "Greater Than >",
