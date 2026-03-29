@@ -13,18 +13,11 @@
   <!-- After-loop highlight -->
   <rect x="18" y="112" width="152" height="23" rx="3" fill="rgba(251,191,36,0.25)"/>
 
-  <!-- Code: for i in range(3): -->
   <text font-family="monospace" font-size="15">
     <tspan x="22" y="35" fill="#c084fc">for </tspan><tspan fill="#e2e8f0">i in range(3):</tspan>
   </text>
-
-  <!-- Code:   print(i) -->
   <text font-family="monospace" font-size="15" x="40" y="66" fill="#6ee7b7">print(i)</text>
-
-  <!-- Code:   print("---") -->
   <text font-family="monospace" font-size="15" x="40" y="96" fill="#6ee7b7">print("---")</text>
-
-  <!-- Code: print("done") -->
   <text font-family="monospace" font-size="15" x="22" y="129" fill="#fbbf24">print("done")</text>
 
   <!-- Arrow: loop statement -->
