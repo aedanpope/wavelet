@@ -58,7 +58,7 @@
       "type": "concept",
       "icon": "🔀",
       "title": "Making Decisions: the if statement",
-      "content": "<p>So far, every line of your code always ran. The <code>if</code> statement changes that — it only runs the indented code <strong>when the condition is <code>True</code></strong>.</p><p><code>if <strong>age > 5</strong>:</code><br>&nbsp;&nbsp;&nbsp;&nbsp;<code>print(\"OK\")</code></p><p>Every <code>if</code> statement has two parts:</p><ul><li><strong>Condition</strong> — the True/False question, written between <code>if</code> and the colon: <code>age > 5</code></li><li><strong>Body</strong> — the indented line(s) that only run when the condition is <code>True</code>: <code>print(\"OK\")</code></li></ul><p>Python checks the <strong>condition</strong>. If it's <code>True</code>, it runs the <strong>body</strong>. If it's <code>False</code>, it skips the body entirely.</p><p>Notice the <strong>colon</strong> <code>:</code> at the end of the <code>if</code> line — just like loops in Worksheet 3.</p>",
+      "content": "<p>So far, every line of your code always ran. The <code>if</code> statement changes that — it only runs the indented code <strong>when the condition is <code>True</code></strong>.</p><p>Every <code>if</code> statement has two parts:</p><ul><li><strong>Condition</strong> — the True/False question between <code>if</code> and the colon</li><li><strong>Body</strong> — the indented line(s) that only run when the condition is <code>True</code></li></ul><img src='worksheets/diagrams/if-statement-anatomy.svg' alt='if statement diagram showing condition and body labels' style='width:100%;max-width:420px;display:block;margin:12px 0;'/><p>Python checks the <strong>condition</strong>. If it's <code>True</code>, it runs the <strong>body</strong>. If it's <code>False</code>, it skips the body entirely.</p><p>Notice the <strong>colon</strong> <code>:</code> at the end of the <code>if</code> line — just like loops in Worksheet 3.</p>",
       "footer": "Condition = the True/False question. Body = the code that runs when True."
     },
     {
@@ -129,7 +129,7 @@
       "content": "Great job fixing that bug! Now that you know the difference between <code>=</code> and <code>==</code>, let's create a simple program from scratch.",
       "task": "Write a program that sets a variable called <code>number</code> to 3, then uses an if statement to check if it equals 3. If it does, print 'yes'.",
       "codeHeight": 4,
-      "starterCode": "",
+      "starterCode": "number = 3\n",
       "hint": "Remember: use = to set the variable, and == to check if it equals 3. You only need an if statement and one print.",
       "validation": {
         "rules": [
@@ -153,8 +153,15 @@
       }
     },
     {
+      "type": "concept",
+      "icon": "🔀",
+      "title": "Two Paths: adding else",
+      "content": "<p>So far, when the condition is <code>False</code>, nothing happens. But what if we want to do something in that case too? We add an <code>else</code> block — it runs when the condition is <code>False</code>.</p><img src='worksheets/diagrams/if-else-anatomy.svg' alt='if-else diagram' style='width:100%;max-width:440px;display:block;margin:12px 0;'/><p>Python always goes down <strong>exactly one</strong> path — never both, never neither.</p>",
+      "footer": "if = runs when True. else = runs when False. Only one ever runs."
+    },
+    {
       "title": "Adding an else",
-      "content": "What if we want to do something when the <code>if</code> condition is *not* true? We can add an <code>else</code> block. The code in the <code>else</code> block only runs if the <code>if</code> condition is `False`.",
+      "content": "What if we want to do something when the <code>if</code> condition is <em>not</em> true? We can add an <code>else</code> block. The code in the <code>else</code> block only runs if the <code>if</code> condition is <code>False</code>.",
       "task": "Enter different numbers to see both paths. If you enter a number greater than 10, 'Big number' prints. For any other number, 'Small number' prints.",
       "inputs": [ { "name": "n", "label": "Number:", "type": "number" } ],
       "codeHeight": 6,
@@ -163,37 +170,17 @@
       "validation": { "rules": [{ "type": "solution_code", "solutionCode": "n = get_input()\nif n > 10:\n  print(\"Big number\")\nelse:\n  print(\"Small number\")" }] }
     },
     {
-      "title": "Greater Than or Equal To >=",
-      "content": "What if you want to include the number in your check? You can use <code>>=</code> which means 'greater than or equal to'. This problem will help you practice using >= specifically.",
-      "task": "Run the code with the score set to 50. It says 'Try again'. Change the <code>></code> to <code>>=</code> so that a score of exactly 50 is also a pass. Keep the score as 50 to practice how >= works differently from >.",
+      "title": "Your Turn: Add an else",
+      "content": "This program checks if a score is high, but does nothing when it's low. Let's fix that by adding an <code>else</code> block.",
+      "task": "Run the code with <code>score = 3</code> — nothing prints! Add an <code>else</code> block so that when the score is not greater than 8, it prints <code>Keep trying</code>.",
       "codeHeight": 6,
-      "starterCode": "score = 50\n\nif score > 50:\n  print(\"You passed\")\nelse:\n  print(\"Try again\")",
-      "hint": "Just add an equals sign = after the greater than sign >. Notice how >= includes the boundary value (50) while > excludes it.",
+      "starterCode": "score = 3\n\nif score > 8:\n  print(\"Great score\")",
+      "hint": "Add `else:` on the line after the if-block, then indent the next line and write your print statement.",
       "validation": {
         "rules": [
-          {
-            "type": "no_errors"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "score = 50",
-            "description": "Keep the score as 50 to practice the >= operator. Don't change the score value."
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "if\\s+score\\s*>=\\s*50\\s*:",
-            "description": "Use the >= operator in your if statement: 'if score >= 50:'"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "^(?!.*score\\s*=\\s*(?!50\\b)\\d+)",
-            "description": "Don't change the score value. Keep it as 50 to learn how >= works."
-          },
-          {
-            "type": "output_contains",
-            "pattern": "You passed",
-            "description": "Your code should print 'You passed' when the score is 50 and you use >=."
-          }
+          { "type": "no_errors" },
+          { "type": "code_contains", "pattern": "else:", "description": "Add an else: block" },
+          { "type": "output_contains", "pattern": "Keep trying", "description": "Print 'Keep trying' in the else block" }
         ]
       }
     },
@@ -265,6 +252,57 @@
       "starterCode": "choice = get_choice(3)\n\nif choice == 1:\n  print(\"Found gold coins\")\nelif choice == 2:\n  print(\"Found a rusty sword\")\nelse:\n  print(\"A dragon pops out\")",
       "hint": "Your new `elif choice == 3:` block should go just before the final `else:`.",
       "validation": { "rules": [{ "type": "solution_code", "solutionCode": "choice = get_choice(4)\n\nif choice == 1:\n  print(\"Found gold coins\")\nelif choice == 2:\n  print(\"Found a rusty sword\")\nelif choice == 3:\n  print(\"Found a map\")\nelse:\n  print(\"A dragon pops out\")" }] }
+    },
+    {
+      "type": "concept",
+      "icon": "⚖️",
+      "title": "All the Comparison Operators",
+      "content": "<p>You have used <code>&gt;</code> and <code>==</code> already. Here are all six comparison operators Python understands — every one of them gives <code>True</code> or <code>False</code>:</p><table style='width:100%;border-collapse:collapse;font-size:0.95rem;margin:10px 0;'><thead><tr style='background:rgba(0,0,0,0.08);'><th style='padding:7px 10px;text-align:left;'>Operator</th><th style='padding:7px 10px;text-align:left;'>Meaning</th><th style='padding:7px 10px;text-align:left;'>Example</th><th style='padding:7px 10px;text-align:left;'>Result</th></tr></thead><tbody><tr><td style='padding:6px 10px;'><code>&gt;</code></td><td style='padding:6px 10px;'>greater than</td><td style='padding:6px 10px;'><code>8 &gt; 3</code></td><td style='padding:6px 10px;'><code>True</code></td></tr><tr style='background:rgba(0,0,0,0.04);'><td style='padding:6px 10px;'><code>&lt;</code></td><td style='padding:6px 10px;'>less than</td><td style='padding:6px 10px;'><code>2 &lt; 7</code></td><td style='padding:6px 10px;'><code>True</code></td></tr><tr><td style='padding:6px 10px;'><code>==</code></td><td style='padding:6px 10px;'>equal to</td><td style='padding:6px 10px;'><code>5 == 5</code></td><td style='padding:6px 10px;'><code>True</code></td></tr><tr style='background:rgba(0,0,0,0.04);'><td style='padding:6px 10px;'><code>!=</code></td><td style='padding:6px 10px;'>not equal to</td><td style='padding:6px 10px;'><code>4 != 9</code></td><td style='padding:6px 10px;'><code>True</code></td></tr><tr><td style='padding:6px 10px;'><code>&gt;=</code></td><td style='padding:6px 10px;'>greater than or equal to</td><td style='padding:6px 10px;'><code>5 &gt;= 5</code></td><td style='padding:6px 10px;'><code>True</code></td></tr><tr style='background:rgba(0,0,0,0.04);'><td style='padding:6px 10px;'><code>&lt;=</code></td><td style='padding:6px 10px;'>less than or equal to</td><td style='padding:6px 10px;'><code>3 &lt;= 3</code></td><td style='padding:6px 10px;'><code>True</code></td></tr></tbody></table>",
+      "footer": "!= means 'not equal' — the ! is read as 'not'."
+    },
+    {
+      "title": "Not Equal !=",
+      "content": "The <code>!=</code> operator checks if two values are <em>different</em>. It's the opposite of <code>==</code>.",
+      "task": "Click both buttons. Button 1 is the secret button — clicking anything else should trigger the <code>!=</code> check. Run a few times to see both messages.",
+      "interactionType": "buttons",
+      "codeHeight": 6,
+      "starterCode": "choice = get_choice(3)\n\nif choice != 1:\n  print(\"That is not the secret button\")\nelse:\n  print(\"You found it\")",
+      "hint": "!= means 'not equal to'. The body runs whenever choice is anything other than 1.",
+      "validation": { "rules": [{ "type": "code_contains", "pattern": "!=" }] }
+    },
+    {
+      "title": "Your Turn: Use !=",
+      "content": "Practice using <code>!=</code> yourself.",
+      "task": "Write a program that uses <code>get_choice(2)</code>. If the choice is <strong>not</strong> equal to 2, print <code>Wrong button</code>. Otherwise print <code>Correct</code>.",
+      "interactionType": "buttons",
+      "codeHeight": 6,
+      "starterCode": "",
+      "hint": "Your condition should be `if choice != 2:`.",
+      "validation": {
+        "rules": [
+          { "type": "no_errors" },
+          { "type": "code_contains", "pattern": "!=" },
+          { "type": "code_contains", "pattern": "get_choice(2)" },
+          { "type": "code_contains", "pattern": "else:" }
+        ]
+      }
+    },
+    {
+      "title": "Greater Than or Equal To >=",
+      "content": "What if you want to include the number in your check? You can use <code>>=</code> which means 'greater than or equal to'. This problem will help you practice using >= specifically.",
+      "task": "Run the code with the score set to 50. It says 'Try again'. Change the <code>></code> to <code>>=</code> so that a score of exactly 50 is also a pass. Keep the score as 50 to practice how >= works differently from >.",
+      "codeHeight": 6,
+      "starterCode": "score = 50\n\nif score > 50:\n  print(\"You passed\")\nelse:\n  print(\"Try again\")",
+      "hint": "Just add an equals sign = after the greater than sign >. Notice how >= includes the boundary value (50) while > excludes it.",
+      "validation": {
+        "rules": [
+          { "type": "no_errors" },
+          { "type": "code_contains", "pattern": "score = 50", "description": "Keep the score as 50 to practice the >= operator. Don't change the score value." },
+          { "type": "code_contains_regex", "pattern": "if\\s+score\\s*>=\\s*50\\s*:", "description": "Use the >= operator in your if statement: 'if score >= 50:'" },
+          { "type": "code_contains_regex", "pattern": "^(?!.*score\\s*=\\s*(?!50\\b)\\d+)", "description": "Don't change the score value. Keep it as 50 to learn how >= works." },
+          { "type": "output_contains", "pattern": "You passed", "description": "Your code should print 'You passed' when the score is 50 and you use >=." }
+        ]
+      }
     },
     {
       "title": "The Drink Machine",

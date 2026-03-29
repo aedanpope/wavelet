@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 110">
+
+  <!-- Code block background -->
+  <rect x="12" y="12" width="210" height="86" rx="8" fill="#1e293b"/>
+
+  <!-- Condition highlight (over "age > 5", not the colon) -->
+  <rect x="48" y="30" width="58" height="23" rx="3" fill="rgba(167,139,250,0.45)"/>
+
+  <!-- Body highlight (over "print("OK")") -->
+  <rect x="37" y="63" width="101" height="23" rx="3" fill="rgba(52,211,153,0.35)"/>
+
+  <!-- Line 1: if age > 5: -->
+  <text font-family="monospace" font-size="15">
+    <tspan x="22" y="47" fill="#c084fc">if </tspan><tspan fill="#e2e8f0">age &gt; 5:</tspan>
+  </text>
+
+  <!-- Line 2:   print("OK") — x offset simulates 2-space indent (2 × ~9px per char) -->
+  <text font-family="monospace" font-size="15" x="40" y="80" fill="#6ee7b7">print("OK")</text>
+
+  <!-- Condition arrow: tip lands at right edge of "age > 5" highlight -->
+  <line x1="237" y1="42" x2="122" y2="42" stroke="#7c3aed" stroke-width="1.8"/>
+  <polygon points="113,42 122,37.5 122,46.5" fill="#7c3aed"/>
+  <text x="242" y="47" font-family="sans-serif" font-size="14" fill="#5b21b6" font-weight="700">condition</text>
+
+  <!-- Body arrow: tip lands at right edge of "print("OK")" highlight -->
+  <line x1="237" y1="75" x2="167" y2="75" stroke="#059669" stroke-width="1.8"/>
+  <polygon points="158,75 167,70.5 167,79.5" fill="#059669"/>
+  <text x="242" y="80" font-family="sans-serif" font-size="14" fill="#065f46" font-weight="700">body</text>
+
+</svg>
