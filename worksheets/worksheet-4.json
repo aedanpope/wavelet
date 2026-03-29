@@ -26,6 +26,20 @@
       }
     },
     {
+      "title": "Fix the Typo: true vs True",
+      "content": "Python is picky about capital letters! <code>True</code> and <code>False</code> must always start with a capital. Using <code>true</code> (lowercase) causes an error.",
+      "task": "Run the code to see the error. Then fix the typo so the program prints <code>True</code>.",
+      "codeHeight": 3,
+      "starterCode": "print(true)",
+      "hint": "Change `true` to `True` — Python needs the capital T.",
+      "validation": {
+        "rules": [
+          { "type": "no_errors" },
+          { "type": "output_contains", "pattern": "True" }
+        ]
+      }
+    },
+    {
       "title": "Comparisons give True or False",
       "content": "Comparing two numbers also gives <code>True</code> or <code>False</code>. The <code>></code> sign asks 'is the left number greater than the right?'",
       "task": "Run the code. The first three lines print <code>True</code>, but the last one prints <code>False</code>. Change the numbers on the line <code>print(4 > 9)</code> to make it print <code>True</code>.",
