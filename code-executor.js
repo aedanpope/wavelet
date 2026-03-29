@@ -56,10 +56,18 @@ class CodeExecutor {
         textContainer.className = 'output-text';
         outputElement.appendChild(textContainer);
 
-        // Capture print output incrementally
+        // Capture print output incrementally.
+        // args arrive as JS primitives (Pyodide converts bool→true/false, None→null)
+        // so we must map them back to Python's string representations before joining.
+        const pyStr = a => {
+            if (a === true)  return 'True';
+            if (a === false) return 'False';
+            if (a === null)  return 'None';
+            return String(a);
+        };
         const originalPrint = this.pyodide.globals.get('print');
         this.pyodide.globals.set('print', function(...args) {
-            const text = args.join(' ');
+            const text = args.map(pyStr).join(' ');
             textContainer.textContent += text + '\n';
             printOutput += text + '\n';
         });
