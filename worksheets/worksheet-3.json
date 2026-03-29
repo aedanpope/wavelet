@@ -196,6 +196,7 @@
       "title": "Loop with two statements",
       "content": "A loop can print as many things as you like on each repetition — just indent them all the same amount.",
       "task": "Write a <code>for</code> loop that repeats 3 times and prints <code>'Hip'</code>, <code>'Hip'</code>, and then <code>'Hooray!'</code> each time, so the output looks like:<code><br/>Hip<br/>Hip<br/>Hooray!<br/>Hip<br/>Hip<br/>Hooray!<br/>Hip<br/>Hip<br/>Hooray!</code>",
+      "codeHeight": 5,
       "starterCode": "",
       "hint": "Use a list with 3 items, like <code>[1, 2, 3]</code>. Inside the loop, add three <code>print</code> statements — two for <code>'Hip'</code> and one for <code>'Hooray!'</code>.",
       "validation": {
