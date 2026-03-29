@@ -96,6 +96,33 @@ Problems are validated using pattern matching, output checking, and code analysi
 ### Progress Tracking
 Automatic progress persistence using localStorage. Students' code and completion status are saved per worksheet.
 
+### Concept Cards (worksheet problem type `"type": "concept"`)
+A non-interactive explanatory block that can be inserted between coding problems in any worksheet. Rendered by `createConceptElement()` in `worksheet.js`; excluded from problem numbering/progress tracking via the `getProblems()` filter.
+
+**JSON schema** (all fields except `title` and `content` are optional):
+```json
+{
+  "type": "concept",
+  "icon": "💡",
+  "title": "Key Concept: ...",
+  "content": "<p>HTML content with <code>inline code</code> and <strong>bold</strong></p>",
+  "examples": [
+    { "input": "3",  "substituted": "print(3 + 5)",  "output": "8"  },
+    { "input": "10", "substituted": "print(10 + 5)", "output": "15" }
+  ],
+  "footer": "Optional italic closing thought."
+}
+```
+
+**Rendered structure**: amber/yellow gradient card (`background: linear-gradient(135deg, #fffbeb, #fef3c7)`) with a left amber border. Header has a large icon + bold title. Body renders `content` as raw HTML. The optional `examples` block shows a row of pills for each example: `You type X → Python sees <code>…</code> → prints Y`. Footer appears in italic below.
+
+**Styling**: all in `styles.css` under `/* Concept Card */` — classes `.concept-card`, `.concept-header`, `.concept-icon`, `.concept-body`, `.concept-examples`, `.concept-example`, `.example-input`, `.example-arrow`, `.example-code`, `.example-output`, `.concept-footer`.
+
+**Potential future uses:**
+- Insert concept cards at the start of any worksheet to introduce a key idea before the first problem
+- Use between problem groups to bridge from one concept to the next (e.g. before introducing strings in Worksheet 5)
+- Could be extended: add a `"type": "concept"` variant with a live code demo or embedded trace player to show the concept executing step-by-step
+
 ### Python Scratchpad (`scratchpad.html` / `scratchpad.js`)
 A free-form Python workspace outside the worksheet structure. Features configurable inputs (`get_input()`), an optional canvas, and an **Execution Trace** mode.
 
