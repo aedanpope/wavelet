@@ -4,6 +4,43 @@
   "description": "Learn to use if, elif, and else statements to create programs that can make choices and respond to different conditions.",
   "problems": [
     {
+      "type": "concept",
+      "icon": "✅",
+      "title": "True and False: Python's Yes/No Values",
+      "content": "<p>You already know Python works with numbers. It also has two special yes/no values called <strong>booleans</strong>: <code>True</code> and <code>False</code>. You can print them just like numbers:</p><p><code>print(True)</code> &nbsp;&nbsp;→ prints <strong>True</strong><br><code>print(False)</code> &nbsp;→ prints <strong>False</strong></p><p>You can also print the result of comparing two numbers — Python will answer with <code>True</code> or <code>False</code>:</p><p><code>print(5 > 3)</code> &nbsp;&nbsp;→ <strong>True</strong> &nbsp;<em>(5 is greater than 3 ✓)</em><br><code>print(2 > 9)</code> &nbsp;&nbsp;→ <strong>False</strong> &nbsp;<em>(2 is not greater than 9 ✗)</em></p>",
+      "footer": "The capital letter matters — Python knows True and False, but not true or false."
+    },
+    {
+      "title": "Printing True and False",
+      "content": "Like numbers, you can print Python's boolean values directly. They always start with a capital letter.",
+      "task": "Run the code. Then add a third line that prints <code>False</code>.",
+      "codeHeight": 4,
+      "starterCode": "print(True)\nprint(True)",
+      "hint": "Add `print(False)` as a third line at the bottom.",
+      "validation": {
+        "rules": [
+          { "type": "no_errors" },
+          { "type": "code_contains", "pattern": "print(False)" },
+          { "type": "output_not_empty" }
+        ]
+      }
+    },
+    {
+      "title": "Comparisons give True or False",
+      "content": "Comparing two numbers also gives <code>True</code> or <code>False</code>. The <code>></code> sign asks 'is the left number greater than the right?'",
+      "task": "Run the code. The first two lines print <code>True</code>, the last two print <code>False</code>. Change the numbers in the last two lines so they also print <code>True</code>.",
+      "codeHeight": 5,
+      "starterCode": "print(8 > 3)\nprint(10 > 1)\nprint(2 > 7)\nprint(4 > 9)",
+      "hint": "For `print(2 > 7)`, change the 7 to any number less than 2. For `print(4 > 9)`, change the 9 to any number less than 4.",
+      "validation": {
+        "rules": [
+          { "type": "no_errors" },
+          { "type": "code_contains", "pattern": ">" },
+          { "type": "output_contains", "pattern": "True" }
+        ]
+      }
+    },
+    {
       "title": "Greater Than >",
       "content": "So far, our programs have always run the same way. But what if we want our code to make decisions? The <code>if</code> statement runs code only when a condition is true. We can use math symbols like <code>></code> (greater than) to create these conditions.",
       "task": "Run the code. Then, change the number in the <code>age</code> variable to 3 and run it again. Notice how the <code>True</code>/<code>False</code> line changes and predicts whether 'OK' will be printed.",
