@@ -58,8 +58,8 @@
       "type": "concept",
       "icon": "🔀",
       "title": "Making Decisions: the if statement",
-      "content": "<p>So far, every line of your code always ran. The <code>if</code> statement changes that — it only runs the indented code <strong>when the condition is <code>True</code></strong>.</p><p><code>if age > 5:</code><br>&nbsp;&nbsp;&nbsp;&nbsp;<code>print(\"OK\")</code></p><p>Python checks whether <code>age > 5</code> is <code>True</code> or <code>False</code>. If it's <code>True</code>, the indented line runs. If it's <code>False</code>, Python skips it entirely.</p><p>Notice the <strong>colon</strong> <code>:</code> at the end of the <code>if</code> line, and the <strong>indent</strong> (spaces) before the code inside — just like loops in Worksheet 3.</p>",
-      "footer": "Any code that is indented under the if only runs when the condition is True."
+      "content": "<p>So far, every line of your code always ran. The <code>if</code> statement changes that — it only runs the indented code <strong>when the condition is <code>True</code></strong>.</p><p><code>if <strong>age > 5</strong>:</code><br>&nbsp;&nbsp;&nbsp;&nbsp;<code>print(\"OK\")</code></p><p>Every <code>if</code> statement has two parts:</p><ul><li><strong>Condition</strong> — the True/False question, written between <code>if</code> and the colon: <code>age > 5</code></li><li><strong>Body</strong> — the indented line(s) that only run when the condition is <code>True</code>: <code>print(\"OK\")</code></li></ul><p>Python checks the <strong>condition</strong>. If it's <code>True</code>, it runs the <strong>body</strong>. If it's <code>False</code>, it skips the body entirely.</p><p>Notice the <strong>colon</strong> <code>:</code> at the end of the <code>if</code> line — just like loops in Worksheet 3.</p>",
+      "footer": "Condition = the True/False question. Body = the code that runs when True."
     },
     {
       "title": "Greater Than >",
