@@ -5,7 +5,7 @@
   "problems": [
     {
       "title": "Your First Pixel",
-      "content": "Welcome to grid drawing! You can color cells on a grid using the `draw()` function. The grid uses coordinates like a graph in math class: (x, y). The bottom-left corner is (0, 0).\n\nTry running this code to see a single red cell appear!",
+      "content": "Welcome to grid drawing! You can color cells on a grid using the <code>draw()</code> function. The grid uses coordinates like a graph in math class: (x, y). The bottom-left corner is (0, 0).\n\nTry running this code to see a single red cell appear!",
       "task": "Run the code to draw a red cell at position (1, 1).",
       "starterCode": "use_canvas(GRID3)\n\n# Draw a red cell in the center\ndraw(1, 1, 'red')",
       "hint": "Just click 'Run Code' to see the cell appear on the canvas above!",

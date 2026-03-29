@@ -5,7 +5,7 @@
   "problems": [
     {
       "title": "Adding two numbers",
-      "content": "The `print()` function can be used as a simple calculator. Run this program and observe the output.",
+      "content": "The <code>print()</code> function can be used as a simple calculator. Run this program and observe the output.",
       "task": "Run the code to see the result of the calculation.",
       "starterCode": "print(5 + 3)",
       "hint": "Check the output to see the answer.",
@@ -25,7 +25,7 @@
     },
     {
       "title": "Another addition",
-      "content": "Here is another problem to practice addition. The `+` symbol adds numbers together.",
+      "content": "Here is another problem to practice addition. The <code>+</code> symbol adds numbers together.",
       "task": "Run the program and find out the answer.",
       "starterCode": "print(4 + 8)",
       "hint": "What does four plus eight equal?",
@@ -100,10 +100,10 @@
     },
     {
       "title": "Fix the brackets",
-      "content": "This program has a mistake — the brackets are missing from `print`. Run it to see the error, then fix it.",
+      "content": "This program has a mistake — the brackets are missing from <code>print</code>. Run it to see the error, then fix it.",
       "task": "Add the missing brackets to make the program work.",
       "starterCode": "print 30 + 20",
-      "hint": "The `print` function needs brackets around what you want to print: `print(30 + 20)`.",
+      "hint": "The <code>print</code> function needs brackets around what you want to print: <code>print(30 + 20)</code>.",
       "validation": {
         "rules": [
           {
@@ -121,9 +121,9 @@
     {
       "title": "Add the print",
       "content": "This program calculates an answer but doesn't print it — so nothing appears when you run it. Try running it to see what happens, then fix it.",
-      "task": "Wrap the expression in a `print()` call so the answer is displayed.",
+      "task": "Wrap the expression in a <code>print()</code> call so the answer is displayed.",
       "starterCode": "40 + 15",
-      "hint": "Put `print(` before the expression and `)` at the end.",
+      "hint": "Put <code>print(</code> before the expression and <code>)</code> at the end.",
       "validation": {
         "rules": [
           {
@@ -143,7 +143,7 @@
       "content": "Write a complete program to solve this addition problem.",
       "task": "Write a program to find and print the answer to $7 + 13$.",
       "starterCode": "",
-      "hint": "Use the `print()` function with the numbers and the `+` operator.",
+      "hint": "Use the <code>print()</code> function with the numbers and the <code>+</code> operator.",
       "validation": {
         "rules": [
           {
@@ -207,7 +207,7 @@
     },
     {
       "title": "Subtracting two numbers",
-      "content": "The `-` symbol is used for subtraction. What is the answer to this problem?",
+      "content": "The <code>-</code> symbol is used for subtraction. What is the answer to this problem?",
       "task": "Run the code and find out the answer.",
       "starterCode": "print(10 - 4)",
       "hint": "What does ten minus four equal?",
@@ -260,7 +260,7 @@
       "content": "Write a complete program to solve this subtraction problem.",
       "task": "Write a program to find and print the answer to $30 - 15$.",
       "starterCode": "",
-      "hint": "Remember to use the `-` operator for subtraction.",
+      "hint": "Remember to use the <code>-</code> operator for subtraction.",
       "validation": {
         "rules": [
           {
@@ -319,7 +319,7 @@
     },
     {
       "title": "Multiplication",
-      "content": "The `*` symbol is used for multiplication. What is the answer to this problem?",
+      "content": "The <code>*</code> symbol is used for multiplication. What is the answer to this problem?",
       "task": "Run the program and find out the answer.",
       "starterCode": "print(4 * 6)",
       "hint": "What does four times six equal?",
@@ -368,7 +368,7 @@
       "content": "Write a complete program to solve this multiplication problem.",
       "task": "Write a program to find and print the answer to $9 * 10$.",
       "starterCode": "",
-      "hint": "Use the `*` operator to multiply.",
+      "hint": "Use the <code>*</code> operator to multiply.",
       "validation": {
         "rules": [
           {
@@ -434,7 +434,7 @@
     },
     {
       "title": "Division",
-      "content": "The `/` symbol is used for division. What is the answer to this problem?",
+      "content": "The <code>/</code> symbol is used for division. What is the answer to this problem?",
       "task": "Run the program and find out the answer.",
       "starterCode": "print(25 / 5)",
       "hint": "Division in Python can sometimes give a number with a decimal point, even if the answer is a whole number.",
@@ -489,7 +489,7 @@
       "content": "Write a complete program to solve this division problem.",
       "task": "Write a program to find and print the answer to $100 / 10$.",
       "starterCode": "",
-      "hint": "Use the `/` operator to divide.",
+      "hint": "Use the <code>/</code> operator to divide.",
       "validation": {
         "rules": [
           {
@@ -537,7 +537,7 @@
     {
       "title": "Change the order with brackets",
       "content": "In the last problem, <code>print(20 - 5 * 2)</code> gave 10 because Python did the multiplication first.\n\nWe can add <strong>extra brackets inside</strong> the <code>print()</code> brackets to force a different order. Here, brackets around <code>20 - 5</code> make the subtraction happen first.",
-      "task": "Run the program and see how the answer changes when brackets are added around `20 - 5`.",
+      "task": "Run the program and see how the answer changes when brackets are added around <code>20 - 5</code>.",
       "starterCode": "print((20 - 5) * 2)",
       "hint": "Just run the code and observe the output.",
       "validation": {
@@ -558,7 +558,7 @@
       "content": "Now it's your turn. The program below calculates <code>4 + 6 / 2</code> — but division happens first, so it doesn't give the answer you might expect.",
       "task": "Add brackets around <code>4 + 6</code> so the addition happens first, giving the answer to $(4 + 6) / 2$.",
       "starterCode": "print(4 + 6 / 2)",
-      "hint": "Wrap the addition part in brackets: `print((4 + 6) / 2)`.",
+      "hint": "Wrap the addition part in brackets: <code>print((4 + 6) / 2)</code>.",
       "validation": {
         "rules": [
           {
@@ -578,7 +578,7 @@
       "content": "Write a complete program that uses brackets to control the order of operations.",
       "task": "Write a program to find and print the answer to $10 * (5 - 3)$.",
       "starterCode": "",
-      "hint": "Put the `5 - 3` part inside brackets.",
+      "hint": "Put the <code>5 - 3</code> part inside brackets.",
       "validation": {
         "rules": [
           {
@@ -664,7 +664,7 @@
       "content": "Let's combine everything you've learned so far!",
       "task": "Write a program to find and print the answer to $8 + (12 / 4)$.",
       "starterCode": "",
-      "hint": "The division part `12 / 4` needs to go inside brackets to happen before the addition.",
+      "hint": "The division part <code>12 / 4</code> needs to go inside brackets to happen before the addition.",
       "validation": {
         "rules": [
           {
@@ -789,7 +789,7 @@
       "content": "A baker made 4 dozen cookies. He gave away 10 of them. How many cookies does he have left?",
       "task": "Write a program that solves this problem using multiplication and subtraction. (Hint: One dozen is 12 cookies).",
       "starterCode": "",
-      "hint": "Your expression should be `4 * 12 - 10`.",
+      "hint": "Your expression should be <code>4 * 12 - 10</code>.",
       "validation": {
         "rules": [
           {

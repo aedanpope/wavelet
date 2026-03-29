@@ -16,12 +16,19 @@
       "task": "Run the code. Then add a third line that prints <code>False</code>.",
       "codeHeight": 4,
       "starterCode": "print(True)\nprint(True)",
-      "hint": "Add `print(False)` as a third line at the bottom.",
+      "hint": "Add <code>print(False)</code> as a third line at the bottom.",
       "validation": {
         "rules": [
-          { "type": "no_errors" },
-          { "type": "code_contains", "pattern": "print(False)" },
-          { "type": "output_not_empty" }
+          {
+            "type": "no_errors"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "print(False)"
+          },
+          {
+            "type": "output_not_empty"
+          }
         ]
       }
     },
@@ -31,11 +38,16 @@
       "task": "Run the code to see the error. Then fix the typo so the program prints <code>True</code>.",
       "codeHeight": 3,
       "starterCode": "print(true)",
-      "hint": "Change `true` to `True` — Python needs the capital T.",
+      "hint": "Change <code>true</code> to <code>True</code> — Python needs the capital T.",
       "validation": {
         "rules": [
-          { "type": "no_errors" },
-          { "type": "output_contains", "pattern": "True" }
+          {
+            "type": "no_errors"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "True"
+          }
         ]
       }
     },
@@ -45,12 +57,21 @@
       "task": "Run the code. The first three lines print <code>True</code>, but the last one prints <code>False</code>. Change the numbers on the line <code>print(4 > 9)</code> to make it print <code>True</code>.",
       "codeHeight": 5,
       "starterCode": "print(8 > 3)\nprint(10 > 1)\nprint(7 > 2)\nprint(4 > 9)",
-      "hint": "Change the 9 in `print(4 > 9)` to any number less than 4.",
+      "hint": "Change the 9 in <code>print(4 > 9)</code> to any number less than 4.",
       "validation": {
         "rules": [
-          { "type": "no_errors" },
-          { "type": "code_contains", "pattern": ">" },
-          { "type": "output_contains", "pattern": "True\nTrue\nTrue\nTrue", "description": "All four comparisons should print True" }
+          {
+            "type": "no_errors"
+          },
+          {
+            "type": "code_contains",
+            "pattern": ">"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "True\nTrue\nTrue\nTrue",
+            "description": "All four comparisons should print True"
+          }
         ]
       }
     },
@@ -67,8 +88,22 @@
       "task": "Run the code. Then, change the number in the <code>age</code> variable to 3 and run it again. Notice how the <code>True</code>/<code>False</code> line changes and predicts whether 'OK' will be printed.",
       "codeHeight": 6,
       "starterCode": "age = 6\nprint('What is (age > 5)?')\nprint(age > 5)\n\nif age > 5:\n  print(\"OK\")",
-      "hint": "The code inside the `if` block only runs when the condition next to the `if` is `True`.",
-      "validation": { "rules": [{ "type": "no_errors" }, { "type": "code_contains_regex", "pattern": "print\\s*\\(\\s*age\\s*>\\s*5\\s*\\)" }, { "type": "code_contains_regex", "pattern": "if\\s*age\\s*>\\s*5\\s*:" }] }
+      "hint": "The code inside the <code>if</code> block only runs when the condition next to the <code>if</code> is <code>True</code>.",
+      "validation": {
+        "rules": [
+          {
+            "type": "no_errors"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "print\\s*\\(\\s*age\\s*>\\s*5\\s*\\)"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "if\\s*age\\s*>\\s*5\\s*:"
+          }
+        ]
+      }
     },
     {
       "title": "Your Turn: Greater Than > Practice",
@@ -77,7 +112,25 @@
       "codeHeight": 6,
       "starterCode": "age = 3\nprint('What is (age > 5)?')\nprint(age > 5)\n\nif age > 5:\n  print(\"OK\")",
       "hint": "Try changing age to 6 or any number greater than 5. Watch how the debug output changes to True!",
-      "validation": { "rules": [{ "type": "no_errors" }, { "type": "code_contains", "pattern": "age =" }, { "type": "code_contains", "pattern": "if age > 5:" }, { "type": "output_contains", "pattern": "True" }] }
+      "validation": {
+        "rules": [
+          {
+            "type": "no_errors"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "age ="
+          },
+          {
+            "type": "code_contains",
+            "pattern": "if age > 5:"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "True"
+          }
+        ]
+      }
     },
     {
       "title": "Less Than <",
@@ -86,7 +139,21 @@
       "codeHeight": 6,
       "starterCode": "toys = 4\nprint('What is (toys < 5)?')\nprint(toys < 5)\n\nif toys < 5:\n  print(\"Not too many toys\")",
       "hint": "Try the number 5. Is 5 less than 5? The debug line will tell you!",
-      "validation": { "rules": [{ "type": "no_errors" }, { "type": "code_contains_regex", "pattern": "print\\s*\\(\\s*toys\\s*<\\s*5\\s*\\)" }, { "type": "code_contains_regex", "pattern": "if\\s*toys\\s*<\\s*5\\s*:" }] }
+      "validation": {
+        "rules": [
+          {
+            "type": "no_errors"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "print\\s*\\(\\s*toys\\s*<\\s*5\\s*\\)"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "if\\s*toys\\s*<\\s*5\\s*:"
+          }
+        ]
+      }
     },
     {
       "title": "Your Turn: Less Than < Practice",
@@ -95,7 +162,25 @@
       "codeHeight": 6,
       "starterCode": "toys = 6\nprint('What is (toys < 5)?')\nprint(toys < 5)\n\nif toys < 5:\n  print(\"Not too many toys\")",
       "hint": "Try changing toys to 4 or any number less than 5. Watch the debug output change to True!",
-      "validation": { "rules": [{ "type": "no_errors" }, { "type": "code_contains", "pattern": "toys =" }, { "type": "code_contains", "pattern": "if toys < 5:" }, { "type": "output_contains", "pattern": "True" }] }
+      "validation": {
+        "rules": [
+          {
+            "type": "no_errors"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "toys ="
+          },
+          {
+            "type": "code_contains",
+            "pattern": "if toys < 5:"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "True"
+          }
+        ]
+      }
     },
     {
       "title": "Equal To ==",
@@ -103,8 +188,22 @@
       "task": "Run the code. Change the <code>secret_number</code> to 6 and run it again. Watch the <code>True</code>/<code>False</code> line to predict the result.",
       "codeHeight": 6,
       "starterCode": "secret_number = 7\nprint('What is (secret_number == 7)?')\nprint(secret_number == 7)\n\nif secret_number == 7:\n  print(\"You guessed it\")",
-      "hint": "Remember: one equals `=` gives a value, two equals `==` asks a question.",
-      "validation": { "rules": [{ "type": "no_errors" }, { "type": "code_contains_regex", "pattern": "print\\s*\\(\\s*secret_number\\s*==\\s*7\\s*\\)" }, { "type": "code_contains_regex", "pattern": "if\\s*secret_number\\s*==\\s*7\\s*:" }] }
+      "hint": "Remember: one equals <code>=</code> gives a value, two equals <code>==</code> asks a question.",
+      "validation": {
+        "rules": [
+          {
+            "type": "no_errors"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "print\\s*\\(\\s*secret_number\\s*==\\s*7\\s*\\)"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "if\\s*secret_number\\s*==\\s*7\\s*:"
+          }
+        ]
+      }
     },
     {
       "title": "Your Turn: Equal To == Practice",
@@ -113,7 +212,25 @@
       "codeHeight": 6,
       "starterCode": "secret_number = 5\nprint('What is (secret_number == 7)?')\nprint(secret_number == 7)\n\nif secret_number == 7:\n  print(\"You guessed it\")",
       "hint": "Try changing secret_number to 7. Remember, == checks if two values are exactly equal!",
-      "validation": { "rules": [{ "type": "no_errors" }, { "type": "code_contains", "pattern": "secret_number =" }, { "type": "code_contains", "pattern": "if secret_number == 7:" }, { "type": "output_contains", "pattern": "True" }] }
+      "validation": {
+        "rules": [
+          {
+            "type": "no_errors"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "secret_number ="
+          },
+          {
+            "type": "code_contains",
+            "pattern": "if secret_number == 7:"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "True"
+          }
+        ]
+      }
     },
     {
       "title": "Fix the Bug! (= vs ==)",
@@ -121,8 +238,15 @@
       "task": "Run the code to see the error. Then, fix the bug by changing the single <code>=</code> to a double <code>==</code> so the program works correctly.",
       "codeHeight": 4,
       "starterCode": "choice = 5\n\nif choice = 5:\n  print(\"Bug fixed\")",
-      "hint": "To ask a question inside an `if` statement, you need two equals signs: `==`.",
-      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "choice = 5\nif choice == 5:\n  print(\"Bug fixed\")" }] }
+      "hint": "To ask a question inside an <code>if</code> statement, you need two equals signs: <code>==</code>.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "choice = 5\nif choice == 5:\n  print(\"Bug fixed\")"
+          }
+        ]
+      }
     },
     {
       "title": "Your Turn: Create a Number Check",
@@ -133,7 +257,9 @@
       "hint": "Remember: use = to set the variable, and == to check if it equals 3. You only need an if statement and one print.",
       "validation": {
         "rules": [
-          { "type": "no_errors" },
+          {
+            "type": "no_errors"
+          },
           {
             "type": "code_contains",
             "pattern": "number = 3",
@@ -163,11 +289,24 @@
       "title": "Adding an else",
       "content": "What if we want to do something when the <code>if</code> condition is <em>not</em> true? We can add an <code>else</code> block. The code in the <code>else</code> block only runs if the <code>if</code> condition is <code>False</code>.",
       "task": "Enter different numbers to see both paths. If you enter a number greater than 10, 'Big number' prints. For any other number, 'Small number' prints.",
-      "inputs": [ { "name": "n", "label": "Number:", "type": "number" } ],
+      "inputs": [
+        {
+          "name": "n",
+          "label": "Number:",
+          "type": "number"
+        }
+      ],
       "codeHeight": 6,
       "starterCode": "n = get_input()\n\nif n > 10:\n  print(\"Big number\")\nelse:\n  print(\"Small number\")",
-      "hint": "The `if` block and the `else` block are like two different paths. The program will only ever go down one of them.",
-      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "n = get_input()\nif n > 10:\n  print(\"Big number\")\nelse:\n  print(\"Small number\")" }] }
+      "hint": "The <code>if</code> block and the <code>else</code> block are like two different paths. The program will only ever go down one of them.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "n = get_input()\nif n > 10:\n  print(\"Big number\")\nelse:\n  print(\"Small number\")"
+          }
+        ]
+      }
     },
     {
       "title": "Your Turn: Add an else",
@@ -175,12 +314,22 @@
       "task": "Run the code with <code>score = 3</code> — nothing prints! Add an <code>else</code> block so that when the score is not greater than 8, it prints <code>Keep trying</code>.",
       "codeHeight": 6,
       "starterCode": "score = 3\n\nif score > 8:\n  print(\"Great score\")",
-      "hint": "Add `else:` on the line after the if-block, then indent the next line and write your print statement.",
+      "hint": "Add <code>else:</code> on the line after the if-block, then indent the next line and write your print statement.",
       "validation": {
         "rules": [
-          { "type": "no_errors" },
-          { "type": "code_contains", "pattern": "else:", "description": "Add an else: block" },
-          { "type": "output_contains", "pattern": "Keep trying", "description": "Print 'Keep trying' in the else block" }
+          {
+            "type": "no_errors"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "else:",
+            "description": "Add an else: block"
+          },
+          {
+            "type": "output_contains",
+            "pattern": "Keep trying",
+            "description": "Print 'Keep trying' in the else block"
+          }
         ]
       }
     },
@@ -191,8 +340,15 @@
       "interactionType": "buttons",
       "codeHeight": 6,
       "starterCode": "choice = get_choice(2)\n\nif choice == 1:\n  print(\"Left path\")\nelse:\n  print(\"Right path\")",
-      "hint": "`get_choice(2)` pauses the program and waits for you to click a button.",
-      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "choice = get_choice(2)\nif choice == 1:\n  print(\"Left path\")\nelse:\n  print(\"Right path\")" }] }
+      "hint": "<code>get_choice(2)</code> pauses the program and waits for you to click a button.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "choice = get_choice(2)\nif choice == 1:\n  print(\"Left path\")\nelse:\n  print(\"Right path\")"
+          }
+        ]
+      }
     },
     {
       "title": "Your Turn: Choose Your Adventure",
@@ -204,7 +360,9 @@
       "hint": "Start with 'choice = get_choice(2)', then use 'if choice == 1:' and don't forget the 'else:' block.",
       "validation": {
         "rules": [
-          { "type": "no_errors" },
+          {
+            "type": "no_errors"
+          },
           {
             "type": "code_contains",
             "pattern": "get_choice(2)",
@@ -237,11 +395,24 @@
       "title": "More Than Two Choices: elif",
       "content": "What if we have more than two options? We can use <code>elif</code>, which is short for 'else if'. It lets us check another condition.",
       "task": "Enter numbers like 2, 5, and 8. See how the program prints 'Low', 'Mid', or 'High' depending on the number.",
-      "inputs": [ { "name": "n", "label": "Number:", "type": "number" } ],
+      "inputs": [
+        {
+          "name": "n",
+          "label": "Number:",
+          "type": "number"
+        }
+      ],
       "codeHeight": 8,
       "starterCode": "n = get_input()\n\nif n < 3:\n  print(\"Low\")\nelif n < 6:\n  print(\"Mid\")\nelse:\n  print(\"High\")",
       "hint": "The program checks each condition from top to bottom. As soon as one is true, it runs that code and skips the rest.",
-      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "n = get_input()\nif n < 3:\n  print(\"Low\")\nelif n < 6:\n  print(\"Mid\")\nelse:\n  print(\"High\")" }] }
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "n = get_input()\nif n < 3:\n  print(\"Low\")\nelif n < 6:\n  print(\"Mid\")\nelse:\n  print(\"High\")"
+          }
+        ]
+      }
     },
     {
       "title": "Your Turn: Add an elif",
@@ -250,8 +421,15 @@
       "interactionType": "buttons",
       "codeHeight": 8,
       "starterCode": "choice = get_choice(3)\n\nif choice == 1:\n  print(\"Found gold coins\")\nelif choice == 2:\n  print(\"Found a rusty sword\")\nelse:\n  print(\"A dragon pops out\")",
-      "hint": "Your new `elif choice == 3:` block should go just before the final `else:`.",
-      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "choice = get_choice(4)\n\nif choice == 1:\n  print(\"Found gold coins\")\nelif choice == 2:\n  print(\"Found a rusty sword\")\nelif choice == 3:\n  print(\"Found a map\")\nelse:\n  print(\"A dragon pops out\")" }] }
+      "hint": "Your new <code>elif choice == 3:</code> block should go just before the final <code>else:</code>.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "choice = get_choice(4)\n\nif choice == 1:\n  print(\"Found gold coins\")\nelif choice == 2:\n  print(\"Found a rusty sword\")\nelif choice == 3:\n  print(\"Found a map\")\nelse:\n  print(\"A dragon pops out\")"
+          }
+        ]
+      }
     },
     {
       "type": "concept",
@@ -268,7 +446,14 @@
       "codeHeight": 6,
       "starterCode": "choice = get_choice(3)\n\nif choice != 1:\n  print(\"That is not the secret button\")\nelse:\n  print(\"You found it\")",
       "hint": "!= means 'not equal to'. The body runs whenever choice is anything other than 1.",
-      "validation": { "rules": [{ "type": "code_contains", "pattern": "!=" }] }
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "!="
+          }
+        ]
+      }
     },
     {
       "title": "Your Turn: Use !=",
@@ -277,13 +462,24 @@
       "interactionType": "buttons",
       "codeHeight": 6,
       "starterCode": "",
-      "hint": "Your condition should be `if choice != 2:`.",
+      "hint": "Your condition should be <code>if choice != 2:</code>.",
       "validation": {
         "rules": [
-          { "type": "no_errors" },
-          { "type": "code_contains", "pattern": "!=" },
-          { "type": "code_contains", "pattern": "get_choice(2)" },
-          { "type": "code_contains", "pattern": "else:" }
+          {
+            "type": "no_errors"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "!="
+          },
+          {
+            "type": "code_contains",
+            "pattern": "get_choice(2)"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "else:"
+          }
         ]
       }
     },
@@ -296,11 +492,29 @@
       "hint": "Just add an equals sign = after the greater than sign >. Notice how >= includes the boundary value (50) while > excludes it.",
       "validation": {
         "rules": [
-          { "type": "no_errors" },
-          { "type": "code_contains", "pattern": "score = 50", "description": "Keep the score as 50 to practice the >= operator. Don't change the score value." },
-          { "type": "code_contains_regex", "pattern": "if\\s+score\\s*>=\\s*50\\s*:", "description": "Use the >= operator in your if statement: 'if score >= 50:'" },
-          { "type": "code_contains_regex", "pattern": "^(?!.*score\\s*=\\s*(?!50\\b)\\d+)", "description": "Don't change the score value. Keep it as 50 to learn how >= works." },
-          { "type": "output_contains", "pattern": "You passed", "description": "Your code should print 'You passed' when the score is 50 and you use >=." }
+          {
+            "type": "no_errors"
+          },
+          {
+            "type": "code_contains",
+            "pattern": "score = 50",
+            "description": "Keep the score as 50 to practice the >= operator. Don't change the score value."
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "if\\s+score\\s*>=\\s*50\\s*:",
+            "description": "Use the >= operator in your if statement: 'if score >= 50:'"
+          },
+          {
+            "type": "code_contains_regex",
+            "pattern": "^(?!.*score\\s*=\\s*(?!50\\b)\\d+)",
+            "description": "Don't change the score value. Keep it as 50 to learn how >= works."
+          },
+          {
+            "type": "output_contains",
+            "pattern": "You passed",
+            "description": "Your code should print 'You passed' when the score is 50 and you use >=."
+          }
         ]
       }
     },
@@ -311,8 +525,15 @@
       "interactionType": "buttons",
       "codeHeight": 6,
       "starterCode": "",
-      "hint": "You will need one `if`, one `elif`, and one `else`. Look at the code from the previous two problems for help.",
-      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "choice = get_choice(3)\nif choice == 1:\n  print(\"Water\")\nelif choice == 2:\n  print(\"Juice\")\nelse:\n  print(\"Lemonade\")" }] }
+      "hint": "You will need one <code>if</code>, one <code>elif</code>, and one <code>else</code>. Look at the code from the previous two problems for help.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "choice = get_choice(3)\nif choice == 1:\n  print(\"Water\")\nelif choice == 2:\n  print(\"Juice\")\nelse:\n  print(\"Lemonade\")"
+          }
+        ]
+      }
     },
     {
       "title": "Quiz Question",
@@ -321,8 +542,15 @@
       "interactionType": "buttons",
       "codeHeight": 7,
       "starterCode": "print(\"What is 10 + 5?\")\nprint(\"1) 12\")\nprint(\"2) 15\")\nprint(\"3) 20\")\n",
-      "hint": "The correct answer is choice 2. You can use an `if choice == 2:` block for the correct message and an `else` block for the incorrect message.",
-      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "print(\"What is 10 + 5?\")\nprint(\"1) 12\")\nprint(\"2) 15\")\nprint(\"3) 20\")\n\nchoice = get_choice(3)\nif choice == 2:\n  print(\"Correct\")\nelse:\n  print(\"Not quite\")" }] }
+      "hint": "The correct answer is choice 2. You can use an <code>if choice == 2:</code> block for the correct message and an <code>else</code> block for the incorrect message.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "print(\"What is 10 + 5?\")\nprint(\"1) 12\")\nprint(\"2) 15\")\nprint(\"3) 20\")\n\nchoice = get_choice(3)\nif choice == 2:\n  print(\"Correct\")\nelse:\n  print(\"Not quite\")"
+          }
+        ]
+      }
     },
     {
       "title": "Magic Potions",
@@ -331,57 +559,128 @@
       "interactionType": "buttons",
       "codeHeight": 8,
       "starterCode": "health = 10\nprint(\"Your health is 10\")\nchoice = get_choice(2)\n\nif choice == 1:\n  health = health + 5\n\nprint(\"Your health is now\", health)",
-      "hint": "Add an `else:` block. Inside it, write the line `health = health - 3`.",
-      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "health = 10\nprint(\"Your health is 10\")\nchoice = get_choice(2)\n\nif choice == 1:\n  health = health + 5\nelse:\n  health = health - 3\n\nprint(\"Your health is now\", health)" }] }
+      "hint": "Add an <code>else:</code> block. Inside it, write the line <code>health = health - 3</code>.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "health = 10\nprint(\"Your health is 10\")\nchoice = get_choice(2)\n\nif choice == 1:\n  health = health + 5\nelse:\n  health = health - 3\n\nprint(\"Your health is now\", health)"
+          }
+        ]
+      }
     },
     {
       "title": "Two Conditions with 'and'",
       "content": "Sometimes you need to check if two things are true at the same time. For this, we can use the word <code>and</code>. The code inside the <code>if</code> will only run if the condition on the left AND the condition on the right are both true.",
-      "task": "Run this code. Try changing the variables. For the message to print, <code>age</code> must be 12 or more AND <code>has_ticket</code> must be `True`.",
+      "task": "Run this code. Try changing the variables. For the message to print, <code>age</code> must be 12 or more AND <code>has_ticket</code> must be <code>True</code>.",
       "codeHeight": 6,
       "starterCode": "age = 14\nhas_ticket = True\n\nif age >= 12 and has_ticket == True:\n  print(\"Welcome to the movie\")",
-      "hint": "If you change age to 10, the first part is false, so the message won't print. If you change `has_ticket` to `False`, the second part is false, so it also won't print.",
-      "validation": { "rules": [{ "type": "code_contains", "pattern": "and" }] }
+      "hint": "If you change age to 10, the first part is false, so the message won't print. If you change <code>has_ticket</code> to <code>False</code>, the second part is false, so it also won't print.",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "and"
+          }
+        ]
+      }
     },
     {
       "title": "Secret Password",
       "content": "Let's use the <code>and</code> operator to check two inputs from the user.",
       "task": "Write a program that asks for a number and a code. If the number is 7 AND the code is 123, print 'Access granted'. Otherwise, print 'Access denied'.",
-      "inputs": [ { "name": "num", "label": "Number:", "type": "number" }, { "name": "code", "label": "Code:", "type": "number" } ],
+      "inputs": [
+        {
+          "name": "num",
+          "label": "Number:",
+          "type": "number"
+        },
+        {
+          "name": "code",
+          "label": "Code:",
+          "type": "number"
+        }
+      ],
       "codeHeight": 6,
       "starterCode": "num = get_input('num')\ncode = get_input('code')\n",
-      "hint": "Your `if` statement will look like this: `if num == 7 and code == 123:`.",
-      "validation": { 
-        "rules": [{ 
-          "type": "solution_code", 
-          "solutionCode": "num = get_input('num')\ncode = get_input('code')\nif num == 7 and code == 123:\n  print('Access granted')\nelse:\n  print('Access denied')",
-          "testInputs": [
-            {"inputs": {"num": 7, "code": 123}, "expectedOutput": "Access granted"},
-            {"inputs": {"num": 5, "code": 123}, "expectedOutput": "Access denied"},
-            {"inputs": {"num": 7, "code": 456}, "expectedOutput": "Access denied"},
-            {"inputs": {"num": 12, "code": 43}, "expectedOutput": "Access denied"}
-          ]
-        }] 
+      "hint": "Your <code>if</code> statement will look like this: <code>if num == 7 and code == 123:</code>.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "num = get_input('num')\ncode = get_input('code')\nif num == 7 and code == 123:\n  print('Access granted')\nelse:\n  print('Access denied')",
+            "testInputs": [
+              {
+                "inputs": {
+                  "num": 7,
+                  "code": 123
+                },
+                "expectedOutput": "Access granted"
+              },
+              {
+                "inputs": {
+                  "num": 5,
+                  "code": 123
+                },
+                "expectedOutput": "Access denied"
+              },
+              {
+                "inputs": {
+                  "num": 7,
+                  "code": 456
+                },
+                "expectedOutput": "Access denied"
+              },
+              {
+                "inputs": {
+                  "num": 12,
+                  "code": 43
+                },
+                "expectedOutput": "Access denied"
+              }
+            ]
+          }
+        ]
       }
     },
     {
       "title": "Finding the Remainder %",
-      "content": "In programming, there's a special math symbol called **modulo**, which is a percent sign <code>%</code>. It gives you the remainder of a division. For example, if you share 10 sweets between 3 friends, each gets 3 and there is 1 left over. So, <code>10 % 3</code> is 1.",
+      "content": "In programming, there's a special math symbol called <strong>modulo</strong>, which is a percent sign <code>%</code>. It gives you the remainder of a division. For example, if you share 10 sweets between 3 friends, each gets 3 and there is 1 left over. So, <code>10 % 3</code> is 1.",
       "task": "Run the code to see the remainder of 14 divided by 4. Change the numbers to see how it works with different values.",
       "codeHeight": 2,
       "starterCode": "print(14 % 4)",
       "hint": "14 divided by 4 is 3 with a remainder of 2.",
-      "validation": { "rules": [{ "type": "code_contains", "pattern": "%" }] }
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "%"
+          }
+        ]
+      }
     },
     {
       "title": "Even or Odd?",
       "content": "We can use the modulo operator <code>%</code> to see if a number is even or odd. Any even number can be divided by 2 with no remainder! So, if <code>number % 2</code> is 0, the number is even.",
       "task": "Enter different numbers, both even and odd, and run the code to see if the program gets it right.",
-      "inputs": [{ "name": "num", "label": "Number:", "type": "number" }],
+      "inputs": [
+        {
+          "name": "num",
+          "label": "Number:",
+          "type": "number"
+        }
+      ],
       "codeHeight": 6,
       "starterCode": "number = get_input()\n\nif number % 2 == 0:\n  print(\"Even\")\nelse:\n  print(\"Odd\")",
-      "hint": "Try entering 10, then try 5. See how the result of `number % 2` changes the outcome.",
-      "validation": { "rules": [{ "type": "code_contains_regex", "pattern": "number\\s*%\\s*2\\s*==\\s*0" }] }
+      "hint": "Try entering 10, then try 5. See how the result of <code>number % 2</code> changes the outcome.",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains_regex",
+            "pattern": "number\\s*%\\s*2\\s*==\\s*0"
+          }
+        ]
+      }
     },
     {
       "title": "Loop with Modulo",
@@ -389,8 +688,15 @@
       "task": "Run the code to see it print all the multiples of 3. Then, change the code to print the multiples of 4 instead.",
       "codeHeight": 5,
       "starterCode": "for i in range(1, 21):\n  if i % 3 == 0:\n    print(i)",
-      "hint": "You only need to change one number in the `if` statement.",
-      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in range(1, 21):\n  if i % 4 == 0:\n    print(i)" }] }
+      "hint": "You only need to change one number in the <code>if</code> statement.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "for i in range(1, 21):\n  if i % 4 == 0:\n    print(i)"
+          }
+        ]
+      }
     },
     {
       "title": "Challenge: Dance Party",
@@ -399,8 +705,15 @@
       "interactionType": "buttons",
       "codeHeight": 8,
       "starterCode": "",
-      "hint": "Use `for i in range(4):`. Inside that loop, get a choice and use an `if/elif/else` structure to print the chosen move.",
-      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in range(4):\n  choice = get_choice(3)\n  if choice == 1:\n    print(\"You spin around\")\n  elif choice == 2:\n    print(\"You jump up high\")\n  else:\n    print(\"You wiggle\")" }] }
+      "hint": "Use <code>for i in range(4):</code>. Inside that loop, get a choice and use an <code>if/elif/else</code> structure to print the chosen move.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "for i in range(4):\n  choice = get_choice(3)\n  if choice == 1:\n    print(\"You spin around\")\n  elif choice == 2:\n    print(\"You jump up high\")\n  else:\n    print(\"You wiggle\")"
+          }
+        ]
+      }
     },
     {
       "title": "Challenge: FizzBuzz Intro",
@@ -408,19 +721,50 @@
       "task": "Write a program that loops from 1 to 20. Inside the loop, if a number is a multiple of 3, print 'Fizz'. Otherwise, just print the number itself.",
       "codeHeight": 6,
       "starterCode": "",
-      "hint": "Use a `for` loop and an `if/else` statement. The condition to check is `i % 3 == 0`.",
-      "validation": { "rules": [{ "type": "solution_code", "solutionCode": "for i in range(1, 21):\n  if i % 3 == 0:\n    print('Fizz')\n  else:\n    print(i)" }] }
+      "hint": "Use a <code>for</code> loop and an <code>if/else</code> statement. The condition to check is <code>i % 3 == 0</code>.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "for i in range(1, 21):\n  if i % 3 == 0:\n    print('Fizz')\n  else:\n    print(i)"
+          }
+        ]
+      }
     },
     {
       "title": "Creative Challenge",
       "content": "You've learned about variables, loops, and now decisions! These are the three main building blocks of almost every program. Now it's your turn to combine them in a creative way.",
       "task": "Create your own interesting program. It could be a simple game, an interactive story, or a cool calculator. Use at least one variable, one loop, and one <code>if</code> statement. Be creative!",
       "interactionType": "buttons",
-      "inputs": [{ "name": "x", "label": "Input X:", "type": "number" }],
+      "inputs": [
+        {
+          "name": "x",
+          "label": "Input X:",
+          "type": "number"
+        }
+      ],
       "codeHeight": 8,
       "starterCode": "",
       "hint": "You could make a guessing game with limited lives, a story where choices affect your score, or a program that asks for a number and then draws a pattern of that size.",
-      "validation": { "rules": [{ "type": "code_contains", "pattern": "=" }, { "type": "code_contains", "pattern": "for " }, { "type": "code_contains", "pattern": "if " }, { "type": "output_not_empty" }] }
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains",
+            "pattern": "="
+          },
+          {
+            "type": "code_contains",
+            "pattern": "for "
+          },
+          {
+            "type": "code_contains",
+            "pattern": "if "
+          },
+          {
+            "type": "output_not_empty"
+          }
+        ]
+      }
     }
   ]
 }

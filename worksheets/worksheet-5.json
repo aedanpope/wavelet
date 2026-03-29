@@ -246,10 +246,26 @@
             "type": "solution_code",
             "solutionCode": "score = get_input()\n\nif score >= 50:\n  print(\"Pass\")\nelse:\n  print(\"Try again\")",
             "testInputs": [
-              {"inputs": {"score": 50}},
-              {"inputs": {"score": 49}},
-              {"inputs": {"score": 60}},
-              {"inputs": {"score": 0}}
+              {
+                "inputs": {
+                  "score": 50
+                }
+              },
+              {
+                "inputs": {
+                  "score": 49
+                }
+              },
+              {
+                "inputs": {
+                  "score": 60
+                }
+              },
+              {
+                "inputs": {
+                  "score": 0
+                }
+              }
             ]
           }
         ]
@@ -288,10 +304,26 @@
             "type": "solution_code",
             "solutionCode": "n = get_input()\n\nif n > 10:\n  print(f\"{n} is big\")\nelse:\n  print(f\"{n} is small\")",
             "testInputs": [
-              {"inputs": {"n": 11}},
-              {"inputs": {"n": 10}},
-              {"inputs": {"n": 5}},
-              {"inputs": {"n": 100}}
+              {
+                "inputs": {
+                  "n": 11
+                }
+              },
+              {
+                "inputs": {
+                  "n": 10
+                }
+              },
+              {
+                "inputs": {
+                  "n": 5
+                }
+              },
+              {
+                "inputs": {
+                  "n": 100
+                }
+              }
             ]
           }
         ]
@@ -326,8 +358,16 @@
             "type": "solution_code",
             "solutionCode": "name = get_input()\nprint(f\"Welcome {name}\")",
             "testInputs": [
-              {"inputs": {"name": "Alice"}},
-              {"inputs": {"name": "Bob"}}
+              {
+                "inputs": {
+                  "name": "Alice"
+                }
+              },
+              {
+                "inputs": {
+                  "name": "Bob"
+                }
+              }
             ]
           }
         ]
@@ -373,8 +413,18 @@
             "type": "solution_code",
             "solutionCode": "name = get_input('name')\nage = get_input('age')\nprint(f\"My name is {name} and I am {age}\")",
             "testInputs": [
-              {"inputs": {"name": "Alice", "age": 10}},
-              {"inputs": {"name": "Bob", "age": 12}}
+              {
+                "inputs": {
+                  "name": "Alice",
+                  "age": 10
+                }
+              },
+              {
+                "inputs": {
+                  "name": "Bob",
+                  "age": 12
+                }
+              }
             ]
           }
         ]
@@ -404,8 +454,16 @@
             "type": "solution_code",
             "solutionCode": "name = get_input()\nprint(f\"Hello {name}\")\nprint(f\"Welcome {name}\")\nprint(f\"Goodbye {name}\")",
             "testInputs": [
-              {"inputs": {"name": "Alice"}},
-              {"inputs": {"name": "Bob"}}
+              {
+                "inputs": {
+                  "name": "Alice"
+                }
+              },
+              {
+                "inputs": {
+                  "name": "Bob"
+                }
+              }
             ]
           }
         ]
@@ -413,7 +471,7 @@
     },
     {
       "title": "Finding the Remainder %",
-      "content": "In programming, there's a special math symbol called **modulo**, which is a percent sign <code>%</code>. It gives you the remainder of a division. For example, if you share 10 sweets between 3 friends, each gets 3 and there is 1 left over. So, <code>10 % 3</code> is 1.",
+      "content": "In programming, there's a special math symbol called <strong>modulo</strong>, which is a percent sign <code>%</code>. It gives you the remainder of a division. For example, if you share 10 sweets between 3 friends, each gets 3 and there is 1 left over. So, <code>10 % 3</code> is 1.",
       "task": "Run the code to see the remainder of 14 divided by 4. Change the numbers to see how it works with different values.",
       "codeHeight": 2,
       "starterCode": "print(14 % 4)",
@@ -440,17 +498,33 @@
       ],
       "codeHeight": 6,
       "starterCode": "number = get_input()\n\nif number % 2 == 0:\n  print(\"Even\")\nelse:\n  print(\"Odd\")",
-      "hint": "Try entering 10, then try 5. See how the result of `number % 2` changes the outcome.",
+      "hint": "Try entering 10, then try 5. See how the result of <code>number % 2</code> changes the outcome.",
       "validation": {
         "rules": [
           {
             "type": "solution_code",
             "solutionCode": "number = get_input()\n\nif number % 2 == 0:\n  print(\"Even\")\nelse:\n  print(\"Odd\")",
             "testInputs": [
-              {"inputs": {"num": 10}},
-              {"inputs": {"num": 5}},
-              {"inputs": {"num": 2}},
-              {"inputs": {"num": 7}}
+              {
+                "inputs": {
+                  "num": 10
+                }
+              },
+              {
+                "inputs": {
+                  "num": 5
+                }
+              },
+              {
+                "inputs": {
+                  "num": 2
+                }
+              },
+              {
+                "inputs": {
+                  "num": 7
+                }
+              }
             ]
           }
         ]
@@ -485,10 +559,26 @@
             "type": "solution_code",
             "solutionCode": "num = get_input()\n\nif num % 2 == 0:\n  print(f\"{num} is even\")\nelse:\n  print(f\"{num} is odd\")",
             "testInputs": [
-              {"inputs": {"num": 10}},
-              {"inputs": {"num": 5}},
-              {"inputs": {"num": 2}},
-              {"inputs": {"num": 7}}
+              {
+                "inputs": {
+                  "num": 10
+                }
+              },
+              {
+                "inputs": {
+                  "num": 5
+                }
+              },
+              {
+                "inputs": {
+                  "num": 2
+                }
+              },
+              {
+                "inputs": {
+                  "num": 7
+                }
+              }
             ]
           }
         ]
@@ -514,12 +604,36 @@
             "type": "solution_code",
             "solutionCode": "n = get_input()\nprint(f\"Factors of {n}:\")\n\nfor i in range(1, n + 1):\n  if n % i == 0:\n    print(i)",
             "testInputs": [
-              {"inputs": {"n": 2}},
-              {"inputs": {"n": 3}},
-              {"inputs": {"n": 5}},
-              {"inputs": {"n": 12}},
-              {"inputs": {"n": 10}},
-              {"inputs": {"n": 7}}
+              {
+                "inputs": {
+                  "n": 2
+                }
+              },
+              {
+                "inputs": {
+                  "n": 3
+                }
+              },
+              {
+                "inputs": {
+                  "n": 5
+                }
+              },
+              {
+                "inputs": {
+                  "n": 12
+                }
+              },
+              {
+                "inputs": {
+                  "n": 10
+                }
+              },
+              {
+                "inputs": {
+                  "n": 7
+                }
+              }
             ]
           }
         ]
@@ -581,9 +695,21 @@
             "type": "solution_code",
             "solutionCode": "target = get_input()\nfound = False\n\nfor i in range(1, 100):\n  if i > target:\n    found = True\n    break\n\nif found:\n  print(\"Found it!\")\nelse:\n  print(\"Not found\")",
             "testInputs": [
-              {"inputs": {"target": 5}},
-              {"inputs": {"target": 10}},
-              {"inputs": {"target": 50}}
+              {
+                "inputs": {
+                  "target": 5
+                }
+              },
+              {
+                "inputs": {
+                  "target": 10
+                }
+              },
+              {
+                "inputs": {
+                  "target": 50
+                }
+              }
             ]
           }
         ]
@@ -617,12 +743,36 @@
             "type": "solution_code",
             "solutionCode": "n = get_input()\nis_composite = False\n\nfor i in range(2, n):\n  if n % i == 0:\n    is_composite = True\n    break\n\nif is_composite:\n  print(\"Composite\")\nelse:\n  print(\"Prime\")",
             "testInputs": [
-              {"inputs": {"n": 7}},
-              {"inputs": {"n": 12}},
-              {"inputs": {"n": 13}},
-              {"inputs": {"n": 9}},
-              {"inputs": {"n": 11}},
-              {"inputs": {"n": 15}}
+              {
+                "inputs": {
+                  "n": 7
+                }
+              },
+              {
+                "inputs": {
+                  "n": 12
+                }
+              },
+              {
+                "inputs": {
+                  "n": 13
+                }
+              },
+              {
+                "inputs": {
+                  "n": 9
+                }
+              },
+              {
+                "inputs": {
+                  "n": 11
+                }
+              },
+              {
+                "inputs": {
+                  "n": 15
+                }
+              }
             ]
           }
         ]

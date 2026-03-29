@@ -144,8 +144,16 @@
       "title": "Key Concept: x stores whatever you type",
       "content": "<p>When Python runs <code>x = get_input()</code>, it waits for you to enter a number — then stores that number inside <code>x</code>.</p><p>From that point on, <strong>x IS that number</strong>. So when Python sees <code>print(x + 5)</code>, it swaps in whatever is stored:</p>",
       "examples": [
-        { "input": "3",  "substituted": "print(3 + 5)",  "output": "8"  },
-        { "input": "10", "substituted": "print(10 + 5)", "output": "15" }
+        {
+          "input": "3",
+          "substituted": "print(3 + 5)",
+          "output": "8"
+        },
+        {
+          "input": "10",
+          "substituted": "print(10 + 5)",
+          "output": "15"
+        }
       ],
       "footer": "Same code, different answers — because <code>x</code> holds whatever you typed. This is what makes variables powerful!"
     },
@@ -486,7 +494,7 @@
           "type": "number"
         }
       ],
-      "hint": "First get the input with <code>get_input('x')</code>. Then use three print statements: one for the original number, one for <code>x * x</code> (squared), and one for <code>x * x * x</code> (cubed).",
+      "hint": "First get the input with <code>get_input('x')</code>. Then use three print statements: one for the original number, one for <code>x <em> x</code> (squared), and one for <code>x </em> x * x</code> (cubed).",
       "validation": {
         "rules": [
           {
@@ -518,85 +526,85 @@
           }
         ]
       }
-         },
-     {
-       "title": "Perimeter of a square",
-       "content": "Great! Now let's calculate the perimeter of a square. The perimeter is the total distance around the square - you add up all four sides. Since all sides of a square are equal, the perimeter is 4 times the length of one side. For example, if a square has sides of 5 units, its perimeter is 4 × 5 = 20 units.",
-       "task": "Write a program that calculates the perimeter of a square. Use the descriptive variable name 'side_length' for the input.",
-       "codeHeight": 5,
-       "inputs": [
-         {
-           "name": "side_length",
-           "label": "Enter the length of one side of the square:",
-           "type": "number"
-         }
-       ],
-       "starterCode": "side_length = get_input('side_length')",
-       "hint": "Use <code>side_length = get_input('side_length')</code> to get the input, then multiply it by 4 using <code>side_length * 4</code> to calculate the perimeter. Remember, perimeter = 4 × side length!",
-       "validation": {
-         "rules": [
-           {
-             "type": "solution_code",
-             "solutionCode": "side_length = get_input('side_length')\nperimeter = side_length * 4\nprint(perimeter)"
-           }
-         ]
-       }
-          },
-     {
-       "title": "Rectangle area and perimeter",
-       "content": "<p>Now let's work with rectangles! A rectangle has two different sides - length and width. The area is length × width, and the perimeter is 2 × (length + width).</p><p>Why 2 × (length + width)? Imagine you have to walk all the way around a rectangular room - you walk one length, then one width, then another length, then another width. So you walk length + width + length + width = 2 × (length + width).</p><p>For example, a rectangle with length 6 and width 4 has area = 6 × 4 = 24 and perimeter = 2 × (6 + 4) = 2 × 10 = 20.</p>",
-       "task": "Write a program that calculates both the area and perimeter of a rectangle. Use descriptive variable names 'length' and 'width' for the inputs. Print the area on the first line and the perimeter on the second line.",
-       "codeHeight": 7,
-       "inputs": [
-         {
-           "name": "length",
-           "label": "Enter the length of the rectangle:",
-           "type": "number"
-         },
-         {
-           "name": "width",
-           "label": "Enter the width of the rectangle:",
-           "type": "number"
-         }
-       ],
-       "starterCode": "",
-       "hint": "Get both inputs using <code>get_input('length')</code> and <code>get_input('width')</code>. Then calculate area with <code>length * width</code> and perimeter with <code>2 * (length + width)</code>. Print both results!",
-       "validation": {
-         "rules": [
-           {
-             "type": "solution_code",
-             "solutionCode": "length = get_input('length')\nwidth = get_input('width')\narea = length * width\nperimeter = 2 * (length + width)\nprint(area)\nprint(perimeter)"
-           }
-         ]
-       }
-     },
-     {
-         "title": "Creative challenge",
-       "content": "Write a program using one input & do something cool. Be creative! Show your teacher your code and your output.",
-       "task": "Create a program that takes one input and does something interesting with it. You can use any of the concepts you've learned: variables, calculations, multiple print statements, etc.",
-       "codeHeight": 8,
-       "inputs": [
-         {
-           "name": "x",
-           "label": "Enter a number:",
-           "type": "number"
-         }
-       ],
-       "starterCode": "x = get_input()\n",
-       "hint": "Try combining different operations! You could calculate the input plus 5, minus 3, times 2, divided by 2, etc. Or create a pattern with multiple print statements.",
-               "validation": {
-          "rules": [
-            {
-              "type": "code_contains_regex",
-              "pattern": "print\\s*\\("
-            },
-            {
-              "type": "output_contains_regex",
-              "pattern": "^(?!\\s*$).+"
-            }
-          ]
+    },
+    {
+      "title": "Perimeter of a square",
+      "content": "Great! Now let's calculate the perimeter of a square. The perimeter is the total distance around the square - you add up all four sides. Since all sides of a square are equal, the perimeter is 4 times the length of one side. For example, if a square has sides of 5 units, its perimeter is 4 × 5 = 20 units.",
+      "task": "Write a program that calculates the perimeter of a square. Use the descriptive variable name 'side_length' for the input.",
+      "codeHeight": 5,
+      "inputs": [
+        {
+          "name": "side_length",
+          "label": "Enter the length of one side of the square:",
+          "type": "number"
         }
-     }
+      ],
+      "starterCode": "side_length = get_input('side_length')",
+      "hint": "Use <code>side_length = get_input('side_length')</code> to get the input, then multiply it by 4 using <code>side_length * 4</code> to calculate the perimeter. Remember, perimeter = 4 × side length!",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "side_length = get_input('side_length')\nperimeter = side_length * 4\nprint(perimeter)"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Rectangle area and perimeter",
+      "content": "<p>Now let's work with rectangles! A rectangle has two different sides - length and width. The area is length × width, and the perimeter is 2 × (length + width).</p><p>Why 2 × (length + width)? Imagine you have to walk all the way around a rectangular room - you walk one length, then one width, then another length, then another width. So you walk length + width + length + width = 2 × (length + width).</p><p>For example, a rectangle with length 6 and width 4 has area = 6 × 4 = 24 and perimeter = 2 × (6 + 4) = 2 × 10 = 20.</p>",
+      "task": "Write a program that calculates both the area and perimeter of a rectangle. Use descriptive variable names 'length' and 'width' for the inputs. Print the area on the first line and the perimeter on the second line.",
+      "codeHeight": 7,
+      "inputs": [
+        {
+          "name": "length",
+          "label": "Enter the length of the rectangle:",
+          "type": "number"
+        },
+        {
+          "name": "width",
+          "label": "Enter the width of the rectangle:",
+          "type": "number"
+        }
+      ],
+      "starterCode": "",
+      "hint": "Get both inputs using <code>get_input('length')</code> and <code>get_input('width')</code>. Then calculate area with <code>length <em> width</code> and perimeter with <code>2 </em> (length + width)</code>. Print both results!",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "length = get_input('length')\nwidth = get_input('width')\narea = length * width\nperimeter = 2 * (length + width)\nprint(area)\nprint(perimeter)"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Creative challenge",
+      "content": "Write a program using one input & do something cool. Be creative! Show your teacher your code and your output.",
+      "task": "Create a program that takes one input and does something interesting with it. You can use any of the concepts you've learned: variables, calculations, multiple print statements, etc.",
+      "codeHeight": 8,
+      "inputs": [
+        {
+          "name": "x",
+          "label": "Enter a number:",
+          "type": "number"
+        }
+      ],
+      "starterCode": "x = get_input()\n",
+      "hint": "Try combining different operations! You could calculate the input plus 5, minus 3, times 2, divided by 2, etc. Or create a pattern with multiple print statements.",
+      "validation": {
+        "rules": [
+          {
+            "type": "code_contains_regex",
+            "pattern": "print\\s*\\("
+          },
+          {
+            "type": "output_contains_regex",
+            "pattern": "^(?!\\s*$).+"
+          }
+        ]
+      }
+    }
   ],
   "metadata": {
     "created": "2025-08-14"
