@@ -7,8 +7,8 @@
       "type": "concept",
       "icon": "🔁",
       "title": "How a for loop works",
-      "content": "<p>A <code>for</code> loop repeats code for you automatically. There are three parts to understand:</p><img src='worksheets/diagrams/for-loop-anatomy.svg' alt='for loop anatomy diagram' style='width:100%;max-width:500px;display:block;margin:12px 0;'/><ul><li><strong>Loop statement</strong> — the <code>for</code> line, ending in a colon <code>:</code>. It runs once and tells Python how many times to repeat.</li><li><strong>Body</strong> — the indented lines below. Python runs all of these on every repetition.</li><li><strong>After the loop</strong> — any lines with no indent after the body. Python runs these once when the loop is finished.</li></ul>",
-      "footer": "Indentation is what tells Python which lines are inside the loop and which are outside."
+      "content": "<p>A <code>for</code> loop repeats code for you automatically. There are three parts to understand:</p><img src='worksheets/diagrams/for-loop-anatomy.svg' alt='for loop anatomy diagram' style='width:100%;max-width:500px;display:block;margin:12px 0;'/><ul><li><strong>Loop statement</strong> — the <code>for</code> line, ending in a colon <code>:</code>. It runs once and tells Python how many times to repeat.</li><li><strong>Body</strong> — the lines below that start with spaces. Python runs all of these on every repetition.</li><li><strong>After the loop</strong> — lines with no spaces at the start. Python runs these once when the loop is finished.</li></ul><p><strong>Indentation</strong> means adding spaces at the start of a line. In Python, the spaces tell Python which lines are <em>inside</em> the loop (body) and which are <em>outside</em> (after the loop). We use 2 spaces.</p>",
+      "footer": "Spaces at the start = inside the loop. No spaces = outside the loop."
     },
     {
       "title": "The problem with repetition",
