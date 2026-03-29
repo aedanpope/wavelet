@@ -16,6 +16,8 @@ Wavelet Zone provides a comprehensive Python learning experience through interac
 - **Visual Input System**: User-friendly textbox inputs instead of intimidating command line prompts
 - **Real-time Validation**: Immediate feedback with educational error messages
 - **Progress Tracking**: Visual indicators and completion tracking
+- **Python Scratchpad**: Free-form coding workspace with configurable inputs and canvas output
+- **Execution Trace**: Step-by-step code visualiser showing variable values, for-loop state, and print output as each line runs — useful for live teacher demos and student exploration
 - **Responsive Design**: Works on desktop, tablet, and mobile devices
 
 ## Educational Approach

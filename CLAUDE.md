@@ -96,6 +96,23 @@ Problems are validated using pattern matching, output checking, and code analysi
 ### Progress Tracking
 Automatic progress persistence using localStorage. Students' code and completion status are saved per worksheet.
 
+### Python Scratchpad (`scratchpad.html` / `scratchpad.js`)
+A free-form Python workspace outside the worksheet structure. Features configurable inputs (`get_input()`), an optional canvas, and an **Execution Trace** mode.
+
+**Trace mode** (`trace-toggle` checkbox → "Run & Trace"):
+- Uses `sys.settrace()` in Pyodide to record every line event
+- Generates a list of *steps* (each line has a `before` and `after` sub-step), serialised to JSON via `_wavelet_trace_result`
+- Each step carries: `line` (1-indexed), `locals` snapshot, `output` (accumulated stdout so far), `phase` (`before`/`after`), `ann` (annotation chip), `for_ctx` (for-loop iterable state)
+- JS `TracePlayer` class drives playback: slider, prev/next/play controls, variable panel, output-so-far panel
+- Line highlight uses a sliding CSS-transitioned overlay (`div.trace-line-overlay`) inside the CodeMirror scroller, animated with `transition: top`
+- Annotations shown on relevant steps: `print → "value"`, `if condition → true/false`, `for x in [...]` with consumed/current item styling
+
+**Potential future uses to keep in mind:**
+- Embed a read-only trace player inside a worksheet problem to *demo* how a specific piece of code executes (e.g. explain a for-loop or accumulator pattern before students write their own)
+- Add a "trace this" hint mode on hard problems so students can step through a working solution
+- Use the scratchpad page in a teacher walkthrough / live demo context
+- If pulling trace into worksheets: the `TracePlayer` class and `buildTraceScript()` / `runTrace()` functions in `scratchpad.js` are self-contained and could be imported or duplicated into `worksheet.js` with minor wiring changes
+
 ## Code Style Guidelines
 
 ### JavaScript
