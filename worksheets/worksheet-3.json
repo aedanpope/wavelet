@@ -4,6 +4,13 @@
   "description": "Learn to use for loops to repeat actions and create cool visual patterns and fun programs.",
   "problems": [
     {
+      "type": "concept",
+      "icon": "🔁",
+      "title": "How a for loop works",
+      "content": "<p>A <code>for</code> loop repeats code for you automatically. There are three parts to understand:</p><img src='worksheets/diagrams/for-loop-anatomy.svg' alt='for loop anatomy diagram' style='width:100%;max-width:500px;display:block;margin:12px 0;'/><ul><li><strong>Loop statement</strong> — the <code>for</code> line, ending in a colon <code>:</code>. It runs once and tells Python how many times to repeat.</li><li><strong>Body</strong> — the indented lines below. Python runs all of these on every repetition.</li><li><strong>After the loop</strong> — any lines with no indent after the body. Python runs these once when the loop is finished.</li></ul>",
+      "footer": "Indentation is what tells Python which lines are inside the loop and which are outside."
+    },
+    {
       "title": "The problem with repetition",
       "content": "Sometimes we want to do the same thing over and over. Typing it all out is a lot of work!",
       "task": "Run this code to see 'Hello' printed five times.",
