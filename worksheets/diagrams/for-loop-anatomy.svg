@@ -1,63 +1,41 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 190">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 148">
 
   <!-- Code block background -->
-  <rect x="12" y="12" width="220" height="168" rx="8" fill="#1e293b"/>
+  <rect x="12" y="12" width="220" height="126" rx="8" fill="#1e293b"/>
 
   <!-- Loop statement highlight -->
   <rect x="18" y="18" width="214" height="23" rx="3" fill="rgba(192,132,252,0.3)"/>
 
-  <!-- Body: single rect covering both lines -->
-  <rect x="18" y="50" width="214" height="56" rx="3" fill="rgba(52,211,153,0.18)"/>
-
-  <!-- Indentation highlight: the 2-space gap on each body line -->
-  <rect x="18" y="50" width="20" height="56" rx="2" fill="rgba(96,165,250,0.45)"/>
+  <!-- Body highlight: single rect, both lines -->
+  <rect x="18" y="50" width="214" height="56" rx="3" fill="rgba(52,211,153,0.2)"/>
 
   <!-- After-loop highlight -->
-  <rect x="18" y="148" width="152" height="23" rx="3" fill="rgba(251,191,36,0.25)"/>
-
-  <!-- i ← 1 assignment pill on the for line -->
-  <rect x="145" y="87" width="82" height="16" rx="8" fill="rgba(192,132,252,0.22)"/>
-  <text x="150" y="99" font-family="sans-serif" font-size="11" fill="#c084fc">i ← 1, then 2, then 3</text>
+  <rect x="18" y="115" width="152" height="23" rx="3" fill="rgba(251,191,36,0.25)"/>
 
   <!-- Code text -->
   <text font-family="monospace" font-size="15">
-    <tspan x="22" y="35" fill="#c084fc">for </tspan><tspan fill="#93c5fd">i</tspan><tspan fill="#e2e8f0"> in [1, 2, 3]:</tspan>
+    <tspan x="22" y="35" fill="#c084fc">for </tspan><tspan fill="#e2e8f0">i in [1, 2, 3]:</tspan>
   </text>
-  <text font-family="monospace" font-size="15" x="40" y="69" fill="#6ee7b7">print(i)</text>
-  <text font-family="monospace" font-size="15" x="40" y="99" fill="#6ee7b7">print("---")</text>
-  <text font-family="monospace" font-size="15" x="22" y="165" fill="#fbbf24">print("done")</text>
+  <text font-family="monospace" font-size="15" x="40" y="66" fill="#6ee7b7">print(i)</text>
+  <text font-family="monospace" font-size="15" x="40" y="96" fill="#6ee7b7">print("---")</text>
+  <text font-family="monospace" font-size="15" x="22" y="129" fill="#fbbf24">print("done")</text>
 
   <!-- Arrow: loop statement -->
   <line x1="247" y1="30" x2="236" y2="30" stroke="#7c3aed" stroke-width="1.8"/>
   <polygon points="228,30 236,25.5 236,34.5" fill="#7c3aed"/>
-  <text x="252" y="26" font-family="sans-serif" font-size="13" fill="#5b21b6" font-weight="700">loop statement</text>
-  <text x="252" y="40" font-family="sans-serif" font-size="11" fill="#7c3aed">(sets up how many times to repeat)</text>
+  <text x="252" y="35" font-family="sans-serif" font-size="13" fill="#5b21b6" font-weight="700">loop statement</text>
 
-  <!-- Arrow: i assignment detail -->
-  <line x1="247" y1="115" x2="232" y2="115" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="3,2"/>
-  <polygon points="224,115 232,111 232,119" fill="#7c3aed"/>
-  <text x="252" y="111" font-family="sans-serif" font-size="12" fill="#5b21b6" font-weight="700">i gets each value</text>
-  <text x="252" y="125" font-family="sans-serif" font-size="11" fill="#7c3aed">from the list, one at a time</text>
+  <!-- Brace + arrow: body -->
+  <line x1="205" y1="52" x2="213" y2="52" stroke="#059669" stroke-width="1.5"/>
+  <line x1="213" y1="52" x2="213" y2="104" stroke="#059669" stroke-width="1.5"/>
+  <line x1="213" y1="104" x2="205" y2="104" stroke="#059669" stroke-width="1.5"/>
+  <line x1="213" y1="78" x2="247" y2="78" stroke="#059669" stroke-width="1.8"/>
+  <polygon points="239,78 247,73.5 247,82.5" fill="#059669"/>
+  <text x="252" y="83" font-family="sans-serif" font-size="13" fill="#065f46" font-weight="700">body</text>
 
-  <!-- Arrow: indentation label -->
-  <line x1="247" y1="78" x2="42" y2="78" stroke="#3b82f6" stroke-width="1.8"/>
-  <polygon points="34,78 42,73.5 42,82.5" fill="#3b82f6"/>
-  <text x="252" y="74" font-family="sans-serif" font-size="13" fill="#1d4ed8" font-weight="700">indentation</text>
-  <text x="252" y="88" font-family="sans-serif" font-size="11" fill="#3b82f6">(2 spaces — marks the body)</text>
-
-  <!-- Brace for body -->
-  <line x1="205" y1="50" x2="215" y2="50" stroke="#059669" stroke-width="1.5"/>
-  <line x1="215" y1="50" x2="215" y2="106" stroke="#059669" stroke-width="1.5"/>
-  <line x1="215" y1="106" x2="205" y2="106" stroke="#059669" stroke-width="1.5"/>
-  <line x1="215" y1="140" x2="247" y2="140" stroke="#059669" stroke-width="1.8"/>
-  <polygon points="239,140 247,135.5 247,144.5" fill="#059669"/>
-  <text x="252" y="136" font-family="sans-serif" font-size="13" fill="#065f46" font-weight="700">body</text>
-  <text x="252" y="150" font-family="sans-serif" font-size="11" fill="#059669">(runs on every repetition)</text>
-
-  <!-- Arrow: after loop -->
-  <line x1="247" y1="165" x2="178" y2="165" stroke="#b45309" stroke-width="1.8"/>
-  <polygon points="170,165 178,160.5 178,169.5" fill="#b45309"/>
-  <text x="252" y="161" font-family="sans-serif" font-size="13" fill="#92400e" font-weight="700">after the loop</text>
-  <text x="252" y="175" font-family="sans-serif" font-size="11" fill="#b45309">(no spaces — runs once at the end)</text>
+  <!-- Arrow: after the loop -->
+  <line x1="247" y1="127" x2="178" y2="127" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="170,127 178,122.5 178,131.5" fill="#b45309"/>
+  <text x="252" y="132" font-family="sans-serif" font-size="13" fill="#92400e" font-weight="700">after the loop</text>
 
 </svg>
