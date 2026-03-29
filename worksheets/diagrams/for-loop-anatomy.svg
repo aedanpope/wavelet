@@ -4,7 +4,7 @@
   <rect x="12" y="12" width="220" height="126" rx="8" fill="#1e293b"/>
 
   <!-- Loop statement highlight -->
-  <rect x="18" y="18" width="208" height="23" rx="3" fill="rgba(192,132,252,0.3)"/>
+  <rect x="18" y="18" width="214" height="23" rx="3" fill="rgba(192,132,252,0.3)"/>
 
   <!-- Body highlight (two lines) -->
   <rect x="37" y="50" width="155" height="23" rx="3" fill="rgba(52,211,153,0.25)"/>
@@ -14,7 +14,7 @@
   <rect x="18" y="112" width="152" height="23" rx="3" fill="rgba(251,191,36,0.25)"/>
 
   <text font-family="monospace" font-size="15">
-    <tspan x="22" y="35" fill="#c084fc">for </tspan><tspan fill="#e2e8f0">i in range(3):</tspan>
+    <tspan x="22" y="35" fill="#c084fc">for </tspan><tspan fill="#e2e8f0">i in [1, 2, 3]:</tspan>
   </text>
   <text font-family="monospace" font-size="15" x="40" y="66" fill="#6ee7b7">print(i)</text>
   <text font-family="monospace" font-size="15" x="40" y="96" fill="#6ee7b7">print("---")</text>
