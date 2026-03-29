@@ -18,13 +18,13 @@
   <!-- LHS: indentation label + arrow -->
   <text x="8" y="55" font-family="sans-serif" font-size="13" fill="#1d4ed8" font-weight="700">indentation</text>
   <text x="8" y="69" font-family="sans-serif" font-size="11" fill="#3b82f6">2 spaces → inside</text>
-  <line x1="178" y1="62" x2="216" y2="62" stroke="#e2e8f0" stroke-width="1.8"/>
+  <line x1="190" y1="62" x2="216" y2="62" stroke="#e2e8f0" stroke-width="1.8"/>
   <polygon points="224,62 216,57.5 216,66.5" fill="#e2e8f0"/>
 
   <!-- LHS: no indentation label + arrow -->
   <text x="8" y="103" font-family="sans-serif" font-size="13" fill="#92400e" font-weight="700">no indentation</text>
   <text x="8" y="117" font-family="sans-serif" font-size="11" fill="#b45309">no spaces → outside</text>
-  <line x1="178" y1="110" x2="198" y2="110" stroke="#e2e8f0" stroke-width="1.8"/>
+  <line x1="190" y1="110" x2="198" y2="110" stroke="#e2e8f0" stroke-width="1.8"/>
   <polygon points="206,110 198,105.5 198,114.5" fill="#e2e8f0"/>
 
 </svg>
