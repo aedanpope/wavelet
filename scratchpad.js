@@ -739,9 +739,19 @@ finally:
 # Close the final pending 'after' step using the namespace end-state
 if _tr_pending[0] is not None:
     pend = _tr_pending[0]
+    pl = pend['line']
     final_snap = _tr_snap({k: v for k, v in _tr_ns.items() if not k.startswith('_')})
-    _tr_steps.append({'line': pend['line'], 'locals': final_snap, 'for_ctx': pend['for_ctx'],
-                      'phase': 'after', 'ann': None, 'output': ''.join(_tr_output)})
+    ann = None
+    # If an if-line is still pending at end-of-code, its body never ran → condition was False
+    ist = _tr_if_stmts.get(pl)
+    if ist:
+        ann = {'type': 'if_result', 'cond': ist['cond_src'], 'value': False}
+    # If a for-line is still pending (e.g. empty iterable), loop is done
+    fl = _tr_for_loops.get(pl)
+    if fl and ann is None:
+        ann = {'type': 'loop_done', 'var': fl['target']}
+    _tr_steps.append({'line': pl, 'locals': final_snap, 'for_ctx': pend['for_ctx'],
+                      'phase': 'after', 'ann': ann, 'output': ''.join(_tr_output)})
 
 _wavelet_trace_result = _json_tr.dumps({
     'steps': _tr_steps,
