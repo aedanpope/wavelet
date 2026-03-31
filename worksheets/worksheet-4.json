@@ -87,14 +87,97 @@
       "title": "When the condition is True — body runs",
       "code": "n = 15\nif n > 10:\n  print('big number')\nprint('done')",
       "steps": [
-        {"line":1,"locals":{},"for_ctx":null,"phase":"before","ann":null,"output":""},
-        {"line":1,"locals":{"n":"15"},"for_ctx":null,"phase":"after","ann":null,"output":""},
-        {"line":2,"locals":{"n":"15"},"for_ctx":null,"phase":"before","ann":{"type":"if_test","cond":"n > 10"},"output":""},
-        {"line":2,"locals":{"n":"15"},"for_ctx":null,"phase":"after","ann":{"type":"if_result","cond":"n > 10","value":true},"output":""},
-        {"line":3,"locals":{"n":"15"},"for_ctx":null,"phase":"before","ann":{"type":"print","preview":"big number"},"output":""},
-        {"line":3,"locals":{"n":"15"},"for_ctx":null,"phase":"after","ann":null,"output":"big number\n"},
-        {"line":4,"locals":{"n":"15"},"for_ctx":null,"phase":"before","ann":{"type":"print","preview":"done"},"output":"big number\n"},
-        {"line":4,"locals":{"n":"15"},"for_ctx":null,"phase":"after","ann":null,"output":"big number\ndone\n"}
+        {
+          "line": 1,
+          "locals": {},
+          "for_ctx": null,
+          "phase": "before",
+          "ann": null,
+          "output": ""
+        },
+        {
+          "line": 1,
+          "locals": {
+            "n": "15"
+          },
+          "for_ctx": null,
+          "phase": "after",
+          "ann": null,
+          "output": ""
+        },
+        {
+          "line": 2,
+          "locals": {
+            "n": "15"
+          },
+          "for_ctx": null,
+          "phase": "before",
+          "ann": {
+            "type": "if_test",
+            "cond": "n > 10"
+          },
+          "output": ""
+        },
+        {
+          "line": 2,
+          "locals": {
+            "n": "15"
+          },
+          "for_ctx": null,
+          "phase": "after",
+          "ann": {
+            "type": "if_result",
+            "cond": "n > 10",
+            "value": true
+          },
+          "output": ""
+        },
+        {
+          "line": 3,
+          "locals": {
+            "n": "15"
+          },
+          "for_ctx": null,
+          "phase": "before",
+          "ann": {
+            "type": "print",
+            "preview": "big number"
+          },
+          "output": ""
+        },
+        {
+          "line": 3,
+          "locals": {
+            "n": "15"
+          },
+          "for_ctx": null,
+          "phase": "after",
+          "ann": null,
+          "output": "big number\n"
+        },
+        {
+          "line": 4,
+          "locals": {
+            "n": "15"
+          },
+          "for_ctx": null,
+          "phase": "before",
+          "ann": {
+            "type": "print",
+            "preview": "done"
+          },
+          "output": "big number\n"
+        },
+        {
+          "line": 4,
+          "locals": {
+            "n": "15"
+          },
+          "for_ctx": null,
+          "phase": "after",
+          "ann": null,
+          "output": "big number\ndone\n"
+        }
       ]
     },
     {
@@ -102,20 +185,82 @@
       "title": "When the condition is False — body is skipped",
       "code": "n = 8\nif n > 10:\n  print('big number')\nprint('done')",
       "steps": [
-        {"line":1,"locals":{},"for_ctx":null,"phase":"before","ann":null,"output":""},
-        {"line":1,"locals":{"n":"8"},"for_ctx":null,"phase":"after","ann":null,"output":""},
-        {"line":2,"locals":{"n":"8"},"for_ctx":null,"phase":"before","ann":{"type":"if_test","cond":"n > 10"},"output":""},
-        {"line":2,"locals":{"n":"8"},"for_ctx":null,"phase":"after","ann":{"type":"if_result","cond":"n > 10","value":false},"output":""},
-        {"line":4,"locals":{"n":"8"},"for_ctx":null,"phase":"before","ann":{"type":"print","preview":"done"},"output":""},
-        {"line":4,"locals":{"n":"8"},"for_ctx":null,"phase":"after","ann":null,"output":"done\n"}
+        {
+          "line": 1,
+          "locals": {},
+          "for_ctx": null,
+          "phase": "before",
+          "ann": null,
+          "output": ""
+        },
+        {
+          "line": 1,
+          "locals": {
+            "n": "8"
+          },
+          "for_ctx": null,
+          "phase": "after",
+          "ann": null,
+          "output": ""
+        },
+        {
+          "line": 2,
+          "locals": {
+            "n": "8"
+          },
+          "for_ctx": null,
+          "phase": "before",
+          "ann": {
+            "type": "if_test",
+            "cond": "n > 10"
+          },
+          "output": ""
+        },
+        {
+          "line": 2,
+          "locals": {
+            "n": "8"
+          },
+          "for_ctx": null,
+          "phase": "after",
+          "ann": {
+            "type": "if_result",
+            "cond": "n > 10",
+            "value": false
+          },
+          "output": ""
+        },
+        {
+          "line": 4,
+          "locals": {
+            "n": "8"
+          },
+          "for_ctx": null,
+          "phase": "before",
+          "ann": {
+            "type": "print",
+            "preview": "done"
+          },
+          "output": ""
+        },
+        {
+          "line": 4,
+          "locals": {
+            "n": "8"
+          },
+          "for_ctx": null,
+          "phase": "after",
+          "ann": null,
+          "output": "done\n"
+        }
       ]
     },
     {
       "title": "Greater Than >",
       "content": "So far, our programs have always run the same way. But what if we want our code to make decisions? The <code>if</code> statement runs code only when a condition is true. We can use math symbols like <code>></code> (greater than) to create these conditions.",
-      "task": "Run the code. Then, change the number in the <code>age</code> variable to 3 and run it again. Notice how the <code>True</code>/<code>False</code> line changes and predicts whether 'OK' will be printed.",
-      "codeHeight": 7,
-      "starterCode": "age = 6\nprint('What is (age > 5)?')\nprint(age > 5)\n\nif age > 5:\n  print(\"OK\")",
+      "task": "Run the code — <code>age</code> is 6, so <code>age > 5</code> is <code>True</code> and <code>'OK'</code> prints. Now change <code>age</code> to 3 and run again. Notice <code>'OK'</code> no longer prints.",
+      "codeHeight": 5,
+      "starterCode": "age = 6\n\nif age > 5:\n  print(\"OK\")",
       "hint": "The code inside the <code>if</code> block only runs when the condition next to the <code>if</code> is <code>True</code>.",
       "validation": {
         "rules": [
@@ -123,12 +268,8 @@
             "type": "no_errors"
           },
           {
-            "type": "code_contains_regex",
-            "pattern": "print\\s*\\(\\s*age\\s*>\\s*5\\s*\\)"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "if\\s*age\\s*>\\s*5\\s*:"
+            "type": "code_contains",
+            "pattern": "if age > 5:"
           }
         ]
       }
@@ -136,9 +277,9 @@
     {
       "title": "Your Turn: Greater Than > Practice",
       "content": "Now it's your turn to practice! This code starts with a False condition. Can you change the age to make the condition True and see 'OK' printed?",
-      "task": "The debug lines show this will print False. Change the <code>age</code> value to make the condition <code>age > 5</code> become True so 'OK' gets printed.",
-      "codeHeight": 7,
-      "starterCode": "age = 3\nprint('What is (age > 5)?')\nprint(age > 5)\n\nif age > 5:\n  print(\"OK\")",
+      "task": "The condition <code>age > 5</code> is currently False. Change <code>age</code> to make the condition True so <code>'OK'</code> gets printed.",
+      "codeHeight": 5,
+      "starterCode": "age = 3\n\nif age > 5:\n  print(\"OK\")",
       "hint": "Try changing age to 6 or any number greater than 5. Watch how the debug output changes to True!",
       "validation": {
         "rules": [
@@ -147,15 +288,11 @@
           },
           {
             "type": "code_contains",
-            "pattern": "age ="
-          },
-          {
-            "type": "code_contains",
             "pattern": "if age > 5:"
           },
           {
             "type": "output_contains",
-            "pattern": "True"
+            "pattern": "OK"
           }
         ]
       }
@@ -163,9 +300,9 @@
     {
       "title": "Less Than <",
       "content": "Just like we use <code>></code> for 'greater than', we can use <code><</code> for 'less than'. Let's use our debug print to see how it works.",
-      "task": "Run the code. Then, change the number of <code>toys</code> to 5 and run it again. What happens when <code>toys < 5</code> is <code>False</code>?",
-      "codeHeight": 7,
-      "starterCode": "toys = 4\nprint('What is (toys < 5)?')\nprint(toys < 5)\n\nif toys < 5:\n  print(\"Not too many toys\")",
+      "task": "Run the code — <code>toys</code> is 4, so <code>toys < 5</code> is <code>True</code> and the message prints. Change <code>toys</code> to 5 and run again — what happens?",
+      "codeHeight": 5,
+      "starterCode": "toys = 4\n\nif toys < 5:\n  print(\"Not too many toys\")",
       "hint": "Try the number 5. Is 5 less than 5? The debug line will tell you!",
       "validation": {
         "rules": [
@@ -173,12 +310,8 @@
             "type": "no_errors"
           },
           {
-            "type": "code_contains_regex",
-            "pattern": "print\\s*\\(\\s*toys\\s*<\\s*5\\s*\\)"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "if\\s*toys\\s*<\\s*5\\s*:"
+            "type": "code_contains",
+            "pattern": "if toys < 5:"
           }
         ]
       }
@@ -186,9 +319,9 @@
     {
       "title": "Your Turn: Less Than < Practice",
       "content": "Time to practice the less than operator! This code starts with a False condition because 6 is not less than 5.",
-      "task": "The debug lines show this will print False. Change the <code>toys</code> value to make the condition <code>toys < 5</code> become True so the message gets printed.",
-      "codeHeight": 7,
-      "starterCode": "toys = 6\nprint('What is (toys < 5)?')\nprint(toys < 5)\n\nif toys < 5:\n  print(\"Not too many toys\")",
+      "task": "The condition <code>toys < 5</code> is currently False. Change <code>toys</code> to make the condition True so the message gets printed.",
+      "codeHeight": 5,
+      "starterCode": "toys = 6\n\nif toys < 5:\n  print(\"Not too many toys\")",
       "hint": "Try changing toys to 4 or any number less than 5. Watch the debug output change to True!",
       "validation": {
         "rules": [
@@ -197,15 +330,11 @@
           },
           {
             "type": "code_contains",
-            "pattern": "toys ="
-          },
-          {
-            "type": "code_contains",
             "pattern": "if toys < 5:"
           },
           {
             "type": "output_contains",
-            "pattern": "True"
+            "pattern": "Not too many toys"
           }
         ]
       }
@@ -213,9 +342,9 @@
     {
       "title": "Equal To ==",
       "content": "This is a very important one! To ask if two things are equal, we use two equals signs: <code>==</code>. A single equals sign <code>=</code> is for giving a value to a variable.",
-      "task": "Run the code. Change the <code>secret_number</code> to 6 and run it again. Watch the <code>True</code>/<code>False</code> line to predict the result.",
-      "codeHeight": 7,
-      "starterCode": "secret_number = 7\nprint('What is (secret_number == 7)?')\nprint(secret_number == 7)\n\nif secret_number == 7:\n  print(\"You guessed it\")",
+      "task": "Run the code — <code>secret_number</code> is 7, so <code>secret_number == 7</code> is <code>True</code> and the message prints. Change <code>secret_number</code> to 6 and run again. Does it print?",
+      "codeHeight": 5,
+      "starterCode": "secret_number = 7\n\nif secret_number == 7:\n  print(\"You guessed it\")",
       "hint": "Remember: one equals <code>=</code> gives a value, two equals <code>==</code> asks a question.",
       "validation": {
         "rules": [
@@ -223,12 +352,8 @@
             "type": "no_errors"
           },
           {
-            "type": "code_contains_regex",
-            "pattern": "print\\s*\\(\\s*secret_number\\s*==\\s*7\\s*\\)"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "if\\s*secret_number\\s*==\\s*7\\s*:"
+            "type": "code_contains",
+            "pattern": "if secret_number == 7:"
           }
         ]
       }
@@ -236,9 +361,9 @@
     {
       "title": "Your Turn: Equal To == Practice",
       "content": "Let's practice the equality operator! This code starts with a False condition because 5 does not equal 7.",
-      "task": "The debug lines show this will print False. Change the <code>secret_number</code> value to make the condition <code>secret_number == 7</code> become True so the success message gets printed.",
-      "codeHeight": 7,
-      "starterCode": "secret_number = 5\nprint('What is (secret_number == 7)?')\nprint(secret_number == 7)\n\nif secret_number == 7:\n  print(\"You guessed it\")",
+      "task": "The condition <code>secret_number == 7</code> is currently False. Change <code>secret_number</code> to the right value so the success message gets printed.",
+      "codeHeight": 5,
+      "starterCode": "secret_number = 5\n\nif secret_number == 7:\n  print(\"You guessed it\")",
       "hint": "Try changing secret_number to 7. Remember, == checks if two values are exactly equal!",
       "validation": {
         "rules": [
@@ -247,15 +372,11 @@
           },
           {
             "type": "code_contains",
-            "pattern": "secret_number ="
-          },
-          {
-            "type": "code_contains",
             "pattern": "if secret_number == 7:"
           },
           {
             "type": "output_contains",
-            "pattern": "True"
+            "pattern": "You guessed it"
           }
         ]
       }
@@ -318,14 +439,97 @@
       "title": "else in action — the False path runs",
       "code": "score = 3\nif score >= 5:\n  print('pass')\nelse:\n  print('fail')\nprint('done')",
       "steps": [
-        {"line":1,"locals":{},"for_ctx":null,"phase":"before","ann":null,"output":""},
-        {"line":1,"locals":{"score":"3"},"for_ctx":null,"phase":"after","ann":null,"output":""},
-        {"line":2,"locals":{"score":"3"},"for_ctx":null,"phase":"before","ann":{"type":"if_test","cond":"score >= 5"},"output":""},
-        {"line":2,"locals":{"score":"3"},"for_ctx":null,"phase":"after","ann":{"type":"if_result","cond":"score >= 5","value":false},"output":""},
-        {"line":5,"locals":{"score":"3"},"for_ctx":null,"phase":"before","ann":{"type":"print","preview":"fail"},"output":""},
-        {"line":5,"locals":{"score":"3"},"for_ctx":null,"phase":"after","ann":null,"output":"fail\n"},
-        {"line":6,"locals":{"score":"3"},"for_ctx":null,"phase":"before","ann":{"type":"print","preview":"done"},"output":"fail\n"},
-        {"line":6,"locals":{"score":"3"},"for_ctx":null,"phase":"after","ann":null,"output":"fail\ndone\n"}
+        {
+          "line": 1,
+          "locals": {},
+          "for_ctx": null,
+          "phase": "before",
+          "ann": null,
+          "output": ""
+        },
+        {
+          "line": 1,
+          "locals": {
+            "score": "3"
+          },
+          "for_ctx": null,
+          "phase": "after",
+          "ann": null,
+          "output": ""
+        },
+        {
+          "line": 2,
+          "locals": {
+            "score": "3"
+          },
+          "for_ctx": null,
+          "phase": "before",
+          "ann": {
+            "type": "if_test",
+            "cond": "score >= 5"
+          },
+          "output": ""
+        },
+        {
+          "line": 2,
+          "locals": {
+            "score": "3"
+          },
+          "for_ctx": null,
+          "phase": "after",
+          "ann": {
+            "type": "if_result",
+            "cond": "score >= 5",
+            "value": false
+          },
+          "output": ""
+        },
+        {
+          "line": 5,
+          "locals": {
+            "score": "3"
+          },
+          "for_ctx": null,
+          "phase": "before",
+          "ann": {
+            "type": "print",
+            "preview": "fail"
+          },
+          "output": ""
+        },
+        {
+          "line": 5,
+          "locals": {
+            "score": "3"
+          },
+          "for_ctx": null,
+          "phase": "after",
+          "ann": null,
+          "output": "fail\n"
+        },
+        {
+          "line": 6,
+          "locals": {
+            "score": "3"
+          },
+          "for_ctx": null,
+          "phase": "before",
+          "ann": {
+            "type": "print",
+            "preview": "done"
+          },
+          "output": "fail\n"
+        },
+        {
+          "line": 6,
+          "locals": {
+            "score": "3"
+          },
+          "for_ctx": null,
+          "phase": "after",
+          "ann": null,
+          "output": "fail\ndone\n"
+        }
       ]
     },
     {
