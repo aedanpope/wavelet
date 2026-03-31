@@ -639,6 +639,13 @@
       }
     },
     {
+      "type": "concept",
+      "icon": "🔀",
+      "title": "More Than Two Paths: elif",
+      "content": "<p><code>elif</code> means <strong>\"else if\"</strong> — it adds an extra condition to check when the one above it was <code>False</code>. You can have as many <code>elif</code>s as you need.</p><p>The order always goes: <code>if</code> first, then any <code>elif</code>s, then <code>else</code> last. <strong><code>else</code> must always come after all the <code>elif</code>s</strong> — never before.</p><pre style=\"background:#1e293b;padding:12px 16px;border-radius:8px;font-size:0.9rem;line-height:1.8;margin:14px 0;\"><code style=\"color:#f1f5f9;background:transparent;padding:0;border-radius:0;font-size:inherit\"><span style=\"color:#93c5fd;font-weight:700\">if</span> <span style=\"color:#86efac\">condition1</span>:    <span style=\"color:#94a3b8\"># checked first</span>\n<span style=\"color:#64748b\">  ...</span>\n<span style=\"color:#93c5fd;font-weight:700\">elif</span> <span style=\"color:#86efac\">condition2</span>:  <span style=\"color:#94a3b8\"># checked if condition1 was False</span>\n<span style=\"color:#64748b\">  ...</span>\n<span style=\"color:#93c5fd;font-weight:700\">elif</span> <span style=\"color:#86efac\">condition3</span>:  <span style=\"color:#94a3b8\"># checked if both above were False</span>\n<span style=\"color:#64748b\">  ...</span>\n<span style=\"color:#93c5fd;font-weight:700\">else</span>:             <span style=\"color:#94a3b8\"># runs if ALL conditions above were False</span>\n<span style=\"color:#64748b\">  ...</span></code></pre><p>Python checks from top to bottom and runs the <strong>first</strong> block whose condition is <code>True</code> — then skips all the rest. Only one block ever runs.</p>",
+      "footer": "if → elif → elif → else. elif comes before else, always."
+    },
+    {
       "title": "More Than Two Choices: elif",
       "content": "What if we have more than two options? We can use <code>elif</code>, which is short for 'else if'. It lets us check another condition.",
       "task": "Enter numbers like 2, 5, and 8. See how the program prints 'Low', 'Mid', or 'High' depending on the number.",
