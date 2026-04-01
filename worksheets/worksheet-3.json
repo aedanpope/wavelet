@@ -229,7 +229,7 @@
       }
     },
     {
-      "title": "Loop with two statements",
+      "title": "Loop with three statements",
       "content": "A loop body can have as many lines as you like — just indent them all. The loop variable doesn't have to appear in the body; here <code>i</code> is just a counter to repeat 3 times.",
       "task": "Add three <code>print</code> statements inside the loop — <code>'Hip'</code>, <code>'Hip'</code>, then <code>'Hooray!'</code> — so all three print on every repetition:<code><br/>Hip<br/>Hip<br/>Hooray!<br/>Hip<br/>Hip<br/>Hooray!<br/>Hip<br/>Hip<br/>Hooray!</code>",
       "codeHeight": 5,
@@ -308,8 +308,8 @@
             "message": "Your code needs to use a 'for' loop"
           },
           {
-            "type": "code_contains",
-            "pattern": "range",
+            "type": "code_contains_regex",
+            "pattern": "range\\s*\\(",
             "message": "Your code needs to use the 'range()' function"
           },
           {
@@ -344,7 +344,7 @@
         "rules": [
           {
             "type": "code_contains_regex",
-            "pattern": "range\\(.*\\)",
+            "pattern": "range\\s*\\(",
             "message": "Your code needs to use the 'range()' function"
           },
           {
@@ -369,7 +369,7 @@
           },
           {
             "type": "code_contains_regex",
-            "pattern": "range\\(.*\\)",
+            "pattern": "range\\s*\\(",
             "message": "Your code needs to use the 'range()' function"
           },
           {
@@ -464,11 +464,6 @@
             "message": "Your code needs to use a 'for' loop"
           },
           {
-            "type": "code_contains_regex",
-            "pattern": "range\\(.*\\)",
-            "message": "Your code needs to use the 'range()' function"
-          },
-          {
             "type": "solution_code",
             "solutionCode": "n = get_input()\nfor i in range(1, 11):\n  print(i * n)"
           }
@@ -548,7 +543,7 @@
           },
           {
             "type": "code_contains_regex",
-            "pattern": "range\\(.*\\)",
+            "pattern": "range\\s*\\(",
             "message": "Your code needs to use the 'range()' function"
           },
           {
@@ -581,7 +576,7 @@
           },
           {
             "type": "code_contains_regex",
-            "pattern": "range\\(.*\\)",
+            "pattern": "range\\s*\\(",
             "message": "Your code needs to use the 'range()' function"
           },
           {
@@ -594,7 +589,7 @@
     {
       "title": "Challenge: The Product",
       "content": "Multiplying a series of numbers is called finding the 'product'.",
-      "task": "Modify this summing code to instead find the product of numbers from 1 to 5. That is, instead of <code>1+2+3+4+5</code>, it should calculate <code>1<em>2</em>3<em>4</em>5</code>. What happens if <code>total</code> starts at 0?",
+      "task": "Modify this summing code to instead find the product of numbers from 1 to 5. That is, instead of <code>1+2+3+4+5</code>, it should calculate <code>1*2*3*4*5</code>. What happens if <code>total</code> starts at 0?",
       "codeHeight": 5,
       "starterCode": "total = 0\nfor i in range(1, 6):\n  total = total + i\nprint(total)",
       "hint": "The task asks what happens if total starts at 0. After you change the <code>+</code> to a <code>*</code>, try running it to see the problem for yourself. What must the starting value be so that multiplying by it doesn't always result in zero?",

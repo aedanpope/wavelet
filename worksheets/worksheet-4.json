@@ -807,23 +807,6 @@
       }
     },
     {
-      "title": "Magic Potions",
-      "content": "Decisions can change the value of variables! This is how games keep track of things like health or score. The line <code>health = health + 5</code> takes the current value of health, adds 5, and then saves the result back into the health variable.",
-      "task": "Complete the program. Add an <code>else</code> block that subtracts 3 from health if the second choice is picked.",
-      "interactionType": "buttons",
-      "codeHeight": 11,
-      "starterCode": "health = 10\nprint(\"Your health is 10\")\nchoice = get_choice(2)\n\nif choice == 1:\n  health = health + 5\n\nprint(\"Your health is now\", health)",
-      "hint": "Add an <code>else:</code> block. Inside it, write the line <code>health = health - 3</code>.",
-      "validation": {
-        "rules": [
-          {
-            "type": "solution_code",
-            "solutionCode": "health = 10\nprint(\"Your health is 10\")\nchoice = get_choice(2)\n\nif choice == 1:\n  health = health + 5\nelse:\n  health = health - 3\n\nprint(\"Your health is now\", health)"
-          }
-        ]
-      }
-    },
-    {
       "title": "Two Conditions with 'and'",
       "content": "Sometimes you need to check if two things are true at the same time. For this, we can use the word <code>and</code>. The code inside the <code>if</code> will only run if the condition on the left AND the condition on the right are both true.",
       "task": "Run this code. Try changing the variables. For the message to print, <code>age</code> must be 12 or more AND <code>has_ticket</code> must be <code>True</code>.",
@@ -893,6 +876,47 @@
                 "expectedOutput": "Access denied"
               }
             ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Magic Potions",
+      "content": "Decisions can change the value of variables! This is how games keep track of things like health or score. The line <code>health = health + 5</code> takes the current value of health, adds 5, and then saves the result back into the health variable.",
+      "task": "Complete the program. Add an <code>else</code> block that subtracts 3 from health if the second choice is picked.",
+      "interactionType": "buttons",
+      "codeHeight": 11,
+      "starterCode": "health = 10\nprint(\"Your health is 10\")\nchoice = get_choice(2)\n\nif choice == 1:\n  health = health + 5\n\nprint(\"Your health is now\", health)",
+      "hint": "Add an <code>else:</code> block. Inside it, write the line <code>health = health - 3</code>.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "health = 10\nprint(\"Your health is 10\")\nchoice = get_choice(2)\n\nif choice == 1:\n  health = health + 5\nelse:\n  health = health - 3\n\nprint(\"Your health is now\", health)"
+          }
+        ]
+      }
+    },
+    {
+      "type": "concept",
+      "icon": "📐",
+      "title": "Key Concept: Indentation Inside a Loop",
+      "content": "<p>When you put an <code>if</code> inside a <code>for</code> loop, you need <strong>two levels of indentation</strong>. Each level adds 2 spaces:</p><pre style=\"background:#fef9c3;border-radius:6px;padding:10px 14px;margin:10px 0;font-size:0.92em;line-height:1.7\"><span style=\"color:#6b7280\">for</span> i <span style=\"color:#6b7280\">in</span> range(3):          <span style=\"color:#9ca3af\"># level 0</span>\n  <span style=\"color:#6b7280\">if</span> i == 1:               <span style=\"color:#9ca3af\"># level 1 — 2 spaces</span>\n    print(i)              <span style=\"color:#9ca3af\"># level 2 — 4 spaces</span></pre><p>The <code>if</code> is indented because it's <em>inside the loop</em>. The <code>print</code> is indented again because it's inside <em>both</em> the loop and the if.</p>",
+      "footer": "Rule: every time you go one level deeper, add 2 more spaces."
+    },
+    {
+      "title": "Magic Potions: The Adventure",
+      "content": "Now let's make the potion game last for more than one round! By wrapping the code in a <code>for</code> loop, the player gets to make multiple decisions — this is how real games work.",
+      "task": "Complete the program so it plays 3 rounds. Each round, print the current health, get a choice, and update health. If choice is 1, add 5 to health. Otherwise, subtract 3. Print the final health at the end.",
+      "interactionType": "buttons",
+      "codeHeight": 13,
+      "starterCode": "health = 10\nprint(\"Starting health:\", health)\n\nfor i in range(3):\n  print(\"Your health is\", health)\n  choice = get_choice(2)\n  \n\nprint(\"Final health:\", health)",
+      "hint": "Inside the loop, after <code>get_choice(2)</code>, add an <code>if</code>/<code>else</code>: if <code>choice == 1</code> then <code>health = health + 5</code>, else <code>health = health - 3</code>.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "health = 10\nprint(\"Starting health:\", health)\nfor i in range(3):\n  print(\"Your health is\", health)\n  choice = get_choice(2)\n  if choice == 1:\n    health = health + 5\n  else:\n    health = health - 3\nprint(\"Final health:\", health)"
           }
         ]
       }
