@@ -7,184 +7,7 @@ let codeEditor = null;
 let inputConfigs = []; // Array of { id, name, type, placeholder }
 let tracePlayer = null;
 
-// ── Trace Player ─────────────────────────────────────────────────────────────
-
-class TracePlayer {
-    constructor(steps, prints, editor) {
-        this.steps = steps;   // [{line, locals}]  (line is 1-indexed)
-        this.prints = prints; // [{at_step, text}]
-        this.editor = editor;
-        this.currentStep = -1;
-        this.highlightedLine = -1;
-        this.playTimer = null;
-        this.prevLocals = {};
-        this.highlightOverlay = null;
-    }
-
-    _ensureOverlay() {
-        if (this.highlightOverlay) return;
-        const scroller = this.editor.getScrollerElement();
-        const overlay = document.createElement('div');
-        overlay.className = 'trace-line-overlay';
-        scroller.appendChild(overlay);
-        this.highlightOverlay = overlay;
-    }
-
-    _moveOverlay(lineIdx, animate) {
-        this._ensureOverlay();
-        const lineTop = this.editor.heightAtLine(lineIdx, 'local');
-        const lineHeight = this.editor.defaultTextHeight();
-        const ov = this.highlightOverlay;
-        ov.style.transition = animate ? 'top 0.28s ease' : 'none';
-        ov.style.top = `${lineTop}px`;
-        ov.style.height = `${lineHeight}px`;
-        ov.style.display = 'block';
-    }
-
-    goToStep(n) {
-        if (n < 0 || n >= this.steps.length) return;
-
-        // Move gutter highlight
-        if (this.highlightedLine >= 0) {
-            this.editor.removeLineClass(this.highlightedLine, 'gutter', 'trace-current-line-gutter');
-        }
-
-        this.currentStep = n;
-        const step = this.steps[n];
-        const lineIdx = step.line - 1; // CodeMirror is 0-indexed
-        const animate = this.highlightedLine >= 0 && this.highlightedLine !== lineIdx;
-
-        // Slide background overlay to new line; jump gutter highlight
-        this._moveOverlay(lineIdx, animate);
-        this.editor.addLineClass(lineIdx, 'gutter', 'trace-current-line-gutter');
-        this.editor.scrollIntoView({ line: lineIdx, ch: 0 }, 80);
-        this.highlightedLine = lineIdx;
-
-        this._renderVars(step.locals, step.for_ctx, step.phase, step.ann);
-        this._renderOutput(n);
-        this._updateControls();
-
-        this.prevLocals = { ...step.locals };
-    }
-
-    _renderVars(locals, forCtx, phase, ann) {
-        const panel = document.getElementById('trace-vars');
-        const keys = Object.keys(locals);
-        let html = '';
-
-        // for-loop context chip
-        if (forCtx) {
-            let iterHtml;
-            if (forCtx.items && forCtx.items.length > 0) {
-                const k = forCtx.iteration ?? 0;
-                const itemsHtml = forCtx.items.map((item, idx) => {
-                    let cls = 'trace-iter-item';
-                    if (idx < k)                          cls += ' consumed';
-                    else if (idx === k && phase === 'before') cls += ' current';
-                    else if (idx <= k && phase === 'after')   cls += ' consumed';
-                    return `<span class="${cls}">${escHtml(item)}</span>`;
-                }).join('<span class="trace-iter-sep">, </span>');
-                iterHtml = `[${itemsHtml}]`;
-            } else {
-                iterHtml = escHtml(forCtx.iter);
-            }
-            html += `<div class="trace-for-ctx">
-                <span class="trace-for-kw">for</span>
-                <span class="trace-for-target">${escHtml(forCtx.target)}</span>
-                <span class="trace-for-kw">in</span>
-                <span class="trace-for-iter-items">${iterHtml}</span>
-            </div>`;
-        }
-
-        // annotation chip
-        if (ann) {
-            if (ann.type === 'loop_done') {
-                html += `<div class="trace-ann trace-ann-done">loop complete</div>`;
-            } else if (ann.type === 'loop_assigned') {
-                html += `<div class="trace-ann trace-ann-assign">${escHtml(ann.value)} → ${escHtml(ann.var)}</div>`;
-            } else if (ann.type === 'if_result') {
-                const cls = ann.value ? 'trace-ann-true' : 'trace-ann-false';
-                const icon = ann.value ? '✓ true' : '✗ false';
-                html += `<div class="trace-ann ${cls}">${escHtml(ann.cond)} → ${icon}</div>`;
-            } else if (ann.type === 'print') {
-                const preview = ann.preview != null
-                    ? ` → <span class="trace-ann-print-val">"${escHtml(ann.preview)}"</span>`
-                    : '';
-                html += `<div class="trace-ann trace-ann-print">print${preview}</div>`;
-            } else if (ann.type === 'if_test') {
-                html += `<div class="trace-ann trace-ann-if">if ${escHtml(ann.cond)}</div>`;
-            }
-        }
-
-        if (keys.length === 0 && !forCtx && !ann) {
-            html += '<span class="trace-empty">No variables yet</span>';
-        } else {
-            html += keys.map(k => {
-                const changed = this.prevLocals[k] !== locals[k];
-                return `<div class="trace-var-row${changed ? ' trace-var-changed' : ''}">
-                    <span class="trace-var-name">${escHtml(k)}</span>
-                    <span class="trace-var-eq">=</span>
-                    <span class="trace-var-value">${escHtml(locals[k])}</span>
-                </div>`;
-            }).join('');
-        }
-
-        panel.innerHTML = html;
-    }
-
-    _renderOutput(n) {
-        const text = (this.steps[n] && this.steps[n].output) || '';
-        const panel = document.getElementById('trace-output-panel');
-        const content = document.getElementById('trace-output');
-        if (text) {
-            content.textContent = text;
-            panel.style.display = 'block';
-        } else {
-            panel.style.display = 'none';
-        }
-    }
-
-    _updateControls() {
-        const n = this.currentStep;
-        const max = this.steps.length - 1;
-        document.getElementById('trace-first').disabled = n <= 0;
-        document.getElementById('trace-prev').disabled = n <= 0;
-        document.getElementById('trace-next').disabled = n >= max;
-        document.getElementById('trace-last').disabled = n >= max;
-        document.getElementById('trace-slider').value = n;
-        const phase = this.steps[n].phase === 'after' ? ' · after' : '';
-        document.getElementById('trace-step-count').textContent = `Step ${n + 1} / ${this.steps.length}${phase}`;
-    }
-
-    play() {
-        if (this.playTimer) return;
-        if (this.currentStep >= this.steps.length - 1) this.goToStep(0);
-        const speed = parseInt(document.getElementById('trace-speed').value);
-        document.getElementById('trace-play').textContent = '⏸ Pause';
-        const advance = () => {
-            if (this.currentStep >= this.steps.length - 1) { this.pause(); return; }
-            this.goToStep(this.currentStep + 1);
-        };
-        this.playTimer = setInterval(advance, speed);
-    }
-
-    pause() {
-        if (this.playTimer) { clearInterval(this.playTimer); this.playTimer = null; }
-        document.getElementById('trace-play').textContent = '▶ Play';
-    }
-
-    cleanup() {
-        this.pause();
-        if (this.highlightedLine >= 0) {
-            this.editor.removeLineClass(this.highlightedLine, 'gutter', 'trace-current-line-gutter');
-            this.highlightedLine = -1;
-        }
-        if (this.highlightOverlay) {
-            this.highlightOverlay.remove();
-            this.highlightOverlay = null;
-        }
-    }
-}
+// TracePlayer is defined in trace-player.js, loaded before this script.
 
 // ── Persistence ──────────────────────────────────────────────────────────────
 
@@ -571,7 +394,14 @@ async function runTrace() {
         slider.max = steps.length - 1;
         slider.value = 0;
 
-        tracePlayer = new TracePlayer(steps, prints, codeEditor);
+        const elFn = name => document.getElementById(
+            name === 'count' ? 'trace-step-count' :
+            name === 'output-panel' ? 'trace-output-panel' :
+            `trace-${name}`
+        );
+        tracePlayer = new TracePlayer(steps, codeEditor, elFn, {
+            playSpeed: () => parseInt(document.getElementById('trace-speed').value)
+        });
         document.getElementById('trace-player').style.display = 'block';
         tracePlayer.goToStep(0);
 
@@ -819,13 +649,7 @@ function debounce(fn, ms) {
     return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };
 }
 
-function escHtml(str) {
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-}
+// escHtml is provided by trace-player.js (window.escHtml)
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
 
