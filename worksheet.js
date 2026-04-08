@@ -157,12 +157,12 @@ function loadAllProblems() {
     let traceIndex = 0;
     currentWorksheet.problems.forEach((block) => {
         if (block.type === 'concept') {
-            container.appendChild(createConceptElement(block));
+            container.appendChild(ProblemRenderer.createConceptElement(block));
         } else if (block.type === 'trace') {
-            container.appendChild(createTraceElement(block, traceIndex));
+            container.appendChild(ProblemRenderer.createTraceElement(block, traceIndex));
             traceIndex++;
         } else {
-            container.appendChild(createProblemElement(block, problemIndex));
+            container.appendChild(ProblemRenderer.createProblemElement(block, problemIndex));
             problemIndex++;
         }
     });
@@ -207,140 +207,11 @@ function loadAllProblems() {
     }, 100);
 }
 
-// Create a problem element
-function createProblemElement(problem, index) {
-    const problemDiv = document.createElement('div');
-    problemDiv.className = 'problem-container';
-    problemDiv.id = `problem-${index}`;
-    
-    // Generate input fields HTML if the problem has inputs
-    let inputsHTML = '';
-    if (problem.inputs && problem.inputs.length > 0) {
-        inputsHTML = `
-            <div class="input-section">
-                <div class="input-fields" id="input-fields-${index}">
-                    ${problem.inputs.map(input => `
-                        <div class="input-field">
-                            <label for="input-${index}-${input.name}">${input.name} =</label>
-                            <input 
-                                type="${input.type}" 
-                                id="input-${index}-${input.name}" 
-                                name="${input.name}"
-                                placeholder="${input.placeholder || ''}"
-                                class="problem-input"
-                            >
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-    }
-    
-    problemDiv.innerHTML = `
-        <div class="problem-header">
-            <h2>Problem ${index + 1}: ${problem.title}</h2>
-        </div>
-
-        <div class="problem-content">
-            <div class="explanation">
-                <div class="problem-content-text">${problem.content}</div>
-                <div class="task-box">
-                    <h4>Your Task:</h4>
-                    <p>${problem.task}</p>
-                </div>
-            </div>
-
-            <div class="code-section">
-                <div class="code-header">
-                    <h4>Your Code</h4>
-                    <div class="code-controls">
-                        <button class="hint-btn" onclick="showHint(${index})">💡 Hint</button>
-                        <button class="reset-btn" onclick="resetProblem(${index})">🔄 Reset</button>
-                    </div>
-                </div>
-                <div class="code-editor" id="code-editor-${index}"></div>
-                
-                ${inputsHTML}
-                
-                <div class="output-section">
-                    <div class="output-header">
-                        <span>Output</span>
-                        <button class="run-btn" onclick="runCode(${index})">▶ Run Code</button>
-                    </div>
-                    <div class="output" id="output-${index}">
-                        <div class="output-placeholder">Click "Run Code" to see your output here</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    return problemDiv;
-}
-
-// Create a concept card element (non-interactive, just explanation content)
-function createConceptElement(block) {
-    const div = document.createElement('div');
-    div.className = 'concept-card';
-
-    const examplesHTML = block.examples ? `
-        <div class="concept-examples">
-            ${block.examples.map(ex => `
-                <div class="concept-example">
-                    <span class="example-input">You type <strong>${ex.input}</strong></span>
-                    <span class="example-arrow">→</span>
-                    <span class="example-code">Python sees <code>${ex.substituted}</code></span>
-                    <span class="example-arrow">→</span>
-                    <span class="example-output">prints <strong>${ex.output}</strong></span>
-                </div>
-            `).join('')}
-        </div>
-    ` : '';
-
-    const footerHTML = block.footer ? `<p class="concept-footer">${block.footer}</p>` : '';
-
-    div.innerHTML = `
-        <div class="concept-header">
-            <span class="concept-icon">${block.icon || '💡'}</span>
-            <h3>${block.title}</h3>
-        </div>
-        <div class="concept-body">
-            ${block.content}
-            ${examplesHTML}
-            ${footerHTML}
-        </div>
-    `;
-    return div;
-}
-
 // Initialize all CodeMirror editors
 function initAllCodeEditors() {
     getProblems().forEach((problem, index) => {
-        const editorElement = document.getElementById(`code-editor-${index}`);
-        const editor = CodeMirror(editorElement, {
-            mode: 'python',
-            theme: 'monokai',
-            lineNumbers: true,
-            indentUnit: 2,
-            tabSize: 2,
-            lineWrapping: true,
-            autoCloseBrackets: true,
-            matchBrackets: true,
-            extraKeys: {
-                "Tab": function(cm) {
-                    cm.replaceSelection("  ", "end");
-                }
-            }
-        });
-        
-        // Set starter code
-        editor.setValue(problem.starterCode || '');
-        
-        // Set editor height based on problem configuration (default: 3 lines)
-        const height = problem.codeHeight || 3;
-        editor.setSize(null, height * 23 + 10);
-        
-        codeEditors[index] = editor;
+        const containerEl = document.getElementById(`code-editor-${index}`);
+        codeEditors[index] = ProblemRenderer.createEditor(containerEl, problem);
     });
 }
 
@@ -450,66 +321,8 @@ async function runCode(problemIndex) {
     }
 }
 
-// Enhanced output display function
 function displayOutput(outputElement, content, type = 'normal', message = null) {
-    // Preserve canvas if it exists
-    const existingCanvas = outputElement.querySelector('.canvas-container');
-
-    // Clear previous content
-    outputElement.innerHTML = '';
-    outputElement.className = `output ${type}`;
-
-    // Restore canvas at the top if it existed
-    if (existingCanvas) {
-        outputElement.appendChild(existingCanvas);
-    }
-
-    // Create scrollable text container
-    const textScrollContainer = document.createElement('div');
-    textScrollContainer.className = 'output-text-scroll';
-
-    if (!content.trim() && type !== 'running') {
-        const emptyDiv = document.createElement('div');
-        emptyDiv.className = 'output-empty';
-        emptyDiv.textContent = '<program ran and produced no output>';
-        textScrollContainer.appendChild(emptyDiv);
-    }
-
-    if (content.trim()) {
-        // Truncate content after 1000 lines to prevent browser crashes
-        const lines = content.split('\n');
-        let truncatedContent = content;
-        let isTruncated = false;
-
-        if (lines.length > 1000) {
-            truncatedContent = lines.slice(0, 1000).join('\n');
-            isTruncated = true;
-        }
-
-        // Show raw output content
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'output-content';
-        contentDiv.textContent = truncatedContent;
-        textScrollContainer.appendChild(contentDiv);
-
-        // Add truncation warning if content was truncated
-        if (isTruncated) {
-            const truncationDiv = document.createElement('div');
-            truncationDiv.className = 'output-truncated';
-            truncationDiv.textContent = `Output truncated after 1000 lines (${lines.length} total lines). This prevents browser crashes.`;
-            textScrollContainer.appendChild(truncationDiv);
-        }
-    }
-
-    if (message) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `output-message ${type}`;
-        messageDiv.textContent = message;
-        textScrollContainer.appendChild(messageDiv);
-    }
-
-    // Add text container to output (even if empty, for structure)
-    outputElement.appendChild(textScrollContainer);
+    ProblemRenderer.displayOutput(outputElement, content, type, message);
 }
 
 // Reset a specific problem to its default state
@@ -721,17 +534,7 @@ function initAllTraceEditors() {
         const editorEl = document.getElementById(`trace-card-editor-${id}`);
         if (!editorEl) return;
 
-        const lineCount = block.code.split('\n').length;
-        const editor = CodeMirror(editorEl, {
-            mode: 'python',
-            theme: 'monokai',
-            lineNumbers: true,
-            readOnly: true,
-            value: block.code,
-            indentUnit: 2,
-            tabSize: 2,
-        });
-        editor.setSize(215, lineCount * 23 + 33);
+        const editor = ProblemRenderer.createTraceEditor(editorEl, block);
 
         const elFn = name => document.getElementById(`trace-card-${name}-${id}`);
         const player = new TracePlayer(block.steps, editor, elFn);
