@@ -1,0 +1,126 @@
+{
+  "id": "worksheet-7",
+  "title": "Worksheet 7: Drawing with Code",
+  "description": "Learn to create visual patterns by drawing on a grid using coordinates.",
+  "problems": [
+    {
+      "title": "Your First Pixel",
+      "content": "Welcome to grid drawing! You can color cells on a grid using the <code>draw()</code> function. The grid uses coordinates like a graph in math class: (x, y). The bottom-left corner is (0, 0).\n\nTry running this code to see a single red cell appear!",
+      "task": "Run the code to draw a red cell at position (1, 1).",
+      "starterCode": "use_canvas(GRID3)\n\n# Draw a red cell in the center\ndraw(1, 1, 'red')",
+      "hint": "Just click 'Run Code' to see the cell appear on the canvas above!",
+      "codeHeight": 6,
+      "canvas": true,
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "use_canvas(GRID3)\ndraw(1, 1, 'red')"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Draw a Horizontal Line",
+      "content": "Now let's draw multiple cells to create a line. A horizontal line goes from left to right at the same y-coordinate.\n\nThe grid is 3×3, so the coordinates go from (0, 0) to (2, 2). Let's draw a black line across the middle row at y=1.",
+      "task": "Draw a black horizontal line at y=1 by coloring cells (0, 1), (1, 1), and (2, 1).",
+      "starterCode": "use_canvas(GRID3)\n\n# Draw three cells to make a horizontal line\n# draw(x, y) draws black by default\n\n",
+      "hint": "You need three draw() calls: draw(0, 1), draw(1, 1), and draw(2, 1)",
+      "codeHeight": 6,
+      "canvas": true,
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "use_canvas(GRID3)\ndraw(0, 1)\ndraw(1, 1)\ndraw(2, 1)"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Color the Corners",
+      "content": "Let's make a pattern by coloring the four corner cells of the grid. The corners are at coordinates: (0, 0), (2, 0), (0, 2), and (2, 2).\n\nYou can use different colors! Try 'blue', 'green', 'yellow', 'purple', or any color name you know.",
+      "task": "Draw blue cells in all four corners of the grid.",
+      "starterCode": "use_canvas(GRID3)\n\n# Color all four corners blue\n\n",
+      "hint": "You need four draw() calls for the corners: (0, 0), (2, 0), (0, 2), and (2, 2)",
+      "codeHeight": 6,
+      "canvas": true,
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "use_canvas(GRID3)\ndraw(0, 0, 'blue')\ndraw(2, 0, 'blue')\ndraw(0, 2, 'blue')\ndraw(2, 2, 'blue')"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Your First Loop with Drawing",
+      "content": "Now let's use a loop to draw! A loop lets us repeat actions without writing the same code over and over.\n\nWe'll use GRID100 - a much bigger canvas with 100×100 cells. Instead of drawing 100 cells one by one, we can use a loop!",
+      "task": "Use a for loop to draw a red horizontal line at y=50 across the entire width of the canvas.",
+      "starterCode": "use_canvas(GRID100)\n\n# Use a for loop to draw across x from 0 to 99\nfor x in range(100):\n  # Your draw() call here\n  ",
+      "hint": "Inside the loop, use draw(x, 50, 'red') to color each cell",
+      "codeHeight": 6,
+      "canvas": true,
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "use_canvas(GRID100)\nfor x in range(100):\n  draw(x, 50, 'red')"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Draw a Vertical Line with a Loop",
+      "content": "Great! Now let's draw a vertical line using a loop. A vertical line has the same x-coordinate but different y-coordinates.",
+      "task": "Use a for loop to draw a blue vertical line at x=30 from top to bottom.",
+      "starterCode": "use_canvas(GRID100)\n\n# Use a for loop to draw from y=0 to y=99\n\n",
+      "hint": "Use: for y in range(100): draw(30, y, 'blue')",
+      "codeHeight": 4,
+      "canvas": true,
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "use_canvas(GRID100)\nfor y in range(100):\n  draw(30, y, 'blue')"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Create a Rainbow",
+      "content": "Now for something colorful! We can create a rainbow by drawing horizontal stripes with different colors.\n\nWe'll use a list of colors and a loop to draw multiple colored lines.",
+      "task": "Draw a rainbow with horizontal stripes at y=40, 45, 50, 55, 60, and 65 using the colors: red, orange, yellow, green, blue, purple.",
+      "starterCode": "use_canvas(GRID100)\n\ncolors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']\n\n# Loop through each color\nfor i in range(6):\n  # Calculate y position: start at 40, add i*5\n  y = 40 + i * 5\n  \n  # Draw a horizontal line at this y position\n  for x in range(100):\n    # Draw with colors[i]\n    ",
+      "hint": "Inside the inner loop, use draw(x, y, colors[i])",
+      "codeHeight": 14,
+      "canvas": true,
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "use_canvas(GRID100)\ncolors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']\nfor i in range(6):\n  y = 40 + i * 5\n  for x in range(100):\n    draw(x, y, colors[i])"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Fill a Square",
+      "content": "Let's use nested loops to fill in a square! Nested loops let us work with both x and y at the same time.\n\nWe'll draw a 20×20 green square in the middle of the canvas.",
+      "task": "Draw a green square from (40, 40) to (59, 59) using nested loops.",
+      "starterCode": "use_canvas(GRID100)\n\n# Loop through x from 40 to 59\nfor x in range(40, 60):\n  # Loop through y from 40 to 59\n  for y in range(40, 60):\n    # Draw each cell green\n    ",
+      "hint": "Inside both loops, use draw(x, y, 'green')",
+      "codeHeight": 8,
+      "canvas": true,
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "use_canvas(GRID100)\nfor x in range(40, 60):\n  for y in range(40, 60):\n    draw(x, y, 'green')"
+          }
+        ]
+      }
+    }
+  ]
+}

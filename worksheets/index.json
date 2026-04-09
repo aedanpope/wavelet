@@ -32,9 +32,15 @@
     },
     {
       "id": "worksheet-6",
-      "title": "Worksheet 6: Drawing with Code",
-      "description": "Learn to create visual patterns by drawing on a grid using coordinates.",
+      "title": "Worksheet 6: Lists & Indexing",
+      "description": "Learn to create lists, access items by index, and loop through sequences in Python.",
       "file": "worksheet-6.json"
+    },
+    {
+      "id": "worksheet-7",
+      "title": "Worksheet 7: Drawing with Code",
+      "description": "Learn to create visual patterns by drawing on a grid using coordinates.",
+      "file": "worksheet-7.json"
     }
   ],
   "metadata": {
