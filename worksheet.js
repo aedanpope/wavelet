@@ -9,100 +9,50 @@ function getProblems() {
     return currentWorksheet.problems.filter(b => b.type !== 'concept' && b.type !== 'trace');
 }
 
-// Progress persistence functions
+// Serialise current worksheet state and persist via ProgressStore.
 function saveProgress(worksheetId) {
-    try {
-        const allProgress = JSON.parse(localStorage.getItem('pythonProgress') || '{}');
-        const worksheetProgress = {
-            completedProblems: Array.from(completedProblems),
-            problems: []
-        };
-        
-        // Save state for each problem
-        getProblems().forEach((problem, index) => {
-            const codeEditor = codeEditors[index];
-            const outputElement = document.getElementById(`output-${index}`);
-            
-            let problemState = {
-                code: codeEditor ? codeEditor.getValue() : '',
-                completed: completedProblems.has(index)
-            };
-            
-            // Save output and status if available
-            if (outputElement && outputElement.innerHTML !== '') {
-                const outputContent = outputElement.querySelector('.output-content');
-                const outputMessage = outputElement.querySelector('.output-message');
-                
-                if (outputContent) {
-                    problemState.output = outputContent.textContent;
-                }
-                if (outputMessage) {
-                    problemState.message = outputMessage.textContent;
-                    problemState.status = outputElement.className.includes('success') ? 'success' : 
-                                        outputElement.className.includes('error') ? 'error' : 'normal';
-                }
-            }
-            
-            worksheetProgress.problems.push(problemState);
-        });
-        
-        allProgress[worksheetId] = worksheetProgress;
-        localStorage.setItem('pythonProgress', JSON.stringify(allProgress));
-    } catch (error) {
-        console.warn('Failed to save progress:', error);
-    }
-}
+    const worksheetProgress = {
+        completedProblems: Array.from(completedProblems),
+        problems: []
+    };
 
-function loadProgress(worksheetId) {
-    try {
-        const allProgress = JSON.parse(localStorage.getItem('pythonProgress') || '{}');
-        return allProgress[worksheetId] || null;
-    } catch (error) {
-        console.warn('Failed to load progress:', error);
-        return null;
-    }
+    getProblems().forEach((problem, index) => {
+        const codeEditor = codeEditors[index];
+        const outputElement = document.getElementById(`output-${index}`);
+
+        const problemState = {
+            code: codeEditor ? codeEditor.getValue() : '',
+            completed: completedProblems.has(index)
+        };
+
+        if (outputElement && outputElement.innerHTML !== '') {
+            const outputContent = outputElement.querySelector('.output-content');
+            const outputMessage = outputElement.querySelector('.output-message');
+            if (outputContent) problemState.output = outputContent.textContent;
+            if (outputMessage) {
+                problemState.message = outputMessage.textContent;
+                problemState.status = outputElement.className.includes('success') ? 'success'
+                                    : outputElement.className.includes('error')   ? 'error'
+                                    : 'normal';
+            }
+        }
+
+        worksheetProgress.problems.push(problemState);
+    });
+
+    ProgressStore.saveWorksheet(worksheetId, worksheetProgress);
 }
 
 function clearWorksheetProgress(worksheetId) {
-    try {
-        const allProgress = JSON.parse(localStorage.getItem('pythonProgress') || '{}');
-        delete allProgress[worksheetId];
-        localStorage.setItem('pythonProgress', JSON.stringify(allProgress));
-        location.reload();
-    } catch (error) {
-        console.warn('Failed to clear progress:', error);
-        location.reload();
-    }
-}
-
-// Check version and clear outdated storage
-function checkAndClearOutdatedStorage() {
-    try {
-        if (typeof window.APP_VERSION === 'undefined') {
-            console.warn('App version not available, skipping version check');
-            return;
-        }
-
-        const currentVersion = window.APP_VERSION;
-        const storedVersion = localStorage.getItem('appVersion');
-
-        if (storedVersion && storedVersion !== currentVersion) {
-            console.log(`📚 App updated (${storedVersion.substring(0,8)} → ${currentVersion.substring(0,8)}), clearing storage`);
-            localStorage.clear();
-        }
-
-        localStorage.setItem('appVersion', currentVersion);
-    } catch (error) {
-        console.warn('Version check failed:', error);
-        // Continue without version checking rather than breaking the app
-    }
+    ProgressStore.clearWorksheet(worksheetId);
+    location.reload();
 }
 
 // Initialize the application
 async function init() {
     try {
         // Check version and clear storage if needed
-        checkAndClearOutdatedStorage();
+        ProgressStore.checkVersion();
 
         // Get worksheet ID from URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -157,7 +107,7 @@ async function loadWorksheet(worksheetId) {
         currentWorksheet = await response.json();
         
         // Load saved progress
-        const savedProgress = loadProgress(worksheetId);
+        const savedProgress = ProgressStore.loadWorksheet(worksheetId);
         if (savedProgress) {
             completedProblems = new Set(savedProgress.completedProblems || []);
         } else {
@@ -223,7 +173,7 @@ function loadAllProblems() {
         initAllTraceEditors();
         
         // Restore saved state if available
-        const savedProgress = loadProgress(currentWorksheet.id);
+        const savedProgress = ProgressStore.loadWorksheet(currentWorksheet.id);
         if (savedProgress && savedProgress.problems) {
             savedProgress.problems.forEach((problemState, index) => {
                 // Restore code
