@@ -1,6 +1,7 @@
 {
   "permissions": {
     "allow": [
+      "Edit(**/.claude/*)",
       "Bash(npm run:*)",
       "Bash(npm --version)",
       "Bash(npm config:*)",
