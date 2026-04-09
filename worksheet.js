@@ -673,170 +673,6 @@ function showError(message) {
     }
 }
 
-// ── Embedded Trace Player ─────────────────────────────────────────────────────
-
-class EmbeddedTracePlayer {
-    constructor(id, steps, editor) {
-        this.id = id;
-        this.steps = steps;
-        this.editor = editor;
-        this.currentStep = -1;
-        this.highlightedLine = -1;
-        this.prevLocals = {};
-        this.highlightOverlay = null;
-        this.playTimer = null;
-    }
-
-    _el(name) {
-        return document.getElementById(`trace-card-${name}-${this.id}`);
-    }
-
-    _ensureOverlay() {
-        if (this.highlightOverlay) return;
-        const scroller = this.editor.getScrollerElement();
-        const overlay = document.createElement('div');
-        overlay.className = 'trace-line-overlay';
-        scroller.appendChild(overlay);
-        this.highlightOverlay = overlay;
-    }
-
-    _moveOverlay(lineIdx, animate) {
-        this._ensureOverlay();
-        const lineTop = this.editor.heightAtLine(lineIdx, 'local');
-        const lineHeight = this.editor.defaultTextHeight();
-        const ov = this.highlightOverlay;
-        ov.style.transition = animate ? 'top 0.28s ease' : 'none';
-        ov.style.top = `${lineTop}px`;
-        ov.style.height = `${lineHeight}px`;
-        ov.style.display = 'block';
-    }
-
-    goToStep(n) {
-        if (n < 0 || n >= this.steps.length) return;
-        if (this.highlightedLine >= 0) {
-            this.editor.removeLineClass(this.highlightedLine, 'gutter', 'trace-current-line-gutter');
-        }
-        this.currentStep = n;
-        const step = this.steps[n];
-        const lineIdx = step.line - 1;
-        const animate = this.highlightedLine >= 0 && this.highlightedLine !== lineIdx;
-        this._moveOverlay(lineIdx, animate);
-        this.editor.addLineClass(lineIdx, 'gutter', 'trace-current-line-gutter');
-        this.highlightedLine = lineIdx;
-        this._renderVars(step.locals, step.for_ctx, step.phase, step.ann);
-        this._renderOutput(n);
-        this._updateControls();
-        this.prevLocals = { ...step.locals };
-        this._ratchetHeight('vars-col');
-        this._ratchetHeight('output-col');
-    }
-
-    _ratchetHeight(colId) {
-        const el = this._el(colId);
-        if (!el) return;
-        const current = Math.ceil(el.getBoundingClientRect().height);
-        const floor = parseInt(el.style.minHeight) || 0;
-        if (current > floor) el.style.minHeight = current + 'px';
-    }
-
-    _renderVars(locals, forCtx, phase, ann) {
-        const panel = this._el('vars');
-        const keys = Object.keys(locals);
-        let html = '';
-
-        if (forCtx) {
-            let iterHtml;
-            if (forCtx.items && forCtx.items.length > 0) {
-                const k = forCtx.iteration ?? 0;
-                const itemsHtml = forCtx.items.map((item, idx) => {
-                    let cls = 'trace-iter-item';
-                    if (idx < k)                           cls += ' consumed';
-                    else if (idx === k && phase === 'before') cls += ' current';
-                    else if (idx <= k && phase === 'after')   cls += ' consumed';
-                    return `<span class="${cls}">${escHtml(item)}</span>`;
-                }).join('<span class="trace-iter-sep">, </span>');
-                iterHtml = `[${itemsHtml}]`;
-            } else {
-                iterHtml = escHtml(forCtx.iter);
-            }
-            html += `<div class="trace-for-ctx">
-                <span class="trace-for-kw">for</span>
-                <span class="trace-for-target">${escHtml(forCtx.target)}</span>
-                <span class="trace-for-kw">in</span>
-                <span class="trace-for-iter-items">${iterHtml}</span>
-            </div>`;
-        }
-
-        if (ann) {
-            if (ann.type === 'loop_done') {
-                html += `<div class="trace-ann trace-ann-done">loop complete</div>`;
-            } else if (ann.type === 'loop_assigned') {
-                html += `<div class="trace-ann trace-ann-assign">${escHtml(ann.value)} → ${escHtml(ann.var)}</div>`;
-            } else if (ann.type === 'if_result') {
-                const cls = ann.value ? 'trace-ann-true' : 'trace-ann-false';
-                const icon = ann.value ? '✓ true' : '✗ false';
-                html += `<div class="trace-ann ${cls}">${escHtml(ann.cond)} → ${icon}</div>`;
-            } else if (ann.type === 'print') {
-                const preview = ann.preview != null
-                    ? ` → <span class="trace-ann-print-val">"${escHtml(ann.preview)}"</span>`
-                    : '';
-                html += `<div class="trace-ann trace-ann-print">print${preview}</div>`;
-            } else if (ann.type === 'if_test') {
-                html += `<div class="trace-ann trace-ann-if">if ${escHtml(ann.cond)}</div>`;
-            }
-        }
-
-        if (keys.length === 0 && !forCtx && !ann) {
-            html += '<span class="trace-empty">No variables yet</span>';
-        } else {
-            html += keys.map(k => {
-                const changed = this.prevLocals[k] !== locals[k];
-                return `<div class="trace-var-row${changed ? ' trace-var-changed' : ''}">
-                    <span class="trace-var-name">${escHtml(k)}</span>
-                    <span class="trace-var-eq">=</span>
-                    <span class="trace-var-value">${escHtml(locals[k])}</span>
-                </div>`;
-            }).join('');
-        }
-
-        panel.innerHTML = html;
-    }
-
-    _renderOutput(n) {
-        const text = (this.steps[n] && this.steps[n].output) || '';
-        this._el('output').textContent = text;
-    }
-
-    _updateControls() {
-        const n = this.currentStep;
-        const max = this.steps.length - 1;
-        this._el('first').disabled = n <= 0;
-        this._el('prev').disabled = n <= 0;
-        this._el('next').disabled = n >= max;
-        this._el('last').disabled = n >= max;
-        this._el('slider').value = n;
-        const phase = this.steps[n].phase === 'after' ? ' · after' : '';
-        this._el('count').textContent = `Step ${n + 1} / ${this.steps.length}${phase}`;
-        this._el('play').textContent = this.playTimer ? '⏸ Pause' : '▶ Play';
-    }
-
-    play() {
-        if (this.playTimer) return;
-        if (this.currentStep >= this.steps.length - 1) this.goToStep(0);
-        this._el('play').textContent = '⏸ Pause';
-        const advance = () => {
-            if (this.currentStep >= this.steps.length - 1) { this.pause(); return; }
-            this.goToStep(this.currentStep + 1);
-        };
-        this.playTimer = setInterval(advance, 600);
-    }
-
-    pause() {
-        if (this.playTimer) { clearInterval(this.playTimer); this.playTimer = null; }
-        this._el('play').textContent = '▶ Play';
-    }
-}
-
 const tracePlayerInstances = [];
 
 function createTraceElement(block, traceIndex) {
@@ -886,7 +722,6 @@ function initAllTraceEditors() {
         if (!editorEl) return;
 
         const lineCount = block.code.split('\n').length;
-        const editorHeight = lineCount * 23 + 10;
         const editor = CodeMirror(editorEl, {
             mode: 'python',
             theme: 'monokai',
@@ -896,28 +731,32 @@ function initAllTraceEditors() {
             indentUnit: 2,
             tabSize: 2,
         });
-        editor.setSize(215, editorHeight + 23);
+        editor.setSize(215, lineCount * 23 + 33);
 
-        const player = new EmbeddedTracePlayer(id, block.steps, editor);
+        const elFn = name => document.getElementById(`trace-card-${name}-${id}`);
+        const player = new TracePlayer(block.steps, editor, elFn);
         tracePlayerInstances.push(player);
 
-        document.getElementById(`trace-card-first-${id}`).addEventListener('click', () => player.goToStep(0));
-        document.getElementById(`trace-card-prev-${id}`).addEventListener('click', () => player.goToStep(player.currentStep - 1));
-        document.getElementById(`trace-card-next-${id}`).addEventListener('click', () => player.goToStep(player.currentStep + 1));
-        document.getElementById(`trace-card-last-${id}`).addEventListener('click', () => player.goToStep(player.steps.length - 1));
-        document.getElementById(`trace-card-play-${id}`).addEventListener('click', () => player.playTimer ? player.pause() : player.play());
-        document.getElementById(`trace-card-slider-${id}`).addEventListener('input', e => player.goToStep(parseInt(e.target.value)));
+        elFn('first').addEventListener('click', () => player.goToStep(0));
+        elFn('prev').addEventListener('click',  () => player.goToStep(player.currentStep - 1));
+        elFn('next').addEventListener('click',  () => player.goToStep(player.currentStep + 1));
+        elFn('last').addEventListener('click',  () => player.goToStep(player.steps.length - 1));
+        elFn('play').addEventListener('click',  () => player.playTimer ? player.pause() : player.play());
+        elFn('slider').addEventListener('input', e => player.goToStep(parseInt(e.target.value)));
 
         player.goToStep(0);
-    });
-}
 
-function escHtml(str) {
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+        // Ratchet panel heights so they don't shrink as steps change
+        const ratchet = colId => {
+            const el = elFn(colId);
+            if (!el) return;
+            const h = Math.ceil(el.getBoundingClientRect().height);
+            if (h > (parseInt(el.style.minHeight) || 0)) el.style.minHeight = h + 'px';
+        };
+        const origGoToStep = player.goToStep.bind(player);
+        player.goToStep = n => { origGoToStep(n); ratchet('vars-col'); ratchet('output-col'); };
+        player.goToStep(0);
+    });
 }
 
 // Initialize when page loads
