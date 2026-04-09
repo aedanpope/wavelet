@@ -6,10 +6,35 @@
 
 ## Current State (as of Apr 2026)
 
-- 6 worksheets (arithmetic → variables → loops → conditionals → strings → drawing)
+- 5 solid worksheets (arithmetic → variables → loops → conditionals → strings)
+- Worksheet 6 "Drawing with Code" exists but is not yet ready (animation infra incomplete — see below)
 - In-browser Python via Pyodide, no accounts/server
 - Worksheet validation system, execution trace in scratchpad
 - localStorage progress, version-stamped cache clearing
+- Refactored modular JS: `ProgressStore`, `TracePlayer`, `ProblemRenderer`
+
+---
+
+## Worksheet Sequence (agreed Apr 2026)
+
+```
+WS1  The Python Calculator       ✅ ready
+WS2  Storing Your Numbers        ✅ ready
+WS3  Making Things Repeat        ✅ ready
+WS4  Making Decisions            ✅ ready
+WS5  Working with Text           ✅ ready
+WS6  Lists & Indexing            🔲 to build
+WS7  Drawing with Code           🔧 infra in progress (see below)
+WS8  Functions                   🔲 to build
+WS9  Interactive I               🔲 to build (depends on WS7 infra)
+WS10 Interactive II / Animation  🔲 to build (depends on WS9)
+```
+
+**Rationale for this order:**
+- Lists before drawing — students can use lists for coordinates/colours, and it's a natural step from WS5 strings (both are sequences)
+- Drawing as mid-course payoff — visual/fun reward before functions
+- Functions after drawing — students have a concrete motivation ("DRY my drawing code") rather than learning abstraction in a vacuum
+- Interactive last — builds on all prior concepts; complexity justifies the late position
 
 ---
 
@@ -17,11 +42,17 @@
 
 Goal: get to a complete, teachable course before adding infrastructure.
 
-**Worksheets 7–10+ (topics TBD, possible order):**
-- Lists & indexing
-- Functions & reuse
-- Dictionaries / data structures
-- Mini-project worksheet (open-ended, ties concepts together)
+### WS6: Lists & Indexing (next to build)
+Key concepts: creating lists, indexing (`list[0]`), negative indexing, `len()`, iterating with `for`, `append()`.
+Scope to decide: whether slicing makes it in here or moves to WS8/WS9.
+
+### WS7: Drawing with Code (infra first — see Phase 2)
+Current `canvas-system.js` already uses **command buffering** — `draw(x, y, color)` appends to `_canvas_state['commands']`, JS flushes after execution. Works well for static drawing problems.
+The animation problem: `show()` is currently a no-op until execution ends, so multi-frame loops never render intermediate frames.
+WS7 only needs static drawing — the current infra is nearly sufficient. Main gap is deciding the final API surface and whether to keep the grid model or move to pixel/vector.
+
+### WS8: Functions
+Key concepts: `def`, parameters, return values, calling functions, reuse. Motivated by "make a reusable draw command".
 
 **Teacher support materials** (alongside each worksheet):
 - Worksheet guide: learning objectives, common mistakes, teaching notes
@@ -31,21 +62,31 @@ Goal: get to a complete, teachable course before adding infrastructure.
 
 ---
 
-## Phase 2 — Graphics & Games
+## Phase 2 — Graphics & Animation Infra
 
-Goal: let students build things that look like real programs.
+Goal: unblock WS7–WS10 with a solid, learner-friendly drawing API.
 
-**Canvas-based graphics** (most viable path):
-- Expose a `draw_*` API (`draw_rect`, `draw_circle`, `draw_line`, `fill`, `clear`) that maps to an HTML `<canvas>` element alongside the code editor
-- Avoid pygame — it requires SDL via Emscripten and is very heavy. Pyodide has no native pygame support. Better: a thin Python shim that calls JS canvas via `pyodide.globals`
-- Alternatively: look at `p5.py` or a custom turtle-style API
+### Current canvas system
+- Grid-based: `GRID3` (3×3, large cells) and `GRID100` (100×100, pixel-sized cells)
+- Python API: `use_canvas(GRID3)`, `draw(x, y, color)`, `clear()`, `show()`
+- Command buffering already in place — draw commands queue in Python, JS flushes to `<canvas>` after execution
+- Static drawing works; animation does not (Pyodide blocks main thread, `requestAnimationFrame` can't interleave)
 
-**Game loop support:**
-- Requires async/requestAnimationFrame integration with Pyodide — non-trivial
-- Likely needs a dedicated "game mode" worksheet type with its own runner
-- Keyboard input needs special handling (block browser shortcuts, capture events)
+### Animation options (ranked by fit)
 
-**Key decision:** scoped graphics API students learn vs. free-form canvas. Scoped is safer for primary students and easier to validate.
+**Option A — Frame buffering (recommended for WS9–10):**
+Student writes a `draw_frame(t)` function; JS calls it N times to build a list of frame snapshots, then plays them back with `setInterval`. No real-time loop, no threading. Fits the command-buffer model already in place.
+
+**Option B — P5.js callbacks:**
+Define `setup()` and `draw()` in Python, JS calls them via Pyodide bridge on each `requestAnimationFrame`. Possible but fragile — `draw()` must complete in <16ms or it jitters, and Python startup overhead per call is significant.
+
+**Option C — Web Worker + SharedArrayBuffer:**
+Run Pyodide in a worker, share frame data via `SharedArrayBuffer`. Proper isolation and smooth playback. High implementation complexity — not worth it for primary school scope.
+
+**Decision (Apr 2026):** Use command buffering (Option A) for WS7 static drawing. Revisit frame buffering for WS9–10 animation when WS7 is stable.
+
+### Scoped API vs free-form
+Keep the scoped grid API for WS7 (easier to validate, maps to coordinate concepts from maths). For WS9–10 consider adding `move_to(x, y)` / `line_to(x, y)` turtle-style commands as an extension layer on top of the existing system.
 
 ---
 
@@ -107,7 +148,7 @@ Goal: let students build something over multiple sessions.
 
 | Decision | Options | Notes |
 |---|---|---|
-| Graphics API | Custom canvas shim, turtle, p5.py | Evaluate pygame-web / pygbag as an option for game mode |
+| Graphics API | Command buffering (chosen), frame buffering for animation | pygame-web/pygbag ruled out — too heavy for primary school scope |
 | Assessment storage | File export, URL encoding, backend | Defer backend until there's a clear use case |
 | Auth/persistence | Save file, short code, OAuth | Save file is the pragmatic first step |
 | Teacher materials | Markdown + print CSS, separate app | Keep simple, avoid a second codebase |
