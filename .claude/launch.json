@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Dev Server (live-server, hot reload)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 8000
+    },
+    {
+      "name": "Serve (http-server, no reload)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "serve"],
+      "port": 8000
+    },
+    {
+      "name": "Start (http-server, opens browser)",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["start"],
+      "port": 8000
+    }
+  ]
+}
