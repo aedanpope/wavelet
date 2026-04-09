@@ -1,0 +1,4 @@
+# version.js is auto-stamped by the post-commit hook after every commit.
+# Always keep ours during merges — the hook will re-stamp it correctly
+# once the merge commit is created.
+version.js merge=ours

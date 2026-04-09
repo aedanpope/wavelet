@@ -12,7 +12,7 @@
     "prebuild": "npm run validate:worksheets && node scripts/generate-version.js",
     "build": "echo 'Static build complete - files ready for deployment'",
     "deploy:docker": "docker build -t python-editor . && docker run -p 80:80 python-editor",
-    "setup": "cp scripts/post-commit .git/hooks/post-commit && chmod +x .git/hooks/post-commit && echo 'Git hooks installed.'",
+    "setup": "cp scripts/post-commit .git/hooks/post-commit && chmod +x .git/hooks/post-commit && git config merge.ours.driver true && echo 'Git hooks and merge drivers installed.'",
     "update-version": "node scripts/generate-version.js",
     "validate:worksheets": "node scripts/validate-worksheets.js",
     "lint": "eslint *.js",
