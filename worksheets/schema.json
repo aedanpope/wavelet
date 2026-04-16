@@ -322,6 +322,65 @@
           },
           "required": ["type"],
           "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "ast_has_for_loop"},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "ast_has_if"},
+            "inside": {"type": "string", "enum": ["for"]},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "ast_has_method_call"},
+            "method": {"type": "string", "minLength": 1},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type", "method"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "ast_has_function_call"},
+            "function": {"type": "string", "minLength": 1},
+            "withArg": {"type": "string", "minLength": 1},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type", "function"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "ast_has_list_literal"},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "ast_no_assign_to_method_result"},
+            "method": {"type": "string", "minLength": 1},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type", "method"],
+          "additionalProperties": false
         }
       ]
     }

@@ -64,9 +64,8 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "[",
-            "message": "Your list needs square brackets []"
+            "type": "ast_has_list_literal",
+            "message": "Your code needs to create a list with square brackets []."
           },
           {
             "type": "solution_code",
@@ -331,9 +330,10 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "range(len(",
-            "message": "Use range(len(...)) to loop with indices"
+            "type": "ast_has_function_call",
+            "function": "range",
+            "withArg": "len",
+            "message": "Use range(len(...)) to loop through the list with index numbers."
           },
           {
             "type": "output_line_count",
@@ -392,6 +392,10 @@
       "validation": {
         "rules": [
           {
+            "type": "ast_no_assign_to_method_result",
+            "method": "append"
+          },
+          {
             "type": "solution_code",
             "solutionCode": "numbers = [1, 2, 3]\nnumbers.append(4)\nprint(numbers)"
           }
@@ -408,14 +412,13 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": ".append(",
-            "message": "Use .append() to add items to the list"
+            "type": "ast_has_method_call",
+            "method": "append",
+            "message": "Use .append() to add items to the list."
           },
           {
-            "type": "code_contains_regex",
-            "pattern": "for.*:",
-            "message": "Use a for loop to build the list"
+            "type": "ast_has_for_loop",
+            "message": "Use a for loop to build the list."
           },
           {
             "type": "solution_code",
@@ -434,9 +437,9 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "if",
-            "message": "Use an if statement to filter the numbers"
+            "type": "ast_has_if",
+            "inside": "for",
+            "message": "Add an if statement inside the for loop to filter the numbers."
           },
           {
             "type": "solution_code",
