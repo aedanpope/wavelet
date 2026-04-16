@@ -169,9 +169,11 @@ const ProblemRenderer = (() => {
         return editor;
     }
 
-    /** Create and return a read-only CodeMirror editor for a trace card. */
+    /** Create and return a read-only CodeMirror editor for a trace card.
+     *  Width is sized to fit the code content (no h-scroll, no wasted space). */
     function createTraceEditor(containerEl, block) {
         const lineCount = block.code.split('\n').length;
+        const editorHeight = lineCount * 23 + 33;
         const editor = CodeMirror(containerEl, {
             mode: 'python',
             theme: 'monokai',
@@ -181,7 +183,11 @@ const ProblemRenderer = (() => {
             indentUnit: 2,
             tabSize: 2,
         });
-        editor.setSize(215, lineCount * 23 + 33);
+        // Shrink to 1px so scrollWidth reports true content width, then size to fit
+        editor.setSize(1, editorHeight);
+        editor.refresh();
+        const contentWidth = editor.getScrollerElement().scrollWidth;
+        editor.setSize(contentWidth, editorHeight);
         return editor;
     }
 

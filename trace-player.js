@@ -124,6 +124,8 @@ class TracePlayer {
                 html += `<div class="trace-ann trace-ann-print">print${preview}</div>`;
             } else if (ann.type === 'if_test') {
                 html += `<div class="trace-ann trace-ann-if">if ${escHtml(ann.cond)}</div>`;
+            } else if (ann.type === 'eval') {
+                html += `<div class="trace-ann trace-ann-eval">${escHtml(ann.expr)} → <span class="trace-ann-eval-val">${escHtml(ann.value)}</span></div>`;
             }
         }
 

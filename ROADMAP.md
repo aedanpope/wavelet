@@ -42,6 +42,9 @@ WS10 Interactive II / Animation  🔲 to build (depends on WS9)
 
 Goal: get to a complete, teachable course before adding infrastructure.
 
+### WS5 iteration: comma-separated print args
+WS5 teaches f-strings and string concatenation but never introduces `print('a', var, 'b')` with comma-separated arguments. This is a gap: WS6 uses it for `print('I have', len(animals), 'pets')` and it appears naturally in `print(i, animals[i])` for index-based iteration. A short run-then-edit pair should be added to WS5 (after the f-string section, before loops+f-strings) showing that `print()` can take multiple comma-separated values separated by spaces.
+
 ### WS6: Lists & Indexing (next to build)
 Key concepts: creating lists, indexing (`list[0]`), negative indexing, `len()`, iterating with `for`, `append()`.
 Scope to decide: whether slicing makes it in here or moves to WS8/WS9.
@@ -87,6 +90,15 @@ Run Pyodide in a worker, share frame data via `SharedArrayBuffer`. Proper isolat
 
 ### Scoped API vs free-form
 Keep the scoped grid API for WS7 (easier to validate, maps to coordinate concepts from maths). For WS9–10 consider adding `move_to(x, y)` / `line_to(x, y)` turtle-style commands as an extension layer on top of the existing system.
+
+### Sub-expression tracing in scratchpad
+
+Worksheet traces are hand-authored JSON and can include any number of steps per line (e.g. an `eval` step showing `fruits[0] → 'apple'` before the `print` step). The scratchpad's dynamic tracer (`buildTraceScript()` in `scratchpad.js`) currently uses `sys.settrace()` which only fires on line events — it cannot observe sub-expression evaluation.
+
+To bring sub-expression steps to the scratchpad:
+- **Best approach: AST rewrite.** Before execution, walk the AST and instrument indexing (`Subscript`), function calls, and compound expressions by wrapping them in a recording helper. The AST infrastructure is already in `buildTraceScript()` (it already walks for-loops, if-statements, and print calls). Extending it to `Subscript` nodes and nested calls is the natural next step.
+- **Not recommended:** `f_trace_opcodes` (Python 3.7+) can trace every bytecode op, but mapping opcodes back to meaningful evaluation steps is complex and noisy.
+- **Priority:** Low — worksheet traces cover the teaching need. Revisit when WS8+ introduces function calls where sub-expression tracing becomes more valuable.
 
 ---
 
@@ -158,6 +170,7 @@ Goal: let students build something over multiple sessions.
 
 ## Not Yet Scoped
 
+- **AST-based validation** — WS6 exposed the limits of pattern matching: `code_contains` can't distinguish `fruits[2]` (read) from `fruits[2] = 'mango'` (assignment), and students can hack output-based checks with hardcoded prints. Pyodide includes Python's `ast` module — parsing student code into an AST would enable checks like "code contains an assignment to a list index" or "code uses a for loop that iterates over a list variable." See VALIDATION.md Phase 4 notes.
 - Accessibility (screen readers, keyboard navigation for code editor)
 - Localisation / non-English support
 - Mobile/tablet optimisation (CodeMirror on touch is rough)

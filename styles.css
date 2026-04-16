@@ -1590,6 +1590,8 @@ code {
 .trace-ann-print  { background: #ede9fe; border: 1px solid #a78bfa; color: #4c1d95; gap: 4px; }
 .trace-ann-print-val { font-weight: 700; color: #6d28d9; }
 .trace-ann-if     { background: #e0f2fe; border: 1px solid #38bdf8; color: #0c4a6e; }
+.trace-ann-eval   { background: #fef9c3; border: 1px solid #facc15; color: #713f12; gap: 4px; }
+.trace-ann-eval-val { font-weight: 700; color: #a16207; }
 
 .trace-for-ctx {
     display: inline-flex;
@@ -1790,21 +1792,22 @@ code {
     display: flex;
     gap: 0;
     align-items: flex-start;
+    width: 100%;
 }
 
-/* Column 1: code editor — fixed width set by CodeMirror, locked via CSS */
+/* Column 1: code editor — width set by JS to fit content, never grows beyond that */
 .trace-card-editor-wrap {
-    flex: 0 0 215px;
-    width: 215px;
+    flex: 0 0 auto;
+    min-width: 215px;
     border-radius: 6px 0 0 6px;
     overflow: hidden;
     border: 1px solid #c7d2fe;
 }
 
-/* Column 2: variables — fixed width; height grows via JS ratchet, never shrinks */
+/* Column 2: variables — fills remaining space; height grows via JS ratchet, never shrinks */
 .trace-card-vars-col {
-    flex: 0 0 210px;
-    width: 210px;
+    flex: 3 0 130px;
+    min-width: 130px;
     padding: 8px 12px;
     border: 1px solid #c7d2fe;
     border-left: none;
@@ -1816,10 +1819,10 @@ code {
     gap: 5px;
 }
 
-/* Column 3: output — height grows via JS ratchet, never shrinks */
+/* Column 3: output — fills remaining space; height grows via JS ratchet, never shrinks */
 .trace-card-output-col {
-    flex: 1;
-    min-width: 0;
+    flex: 2 0 100px;
+    min-width: 100px;
     padding: 8px 12px;
     border: 1px solid #c7d2fe;
     border-left: none;
