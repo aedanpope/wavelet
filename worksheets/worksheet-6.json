@@ -371,9 +371,9 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": ".append(",
-            "message": "Use .append() to add items to the list"
+            "type": "ast_has_method_call",
+            "method": "append",
+            "message": "Use .append() to add items to the list."
           },
           {
             "type": "solution_code",
@@ -458,14 +458,14 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "range(len(",
-            "message": "Use range(len(...)) to loop with indices"
+            "type": "ast_has_function_call",
+            "function": "range",
+            "withArg": "len",
+            "message": "Use range(len(...)) to loop with indices."
           },
           {
-            "type": "code_contains_regex",
-            "pattern": "f[\"']",
-            "message": "Use an f-string to format the output"
+            "type": "ast_has_fstring",
+            "message": "Use an f-string to format the output."
           },
           {
             "type": "output_line_count",
@@ -494,14 +494,14 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": ".append(",
-            "message": "Use .append() to add items to the list"
+            "type": "ast_has_method_call",
+            "method": "append",
+            "inside": "for",
+            "message": "Use .append() inside a for loop to build the list."
           },
           {
-            "type": "code_contains_regex",
-            "pattern": "for.*:",
-            "message": "Use a for loop"
+            "type": "ast_has_for_loop",
+            "message": "Use a for loop."
           },
           {
             "type": "solution_code",
@@ -531,19 +531,13 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "numbers",
-            "message": "Use the numbers list in your solution"
+            "type": "ast_has_for_loop",
+            "message": "Loop through the numbers list."
           },
           {
-            "type": "code_contains_regex",
-            "pattern": "for.*numbers",
-            "message": "Loop through the numbers list"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "if",
-            "message": "Use an if statement to check each number"
+            "type": "ast_has_if",
+            "inside": "for",
+            "message": "Use an if statement inside the loop to check each number."
           },
           {
             "type": "output_contains",
@@ -572,14 +566,13 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "for.*:",
-            "message": "Use a for loop"
+            "type": "ast_has_for_loop",
+            "message": "Use a for loop."
           },
           {
-            "type": "code_contains",
-            "pattern": "if",
-            "message": "Use an if statement to check each number"
+            "type": "ast_has_if",
+            "inside": "for",
+            "message": "Use an if statement inside the loop to check each number."
           },
           {
             "type": "solution_code",
@@ -612,14 +605,12 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "[",
-            "message": "Your program should use a list"
+            "type": "ast_has_list_literal",
+            "message": "Your program should use a list."
           },
           {
-            "type": "code_contains_regex",
-            "pattern": "for.*:",
-            "message": "Your program should use a for loop"
+            "type": "ast_has_for_loop",
+            "message": "Your program should use a for loop."
           },
           {
             "type": "output_not_empty"

@@ -118,9 +118,14 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "for.*range",
-            "description": "Use a for loop with range()"
+            "type": "ast_has_for_loop",
+            "iterOver": "range",
+            "message": "Use a for loop with range()."
+          },
+          {
+            "type": "ast_has_fstring",
+            "variables": ["i"],
+            "message": "Use an f-string with {i} inside your print statement."
           },
           {
             "type": "solution_code",
@@ -138,13 +143,13 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "name ="
+            "type": "ast_has_assignment",
+            "message": "Create a variable called name with your name."
           },
           {
-            "type": "code_contains_regex",
-            "pattern": "print\\s*\\(\\s*f\".*\\{name\\}.*\"\\s*\\)",
-            "description": "Use an f-string with {name} in the print statement"
+            "type": "ast_has_fstring",
+            "variables": ["name"],
+            "message": "Use an f-string with {name} in your print statement."
           },
           {
             "type": "output_contains",
@@ -170,13 +175,14 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "get_input()"
+            "type": "ast_has_function_call",
+            "function": "get_input",
+            "message": "Use get_input() to get the age."
           },
           {
-            "type": "code_contains_regex",
-            "pattern": "print\\s*\\(\\s*f\".*\\{age\\}.*\"\\s*\\)",
-            "description": "Use an f-string with {age} in the print statement"
+            "type": "ast_has_fstring",
+            "variables": ["age"],
+            "message": "Use an f-string with {age} in your print statement."
           },
           {
             "type": "output_contains",
@@ -288,17 +294,19 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "get_input()"
+            "type": "ast_has_function_call",
+            "function": "get_input",
+            "message": "Use get_input() to get the number."
           },
           {
-            "type": "code_contains",
-            "pattern": "if"
+            "type": "ast_has_if",
+            "hasElse": true,
+            "message": "Use an if/else statement to check the number."
           },
           {
-            "type": "code_contains_regex",
-            "pattern": "print\\s*\\(\\s*f\".*\\{.*n.*\\}.*\"\\s*\\)",
-            "description": "Use an f-string with {n} in the print statement"
+            "type": "ast_has_fstring",
+            "variables": ["n"],
+            "message": "Use an f-string with {n} in your print statement."
           },
           {
             "type": "solution_code",
@@ -346,13 +354,14 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "get_input()"
+            "type": "ast_has_function_call",
+            "function": "get_input",
+            "message": "Use get_input() to get the name."
           },
           {
-            "type": "code_contains_regex",
-            "pattern": "print\\s*\\(\\s*f\".*\\{name\\}.*\"\\s*\\)",
-            "description": "Use an f-string with {name} in the print statement"
+            "type": "ast_has_fstring",
+            "variables": ["name"],
+            "message": "Use an f-string with {name} in your print statement."
           },
           {
             "type": "solution_code",
@@ -395,19 +404,14 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "get_input\\s*\\(\\s*['\"]name['\"]\\s*\\)",
-            "description": "Get the name input using get_input('name')"
+            "type": "ast_has_function_call",
+            "function": "get_input",
+            "message": "Use get_input('name') and get_input('age') to get both inputs."
           },
           {
-            "type": "code_contains_regex",
-            "pattern": "get_input\\s*\\(\\s*['\"]age['\"]\\s*\\)",
-            "description": "Get the age input using get_input('age')"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "print\\s*\\(\\s*f\".*\\{name\\}.*\\{age\\}.*\"\\s*\\)",
-            "description": "Use an f-string with both {name} and {age}"
+            "type": "ast_has_fstring",
+            "variables": ["name", "age"],
+            "message": "Use an f-string with both {name} and {age} inside it."
           },
           {
             "type": "solution_code",
@@ -547,13 +551,14 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "%"
+            "type": "ast_has_comparison",
+            "op": "==",
+            "message": "Use == to check if the remainder is 0."
           },
           {
-            "type": "code_contains_regex",
-            "pattern": "print\\s*\\(\\s*f\".*\\{.*num.*\\}.*\"\\s*\\)",
-            "description": "Use an f-string with {num} in the print statement"
+            "type": "ast_has_fstring",
+            "variables": ["num"],
+            "message": "Use an f-string with {num} in your print statement."
           },
           {
             "type": "solution_code",

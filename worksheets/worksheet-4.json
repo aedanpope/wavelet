@@ -415,9 +415,13 @@
             "description": "Set the variable: number = 3"
           },
           {
-            "type": "code_contains_regex",
-            "pattern": "if.*number.*==.*3",
-            "description": "Use an if statement to check if number equals 3: 'if number == 3:'"
+            "type": "ast_has_if",
+            "message": "Use an if statement to check if number equals 3."
+          },
+          {
+            "type": "ast_has_comparison",
+            "op": "==",
+            "message": "Use == to check if number equals 3."
           },
           {
             "type": "output_contains",
@@ -611,29 +615,24 @@
             "type": "no_errors"
           },
           {
-            "type": "code_contains",
-            "pattern": "get_choice(2)",
-            "description": "Use get_choice(2) to show two buttons for the player"
+            "type": "ast_has_function_call",
+            "function": "get_choice",
+            "message": "Use get_choice(2) to show two buttons for the player."
           },
           {
-            "type": "code_contains_regex",
-            "pattern": "if.*choice.*==.*1",
-            "description": "Check if the choice equals 1: 'if choice == 1:'"
+            "type": "ast_has_if",
+            "hasElse": true,
+            "message": "Use an if/else statement to handle the two choices."
           },
           {
-            "type": "code_contains",
-            "pattern": "else:",
-            "description": "Add an else block for the other choice"
+            "type": "ast_has_comparison",
+            "op": "==",
+            "message": "Use == to check which button was clicked."
           },
           {
-            "type": "code_contains",
+            "type": "output_contains",
             "pattern": "Cave",
             "description": "Print 'Cave' when choice is 1"
-          },
-          {
-            "type": "code_contains",
-            "pattern": "Mountain",
-            "description": "Print 'Mountain' in the else block"
           }
         ]
       }
@@ -752,17 +751,12 @@
           {
             "type": "code_contains",
             "pattern": "score = 50",
-            "description": "Keep the score as 50 to practice the >= operator. Don't change the score value."
+            "description": "Keep the score as 50 to practice the >= operator."
           },
           {
-            "type": "code_contains_regex",
-            "pattern": "if\\s+score\\s*>=\\s*50\\s*:",
-            "description": "Use the >= operator in your if statement: 'if score >= 50:'"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "^(?!.*score\\s*=\\s*(?!50\\b)\\d+)",
-            "description": "Don't change the score value. Keep it as 50 to learn how >= works."
+            "type": "ast_has_comparison",
+            "op": ">=",
+            "message": "Use the >= operator in your if statement: 'if score >= 50:'"
           },
           {
             "type": "output_contains",
@@ -954,8 +948,9 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "number\\s*%\\s*2\\s*==\\s*0"
+            "type": "ast_has_comparison",
+            "op": "==",
+            "message": "Use == to check if the remainder equals 0."
           }
         ]
       }
@@ -1027,16 +1022,16 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "="
+            "type": "ast_has_assignment",
+            "message": "Your program needs at least one variable."
           },
           {
-            "type": "code_contains",
-            "pattern": "for "
+            "type": "ast_has_for_loop",
+            "message": "Your program needs a for loop."
           },
           {
-            "type": "code_contains",
-            "pattern": "if "
+            "type": "ast_has_if",
+            "message": "Your program needs an if statement."
           },
           {
             "type": "output_not_empty"

@@ -137,6 +137,156 @@ const unitTests = [
         expected: true
     },
 
+    // ast_has_for_loop with iterOver
+    {
+        name: 'ast_has_for_loop iterOver=range: detects range loop',
+        code: 'for i in range(5):\n  print(i)',
+        rule: { type: 'ast_has_for_loop', iterOver: 'range' },
+        expected: true
+    },
+    {
+        name: 'ast_has_for_loop iterOver=range: list loop fails',
+        code: 'for x in [1,2,3]:\n  print(x)',
+        rule: { type: 'ast_has_for_loop', iterOver: 'range' },
+        expected: false
+    },
+
+    // ast_has_if with hasElse and hasElif
+    {
+        name: 'ast_has_if hasElse: detects else block',
+        code: 'x = 5\nif x > 3:\n  print("yes")\nelse:\n  print("no")',
+        rule: { type: 'ast_has_if', hasElse: true },
+        expected: true
+    },
+    {
+        name: 'ast_has_if hasElse: no else fails',
+        code: 'x = 5\nif x > 3:\n  print("yes")',
+        rule: { type: 'ast_has_if', hasElse: true },
+        expected: false
+    },
+    {
+        name: 'ast_has_if hasElif: detects elif block',
+        code: 'x = 5\nif x > 10:\n  print("big")\nelif x > 3:\n  print("mid")\nelse:\n  print("small")',
+        rule: { type: 'ast_has_if', hasElif: true },
+        expected: true
+    },
+    {
+        name: 'ast_has_if hasElif: if/else without elif fails',
+        code: 'x = 5\nif x > 3:\n  print("yes")\nelse:\n  print("no")',
+        rule: { type: 'ast_has_if', hasElif: true },
+        expected: false
+    },
+
+    // ast_has_method_call with inside
+    {
+        name: 'ast_has_method_call inside=for: detects append inside loop',
+        code: 'nums = []\nfor i in range(5):\n  nums.append(i)',
+        rule: { type: 'ast_has_method_call', method: 'append', inside: 'for' },
+        expected: true
+    },
+    {
+        name: 'ast_has_method_call inside=for: append outside loop fails',
+        code: 'nums = []\nnums.append(1)',
+        rule: { type: 'ast_has_method_call', method: 'append', inside: 'for' },
+        expected: false
+    },
+
+    // ast_has_assignment
+    {
+        name: 'ast_has_assignment: detects regular assignment',
+        code: 'x = 5\nprint(x)',
+        rule: { type: 'ast_has_assignment' },
+        expected: true
+    },
+    {
+        name: 'ast_has_assignment: no assignment fails',
+        code: 'print("hello")',
+        rule: { type: 'ast_has_assignment' },
+        expected: false
+    },
+    {
+        name: 'ast_has_assignment augOp=+=: detects augmented assignment',
+        code: 'total = 0\ntotal += 5',
+        rule: { type: 'ast_has_assignment', augOp: '+=' },
+        expected: true
+    },
+    {
+        name: 'ast_has_assignment augOp=+=: regular assignment fails',
+        code: 'total = 0\ntotal = total + 5',
+        rule: { type: 'ast_has_assignment', augOp: '+=' },
+        expected: false
+    },
+
+    // ast_has_comparison
+    {
+        name: 'ast_has_comparison: detects any comparison',
+        code: 'if x > 5:\n  print("big")',
+        rule: { type: 'ast_has_comparison' },
+        expected: true
+    },
+    {
+        name: 'ast_has_comparison op===: detects ==',
+        code: 'if x == 5:\n  print("yes")',
+        rule: { type: 'ast_has_comparison', op: '==' },
+        expected: true
+    },
+    {
+        name: 'ast_has_comparison op===: > does not match ==',
+        code: 'if x > 5:\n  print("big")',
+        rule: { type: 'ast_has_comparison', op: '==' },
+        expected: false
+    },
+    {
+        name: 'ast_has_comparison op=>=: detects >=',
+        code: 'if score >= 50:\n  print("pass")',
+        rule: { type: 'ast_has_comparison', op: '>=' },
+        expected: true
+    },
+    {
+        name: 'ast_has_comparison op=!=: detects !=',
+        code: 'if choice != 1:\n  print("wrong")',
+        rule: { type: 'ast_has_comparison', op: '!=' },
+        expected: true
+    },
+
+    // ast_has_fstring
+    {
+        name: 'ast_has_fstring: detects f-string',
+        code: 'name = "Sam"\nprint(f"Hello {name}")',
+        rule: { type: 'ast_has_fstring' },
+        expected: true
+    },
+    {
+        name: 'ast_has_fstring: regular string fails',
+        code: 'print("Hello World")',
+        rule: { type: 'ast_has_fstring' },
+        expected: false
+    },
+    {
+        name: 'ast_has_fstring variables=[name]: detects {name}',
+        code: 'name = "Sam"\nprint(f"Hello {name}")',
+        rule: { type: 'ast_has_fstring', variables: ['name'] },
+        expected: true
+    },
+    {
+        name: 'ast_has_fstring variables=[age]: fails when age not in f-string',
+        code: 'name = "Sam"\nprint(f"Hello {name}")',
+        rule: { type: 'ast_has_fstring', variables: ['age'] },
+        expected: false
+    },
+    {
+        name: 'ast_has_fstring variables=[name, age]: detects both',
+        code: 'name = "Sam"\nage = 10\nprint(f"{name} is {age}")',
+        rule: { type: 'ast_has_fstring', variables: ['name', 'age'] },
+        expected: true
+    },
+    {
+        name: 'ast_has_fstring: detects variable in expression {i + 1}',
+        code: 'for i in range(3):\n  print(f"{i + 1}. item")',
+        rule: { type: 'ast_has_fstring', variables: ['i'] },
+        expected: true
+    },
+
     // Edge cases
     {
         name: 'SyntaxError code: AST rules pass gracefully (skip)',

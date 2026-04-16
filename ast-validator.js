@@ -29,6 +29,9 @@ def _wavelet_analyze(code):
         "method_calls": [],
         "function_calls": [],
         "assignments": [],
+        "aug_assignments": [],
+        "comparisons": [],
+        "fstrings": [],
         "list_literals": 0,
         "subscripts": [],
         "anti_patterns": []
@@ -58,6 +61,10 @@ def _wavelet_analyze(code):
         if isinstance(node, ast.For):
             target = _name(node.target)
             iter_src = _name(node.iter)
+            # Determine what function the loop iterates over (e.g. "range")
+            iter_func = None
+            if isinstance(node.iter, ast.Call):
+                iter_func = _name(node.iter.func)
             # Check if iterating over range(len(...))
             is_range_len = False
             if (isinstance(node.iter, ast.Call) and _name(node.iter.func) == "range"
@@ -68,14 +75,19 @@ def _wavelet_analyze(code):
             analysis["for_loops"].append({
                 "target": target,
                 "iter": iter_src,
+                "iter_func": iter_func,
                 "is_range_len": is_range_len,
                 "in_for": "For" in parent_types
             })
             new_parents = parent_types + ["For"]
 
         elif isinstance(node, ast.If):
+            has_else = len(node.orelse) > 0 and not (len(node.orelse) == 1 and isinstance(node.orelse[0], ast.If))
+            has_elif = len(node.orelse) == 1 and isinstance(node.orelse[0], ast.If)
             analysis["if_stmts"].append({
-                "in_for": "For" in parent_types
+                "in_for": "For" in parent_types,
+                "has_else": has_else or has_elif,
+                "has_elif": has_elif
             })
             new_parents = parent_types + ["If"]
 
@@ -115,6 +127,49 @@ def _wavelet_analyze(code):
                 if isinstance(slice_node.operand, ast.Constant):
                     idx = -slice_node.operand.value
             analysis["subscripts"].append({"object": obj, "index": idx})
+
+        if isinstance(node, ast.Compare):
+            op_map = {
+                ast.Eq: "==", ast.NotEq: "!=",
+                ast.Lt: "<", ast.LtE: "<=",
+                ast.Gt: ">", ast.GtE: ">=",
+                ast.In: "in", ast.NotIn: "not in",
+                ast.Is: "is", ast.IsNot: "is not"
+            }
+            ops = [op_map.get(type(op), str(type(op).__name__)) for op in node.ops]
+            analysis["comparisons"].append({
+                "ops": ops,
+                "in_for": "For" in parent_types,
+                "in_if": "If" in parent_types
+            })
+
+        if isinstance(node, ast.JoinedStr):
+            variables = []
+            for val in node.values:
+                if isinstance(val, ast.FormattedValue):
+                    if isinstance(val.value, ast.Name):
+                        variables.append(val.value.id)
+                    elif isinstance(val.value, ast.BinOp):
+                        # e.g. {i + 1} — extract names from the expression
+                        for sub in ast.walk(val.value):
+                            if isinstance(sub, ast.Name):
+                                variables.append(sub.id)
+            analysis["fstrings"].append({
+                "variables": variables,
+                "in_for": "For" in parent_types
+            })
+
+        if isinstance(node, ast.AugAssign):
+            op_map = {
+                ast.Add: "+=", ast.Sub: "-=",
+                ast.Mult: "*=", ast.Div: "/=",
+                ast.Mod: "%=", ast.FloorDiv: "//="
+            }
+            analysis["aug_assignments"].append({
+                "target": _name(node.target),
+                "op": op_map.get(type(node.op), "?="),
+                "in_for": "For" in parent_types
+            })
 
         if isinstance(node, ast.Assign):
             for target_node in node.targets:
@@ -181,12 +236,21 @@ function validateASTRule(astData, rule) {
 
     switch (rule.type) {
         case 'ast_has_for_loop': {
-            const found = astData.for_loops.length > 0;
+            let found;
+            if (rule.iterOver) {
+                // Check that a for loop iterates over a specific function (e.g. "range")
+                found = astData.for_loops.some(l => l.iter_func === rule.iterOver);
+            } else {
+                found = astData.for_loops.length > 0;
+            }
             if (!found) {
+                const detail = rule.iterOver
+                    ? `Your code needs a for loop using ${rule.iterOver}().`
+                    : 'Your code needs a for loop.';
                 return {
                     isValid: false,
                     errorType: 'ast_has_for_loop_failed',
-                    message: rule.message || 'Your code needs a for loop.'
+                    message: rule.message || detail
                 };
             }
             return { isValid: true };
@@ -194,13 +258,11 @@ function validateASTRule(astData, rule) {
 
         case 'ast_has_if': {
             const inside = rule.inside || null;
-            let found;
+            let candidates = astData.if_stmts;
             if (inside === 'for') {
-                found = astData.if_stmts.some(s => s.in_for);
-            } else {
-                found = astData.if_stmts.length > 0;
+                candidates = candidates.filter(s => s.in_for);
             }
-            if (!found) {
+            if (candidates.length === 0) {
                 const detail = inside === 'for'
                     ? 'Your code needs an if statement inside the for loop.'
                     : 'Your code needs an if statement.';
@@ -210,17 +272,45 @@ function validateASTRule(astData, rule) {
                     message: rule.message || detail
                 };
             }
+            // Check hasElse param
+            if (rule.hasElse === true) {
+                const hasOne = candidates.some(s => s.has_else);
+                if (!hasOne) {
+                    return {
+                        isValid: false,
+                        errorType: 'ast_has_if_failed',
+                        message: rule.message || 'Your if statement needs an else block.'
+                    };
+                }
+            }
+            // Check hasElif param
+            if (rule.hasElif === true) {
+                const hasOne = candidates.some(s => s.has_elif);
+                if (!hasOne) {
+                    return {
+                        isValid: false,
+                        errorType: 'ast_has_if_failed',
+                        message: rule.message || 'Your code needs an elif block.'
+                    };
+                }
+            }
             return { isValid: true };
         }
 
         case 'ast_has_method_call': {
             const method = rule.method;
-            const found = astData.method_calls.some(c => c.method === method);
-            if (!found) {
+            let candidates = astData.method_calls.filter(c => c.method === method);
+            if (rule.inside === 'for') {
+                candidates = candidates.filter(c => c.in_for);
+            }
+            if (candidates.length === 0) {
+                const detail = rule.inside === 'for'
+                    ? `Your code needs to call .${method}() inside a for loop.`
+                    : `Your code needs to call .${method}().`;
                 return {
                     isValid: false,
                     errorType: 'ast_has_method_call_failed',
-                    message: rule.message || `Your code needs to call .${method}().`
+                    message: rule.message || detail
                 };
             }
             return { isValid: true };
@@ -258,6 +348,75 @@ function validateASTRule(astData, rule) {
                     errorType: 'ast_has_list_literal_failed',
                     message: rule.message || 'Your code needs to create a list with square brackets [].'
                 };
+            }
+            return { isValid: true };
+        }
+
+        case 'ast_has_assignment': {
+            // Check for regular assignments and/or augmented assignments (+=, -=, etc.)
+            const allAssigns = [
+                ...astData.assignments.map(a => ({ ...a, augOp: null })),
+                ...astData.aug_assignments.map(a => ({ target: a.target, augOp: a.op, in_for: a.in_for }))
+            ];
+            let candidates = allAssigns;
+            if (rule.augOp) {
+                candidates = candidates.filter(a => a.augOp === rule.augOp);
+            }
+            if (candidates.length === 0) {
+                const detail = rule.augOp
+                    ? `Your code needs to use the ${rule.augOp} operator.`
+                    : 'Your code needs a variable assignment.';
+                return {
+                    isValid: false,
+                    errorType: 'ast_has_assignment_failed',
+                    message: rule.message || detail
+                };
+            }
+            return { isValid: true };
+        }
+
+        case 'ast_has_comparison': {
+            let candidates = astData.comparisons;
+            if (rule.op) {
+                candidates = candidates.filter(c => c.ops.includes(rule.op));
+            }
+            if (candidates.length === 0) {
+                const detail = rule.op
+                    ? `Your code needs to use the ${rule.op} comparison operator.`
+                    : 'Your code needs a comparison.';
+                return {
+                    isValid: false,
+                    errorType: 'ast_has_comparison_failed',
+                    message: rule.message || detail
+                };
+            }
+            return { isValid: true };
+        }
+
+        case 'ast_has_fstring': {
+            if (astData.fstrings.length === 0) {
+                return {
+                    isValid: false,
+                    errorType: 'ast_has_fstring_failed',
+                    message: rule.message || 'Your code needs to use an f-string (put f before the quotes).'
+                };
+            }
+            // Check that specific variables appear inside the f-string
+            if (rule.variables && rule.variables.length > 0) {
+                const allVars = new Set();
+                for (const fs of astData.fstrings) {
+                    for (const v of fs.variables) {
+                        allVars.add(v);
+                    }
+                }
+                const missing = rule.variables.filter(v => !allVars.has(v));
+                if (missing.length > 0) {
+                    return {
+                        isValid: false,
+                        errorType: 'ast_has_fstring_failed',
+                        message: rule.message || `Your f-string needs to include {${missing[0]}} inside the curly braces.`
+                    };
+                }
             }
             return { isValid: true };
         }

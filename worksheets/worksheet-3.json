@@ -217,9 +217,8 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "for.*:",
-            "message": "Your code needs to use a 'for' loop"
+            "type": "ast_has_for_loop",
+            "message": "Your code needs to use a 'for' loop."
           },
           {
             "type": "solution_code",
@@ -238,9 +237,8 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "for.*:",
-            "message": "Your code needs to use a 'for' loop"
+            "type": "ast_has_for_loop",
+            "message": "Your code needs to use a 'for' loop."
           },
           {
             "type": "output_contains",
@@ -303,14 +301,9 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "for.*:",
-            "message": "Your code needs to use a 'for' loop"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "range\\s*\\(",
-            "message": "Your code needs to use the 'range()' function"
+            "type": "ast_has_for_loop",
+            "iterOver": "range",
+            "message": "Your code needs a for loop using range()."
           },
           {
             "type": "solution_code",
@@ -343,9 +336,9 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "range\\s*\\(",
-            "message": "Your code needs to use the 'range()' function"
+            "type": "ast_has_for_loop",
+            "iterOver": "range",
+            "message": "Your code needs a for loop using range()."
           },
           {
             "type": "solution_code",
@@ -363,14 +356,9 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "for.*:",
-            "message": "Your code needs to use a 'for' loop"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "range\\s*\\(",
-            "message": "Your code needs to use the 'range()' function"
+            "type": "ast_has_for_loop",
+            "iterOver": "range",
+            "message": "Your code needs a for loop using range()."
           },
           {
             "type": "solution_code",
@@ -431,9 +419,8 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "for.*:",
-            "message": "Your code needs to use a 'for' loop"
+            "type": "ast_has_for_loop",
+            "message": "Your code needs to use a 'for' loop."
           },
           {
             "type": "solution_code",
@@ -459,9 +446,8 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "for.*:",
-            "message": "Your code needs to use a 'for' loop"
+            "type": "ast_has_for_loop",
+            "message": "Your code needs to use a 'for' loop."
           },
           {
             "type": "solution_code",
@@ -537,14 +523,9 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "for.*:",
-            "message": "Your code needs to use a 'for' loop"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "range\\s*\\(",
-            "message": "Your code needs to use the 'range()' function"
+            "type": "ast_has_for_loop",
+            "iterOver": "range",
+            "message": "Your code needs a for loop using range()."
           },
           {
             "type": "solution_code",
@@ -570,14 +551,9 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "for.*:",
-            "message": "Your code needs to use a 'for' loop"
-          },
-          {
-            "type": "code_contains_regex",
-            "pattern": "range\\s*\\(",
-            "message": "Your code needs to use the 'range()' function"
+            "type": "ast_has_for_loop",
+            "iterOver": "range",
+            "message": "Your code needs a for loop using range()."
           },
           {
             "type": "solution_code",
@@ -596,9 +572,8 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "for.*:",
-            "message": "Your code needs to use a 'for' loop"
+            "type": "ast_has_for_loop",
+            "message": "Your code needs to use a 'for' loop."
           },
           {
             "type": "output_contains",
@@ -629,8 +604,7 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains_regex",
-            "pattern": "for.*:"
+            "type": "ast_has_for_loop"
           },
           {
             "type": "output_not_empty"

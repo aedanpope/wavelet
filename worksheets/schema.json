@@ -326,6 +326,7 @@
         {
           "properties": {
             "type": {"const": "ast_has_for_loop"},
+            "iterOver": {"type": "string", "minLength": 1},
             "message": {"type": "string"},
             "description": {"type": "string"}
           },
@@ -336,6 +337,8 @@
           "properties": {
             "type": {"const": "ast_has_if"},
             "inside": {"type": "string", "enum": ["for"]},
+            "hasElse": {"type": "boolean"},
+            "hasElif": {"type": "boolean"},
             "message": {"type": "string"},
             "description": {"type": "string"}
           },
@@ -346,6 +349,7 @@
           "properties": {
             "type": {"const": "ast_has_method_call"},
             "method": {"type": "string", "minLength": 1},
+            "inside": {"type": "string", "enum": ["for"]},
             "message": {"type": "string"},
             "description": {"type": "string"}
           },
@@ -380,6 +384,36 @@
             "description": {"type": "string"}
           },
           "required": ["type", "method"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "ast_has_assignment"},
+            "augOp": {"type": "string", "enum": ["+=", "-=", "*=", "/=", "%=", "//="]},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "ast_has_comparison"},
+            "op": {"type": "string", "enum": ["==", "!=", "<", "<=", ">", ">=", "in", "not in"]},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "ast_has_fstring"},
+            "variables": {"type": "array", "items": {"type": "string", "minLength": 1}},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type"],
           "additionalProperties": false
         }
       ]
