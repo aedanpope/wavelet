@@ -3,6 +3,7 @@
 
 // Import solution_code validation from standalone module
 // Note: In browser environment, this will be loaded via script tag before validation.js
+// AST validator is also loaded via script tag (ast-validator.js) before this file
 
 // Helper function to normalize numerical comparisons with case-insensitive text matching
 function normalizeNumericalComparison(output, pattern) {
@@ -55,9 +56,21 @@ async function validateAnswer(code, output, problem, problemIndex, codeExecutor,
     
     // Apply validation rules from the problem definition
     const validationRules = problem.validation.rules;
-    
+
+    // Parse AST once if any ast_* rules exist (reused by all ast rules)
+    let astData = null;
+    const hasASTRules = validationRules.some(r => r.type.startsWith('ast_'));
+    if (hasASTRules && codeExecutor) {
+        const astParser = (typeof window !== 'undefined' && window.ASTValidator)
+            ? window.ASTValidator
+            : (typeof require !== 'undefined' ? require('./ast-validator.js') : null);
+        if (astParser) {
+            astData = await astParser.parseStudentAST(codeTrimmed, codeExecutor.getPyodide());
+        }
+    }
+
     for (const rule of validationRules) {
-        const ruleResult = await validateRule(code, output, rule, problem, problemIndex, codeExecutor, userInputValues);
+        const ruleResult = await validateRule(code, output, rule, problem, problemIndex, codeExecutor, userInputValues, astData);
         
         if (typeof ruleResult === 'object' && ruleResult.isValid === false) {
             // Rule failed - return the detailed error message
@@ -83,7 +96,18 @@ async function validateAnswer(code, output, problem, problemIndex, codeExecutor,
 
 // Validate a single validation rule
 // Returns detailed error message objects for better educational feedback
-async function validateRule(code, output, rule, problem, problemIndex, codeExecutor, userInputValues = {}) {
+async function validateRule(code, output, rule, problem, problemIndex, codeExecutor, userInputValues = {}, astData = null) {
+    // Delegate ast_* rules to the AST validator module
+    if (rule.type.startsWith('ast_')) {
+        const astValidator = (typeof window !== 'undefined' && window.ASTValidator)
+            ? window.ASTValidator
+            : (typeof require !== 'undefined' ? require('./ast-validator.js') : null);
+        if (astValidator) {
+            return astValidator.validateASTRule(astData, rule);
+        }
+        return { isValid: true }; // graceful fallback if module unavailable
+    }
+
     switch (rule.type) {
         case 'code_contains':
             let result;
