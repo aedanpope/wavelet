@@ -52,7 +52,7 @@
       "type": "object",
       "required": ["title"],
       "if": {
-        "properties": { "type": { "not": { "const": "concept" } } },
+        "properties": { "type": { "not": { "enum": ["concept", "trace"] } } },
         "required": ["title"]
       },
       "then": {
