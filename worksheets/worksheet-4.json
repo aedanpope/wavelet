@@ -916,65 +916,9 @@
       }
     },
     {
-      "title": "Finding the Remainder %",
-      "content": "In programming, there's a special math symbol called <strong>modulo</strong>, which is a percent sign <code>%</code>. It gives you the remainder of a division. For example, if you share 10 sweets between 3 friends, each gets 3 and there is 1 left over. So, <code>10 % 3</code> is 1.",
-      "task": "Run the code to see the remainder of 14 divided by 4. Change the numbers to see how it works with different values.",
-      "codeHeight": 3,
-      "starterCode": "print(14 % 4)",
-      "hint": "14 divided by 4 is 3 with a remainder of 2.",
-      "validation": {
-        "rules": [
-          {
-            "type": "code_contains",
-            "pattern": "%"
-          }
-        ]
-      }
-    },
-    {
-      "title": "Even or Odd?",
-      "content": "We can use the modulo operator <code>%</code> to see if a number is even or odd. Any even number can be divided by 2 with no remainder! So, if <code>number % 2</code> is 0, the number is even.",
-      "task": "Enter different numbers, both even and odd, and run the code to see if the program gets it right.",
-      "inputs": [
-        {
-          "name": "num",
-          "label": "Number:",
-          "type": "number"
-        }
-      ],
-      "codeHeight": 7,
-      "starterCode": "number = get_input()\n\nif number % 2 == 0:\n  print(\"Even\")\nelse:\n  print(\"Odd\")",
-      "hint": "Try entering 10, then try 5. See how the result of <code>number % 2</code> changes the outcome.",
-      "validation": {
-        "rules": [
-          {
-            "type": "ast_has_comparison",
-            "op": "==",
-            "message": "Use == to check if the remainder equals 0."
-          }
-        ]
-      }
-    },
-    {
-      "title": "Loop with Modulo",
-      "content": "Let's combine loops from Worksheet 3 with the modulo operator we just learned! This program loops through numbers from 1 to 20 and uses an <code>if</code> statement to check which ones are multiples of 3.",
-      "task": "Run the code to see it print all the multiples of 3. Then, change the code to print the multiples of 4 instead.",
-      "codeHeight": 5,
-      "starterCode": "for i in range(1, 21):\n  if i % 3 == 0:\n    print(i)",
-      "hint": "You only need to change one number in the <code>if</code> statement.",
-      "validation": {
-        "rules": [
-          {
-            "type": "solution_code",
-            "solutionCode": "for i in range(1, 21):\n  if i % 4 == 0:\n    print(i)"
-          }
-        ]
-      }
-    },
-    {
       "title": "Challenge: Dance Party",
       "content": "Now that you've practiced loops and decisions, let's combine them to create an interactive dance sequence!",
-      "task": "Write a program that uses a <code>for</code> loop to run 4 times. Inside the loop, use <code>get_choice(3)</code> to pick a dance move ('Spin', 'Jump', or 'Wiggle') and print a message for each move.",
+      "task": "Write a program that uses a <code>for</code> loop to run 4 times. Inside the loop, use <code>get_choice(3)</code> to pick a dance move ('Spin', 'Jump', or 'Wiggle') and print a message for each move. Your messages can be anything you like!",
       "interactionType": "buttons",
       "codeHeight": 9,
       "starterCode": "",
@@ -982,24 +926,27 @@
       "validation": {
         "rules": [
           {
-            "type": "solution_code",
-            "solutionCode": "for i in range(4):\n  choice = get_choice(3)\n  if choice == 1:\n    print(\"You spin around\")\n  elif choice == 2:\n    print(\"You jump up high\")\n  else:\n    print(\"You wiggle\")"
-          }
-        ]
-      }
-    },
-    {
-      "title": "Challenge: FizzBuzz Intro",
-      "content": "This is a classic programming challenge! The goal is to loop through numbers and print 'Fizz' for multiples of 3. It's a great way to practice loops and the modulo operator.",
-      "task": "Write a program that loops from 1 to 20. Inside the loop, if a number is a multiple of 3, print 'Fizz'. Otherwise, just print the number itself.",
-      "codeHeight": 6,
-      "starterCode": "",
-      "hint": "Use a <code>for</code> loop and an <code>if/else</code> statement. The condition to check is <code>i % 3 == 0</code>.",
-      "validation": {
-        "rules": [
+            "type": "ast_has_for_loop",
+            "iterOver": "range",
+            "message": "Use a for loop with range(4) to run 4 rounds."
+          },
           {
-            "type": "solution_code",
-            "solutionCode": "for i in range(1, 21):\n  if i % 3 == 0:\n    print('Fizz')\n  else:\n    print(i)"
+            "type": "ast_has_function_call",
+            "function": "get_choice",
+            "message": "Call get_choice(3) inside the loop to pick a dance move."
+          },
+          {
+            "type": "ast_has_if",
+            "inside": "for",
+            "hasElif": true,
+            "hasElse": true,
+            "message": "Use an if/elif/else structure inside the loop to handle all three choices."
+          },
+          {
+            "type": "output_not_empty"
+          },
+          {
+            "type": "no_errors"
           }
         ]
       }

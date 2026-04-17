@@ -2,13 +2,14 @@
   "id": "worksheet-5",
   "title": "Worksheet 5: Working with Text",
   "description": "Learn to use strings to work with text and create more expressive programs.",
+  "designNote": "Worksheet 5 is a revision / breather worksheet. Introduce ONE new concept only (print with multiple comma-separated arguments), then use it as a fresh surface to revise prior concepts (variables, input, arithmetic, if/else, loops). Resist adding further new syntax — the job here is consolidation and confidence, not new load. The final section (modulo onwards) is an extension track for fast-finishing students, ending in a prime-number challenge.",
   "problems": [
     {
       "title": "Hello World!",
-      "content": "Welcome back! So far, we've been working with numbers. Now let's learn to work with text! In programming, we call text <code>strings</code>. A string is text wrapped in quotation marks.",
+      "content": "Welcome back! So far, we've been working with numbers. Now let's learn to work with text. In programming, we call text <code>strings</code>. A string is text wrapped in quotation marks.",
       "task": "Run this code to see your first string printed.",
       "starterCode": "print(\"Hello World\")",
-      "hint": "Just press the 'Run Code' button!",
+      "hint": "Just press the 'Run Code' button.",
       "validation": {
         "rules": [
           {
@@ -19,38 +20,58 @@
       }
     },
     {
-      "title": "Meet the f-string",
-      "content": "Python has a cool feature called <code>f-strings</code> that lets you put variables inside text! Put an <code>f</code> before the opening quote and use <code>{}</code> curly braces around variable names.",
+      "type": "concept",
+      "icon": "💬",
+      "title": "Print with commas",
+      "content": "<p>Up to now, every <code>print()</code> has shown <strong>one thing</strong>. But <code>print()</code> can actually take <strong>many things</strong> at once — just put commas between them:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>name = 'Sam'\nprint('Hello', name)</pre><p>Python prints each item in order with a <strong>space between them</strong>. That's it — no extra syntax, no quotes inside quotes.</p><p>It works with words, numbers, or a mix:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>age = 10\nprint('I am', age, 'years old')</pre><p>This comma-style <code>print()</code> is the <strong>one new idea</strong> in this worksheet. After that, we'll use it to revise everything you've learned so far — variables, input, if/else, and loops.</p>",
+      "footer": "Put commas between items in print() — Python adds a space between each one."
+    },
+    {
+      "type": "trace",
+      "title": "Watch print with commas in action",
+      "code": "name = 'Sam'\nprint('Hello', name)\nprint('Goodbye', name)",
+      "steps": [
+        {"line":1, "locals":{}, "for_ctx":null, "phase":"before", "ann":null, "output":""},
+        {"line":1, "locals":{"name":"'Sam'"}, "for_ctx":null, "phase":"after", "ann":null, "output":""},
+        {"line":2, "locals":{"name":"'Sam'"}, "for_ctx":null, "phase":"before", "ann":{"type":"print","preview":"Hello Sam"}, "output":""},
+        {"line":2, "locals":{"name":"'Sam'"}, "for_ctx":null, "phase":"after", "ann":null, "output":"Hello Sam\n"},
+        {"line":3, "locals":{"name":"'Sam'"}, "for_ctx":null, "phase":"before", "ann":{"type":"print","preview":"Goodbye Sam"}, "output":"Hello Sam\n"},
+        {"line":3, "locals":{"name":"'Sam'"}, "for_ctx":null, "phase":"after", "ann":null, "output":"Hello Sam\nGoodbye Sam\n"}
+      ]
+    },
+    {
+      "title": "Meet print with commas",
+      "content": "Let's try it. Store a name in a variable, then print a greeting using a comma to mix text and the variable.",
       "task": "Run this code to see how the variable <code>name</code> appears in the greeting.",
-      "starterCode": "name = \"Sam\"\nprint(f\"Hello {name}\")",
-      "hint": "Notice how the {name} part gets replaced with the value of the name variable.",
+      "starterCode": "name = \"Sam\"\nprint(\"Hello\", name)",
+      "hint": "Notice the comma between <code>\"Hello\"</code> and <code>name</code>. Python prints them both, with a space in between.",
       "validation": {
         "rules": [
           {
             "type": "solution_code",
-            "solutionCode": "name = \"Sam\"\nprint(f\"Hello {name}\")"
+            "solutionCode": "name = \"Sam\"\nprint(\"Hello\", name)"
           }
         ]
       }
     },
     {
       "title": "Change the greeting",
-      "content": "Now it's your turn to make a small change!",
-      "task": "Edit the greeting from <code>\"Hello\"</code> to <code>\"Hi\"</code> but keep the rest of the f-string the same.",
-      "starterCode": "name = \"Sam\"\nprint(f\"Hello {name}\")",
-      "hint": "Just change the word Hello to Hi, but don't change the {name} part.",
+      "content": "Now it's your turn to make a small change.",
+      "task": "Edit the greeting from <code>\"Hello\"</code> to <code>\"Hi\"</code> but keep the rest of the print the same.",
+      "starterCode": "name = \"Sam\"\nprint(\"Hello\", name)",
+      "hint": "Just change the word Hello to Hi. Don't touch the comma or the <code>name</code> variable.",
       "validation": {
         "rules": [
           {
             "type": "solution_code",
-            "solutionCode": "name = \"Sam\"\nprint(f\"Hi {name}\")"
+            "solutionCode": "name = \"Sam\"\nprint(\"Hi\", name)"
           }
         ]
       }
     },
     {
       "title": "Single quotes work too!",
-      "content": "So far we've used double quotes <code>\"</code> for our strings. Python also lets you use single quotes <code>'</code> - they work exactly the same!",
+      "content": "So far we've used double quotes <code>\"</code> for our strings. Python also lets you use single quotes <code>'</code> - they work exactly the same.",
       "task": "Run this code to see that single quotes work just like double quotes.",
       "starterCode": "print('Hello World')",
       "hint": "Both 'Hello World' and \"Hello World\" produce the same output.",
@@ -65,7 +86,7 @@
     },
     {
       "title": "Quote bug - mixing quotes!",
-      "content": "This is a common mistake that everyone makes when learning Python! If you start a string with one type of quote, you must end it with the same type.",
+      "content": "This is a common mistake that everyone makes when learning Python! If you start a string with one type of quote, you must end it with the same type. <br><br>When you run the broken code below, Python says <code>\"unterminated string literal\"</code> — that's Python's way of saying <em>\"your string didn't finish properly — check the quotes match\"</em>.",
       "task": "Run this code to see the error. The string starts with a double quote <code>\"</code> but ends with a single quote <code>'</code>. Fix it by making both quotes match.",
       "starterCode": "print(\"Welcome')",
       "hint": "Change the ending single quote ' to a double quote \" so they match. Both quotes should be the same type.",
@@ -79,23 +100,78 @@
       }
     },
     {
-      "title": "Numbers in f-strings",
-      "content": "F-strings work with numbers too! You can put any variable inside the <code>{}</code> curly braces.",
-      "task": "Run this code to see how a number variable works in an f-string.",
-      "starterCode": "age = 10\nprint(f\"I am {age} years old\")",
-      "hint": "The {age} part gets replaced with the number 10.",
+      "title": "Fix the bug: comma in the wrong place",
+      "content": "This program has a bug. The comma is in the wrong place — it's <em>inside</em> the quotes instead of separating the two things being printed. Python sees one long string <code>\"Hello,\"</code> and then a bare <code>name</code> with nothing in between, and gets confused.",
+      "task": "Run the code to see the error. Move the comma so it's <strong>outside</strong> the quotes, separating the string from the variable.",
+      "starterCode": "name = \"Sam\"\nprint(\"Hello,\" name)",
+      "hint": "Change <code>\"Hello,\" name</code> to <code>\"Hello\", name</code>. The comma lives between the two things inside the <code>print()</code>, not inside the quotes.",
       "validation": {
         "rules": [
           {
             "type": "solution_code",
-            "solutionCode": "age = 10\nprint(f\"I am {age} years old\")"
+            "solutionCode": "name = \"Sam\"\nprint(\"Hello\", name)"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Numbers with print",
+      "content": "Print with commas works with numbers too. You can mix words and numbers in a single <code>print()</code>.",
+      "task": "Run this code to see how a number variable appears in the output.",
+      "starterCode": "age = 10\nprint(\"I am\", age, \"years old\")",
+      "hint": "The three pieces — <code>\"I am\"</code>, <code>age</code>, <code>\"years old\"</code> — all get printed with spaces between them.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "age = 10\nprint(\"I am\", age, \"years old\")"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Fix the bug: missing commas",
+      "content": "Another bug. This program has no commas between the three things inside <code>print()</code>. Python needs those commas to know where one item ends and the next begins.",
+      "task": "Run the code to see the error. Add the two missing commas so the program prints <code>I am 10 years old</code>.",
+      "starterCode": "age = 10\nprint(\"I am\" age \"years old\")",
+      "hint": "One comma goes between <code>\"I am\"</code> and <code>age</code>. The other goes between <code>age</code> and <code>\"years old\"</code>.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "age = 10\nprint(\"I am\", age, \"years old\")"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Your name with print",
+      "content": "Now let's write a print-with-commas from scratch.",
+      "task": "Write a program that sets a variable called <code>name</code> to your name (in quotes), then prints <code>\"My name is\"</code> followed by <code>name</code>.",
+      "starterCode": "",
+      "hint": "First line: <code>name = \"YourName\"</code>. Second line: <code>print(\"My name is\", name)</code>.",
+      "validation": {
+        "rules": [
+          {
+            "type": "ast_has_assignment",
+            "message": "Create a variable called name with your name."
+          },
+          {
+            "type": "ast_has_function_call",
+            "function": "print",
+            "minArgs": 2,
+            "message": "Use print with a comma to combine the text and your name variable."
+          },
+          {
+            "type": "output_contains",
+            "pattern": "My name is"
           }
         ]
       }
     },
     {
       "title": "Loop reminder",
-      "content": "Remember loops from Worksheet 3? They help us repeat code!",
+      "content": "Remember loops from Worksheet 3? They help us repeat code.",
       "task": "Run this loop to see the numbers 1 to 5 printed.",
       "starterCode": "for i in range(1, 6):\n  print(i)",
       "hint": "The loop runs 5 times, printing each number.",
@@ -109,12 +185,12 @@
       }
     },
     {
-      "title": "Loops meet f-strings!",
-      "content": "Now let's combine loops with f-strings! This is where things get exciting.",
-      "task": "Write a loop that counts from 1 to 5. For each number, print <code>\"Number {i}\"</code> using an f-string.",
+      "title": "Loops meet print with commas",
+      "content": "Now let's combine loops with comma-print. This lets you label each number the loop produces.",
+      "task": "Write a loop that counts from 1 to 5. For each number, print <code>\"Number\"</code> followed by the current value of <code>i</code>.",
       "codeHeight": 3,
       "starterCode": "",
-      "hint": "Use: for i in range(1, 6): and then print(f\"Number {i}\").",
+      "hint": "Use: <code>for i in range(1, 6):</code> and then <code>print(\"Number\", i)</code>.",
       "validation": {
         "rules": [
           {
@@ -123,45 +199,37 @@
             "message": "Use a for loop with range()."
           },
           {
-            "type": "ast_has_fstring",
-            "variables": ["i"],
-            "message": "Use an f-string with {i} inside your print statement."
+            "type": "ast_has_function_call",
+            "function": "print",
+            "minArgs": 2,
+            "message": "Use print with a comma to combine \"Number\" and i."
           },
           {
             "type": "solution_code",
-            "solutionCode": "for i in range(1, 6):\n  print(f\"Number {i}\")"
+            "solutionCode": "for i in range(1, 6):\n  print(\"Number\", i)"
           }
         ]
       }
     },
     {
-      "title": "Your name f-string",
-      "content": "Now let's write our own f-string from scratch!",
-      "task": "Write a program that sets a variable called <code>name</code> to your name (in quotes), then uses an f-string to print <code>\"My name is {name}\"</code>.",
-      "starterCode": "",
-      "hint": "First line: name = \"YourName\". Second line: print(f\"My name is {name}\").",
+      "title": "Fix the bug: capital letters matter",
+      "content": "Python is <strong>very picky</strong> about capital letters. <code>name</code> and <code>Name</code> are treated as two <em>different</em> variables — so if you spell a variable differently from when you made it, Python says it doesn't exist.",
+      "task": "Run the code to see the error: <code>NameError: name 'Name' is not defined</code>. Fix the typo so both lines use the same lowercase spelling.",
+      "starterCode": "name = \"Sam\"\nprint(\"Hello\", Name)",
+      "hint": "Change <code>Name</code> on line 2 to <code>name</code> (with a lowercase n), to match the variable on line 1.",
       "validation": {
         "rules": [
           {
-            "type": "ast_has_assignment",
-            "message": "Create a variable called name with your name."
-          },
-          {
-            "type": "ast_has_fstring",
-            "variables": ["name"],
-            "message": "Use an f-string with {name} in your print statement."
-          },
-          {
-            "type": "output_contains",
-            "pattern": "My name is"
+            "type": "solution_code",
+            "solutionCode": "name = \"Sam\"\nprint(\"Hello\", name)"
           }
         ]
       }
     },
     {
-      "title": "Age f-string with input",
-      "content": "Let's combine f-strings with user input!",
-      "task": "Write a program that gets a number using <code>get_input()</code>, stores it in a variable called <code>age</code>, then uses an f-string to print <code>\"I am {age}\"</code>.",
+      "title": "Age with input",
+      "content": "Let's combine print-with-commas with user input. We've already filled in the <code>get_input()</code> line for you — just add the print.",
+      "task": "The first line stores the entered number in a variable called <code>age</code>. Add a second line that prints <code>\"I am\"</code> followed by <code>age</code>.",
       "inputs": [
         {
           "name": "age",
@@ -170,8 +238,8 @@
         }
       ],
       "codeHeight": 3,
-      "starterCode": "",
-      "hint": "First get the input: age = get_input(). Then print with an f-string: print(f\"I am {age}\").",
+      "starterCode": "age = get_input()\n",
+      "hint": "Add: <code>print(\"I am\", age)</code> on the second line.",
       "validation": {
         "rules": [
           {
@@ -180,9 +248,10 @@
             "message": "Use get_input() to get the age."
           },
           {
-            "type": "ast_has_fstring",
-            "variables": ["age"],
-            "message": "Use an f-string with {age} in your print statement."
+            "type": "ast_has_function_call",
+            "function": "print",
+            "minArgs": 2,
+            "message": "Use print with a comma to combine the text and the age variable."
           },
           {
             "type": "output_contains",
@@ -192,26 +261,8 @@
       }
     },
     {
-      "title": "Combining strings",
-      "content": "You can also join strings together using the <code>+</code> operator. This is called <code>concatenation</code>.",
-      "task": "Change the words in this program to create a different sentence. Try your own words!",
-      "starterCode": "print(\"Hello\" + \" \" + \"World\")",
-      "hint": "Replace 'Hello' and 'World' with any words you like. Don't forget the space in the middle!",
-      "validation": {
-        "rules": [
-          {
-            "type": "code_contains",
-            "pattern": "+"
-          },
-          {
-            "type": "output_not_empty"
-          }
-        ]
-      }
-    },
-    {
       "title": "If statement reminder",
-      "content": "Remember if statements from Worksheet 4? They let our programs make decisions based on conditions!",
+      "content": "Remember if statements from Worksheet 4? They let our programs make decisions based on conditions.",
       "task": "Run this code. Try entering different numbers like 30, then 60, and see how the output changes.",
       "inputs": [
         {
@@ -233,8 +284,24 @@
       }
     },
     {
+      "title": "Fix the bug: missing colon",
+      "content": "Remember from Worksheet 4 — every <code>if</code> line must end with a colon <code>:</code>. Without it, Python doesn't know the if block has started, and shows a syntax error.",
+      "task": "Run the code to see the error. Add the missing <code>:</code> at the end of the <code>if</code> line to fix it.",
+      "codeHeight": 5,
+      "starterCode": "score = 50\n\nif score >= 50\n  print(\"Pass\")",
+      "hint": "Put a <code>:</code> at the very end of the <code>if score >= 50</code> line.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "score = 50\n\nif score >= 50:\n  print(\"Pass\")"
+          }
+        ]
+      }
+    },
+    {
       "title": "Add an else block",
-      "content": "The code above only prints something when the condition is true. Let's make it print something for both cases!",
+      "content": "The code above only prints something when the condition is true. Let's make it print something for both cases.",
       "task": "Add an <code>else:</code> block after the if block that prints <code>\"Try again\"</code>. Test it with different score values!",
       "inputs": [
         {
@@ -252,35 +319,46 @@
             "type": "solution_code",
             "solutionCode": "score = get_input()\n\nif score >= 50:\n  print(\"Pass\")\nelse:\n  print(\"Try again\")",
             "testInputs": [
-              {
-                "inputs": {
-                  "score": 50
-                }
-              },
-              {
-                "inputs": {
-                  "score": 49
-                }
-              },
-              {
-                "inputs": {
-                  "score": 60
-                }
-              },
-              {
-                "inputs": {
-                  "score": 0
-                }
-              }
+              { "inputs": { "score": 50 } },
+              { "inputs": { "score": 49 } },
+              { "inputs": { "score": 60 } },
+              { "inputs": { "score": 0 } }
             ]
           }
         ]
       }
     },
     {
-      "title": "If statements with f-strings",
-      "content": "Now let's combine if statements with f-strings to make more interesting messages!",
-      "task": "Complete the program: If <code>n</code> is greater than 10, print <code>\"{n} is big\"</code>, otherwise print <code>\"{n} is small\"</code> using f-strings.",
+      "title": "Fix the bug: = vs ==",
+      "content": "Another classic from Worksheet 4. A single <code>=</code> means \"store a value in a variable\" (assignment). A double <code>==</code> asks \"are these equal?\" (comparison). They are not the same, and mixing them up inside an <code>if</code> causes a syntax error.",
+      "task": "Run the code to see the error. Fix the bug by changing the single <code>=</code> inside the <code>if</code> to a double <code>==</code>.",
+      "inputs": [
+        {
+          "name": "n",
+          "label": "Enter a number:",
+          "type": "number"
+        }
+      ],
+      "codeHeight": 5,
+      "starterCode": "n = get_input()\n\nif n = 10:\n  print(\"Exactly ten\")",
+      "hint": "The <code>n =</code> on the first line is fine — that's storing a value. The bug is the <code>n = 10</code> inside the if — change that single <code>=</code> to <code>==</code>.",
+      "validation": {
+        "rules": [
+          {
+            "type": "solution_code",
+            "solutionCode": "n = get_input()\n\nif n == 10:\n  print(\"Exactly ten\")",
+            "testInputs": [
+              { "inputs": { "n": 10 } },
+              { "inputs": { "n": 5 } }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "If statements with print",
+      "content": "Now let's combine if statements with print-with-commas to make more interesting messages.",
+      "task": "Complete the program: If <code>n</code> is greater than 10, print <code>n</code> followed by <code>\"is big\"</code>. Otherwise, print <code>n</code> followed by <code>\"is small\"</code>.",
       "inputs": [
         {
           "name": "n",
@@ -290,7 +368,7 @@
       ],
       "codeHeight": 7,
       "starterCode": "n = get_input()\n",
-      "hint": "Add the if/else structure: if n > 10: print(f\"{n} is big\") else: print(f\"{n} is small\").",
+      "hint": "You need an if/else. Inside each branch, use <code>print()</code> with two things separated by a comma — the variable <code>n</code> and a message string.",
       "validation": {
         "rules": [
           {
@@ -304,34 +382,19 @@
             "message": "Use an if/else statement to check the number."
           },
           {
-            "type": "ast_has_fstring",
-            "variables": ["n"],
-            "message": "Use an f-string with {n} in your print statement."
+            "type": "ast_has_function_call",
+            "function": "print",
+            "minArgs": 2,
+            "message": "Use print with a comma to combine n and your message."
           },
           {
             "type": "solution_code",
-            "solutionCode": "n = get_input()\n\nif n > 10:\n  print(f\"{n} is big\")\nelse:\n  print(f\"{n} is small\")",
+            "solutionCode": "n = get_input()\n\nif n > 10:\n  print(n, \"is big\")\nelse:\n  print(n, \"is small\")",
             "testInputs": [
-              {
-                "inputs": {
-                  "n": 11
-                }
-              },
-              {
-                "inputs": {
-                  "n": 10
-                }
-              },
-              {
-                "inputs": {
-                  "n": 5
-                }
-              },
-              {
-                "inputs": {
-                  "n": 100
-                }
-              }
+              { "inputs": { "n": 11 } },
+              { "inputs": { "n": 10 } },
+              { "inputs": { "n": 5 } },
+              { "inputs": { "n": 100 } }
             ]
           }
         ]
@@ -339,8 +402,8 @@
     },
     {
       "title": "Greeting with input",
-      "content": "Now let's get a name from the user and create a personalized greeting!",
-      "task": "Write a program that gets a name input and prints <code>\"Welcome {name}\"</code> using an f-string. Note: For text inputs, you still use <code>get_input()</code> the same way.",
+      "content": "Now let's get a name from the user and create a personalized greeting.",
+      "task": "Write a program that gets a name input and prints <code>\"Welcome\"</code> followed by the name. Note: For text inputs, you still use <code>get_input()</code> the same way.",
       "inputs": [
         {
           "name": "name",
@@ -350,7 +413,7 @@
       ],
       "codeHeight": 3,
       "starterCode": "",
-      "hint": "Get the input: name = get_input(). Then use an f-string: print(f\"Welcome {name}\").",
+      "hint": "Get the input: <code>name = get_input()</code>. Then print with a comma: <code>print(\"Welcome\", name)</code>.",
       "validation": {
         "rules": [
           {
@@ -359,24 +422,17 @@
             "message": "Use get_input() to get the name."
           },
           {
-            "type": "ast_has_fstring",
-            "variables": ["name"],
-            "message": "Use an f-string with {name} in your print statement."
+            "type": "ast_has_function_call",
+            "function": "print",
+            "minArgs": 2,
+            "message": "Use print with a comma to combine \"Welcome\" and the name."
           },
           {
             "type": "solution_code",
-            "solutionCode": "name = get_input()\nprint(f\"Welcome {name}\")",
+            "solutionCode": "name = get_input()\nprint(\"Welcome\", name)",
             "testInputs": [
-              {
-                "inputs": {
-                  "name": "Alice"
-                }
-              },
-              {
-                "inputs": {
-                  "name": "Bob"
-                }
-              }
+              { "inputs": { "name": "Alice" } },
+              { "inputs": { "name": "Bob" } }
             ]
           }
         ]
@@ -384,8 +440,8 @@
     },
     {
       "title": "Full introduction",
-      "content": "Now let's put multiple variables in one f-string!",
-      "task": "Write a program that gets a name and an age as inputs, then prints them both in one sentence: <code>\"My name is {name} and I am {age}\"</code>.",
+      "content": "Now let's use lots of things in one print. When a problem has <strong>two</strong> input boxes, we tell <code>get_input()</code> which one to read by putting the input's name in quotes inside the brackets — like <code>get_input('name')</code> on the first line.",
+      "task": "The first line reads the <code>name</code> from its input box. Add a second line that reads the <code>age</code> the same way, then a third line that prints: <code>\"My name is\"</code>, <code>name</code>, <code>\"and I am\"</code>, <code>age</code>.",
       "inputs": [
         {
           "name": "name",
@@ -399,8 +455,8 @@
         }
       ],
       "codeHeight": 4,
-      "starterCode": "",
-      "hint": "Get both inputs: name = get_input('name') and age = get_input('age'). Then use an f-string with both: print(f\"My name is {name} and I am {age}\").",
+      "starterCode": "name = get_input('name')\n",
+      "hint": "Second line: <code>age = get_input('age')</code> — same pattern as the first line. Third line: <code>print(\"My name is\", name, \"and I am\", age)</code>.",
       "validation": {
         "rules": [
           {
@@ -409,26 +465,17 @@
             "message": "Use get_input('name') and get_input('age') to get both inputs."
           },
           {
-            "type": "ast_has_fstring",
-            "variables": ["name", "age"],
-            "message": "Use an f-string with both {name} and {age} inside it."
+            "type": "ast_has_function_call",
+            "function": "print",
+            "minArgs": 4,
+            "message": "Your print() should have four comma-separated parts."
           },
           {
             "type": "solution_code",
-            "solutionCode": "name = get_input('name')\nage = get_input('age')\nprint(f\"My name is {name} and I am {age}\")",
+            "solutionCode": "name = get_input('name')\nage = get_input('age')\nprint(\"My name is\", name, \"and I am\", age)",
             "testInputs": [
-              {
-                "inputs": {
-                  "name": "Alice",
-                  "age": 10
-                }
-              },
-              {
-                "inputs": {
-                  "name": "Bob",
-                  "age": 12
-                }
-              }
+              { "inputs": { "name": "Alice", "age": 10 } },
+              { "inputs": { "name": "Bob", "age": 12 } }
             ]
           }
         ]
@@ -436,8 +483,8 @@
     },
     {
       "title": "Three greetings",
-      "content": "Let's create a program that prints multiple different messages with the same name!",
-      "task": "Get a name as input, then print three different greetings using f-strings: <code>\"Hello {name}\"</code>, <code>\"Welcome {name}\"</code>, and <code>\"Goodbye {name}\"</code>.",
+      "content": "Let's create a program that prints multiple different messages with the same name.",
+      "task": "Get a name as input, then print three different greetings: <code>\"Hello\", name</code>, then <code>\"Welcome\", name</code>, then <code>\"Goodbye\", name</code>.",
       "inputs": [
         {
           "name": "name",
@@ -447,7 +494,7 @@
       ],
       "codeHeight": 5,
       "starterCode": "",
-      "hint": "Get the input once, then use three separate print statements with f-strings.",
+      "hint": "Get the input once, then use three separate print statements, each with a comma.",
       "validation": {
         "rules": [
           {
@@ -456,26 +503,25 @@
           },
           {
             "type": "solution_code",
-            "solutionCode": "name = get_input()\nprint(f\"Hello {name}\")\nprint(f\"Welcome {name}\")\nprint(f\"Goodbye {name}\")",
+            "solutionCode": "name = get_input()\nprint(\"Hello\", name)\nprint(\"Welcome\", name)\nprint(\"Goodbye\", name)",
             "testInputs": [
-              {
-                "inputs": {
-                  "name": "Alice"
-                }
-              },
-              {
-                "inputs": {
-                  "name": "Bob"
-                }
-              }
+              { "inputs": { "name": "Alice" } },
+              { "inputs": { "name": "Bob" } }
             ]
           }
         ]
       }
     },
     {
+      "type": "concept",
+      "icon": "➗",
+      "title": "Extension: Modulo %",
+      "content": "<p>From here you'll meet a new math symbol and use it to solve some tricky puzzles — even checking whether a number is prime!</p><p>Python has a symbol called <strong>modulo</strong> — it looks like a percent sign <code>%</code>. It gives you the <strong>remainder</strong> of a division.</p><p>Imagine sharing 10 sweets between 3 friends: each friend gets 3, and 1 is left over. That leftover is what <code>%</code> gives you:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>print(10 % 3)   # 1\nprint(14 % 4)   # 2\nprint(9 % 3)    # 0 — no remainder, 3 divides 9 evenly</pre><p>It sounds small, but <code>%</code> unlocks surprising powers — checking even/odd, finding factors, and detecting prime numbers.</p>",
+      "footer": "% = the remainder after division. 10 % 3 = 1."
+    },
+    {
       "title": "Finding the Remainder %",
-      "content": "In programming, there's a special math symbol called <strong>modulo</strong>, which is a percent sign <code>%</code>. It gives you the remainder of a division. For example, if you share 10 sweets between 3 friends, each gets 3 and there is 1 left over. So, <code>10 % 3</code> is 1.",
+      "content": "Time to try the modulo operator yourself! The percent sign <code>%</code> gives the remainder after division.",
       "task": "Run the code to see the remainder of 14 divided by 4. Change the numbers to see how it works with different values.",
       "codeHeight": 3,
       "starterCode": "print(14 % 4)",
@@ -491,7 +537,7 @@
     },
     {
       "title": "Even or Odd?",
-      "content": "We can use the modulo operator <code>%</code> to see if a number is even or odd. Any even number can be divided by 2 with no remainder! So, if <code>number % 2</code> is 0, the number is even.",
+      "content": "We can use the modulo operator <code>%</code> to see if a number is even or odd. Any even number can be divided by 2 with no remainder! So, if <code>num % 2</code> is 0, the number is even.",
       "task": "Enter different numbers, both even and odd, and run the code to see if the program gets it right.",
       "inputs": [
         {
@@ -501,43 +547,27 @@
         }
       ],
       "codeHeight": 7,
-      "starterCode": "number = get_input()\n\nif number % 2 == 0:\n  print(\"Even\")\nelse:\n  print(\"Odd\")",
-      "hint": "Try entering 10, then try 5. See how the result of <code>number % 2</code> changes the outcome.",
+      "starterCode": "num = get_input()\n\nif num % 2 == 0:\n  print(\"Even\")\nelse:\n  print(\"Odd\")",
+      "hint": "Try entering 10, then try 5. See how the result of <code>num % 2</code> changes the outcome.",
       "validation": {
         "rules": [
           {
             "type": "solution_code",
-            "solutionCode": "number = get_input()\n\nif number % 2 == 0:\n  print(\"Even\")\nelse:\n  print(\"Odd\")",
+            "solutionCode": "num = get_input()\n\nif num % 2 == 0:\n  print(\"Even\")\nelse:\n  print(\"Odd\")",
             "testInputs": [
-              {
-                "inputs": {
-                  "num": 10
-                }
-              },
-              {
-                "inputs": {
-                  "num": 5
-                }
-              },
-              {
-                "inputs": {
-                  "num": 2
-                }
-              },
-              {
-                "inputs": {
-                  "num": 7
-                }
-              }
+              { "inputs": { "num": 10 } },
+              { "inputs": { "num": 5 } },
+              { "inputs": { "num": 2 } },
+              { "inputs": { "num": 7 } }
             ]
           }
         ]
       }
     },
     {
-      "title": "Even or odd with f-strings",
-      "content": "Now let's make the even/odd checker more descriptive by using f-strings! Edit the print statements to include the number in the message.",
-      "task": "Change both print statements to use f-strings. Instead of <code>\"Even\"</code>, print <code>\"{num} is even\"</code>. Instead of <code>\"Odd\"</code>, print <code>\"{num} is odd\"</code>.",
+      "title": "Even or odd with print",
+      "content": "Now let's make the even/odd checker more descriptive by using comma-print. Edit the print statements to include the number in the message.",
+      "task": "Change both print statements to include the number. Instead of <code>\"Even\"</code>, print <code>num</code> followed by <code>\"is even\"</code>. Instead of <code>\"Odd\"</code>, print <code>num</code> followed by <code>\"is odd\"</code>.",
       "inputs": [
         {
           "name": "num",
@@ -547,7 +577,7 @@
       ],
       "codeHeight": 7,
       "starterCode": "num = get_input()\n\nif num % 2 == 0:\n  print(\"Even\")\nelse:\n  print(\"Odd\")",
-      "hint": "Change print(\"Even\") to print(f\"{num} is even\") and print(\"Odd\") to print(f\"{num} is odd\"). Don't forget the f before the quote!",
+      "hint": "Change <code>print(\"Even\")</code> to <code>print(num, \"is even\")</code> and <code>print(\"Odd\")</code> to <code>print(num, \"is odd\")</code>.",
       "validation": {
         "rules": [
           {
@@ -556,35 +586,58 @@
             "message": "Use == to check if the remainder is 0."
           },
           {
-            "type": "ast_has_fstring",
-            "variables": ["num"],
-            "message": "Use an f-string with {num} in your print statement."
+            "type": "ast_has_function_call",
+            "function": "print",
+            "minArgs": 2,
+            "message": "Use print with a comma to combine num and your message."
           },
           {
             "type": "solution_code",
-            "solutionCode": "num = get_input()\n\nif num % 2 == 0:\n  print(f\"{num} is even\")\nelse:\n  print(f\"{num} is odd\")",
+            "solutionCode": "num = get_input()\n\nif num % 2 == 0:\n  print(num, \"is even\")\nelse:\n  print(num, \"is odd\")",
             "testInputs": [
-              {
-                "inputs": {
-                  "num": 10
-                }
-              },
-              {
-                "inputs": {
-                  "num": 5
-                }
-              },
-              {
-                "inputs": {
-                  "num": 2
-                }
-              },
-              {
-                "inputs": {
-                  "num": 7
-                }
-              }
+              { "inputs": { "num": 10 } },
+              { "inputs": { "num": 5 } },
+              { "inputs": { "num": 2 } },
+              { "inputs": { "num": 7 } }
             ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "concept",
+      "icon": "📐",
+      "title": "Reminder: Indentation Inside a Loop",
+      "content": "<p>When you put an <code>if</code> inside a <code>for</code> loop, you need <strong>two levels of indentation</strong>. Each level adds 2 spaces:</p><pre style=\"background:#fef9c3;border-radius:6px;padding:10px 14px;margin:10px 0;font-size:0.92em;line-height:1.7\"><span style=\"color:#6b7280\">for</span> i <span style=\"color:#6b7280\">in</span> range(3):          <span style=\"color:#9ca3af\"># level 0</span>\n  <span style=\"color:#6b7280\">if</span> i == 1:               <span style=\"color:#9ca3af\"># level 1 — 2 spaces</span>\n    print(i)              <span style=\"color:#9ca3af\"># level 2 — 4 spaces</span></pre><p>The <code>if</code> is indented because it's <em>inside the loop</em>. The <code>print</code> is indented again because it's inside <em>both</em> the loop and the if.</p>",
+      "footer": "Rule: every time you go one level deeper, add 2 more spaces."
+    },
+    {
+      "title": "Odd numbers in a loop",
+      "content": "Let's combine loops with the modulo check. Instead of checking one number at a time, you can loop through many and only print the ones you want.",
+      "task": "Write a loop that goes through the numbers 1 to 20 and only prints the <strong>odd</strong> ones. Use <code>% 2</code> to check each one.",
+      "codeHeight": 5,
+      "starterCode": "for i in range(1, 21):\n  ",
+      "hint": "Inside the loop, use <code>if i % 2 != 0:</code> (remainder is not 0 means odd). Then <code>print(i)</code> indented under the if. Remember: that's two levels of indent — 4 spaces on the print line.",
+      "validation": {
+        "rules": [
+          {
+            "type": "ast_has_for_loop",
+            "iterOver": "range",
+            "message": "Use a for loop with range()."
+          },
+          {
+            "type": "ast_has_if",
+            "inside": "for",
+            "message": "Use an if statement inside the loop."
+          },
+          {
+            "type": "code_contains",
+            "pattern": "%",
+            "message": "Use % 2 to check if the number is odd."
+          },
+          {
+            "type": "solution_code",
+            "solutionCode": "for i in range(1, 21):\n  if i % 2 != 0:\n    print(i)"
           }
         ]
       }
@@ -601,48 +654,31 @@
         }
       ],
       "codeHeight": 7,
-      "starterCode": "n = get_input()\nprint(f\"Factors of {n}:\")\n\nfor i in range(1, n + 1):\n  print(i)",
-      "hint": "Add 'if n % i == 0:' after the for loop line, then indent the print(i) underneath it. This checks if i divides evenly into n.",
+      "starterCode": "n = get_input()\nprint(\"Factors of\", n)\n\nfor i in range(1, n + 1):\n  print(i)",
+      "hint": "Add <code>if n % i == 0:</code> after the for loop line, then indent the <code>print(i)</code> underneath it by 4 spaces total. This checks if i divides evenly into n.",
       "validation": {
         "rules": [
           {
             "type": "solution_code",
-            "solutionCode": "n = get_input()\nprint(f\"Factors of {n}:\")\n\nfor i in range(1, n + 1):\n  if n % i == 0:\n    print(i)",
+            "solutionCode": "n = get_input()\nprint(\"Factors of\", n)\n\nfor i in range(1, n + 1):\n  if n % i == 0:\n    print(i)",
             "testInputs": [
-              {
-                "inputs": {
-                  "n": 2
-                }
-              },
-              {
-                "inputs": {
-                  "n": 3
-                }
-              },
-              {
-                "inputs": {
-                  "n": 5
-                }
-              },
-              {
-                "inputs": {
-                  "n": 12
-                }
-              },
-              {
-                "inputs": {
-                  "n": 10
-                }
-              },
-              {
-                "inputs": {
-                  "n": 7
-                }
-              }
+              { "inputs": { "n": 2 } },
+              { "inputs": { "n": 3 } },
+              { "inputs": { "n": 5 } },
+              { "inputs": { "n": 12 } },
+              { "inputs": { "n": 10 } },
+              { "inputs": { "n": 7 } }
             ]
           }
         ]
       }
+    },
+    {
+      "type": "concept",
+      "icon": "🔍",
+      "title": "Building a prime checker",
+      "content": "<p>A <strong>prime number</strong> has exactly two factors: <code>1</code> and itself. Examples: <code>2, 3, 5, 7, 11, 13</code>. Numbers that aren't prime are called <strong>composite</strong> — they have more factors. For example, <code>12</code> has factors <code>1, 2, 3, 4, 6, 12</code>.</p><p>How could a program check if a number is prime? It can look for factors — and the moment it finds one, it knows the number is composite. It doesn't need to keep checking after that.</p><p>The next few problems give you the two tools you need:</p><ul><li><strong><code>break</code></strong> — stops a loop early, as soon as you have your answer</li><li><strong>flag variable</strong> — a <code>True</code>/<code>False</code> variable that remembers what you found</li></ul><p>At the end, you'll put them together in the final challenge: decide if a number is prime or composite.</p>",
+      "footer": "A prime number has exactly 2 factors: 1 and itself."
     },
     {
       "title": "The break keyword",
@@ -662,7 +698,7 @@
     },
     {
       "title": "Your turn: Add a break",
-      "content": "Now practice adding <code>break</code> yourself! This loop counts from 1 to 20, but let's make it stop early.",
+      "content": "Now practice adding <code>break</code> yourself. This loop counts from 1 to 20, but let's make it stop early.",
       "task": "Add an if statement inside the loop that breaks when <code>i</code> equals 7. Don't forget to add <code>break</code> inside the if block!",
       "codeHeight": 5,
       "starterCode": "for i in range(1, 21):\n  print(i)",
@@ -700,21 +736,9 @@
             "type": "solution_code",
             "solutionCode": "target = get_input()\nfound = False\n\nfor i in range(1, 100):\n  if i > target:\n    found = True\n    break\n\nif found:\n  print(\"Found it!\")\nelse:\n  print(\"Not found\")",
             "testInputs": [
-              {
-                "inputs": {
-                  "target": 5
-                }
-              },
-              {
-                "inputs": {
-                  "target": 10
-                }
-              },
-              {
-                "inputs": {
-                  "target": 50
-                }
-              }
+              { "inputs": { "target": 5 } },
+              { "inputs": { "target": 10 } },
+              { "inputs": { "target": 50 } }
             ]
           }
         ]
@@ -722,12 +746,12 @@
     },
     {
       "title": "Challenge: Prime or Composite?",
-      "content": "A <strong>prime number</strong> has exactly two factors: 1 and itself. A <strong>composite number</strong> has more than two factors. Can you use what you've learned about factors, the <code>break</code> keyword, and flag variables to determine if a number is prime?",
-      "task": "Write a program that reads a number and prints <code>\"Prime\"</code> if it's prime or <code>\"Composite\"</code> if it's not. Use a flag variable like in the previous question!",
+      "content": "A <strong>prime number</strong> has exactly two factors: 1 and itself. A <strong>composite number</strong> has more than two factors. Use what you've learned about factors, the <code>break</code> keyword, and flag variables to decide.",
+      "task": "Write a program that reads a number (try numbers 2 or bigger) and prints <code>\"Prime\"</code> if it's prime or <code>\"Composite\"</code> if it's not. Use a flag variable like in the previous question!",
       "inputs": [
         {
           "name": "n",
-          "label": "Enter a number:",
+          "label": "Enter a number (2 or bigger):",
           "type": "number"
         }
       ],
@@ -748,36 +772,12 @@
             "type": "solution_code",
             "solutionCode": "n = get_input()\nis_composite = False\n\nfor i in range(2, n):\n  if n % i == 0:\n    is_composite = True\n    break\n\nif is_composite:\n  print(\"Composite\")\nelse:\n  print(\"Prime\")",
             "testInputs": [
-              {
-                "inputs": {
-                  "n": 7
-                }
-              },
-              {
-                "inputs": {
-                  "n": 12
-                }
-              },
-              {
-                "inputs": {
-                  "n": 13
-                }
-              },
-              {
-                "inputs": {
-                  "n": 9
-                }
-              },
-              {
-                "inputs": {
-                  "n": 11
-                }
-              },
-              {
-                "inputs": {
-                  "n": 15
-                }
-              }
+              { "inputs": { "n": 7 } },
+              { "inputs": { "n": 12 } },
+              { "inputs": { "n": 13 } },
+              { "inputs": { "n": 9 } },
+              { "inputs": { "n": 11 } },
+              { "inputs": { "n": 15 } }
             ]
           }
         ]
