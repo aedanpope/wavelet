@@ -122,6 +122,7 @@ const ProblemRenderer = (() => {
                 <span class="trace-card-icon">▶</span>
                 <h3>${block.title || 'Watch it run'}</h3>
             </div>
+            <p class="trace-card-instruction">Click ▶ or drag the slider to watch the code run step by step.</p>
             <div class="trace-card-footer">
                 <div class="trace-step-count" id="trace-card-count-${id}">Step 1 / ${block.steps.length}</div>
                 <div class="trace-card-controls">

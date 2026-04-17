@@ -32,7 +32,7 @@ def _wavelet_analyze(code):
         "aug_assignments": [],
         "comparisons": [],
         "fstrings": [],
-        "list_literals": 0,
+        "list_literals": [],
         "subscripts": [],
         "anti_patterns": []
     }
@@ -111,11 +111,12 @@ def _wavelet_analyze(code):
                 analysis["function_calls"].append({
                     "name": name,
                     "arg_calls": arg_calls,
+                    "arg_count": len(node.args) + len(node.keywords),
                     "in_for": "For" in parent_types
                 })
 
         if isinstance(node, ast.List) and not isinstance(getattr(node, '_parent', None), ast.Subscript):
-            analysis["list_literals"] += 1
+            analysis["list_literals"].append({"size": len(node.elts)})
 
         if isinstance(node, ast.Subscript):
             obj = _name(node.value)
@@ -319,18 +320,25 @@ function validateASTRule(astData, rule) {
         case 'ast_has_function_call': {
             const func = rule.function;
             const withArg = rule.withArg || null;
-            let found;
+            const minArgs = typeof rule.minArgs === 'number' ? rule.minArgs : null;
+            let candidates = astData.function_calls.filter(c => c.name === func);
             if (withArg) {
-                found = astData.function_calls.some(
-                    c => c.name === func && c.arg_calls.includes(withArg)
-                );
-            } else {
-                found = astData.function_calls.some(c => c.name === func);
+                candidates = candidates.filter(c => c.arg_calls.includes(withArg));
             }
-            if (!found) {
-                const detail = withArg
-                    ? `Your code needs to call ${func}(${withArg}(...)).`
-                    : `Your code needs to call ${func}().`;
+            if (minArgs !== null) {
+                candidates = candidates.filter(c => (c.arg_count || 0) >= minArgs);
+            }
+            if (candidates.length === 0) {
+                let detail;
+                if (minArgs !== null && withArg) {
+                    detail = `Your code needs to call ${func}(${withArg}(...)) with at least ${minArgs} arguments.`;
+                } else if (minArgs !== null) {
+                    detail = `Your code needs to call ${func}() with at least ${minArgs} arguments.`;
+                } else if (withArg) {
+                    detail = `Your code needs to call ${func}(${withArg}(...)).`;
+                } else {
+                    detail = `Your code needs to call ${func}().`;
+                }
                 return {
                     isValid: false,
                     errorType: 'ast_has_function_call_failed',
@@ -341,13 +349,23 @@ function validateASTRule(astData, rule) {
         }
 
         case 'ast_has_list_literal': {
-            const found = astData.list_literals > 0;
-            if (!found) {
+            const literals = astData.list_literals || [];
+            if (literals.length === 0) {
                 return {
                     isValid: false,
                     errorType: 'ast_has_list_literal_failed',
                     message: rule.message || 'Your code needs to create a list with square brackets [].'
                 };
+            }
+            if (typeof rule.minItems === 'number') {
+                const biggest = literals.reduce((max, l) => Math.max(max, l.size || 0), 0);
+                if (biggest < rule.minItems) {
+                    return {
+                        isValid: false,
+                        errorType: 'ast_has_list_literal_failed',
+                        message: rule.message || `Your list needs at least ${rule.minItems} items.`
+                    };
+                }
             }
             return { isValid: true };
         }

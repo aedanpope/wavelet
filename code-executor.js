@@ -1,6 +1,12 @@
 // Code execution engine for the Python learning platform
 // Handles Pyodide initialization, code running, input system setup, and error handling
 
+// Maximum total characters of captured print output per run.
+// Beyond this, execution is aborted — prevents runaway loops / huge inputs
+// from filling browser memory and freezing the tab. 50KB is ~1000 lines of
+// typical output, well above anything a legitimate worksheet solution produces.
+const MAX_OUTPUT_CHARS = 50000;
+
 /**
  * Code execution engine class
  * Manages all aspects of running Python code in the browser
@@ -68,6 +74,11 @@ class CodeExecutor {
         const originalPrint = this.pyodide.globals.get('print');
         this.pyodide.globals.set('print', function(...args) {
             const text = args.map(pyStr).join(' ');
+            // Abort if the program is about to exceed the output cap.
+            // Throwing here raises a JsException in Python, which stops runPythonAsync.
+            if (printOutput.length + text.length + 1 > MAX_OUTPUT_CHARS) {
+                throw new Error(`Output too large (over ${MAX_OUTPUT_CHARS} characters). Your program is printing too much — check for an infinite loop or a very large input value.`);
+            }
             textContainer.textContent += text + '\n';
             printOutput += text + '\n';
         });

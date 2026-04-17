@@ -361,6 +361,7 @@
             "type": {"const": "ast_has_function_call"},
             "function": {"type": "string", "minLength": 1},
             "withArg": {"type": "string", "minLength": 1},
+            "minArgs": {"type": "integer", "minimum": 1, "description": "Minimum number of arguments the call must pass"},
             "message": {"type": "string"},
             "description": {"type": "string"}
           },
@@ -370,6 +371,7 @@
         {
           "properties": {
             "type": {"const": "ast_has_list_literal"},
+            "minItems": {"type": "integer", "minimum": 1, "description": "Minimum number of items the list must contain"},
             "message": {"type": "string"},
             "description": {"type": "string"}
           },

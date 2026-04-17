@@ -31,7 +31,9 @@
       "Bash(export PATH:*)",
       "Bash(chmod:*)",
       "Bash(cd:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npx eslint:*)"
     ]
   }
 }

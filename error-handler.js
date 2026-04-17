@@ -35,6 +35,12 @@ function extractErrorInfo(errorMessage) {
             if (colonIndex !== -1) {
                 cleanError = errorLine.substring(colonIndex + 1).trim();
             }
+            // When a JS callback throws, Pyodide wraps it as "JsException: Error: <msg>".
+            // extractErrorInfo strips "JsException:" leaving "Error: <msg>", which would
+            // then collide with the "Error: " prefix added by fullMessage. Strip it here.
+            if (cleanError.startsWith('Error: ')) {
+                cleanError = cleanError.substring('Error: '.length);
+            }
         }
     }
     

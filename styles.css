@@ -1733,6 +1733,13 @@ code {
     font-weight: 700;
 }
 
+.trace-card-instruction {
+    margin: 0 0 12px 0;
+    font-size: 0.9rem;
+    color: #6b7280;
+    font-style: italic;
+}
+
 .trace-card-footer {
     display: flex;
     flex-direction: column;
