@@ -14,6 +14,14 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="version.js" onerror="window.APP_VERSION='dev-fallback'"></script>
     <script>
+        // Opt out of browser scroll restoration. The page is short until
+        // worksheet JSON + CodeMirror finish loading, so letting the browser
+        // restore a remembered scroll position looks like the page is
+        // scrolling itself down after navigation. Must run before any content
+        // renders, so it lives inline in <head>.
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
         window.MathJax = {
             tex: {
                 inlineMath: [['$', '$'], ['\\(', '\\)']],

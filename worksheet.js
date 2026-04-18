@@ -167,11 +167,17 @@ function loadAllProblems() {
         }
     });
     
-    // Initialize all code editors after DOM is ready
+    // Initialize all code editors after DOM is ready.
+    // CodeMirror calls scrollIntoView on its cursor during construction and
+    // during setValue, which would yank the page viewport down to the first
+    // editor on load. Snapshot/restore window.scrollY around the whole
+    // bootstrap block so the viewport stays at the top of the page.
     setTimeout(() => {
+        const savedScrollY = window.scrollY;
+
         initAllCodeEditors();
         initAllTraceEditors();
-        
+
         // Restore saved state if available
         const savedProgress = ProgressStore.loadWorksheet(currentWorksheet.id);
         if (savedProgress && savedProgress.problems) {
@@ -180,21 +186,21 @@ function loadAllProblems() {
                 if (codeEditors[index] && problemState.code) {
                     codeEditors[index].setValue(problemState.code);
                 }
-                
+
                 // Restore output and status
                 if (problemState.output || problemState.message) {
                     const outputElement = document.getElementById(`output-${index}`);
                     if (outputElement) {
-                        displayOutput(outputElement, problemState.output || '', 
+                        displayOutput(outputElement, problemState.output || '',
                                    problemState.status || 'normal', problemState.message || null);
                     }
                 }
             });
         }
-        
+
         // Update progress bar after restoring saved state
         updateProgress();
-        
+
         // Render LaTeX content in all problem elements
         getProblems().forEach((problem, index) => {
             const problemElement = document.getElementById(`problem-${index}`);
@@ -202,7 +208,9 @@ function loadAllProblems() {
                 renderLatexInElement(problemElement);
             }
         });
-        
+
+        window.scrollTo(window.scrollX, savedScrollY);
+
         // Don't show scroll hint initially - only show after completing problem 1
     }, 100);
 }
