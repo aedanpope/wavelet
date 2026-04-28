@@ -66,7 +66,9 @@ https://<sanitized-branch-name>.wavelet-e8x.pages.dev
 
 Example: branch `claude/test-cloud-code-8WTmb` → `https://claude-test-cloud-code-8wtmb.wavelet-e8x.pages.dev`.
 
-When working on a PR or feature branch, share this URL with the user so they can preview the change once Cloudflare finishes building. (If the branch alias doesn't resolve, Cloudflare may have truncated/hashed the slug — point them to the Pages dashboard for the exact deployment URL.)
+**Cloudflare truncates the alias at ~28 chars.** If the sanitized slug is longer, drop characters from the end (and trim any trailing `-`). Example: branch `claude/modernize-worksheet-2-TPGZj` → sanitized `claude-modernize-worksheet-2-tpgzj` (34 chars) → truncated alias `claude-modernize-worksheet-2` → `https://claude-modernize-worksheet-2.wavelet-e8x.pages.dev`. Always send the truncated form when the sanitized slug exceeds 28 chars.
+
+When working on a PR or feature branch, share this URL with the user so they can preview the change once Cloudflare finishes building. (If neither the full nor the truncated alias resolves, Cloudflare may have hashed the slug — point them to the Pages dashboard for the exact deployment URL.)
 
 ## Architecture
 
