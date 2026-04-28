@@ -54,6 +54,20 @@ npm run deploy:docker
 
 **Version stamping**: `version.js` is automatically updated on every commit via the git post-commit hook (installed by `npm run setup`). This ensures localStorage is cleared for users when content changes.
 
+### Cloudflare Pages preview URLs
+
+The project deploys to Cloudflare Pages. Production: `wavelet.zone`. Pages project slug: `wavelet-e8x`.
+
+Per-branch preview URL pattern (branch name lowercased, `/` and other non-alphanumerics replaced with `-`):
+
+```
+https://<sanitized-branch-name>.wavelet-e8x.pages.dev
+```
+
+Example: branch `claude/test-cloud-code-8WTmb` → `https://claude-test-cloud-code-8wtmb.wavelet-e8x.pages.dev`.
+
+When working on a PR or feature branch, share this URL with the user so they can preview the change once Cloudflare finishes building. (If the branch alias doesn't resolve, Cloudflare may have truncated/hashed the slug — point them to the Pages dashboard for the exact deployment URL.)
+
 ## Architecture
 
 ### Core Files
