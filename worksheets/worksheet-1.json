@@ -526,7 +526,7 @@
       "type": "concept",
       "icon": "✖️",
       "title": "Order of Operations: × and ÷ go first",
-      "content": "<p>When a calculation has more than one operator, Python follows the same rules as maths: <strong>multiplication and division happen before addition and subtraction</strong>.</p><p>For example, in <code>print(20 - 5 * 2)</code>:</p><ul><li>Python does <code>5 * 2</code> first &nbsp;→ &nbsp;<strong>10</strong></li><li>Then it does <code>20 - 10</code> &nbsp;→ &nbsp;<strong>10</strong></li></ul><p>So <code>print(20 - 5 * 2)</code> shows <strong>10</strong>, not 30. (If Python went left-to-right, it would give 30 — but it doesn't.)</p>",
+      "content": "<p>When a calculation has more than one operator, Python follows the same rules as maths — the <strong>order of operations</strong> (you might know it as <strong>PEMDAS</strong> or <strong>BODMAS</strong>): <strong>multiplication and division happen before addition and subtraction</strong>.</p><p>For example, in <code>print(20 - 5 * 2)</code>:</p><ul><li>Python does <code>5 * 2</code> first &nbsp;→ &nbsp;<strong>10</strong></li><li>Then it does <code>20 - 10</code> &nbsp;→ &nbsp;<strong>10</strong></li></ul><p>So <code>print(20 - 5 * 2)</code> shows <strong>10</strong>, not 30. (If Python went left-to-right, it would give 30 — but it doesn't.)</p>",
       "footer": "× and ÷ go first, then + and −."
     },
     {
