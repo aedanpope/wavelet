@@ -578,6 +578,16 @@ body {
     margin-bottom: 0;
 }
 
+.bracket-print {
+    color: #2563eb;
+    font-weight: 700;
+}
+
+.bracket-math {
+    color: #dc2626;
+    font-weight: 700;
+}
+
 .problem-header {
     display: flex;
     justify-content: space-between;

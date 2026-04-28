@@ -4,6 +4,13 @@
   "description": "Learn to use Python for basic arithmetic with the print() function.",
   "problems": [
     {
+      "type": "concept",
+      "icon": "🐍",
+      "title": "Welcome to Python",
+      "content": "<p><strong>Python</strong> is a programming language — a way of giving instructions to a computer. In this worksheet, you'll use Python as a <strong>calculator</strong>.</p><p>The instruction <code>print(...)</code> means <em>'work out what's inside the brackets and show me the answer'</em>. Python does the calculation, then the answer appears below your code.</p><p>For example:</p><p><code>print(5 + 3)</code> &nbsp;→ shows <strong>8</strong><br><code>print(10 + 7)</code> &nbsp;→ shows <strong>17</strong></p>",
+      "footer": "Type code into the box, press Run, and the answer appears below."
+    },
+    {
       "title": "Adding two numbers",
       "content": "The <code>print()</code> function can be used as a simple calculator. Run this program and observe the output.",
       "task": "Run the code to see the result of the calculation.",
@@ -516,8 +523,15 @@
       }
     },
     {
+      "type": "concept",
+      "icon": "✖️",
+      "title": "Order of Operations: × and ÷ go first",
+      "content": "<p>When a calculation has more than one operator, Python follows the same rules as maths: <strong>multiplication and division happen before addition and subtraction</strong>.</p><p>For example, in <code>print(20 - 5 * 2)</code>:</p><ul><li>Python does <code>5 * 2</code> first &nbsp;→ &nbsp;<strong>10</strong></li><li>Then it does <code>20 - 10</code> &nbsp;→ &nbsp;<strong>10</strong></li></ul><p>So <code>print(20 - 5 * 2)</code> shows <strong>10</strong>, not 30. (If Python went left-to-right, it would give 30 — but it doesn't.)</p>",
+      "footer": "× and ÷ go first, then + and −."
+    },
+    {
       "title": "Order of Operations",
-      "content": "Python follows the order of operations (PEMDAS/BODMAS) just like in math. It does multiplication and division before addition and subtraction.",
+      "content": "Let's see the order of operations in action. What do you think Python will print?",
       "task": "Run the program and find out the answer to $20 - 5 * 2$.",
       "starterCode": "print(20 - 5 * 2)",
       "hint": "Remember that Python does multiplication before subtraction.",
@@ -535,8 +549,15 @@
       }
     },
     {
+      "type": "concept",
+      "icon": "🔄",
+      "title": "Brackets change the order",
+      "content": "<p>You can add <strong>extra brackets inside</strong> <code>print(...)</code> to force a different order — anything in brackets happens <em>first</em>.</p><p>Compare these two:</p><ul><li><code>print(20 - 5 * 2)</code> &nbsp;→ Python does <code>5 * 2</code> first &nbsp;→ shows <strong>10</strong></li><li><code>print(<span class='bracket-math'>(</span>20 - 5<span class='bracket-math'>)</span> * 2)</code> &nbsp;→ Python does <code>20 - 5</code> first &nbsp;→ shows <strong>30</strong></li></ul><p>Same numbers, same operators — different brackets, different answer.</p><p>⚠️ <strong>Watch out — there are two kinds of brackets!</strong></p><ul><li><span class='bracket-print'>Blue</span> brackets belong to <code>print</code> — they tell Python <em>what to print</em>.</li><li><span class='bracket-math'>Red</span> brackets belong to the maths — they tell Python <em>what to calculate first</em>.</li></ul><p>Look at this carefully:</p><p style='font-size:1.15rem;text-align:center;margin:8px 0;'><code><span class='bracket-print'>print(</span><span class='bracket-math'>(</span>20 - 5<span class='bracket-math'>)</span> * 2<span class='bracket-print'>)</span></code></p><p>Two opening brackets <code><span class='bracket-print'>(</span><span class='bracket-math'>(</span></code> at the start, and two closing brackets — but they're in different places! The <span class='bracket-math'>red</span> <code><span class='bracket-math'>)</span></code> closes after <code>20 - 5</code>, then the <span class='bracket-print'>blue</span> <code><span class='bracket-print'>)</span></code> closes <code>print</code> right at the end. Every opening bracket needs a matching closing bracket of the same colour.</p>",
+      "footer": "Blue brackets = for print. Red brackets = for the maths."
+    },
+    {
       "title": "Change the order with brackets",
-      "content": "In the last problem, <code>print(20 - 5 * 2)</code> gave 10 because Python did the multiplication first.\n\nWe can add <strong>extra brackets inside</strong> the <code>print()</code> brackets to force a different order. Here, brackets around <code>20 - 5</code> make the subtraction happen first.",
+      "content": "Now try it yourself. Brackets around <code>20 - 5</code> make the subtraction happen first.",
       "task": "Run the program and see how the answer changes when brackets are added around <code>20 - 5</code>.",
       "starterCode": "print((20 - 5) * 2)",
       "hint": "Just run the code and observe the output.",
