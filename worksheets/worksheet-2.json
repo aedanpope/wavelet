@@ -4,8 +4,15 @@
   "description": "Learn to use variables to store and manipulate data in Python.",
   "problems": [
     {
+      "type": "concept",
+      "icon": "📦",
+      "title": "Variables: labelled boxes for your data",
+      "content": "<p>So far, every number in your code has been written down right where it's used — like <code>print(5 + 3)</code>. Programs get powerful when you can <strong>save a value</strong> and use it again later.</p><p>That's what a <strong>variable</strong> does. Think of it like a <strong>labelled box</strong>: you put a number inside, and the label is the name you can use to get it back.</p><p>Python uses <code>=</code> to put something into a box:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>age = 7</pre><p>That line says <em>'make a box called <code>age</code> and put 7 inside it'</em>. After that, you can use <code>age</code> anywhere you'd use the number 7:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>print(age)        <span style='color:#94a3b8'># shows 7</span>\nprint(age + 1)    <span style='color:#94a3b8'># shows 8</span></pre>",
+      "footer": "= means \"put the right side into the box on the left\". It's not the same as = in maths!"
+    },
+    {
       "title": "Your first variable",
-      "content": "Variables are containers that hold values. Think of them like labeled boxes - you put something inside and give it a name. Let's create your first variable! Here we're creating a variable named 'age' and giving it the value 7. The equals sign (=) assigns the value to the variable.",
+      "content": "Let's create your first variable! Here we're creating a variable named <code>age</code> and giving it the value 7. The equals sign <code>=</code> puts the value into the box on the left.",
       "task": "Run the code to see the value stored in the variable.",
       "starterCode": "age = 7\nprint(age)",
       "hint": "The variable 'age' holds the number 7.",
@@ -25,6 +32,18 @@
           }
         ]
       }
+    },
+    {
+      "type": "trace",
+      "title": "Watch a variable get assigned",
+      "code": "age = 7\nprint(age)",
+      "steps": [
+        {"line":1, "locals":{}, "for_ctx":null, "phase":"before", "ann":null, "output":""},
+        {"line":1, "locals":{"age":"7"}, "for_ctx":null, "phase":"after", "ann":null, "output":""},
+        {"line":2, "locals":{"age":"7"}, "for_ctx":null, "phase":"before", "ann":{"type":"eval","expr":"age","value":"7"}, "output":""},
+        {"line":2, "locals":{"age":"7"}, "for_ctx":null, "phase":"before", "ann":{"type":"print","preview":"7"}, "output":""},
+        {"line":2, "locals":{"age":"7"}, "for_ctx":null, "phase":"after", "ann":null, "output":"7\n"}
+      ]
     },
     {
       "title": "Changing a variable",
@@ -140,22 +159,10 @@
     },
     {
       "type": "concept",
-      "icon": "💡",
-      "title": "Key Concept: x stores whatever you type",
-      "content": "<p>When Python runs <code>x = get_input()</code>, it waits for you to enter a number — then stores that number inside <code>x</code>.</p><p>From that point on, <strong>x IS that number</strong>. So when Python sees <code>print(x + 5)</code>, it swaps in whatever is stored:</p>",
-      "examples": [
-        {
-          "input": "3",
-          "substituted": "print(3 + 5)",
-          "output": "8"
-        },
-        {
-          "input": "10",
-          "substituted": "print(10 + 5)",
-          "output": "15"
-        }
-      ],
-      "footer": "Same code, different answers — because <code>x</code> holds whatever you typed. This is what makes variables powerful!"
+      "icon": "🔄",
+      "title": "x stores whatever you type",
+      "content": "<p style='font-size:1.1em;font-weight:600;margin:4px 0 10px;'>Same code. Different answers. How?</p><p style='margin:6px 0 4px;color:#475569;font-size:0.9rem;'>The program:</p><pre style='background:#f1f5f9;padding:10px 14px;border-radius:6px;margin:6px 0 14px;font-family:monospace;font-size:0.95rem;line-height:1.6;'>x = get_input()\nprint(x + 5)</pre><table style='border-collapse:collapse;margin:8px 0 14px;font-family:monospace;font-size:0.95rem;'><thead><tr style='background:#e0e7ff;'><th style='padding:7px 14px;border:1px solid #94a3b8;text-align:center;'>You type</th><th style='padding:7px 14px;border:1px solid #94a3b8;text-align:left;'>Python runs</th><th style='padding:7px 14px;border:1px solid #94a3b8;text-align:center;'>Output</th></tr></thead><tbody><tr><td style='padding:6px 14px;border:1px solid #94a3b8;text-align:center;'>3</td><td style='padding:6px 14px;border:1px solid #94a3b8;'><code>print(<strong>3</strong> + 5)</code></td><td style='padding:6px 14px;border:1px solid #94a3b8;text-align:center;'><strong>8</strong></td></tr><tr style='background:rgba(0,0,0,0.04);'><td style='padding:6px 14px;border:1px solid #94a3b8;text-align:center;'>10</td><td style='padding:6px 14px;border:1px solid #94a3b8;'><code>print(<strong>10</strong> + 5)</code></td><td style='padding:6px 14px;border:1px solid #94a3b8;text-align:center;'><strong>15</strong></td></tr></tbody></table><p>When you press Run, <code>get_input()</code> grabs your number out of the text box, and the <code>=</code> puts it in <code>x</code>. From then on, every time Python sees <code>x</code>, it swaps in whatever's in the box.</p>",
+      "footer": "One program — works for any number you type. That's why we use variables."
     },
     {
       "title": "Modify the calculation",
@@ -272,8 +279,15 @@
       }
     },
     {
+      "type": "concept",
+      "icon": "🏷️",
+      "title": "More than one input: use names",
+      "content": "<p>Up until now you've only had one input box, so a plain <code>get_input()</code> was enough — Python knew which box you meant.</p><p>What if there are <strong>two</strong> input boxes? You need to tell Python which one you want by putting the box's <strong>name</strong> in quotes inside the brackets:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>x = get_input('x')   <span style='color:#94a3b8'># value from the box named 'x'</span>\ny = get_input('y')   <span style='color:#94a3b8'># value from the box named 'y'</span></pre><p>The name in quotes has to match the box's name <strong>exactly</strong>. If you type <code>get_input('a')</code> but there's no box called <code>a</code>, Python won't know what to give you.</p>",
+      "footer": "One input box → get_input(). Multiple boxes → get_input('name')."
+    },
+    {
       "title": "Adding two inputs",
-      "content": "Now let's get two numbers from the input boxes and add them together. We'll use <code>get_input()</code> twice to get both numbers. By default, <code>get_input()</code> will return just the value of the first input box, so we need to use <code>get_input('x')</code> and <code>get_input('y')</code> to get the values of the first and second input boxes respectively. The string input into <code>get_input()</code> is the name of the input box.",
+      "content": "Now let's get two numbers from the input boxes and add them together. We'll use <code>get_input()</code> twice — once for each box — passing the name of the box in quotes so Python knows which one we mean.",
       "task": "Input 2 numbers and run the code to see the sum.",
       "codeHeight": 5,
       "inputs": [
