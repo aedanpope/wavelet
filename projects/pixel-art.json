@@ -46,6 +46,19 @@
       }
     },
     {
+      "id": "background",
+      "title": "Draw the background",
+      "function": "draw_background",
+      "guidance": "<p>Time to make the canvas your own. <code>draw_background()</code> is your blank slate &mdash; whatever you draw here sits behind the player.</p><p>Start by calling the two functions you've already written (<code>draw_corners()</code> and <code>draw_border()</code>), then add anything else you can think of. A few ideas to get you started:</p><ul><li>A row of coloured rectangles along the bottom for grass or sand</li><li>Rainbow stripes across the middle</li><li>A pattern of dots</li><li>A shape using nested loops &mdash; a triangle, diamond, or letter</li><li>Anything else you can imagine</li></ul><p>There's no automatic check on this one &mdash; it's your space to be creative.</p>",
+      "starterBody": "draw_corners()\ndraw_border()\n# add your own stuff! rectangles, stripes, shapes, anything.\n\n",
+      "editorHeight": 10,
+      "validation": {
+        "rules": [
+          { "type": "function_runs_clean" }
+        ]
+      }
+    },
+    {
       "id": "player",
       "title": "Draw the player",
       "function": "draw_player",
@@ -63,7 +76,7 @@
       "title": "Build the scene",
       "function": "draw_scene",
       "guidance": "<p>This function runs every time you press a button. Its job is to put the whole picture together by calling your other functions.</p><p>Order matters &mdash; later draws appear on top of earlier ones. Background first, player last.</p>",
-      "starterBody": "draw_border()\ndraw_corners()\ndraw_player()\n",
+      "starterBody": "draw_background()\ndraw_player()\n",
       "editorHeight": 6,
       "validation": {
         "rules": [
