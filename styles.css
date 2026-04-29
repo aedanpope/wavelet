@@ -373,6 +373,13 @@ body {
     transform: translateY(-1px);
 }
 
+.header-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
 .worksheet-info h1 {
     font-size: 1.8rem;
     margin-bottom: 5px;

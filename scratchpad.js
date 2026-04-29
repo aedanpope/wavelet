@@ -176,6 +176,50 @@ function setupEventListeners() {
 
     // Add input button
     document.getElementById('add-input-btn').addEventListener('click', addInput);
+
+    // Save / Open file
+    document.getElementById('save-file-btn').addEventListener('click', saveCodeToFile);
+    document.getElementById('open-file-btn').addEventListener('click', () => {
+        document.getElementById('file-input').click();
+    });
+    document.getElementById('file-input').addEventListener('change', loadCodeFromFile);
+}
+
+// ── Save / Open File ────────────────────────────────────────────────────────
+
+function saveCodeToFile() {
+    const code = codeEditor ? codeEditor.getValue() : '';
+    const blob = new Blob([code], { type: 'text/x-python;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'scratchpad.py';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function loadCodeFromFile(e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    const existing = codeEditor ? codeEditor.getValue().trim() : '';
+    if (existing && !confirm('Replace your current code with the contents of this file?')) {
+        e.target.value = '';
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = ev => {
+        codeEditor.setValue(ev.target.result || '');
+        saveState();
+    };
+    reader.onerror = () => alert('Could not read that file. Try again or pick a different file.');
+    reader.readAsText(file);
+
+    // Reset so picking the same file again still fires `change`.
+    e.target.value = '';
 }
 
 function applyEditorHeight() {

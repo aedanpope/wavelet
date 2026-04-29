@@ -33,7 +33,12 @@
                     <h1>Python Scratchpad</h1>
                     <p>Free-form Python workspace — no validation, just run and explore</p>
                 </div>
-                <button class="reset-btn" id="clear-code-btn">🔄 Clear Code</button>
+                <div class="header-actions">
+                    <button class="reset-btn" id="open-file-btn" title="Load Python code from a .py file">📂 Open</button>
+                    <button class="reset-btn" id="save-file-btn" title="Save your code as a .py file">💾 Save</button>
+                    <button class="reset-btn" id="clear-code-btn">🔄 Clear Code</button>
+                </div>
+                <input type="file" id="file-input" accept=".py,text/x-python,text/plain" style="display: none;">
             </header>
 
             <!-- Settings Bar -->
