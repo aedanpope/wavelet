@@ -107,6 +107,7 @@ function renderSetupCard() {
     host.innerHTML = '';
     const card = document.createElement('article');
     card.className = 'project-task project-setup';
+    card.dataset.taskId = '__setup__';
 
     const header = document.createElement('header');
     header.className = 'project-task-header';
@@ -115,6 +116,7 @@ function renderSetupCard() {
             <span class="task-number setup-number">⚙</span>
             <h3 class="task-title">Setup</h3>
         </div>
+        <span class="task-status task-status-pending" data-status>○ ready</span>
     `;
     card.appendChild(header);
 
@@ -136,10 +138,19 @@ function renderSetupCard() {
     editorFrame.appendChild(editorEl);
 
     card.appendChild(editorFrame);
+
+    const setupError = document.createElement('div');
+    setupError.className = 'task-error';
+    setupError.style.display = 'none';
+    card.appendChild(setupError);
+
     host.appendChild(card);
 
     // Defer CM init to initTaskEditors() (parent must be visible first).
     host._editorEl = editorEl;
+    host._statusEl = header.querySelector('[data-status]');
+    host._errorEl = setupError;
+    host._card = card;
 }
 
 function renderTaskCard(task, idx) {
@@ -203,7 +214,7 @@ function initTaskEditors() {
             value: projectDef.editablePreamble || '',
             mode: 'python',
             theme: 'monokai',
-            lineNumbers: false,
+            lineNumbers: true,
             indentUnit: 2,
             tabSize: 2,
             extraKeys: { 'Tab': cm => cm.replaceSelection('  ', 'end') },
@@ -224,7 +235,7 @@ function initTaskEditors() {
             value: task.starterBody || '',
             mode: 'python',
             theme: 'monokai',
-            lineNumbers: false,
+            lineNumbers: true,
             indentUnit: 2,
             tabSize: 2,
             extraKeys: { 'Tab': cm => cm.replaceSelection('  ', 'end') },
@@ -247,140 +258,328 @@ function initTaskEditors() {
 // ─── Run flow ────────────────────────────────────────────────────────────
 
 async function runProject() {
-    const status = document.getElementById('project-status');
-    status.innerHTML = 'Running…';
+    resetAllStatus();
 
-    // Reset per-task error UI
-    for (const entry of taskEditors.values()) {
-        entry.errorEl.style.display = 'none';
-        entry.statusEl.className = 'task-status task-status-pending';
-        entry.statusEl.textContent = '… running';
-    }
+    // Build the program in three segments so we can attribute exec failures
+    // to whichever section caused them (Setup vs. function defs vs. Extras).
+    const seg = assembleProgramSegmented();
 
-    const { code, taskErrors } = assembleProgram();
+    // Surface per-task syntax errors caught by the assembler before we run anything.
+    for (const [taskId, errMsg] of seg.taskErrors) markTaskError(taskId, errMsg);
 
-    // Reset Python globals so previous state doesn't bleed across runs.
+    // Setup syntax-check upfront so a broken preamble doesn't masquerade as a
+    // runtime error in some unrelated task.
+    const preambleSyntaxErr = seg.preambleSrc.trim() ? checkSyntax(seg.preambleSrc) : null;
+    if (preambleSyntaxErr) setSetupError(preambleSyntaxErr);
+
     await executor.resetPythonEnvironment(0);
     setupCanvasFunctions(executor.getPyodide(), 0);
+    const py = executor.getPyodide();
 
-    const outputEl = document.getElementById('output-0');
-    try {
-        await executor.executeCode(code, outputEl, 0);
-    } catch (err) {
-        status.innerHTML = `<strong>Error while defining your project:</strong> ${escapeHtml(err.message)}`;
-        return;
+    // 1. Setup preamble. A failure here is the student's variables.
+    if (!preambleSyntaxErr && seg.preambleSrc.trim()) {
+        try {
+            await py.runPythonAsync(seg.preambleSrc);
+        } catch (err) {
+            setSetupError(extractPythonError(err));
+            return finalizeRunStatus();
+        }
     }
 
-    // Mark per-task syntax errors caught by the assembler.
-    for (const [taskId, errMsg] of taskErrors.entries()) {
-        markTaskError(taskId, errMsg);
+    // 2. Function definitions. Wrapping is JS-controlled, so this only fails
+    // if our wrapping has a bug — extremely unlikely. Surface as a global
+    // banner so we notice in the field.
+    if (seg.fnDefsSrc.trim()) {
+        try {
+            await py.runPythonAsync(seg.fnDefsSrc);
+        } catch (err) {
+            displayGlobalError(`Couldn't load your functions: ${extractPythonError(err)}`);
+            return finalizeRunStatus();
+        }
     }
 
-    // Initial scene: clear + draw_scene + flush
-    await runDrawScene();
+    // 3. Extras (preserved from a saved file). If they fail, attribute to Extras.
+    if (seg.extrasSrc.trim()) {
+        try {
+            await py.runPythonAsync(seg.extrasSrc);
+        } catch (err) {
+            setExtrasError(extractPythonError(err));
+            // Don't return — student tasks may still work without extras.
+        }
+    }
 
-    // Validate each task that wasn't already marked as a syntax error.
+    // 4. Install the Python attribution helper so subsequent calls (draw_scene,
+    // dpad presses) can attribute errors to whichever task function ran deepest.
+    await installAttributionHelper();
+
+    // 5. Initial scene render via the attributed call helper.
+    const sceneResult = await callWithAttribution('draw_scene');
+    if (!sceneResult.ok) {
+        const taskId = taskIdForFunction(sceneResult.in_function);
+        if (taskId) markTaskError(taskId, sceneResult.error_msg);
+        else displayGlobalError(sceneResult.error_msg);
+    }
+
+    // 6. Per-task validation for anything not already in error.
     for (const [taskId, entry] of taskEditors.entries()) {
-        if (taskErrors.has(taskId)) continue;
+        if (entry.statusEl.classList.contains('task-status-fail')) continue;
         const result = await validateTask(entry.task);
         applyValidationResult(taskId, result);
     }
 
-    status.innerHTML = 'Project running. Try the arrow buttons below the canvas!';
+    finalizeRunStatus();
 }
 
+// Pyodide's err.message is a multi-line traceback. The student-facing line is
+// the last "ErrorType: message" line — the rest is implementation detail.
+function extractPythonError(err) {
+    const msg = (err && err.message) ? err.message : String(err);
+    const lines = msg.split('\n').map(s => s.trim()).filter(Boolean);
+    for (let i = lines.length - 1; i >= 0; i--) {
+        if (/^[A-Z][A-Za-z]*(Error|Exception|Warning):/.test(lines[i])) return lines[i];
+    }
+    return lines[lines.length - 1] || msg;
+}
+
+async function installAttributionHelper() {
+    const py = executor.getPyodide();
+    const knownNames = projectDef.tasks.map(t => t.function);
+    py.globals.set('_wavelet_known_names', py.toPy(knownNames));
+    py.runPython(`
+def _wavelet_call_safely(fn_name):
+    # Walks the exception traceback to find the deepest frame whose function
+    # is one of the project's tasks. That's where the bug lives.
+    known = set(_wavelet_known_names)
+    fn = globals().get(fn_name)
+    if not callable(fn):
+        return {'ok': False,
+                'error_msg': f"'{fn_name}' is not defined yet",
+                'in_function': fn_name}
+    try:
+        fn()
+        return {'ok': True, 'in_function': None, 'error_msg': None}
+    except Exception as e:
+        deepest = fn_name
+        tb = e.__traceback__
+        while tb is not None:
+            frame_name = tb.tb_frame.f_code.co_name
+            if frame_name in known:
+                deepest = frame_name
+            tb = tb.tb_next
+        return {'ok': False,
+                'error_msg': f'{type(e).__name__}: {e}',
+                'in_function': deepest}
+`);
+}
+
+async function callWithAttribution(fnName) {
+    const py = executor.getPyodide();
+    try {
+        const fn = py.globals.get('_wavelet_call_safely');
+        const result = fn(fnName);
+        const obj = result.toJs({ dict_converter: Object.fromEntries });
+        if (typeof autoFlushCanvas !== 'undefined') autoFlushCanvas(py, 0);
+        return obj;
+    } catch (err) {
+        return { ok: false, error_msg: extractPythonError(err), in_function: fnName };
+    }
+}
+
+function taskIdForFunction(fnName) {
+    for (const t of projectDef.tasks) {
+        if (t.function === fnName) return t.id;
+    }
+    return null;
+}
+
+// Wipes the visible canvas via Python's clear(), then calls draw_scene
+// through the attribution helper so any failure inside a task function ends
+// up routed to the right card.
 async function runDrawScene() {
     const py = executor.getPyodide();
     try {
-        await py.runPythonAsync(`
-try:
-    clear()
-except Exception:
-    pass
-try:
-    draw_scene()
-except Exception as _e:
-    print('Error in draw_scene():', _e)
-`);
-    } finally {
-        if (typeof autoFlushCanvas !== 'undefined') {
-            autoFlushCanvas(py, 0);
-        }
-    }
+        await py.runPythonAsync('clear()');
+    } catch (_e) { /* canvas may not yet be initialised — fine */ }
+    return callWithAttribution('draw_scene');
 }
 
 async function onKeyPress(direction) {
     if (!executor || !executor.isReady()) return;
     const fnName = `on_${direction}_key`;
+
+    // The attribution helper isn't installed until after a successful Run.
+    // If the student presses an arrow before running, prompt them to Run.
     const py = executor.getPyodide();
-    try {
-        await py.runPythonAsync(`
-try:
-    ${fnName}()
-except Exception as _e:
-    print('Error in ${fnName}():', _e)
-`);
-    } catch (err) {
-        console.error(`${fnName} failed:`, err);
+    if (!py.globals.get('_wavelet_call_safely')) {
+        document.getElementById('project-status').innerHTML =
+            'Click <strong>Run Project</strong> first to load your code.';
+        return;
     }
-    await runDrawScene();
+
+    // Run the handler, then re-render the scene. Both go through attribution
+    // so any error lands on the right task card.
+    const handlerResult = await callWithAttribution(fnName);
+    if (!handlerResult.ok) {
+        const taskId = taskIdForFunction(handlerResult.in_function);
+        if (taskId) markTaskError(taskId, handlerResult.error_msg);
+        else displayGlobalError(handlerResult.error_msg);
+        finalizeRunStatus();
+        return;
+    }
+
+    // Clear + redraw scene with attribution.
+    try { await py.runPythonAsync('clear()'); } catch (_e) {}
+    const sceneResult = await callWithAttribution('draw_scene');
+    if (!sceneResult.ok) {
+        const taskId = taskIdForFunction(sceneResult.in_function);
+        if (taskId) markTaskError(taskId, sceneResult.error_msg);
+        else displayGlobalError(sceneResult.error_msg);
+        finalizeRunStatus();
+    }
+}
+
+// ─── Status / error UI ──────────────────────────────────────────────────
+
+// Reset every card to a neutral "ready" state. We never leave a "… running"
+// pill behind because exec failures abort before validation runs and the
+// yellow state misleads.
+function resetAllStatus() {
+    const host = document.getElementById('project-setup-host');
+    if (host && host._statusEl) {
+        host._statusEl.className = 'task-status task-status-pending';
+        host._statusEl.textContent = '○ ready';
+    }
+    if (host && host._errorEl) host._errorEl.style.display = 'none';
+
+    for (const entry of taskEditors.values()) {
+        entry.statusEl.className = 'task-status task-status-pending';
+        entry.statusEl.textContent = '○ ready';
+        entry.errorEl.style.display = 'none';
+    }
+
+    const status = document.getElementById('project-status');
+    if (status) status.innerHTML = 'Running…';
+}
+
+function setSetupError(msg) {
+    const host = document.getElementById('project-setup-host');
+    if (!host || !host._statusEl) return;
+    host._statusEl.className = 'task-status task-status-fail';
+    host._statusEl.textContent = '✗ error';
+    host._errorEl.style.display = 'block';
+    host._errorEl.textContent = msg;
+}
+
+function setExtrasError(msg) {
+    const codeEl = document.getElementById('extras-code');
+    if (!codeEl) return;
+    let banner = document.getElementById('extras-error');
+    if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'extras-error';
+        banner.className = 'task-error';
+        banner.style.margin = '8px 12px';
+        codeEl.parentElement.insertBefore(banner, codeEl);
+    }
+    banner.style.display = 'block';
+    banner.textContent = `Error in Extras: ${msg}`;
+}
+
+function displayGlobalError(msg) {
+    const status = document.getElementById('project-status');
+    if (status) status.innerHTML = `<strong>Error:</strong> ${escapeHtml(msg)}`;
+}
+
+// Count failed cards, render the summary in the sticky stage, and scroll to
+// the first error if there is one. Called at the end of every run / key press.
+function finalizeRunStatus() {
+    const failingCards = document.querySelectorAll('.project-task .task-status-fail');
+    const status = document.getElementById('project-status');
+    if (!status) return;
+    if (failingCards.length === 0) {
+        status.innerHTML = '✓ Project running. Try the arrow buttons below the canvas!';
+        return;
+    }
+    const noun = failingCards.length === 1 ? 'task needs' : 'tasks need';
+    status.innerHTML = `
+        <span class="status-fail-text">✗ ${failingCards.length} ${noun} fixing</span>
+        <button type="button" class="status-jump-btn" id="status-jump-btn">Jump to first ↓</button>
+    `;
+    document.getElementById('status-jump-btn').addEventListener('click', scrollToFirstError);
+    scrollToFirstError();
+}
+
+// Smooth-scroll to the first failing card, leaving the sticky stage clear.
+function scrollToFirstError() {
+    const failingPill = document.querySelector('.project-task .task-status-fail');
+    if (!failingPill) return;
+    const card = failingPill.closest('.project-task');
+    if (!card) return;
+    const stage = document.querySelector('.project-stage');
+    const stageHeight = stage ? stage.offsetHeight : 0;
+    const cardTop = card.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({ top: cardTop - stageHeight - 16, behavior: 'smooth' });
 }
 
 // ─── Code assembly ───────────────────────────────────────────────────────
 
-function assembleProgram() {
-    const lines = [];
+// Build the runnable program in three segments — preamble, function defs,
+// extras — so the run loop can exec each piece separately and attribute
+// failures to the right card. assembleFileForDisk uses the same building
+// blocks but adds the on-disk header / per-task labels.
+function assembleProgramSegmented() {
     const taskErrors = new Map();
 
-    // Locked preamble (we own these — use_canvas, etc.)
-    for (const line of (projectDef.lockedPreamble || [])) {
-        lines.push(line);
-    }
-
-    // Editable preamble (student-owned globals)
+    // Preamble: locked (we own) + editable (student globals).
+    const preambleLines = [];
+    for (const line of (projectDef.lockedPreamble || [])) preambleLines.push(line);
     const editablePreamble = setupEditor ? setupEditor.getValue() : (projectDef.editablePreamble || '');
-    if (editablePreamble.trim()) {
-        lines.push(editablePreamble.replace(/\s+$/g, ''));
-    }
-    lines.push('');
+    if (editablePreamble.trim()) preambleLines.push(editablePreamble.replace(/\s+$/g, ''));
+    const preambleSrc = preambleLines.join('\n');
 
     // Auto-inject `global` so students can write `x -= 1` inside a function
-    // without hitting Python's UnboundLocalError. Crucially, we inject only
-    // the candidate names that are *assigned* in this specific function body
+    // without hitting Python's UnboundLocalError. We inject only the
+    // candidate names that are *assigned* in this specific function body
     // (Assign/AugAssign/AnnAssign targets) — never just because a name is
-    // referenced. If we injected unconditionally, a `for x in range(20)` loop
-    // inside draw_border would clobber the global x (treating the loop var as
-    // a global write), which broke the left/right buttons in the first cut.
+    // referenced, and `For.target` is excluded so `for x in range(20)` doesn't
+    // clobber the global.
     const candidateGlobals = scanGlobals(editablePreamble);
 
+    const fnLines = [];
     for (const task of projectDef.tasks) {
         const entry = taskEditors.get(task.id);
         const rawBody = entry && entry.cm ? entry.cm.getValue() : (task.starterBody || '');
 
-        // Tentatively wrap with no global decl so we can inspect the AST.
         const wrappedNoGlobals = wrapAsFunction(task.function, rawBody, null);
         const compileError = checkSyntax(wrappedNoGlobals);
         if (compileError) {
             taskErrors.set(task.id, compileError);
-            lines.push(`def ${task.function}():`);
-            lines.push(`${BODY_INDENT}pass  # (replaced because of a syntax error in your code)`);
-            lines.push('');
+            fnLines.push(`def ${task.function}():`);
+            fnLines.push(`${BODY_INDENT}pass  # (replaced because of a syntax error in your code)`);
+            fnLines.push('');
             continue;
         }
 
         const assignedHere = scanAssignedGlobals(wrappedNoGlobals, candidateGlobals);
         const globalDecl = assignedHere.length ? `global ${assignedHere.join(', ')}` : null;
-        lines.push(wrapAsFunction(task.function, rawBody, globalDecl));
-        lines.push('');
+        fnLines.push(wrapAsFunction(task.function, rawBody, globalDecl));
+        fnLines.push('');
     }
+    const fnDefsSrc = fnLines.join('\n');
 
-    // Extras: opaque to the editing UI, but they still run.
-    if (currentExtras && currentExtras.trim()) {
-        lines.push(currentExtras);
-        lines.push('');
-    }
+    const extrasSrc = (currentExtras && currentExtras.trim()) ? currentExtras : '';
 
-    return { code: lines.join('\n'), taskErrors };
+    return { preambleSrc, fnDefsSrc, extrasSrc, taskErrors };
+}
+
+// Single-blob form used only by old call sites we haven't refactored yet.
+function assembleProgram() {
+    const seg = assembleProgramSegmented();
+    const lines = [];
+    if (seg.preambleSrc) { lines.push(seg.preambleSrc); lines.push(''); }
+    if (seg.fnDefsSrc) { lines.push(seg.fnDefsSrc); }
+    if (seg.extrasSrc) { lines.push(seg.extrasSrc); lines.push(''); }
+    return { code: lines.join('\n'), taskErrors: seg.taskErrors };
 }
 
 function wrapAsFunction(name, body, globalDecl) {

@@ -1988,6 +1988,28 @@ code {
     color: #495057;
     font-size: 0.95rem;
     line-height: 1.4;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.project-status .status-fail-text {
+    color: #991b1b;
+    font-weight: 600;
+}
+.project-status .status-jump-btn {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.project-status .status-jump-btn:hover {
+    background: #b91c1c;
 }
 
 /* Intro prose */
