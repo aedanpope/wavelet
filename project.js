@@ -6,7 +6,7 @@
 
 const PARAM_PROJECT = 'project';
 const DEFAULT_PROJECT = 'pixel-art';
-const BODY_INDENT = '    ';
+const BODY_INDENT = '  ';
 const SUPPORTS_FSA = typeof window !== 'undefined' && 'showOpenFilePicker' in window;
 const PY_FILE_TYPE = {
     description: 'Python file',
@@ -204,8 +204,9 @@ function initTaskEditors() {
             mode: 'python',
             theme: 'monokai',
             lineNumbers: false,
-            indentUnit: 4,
-            tabSize: 4,
+            indentUnit: 2,
+            tabSize: 2,
+            extraKeys: { 'Tab': cm => cm.replaceSelection('  ', 'end') },
             indentWithTabs: false,
             lineWrapping: true,
             viewportMargin: Infinity,
@@ -224,8 +225,9 @@ function initTaskEditors() {
             mode: 'python',
             theme: 'monokai',
             lineNumbers: false,
-            indentUnit: 4,
-            tabSize: 4,
+            indentUnit: 2,
+            tabSize: 2,
+            extraKeys: { 'Tab': cm => cm.replaceSelection('  ', 'end') },
             indentWithTabs: false,
             lineWrapping: true,
             viewportMargin: Infinity, // grow to fit content

@@ -32,7 +32,7 @@
       "title": "Draw a border",
       "function": "draw_border",
       "guidance": "<p>A border goes all the way around the edge of the canvas. There are 76 cells in the border &mdash; way too many to type one by one. Use <code>for</code> loops instead.</p><p>Tip: you'll need <em>four</em> loops &mdash; bottom row, top row, left column, right column. Or one loop with some clever maths!</p>",
-      "starterBody": "for x in range(20):\n    draw(x, 0, 'blue')\n# now do the top row, left column, and right column\n\n",
+      "starterBody": "for x in range(20):\n  draw(x, 0, 'blue')\n# now do the top row, left column, and right column\n\n",
       "editorHeight": 10,
       "validation": {
         "rules": [

@@ -2130,10 +2130,10 @@ code {
     font-size: 0.95rem;
 }
 /* Match the indentation of a real Python function body — shift the editor
-   text right by 4 chars so what students type lines up as the function body
+   text right by 2 chars so what students type lines up as the function body
    under the def line. */
 .task-editor .CodeMirror-lines {
-    padding-left: 2.4em;
+    padding-left: 1.2em;
 }
 
 .task-error {
