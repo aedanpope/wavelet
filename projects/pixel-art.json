@@ -6,7 +6,7 @@
   "canvas": "GRID20",
   "preamble": [
     "use_canvas(GRID20)",
-    "state = {'x': 10, 'y': 10, 'theme': 'sunset'}"
+    "state = {'x': 10, 'y': 10}"
   ],
   "tasks": [
     {
@@ -75,7 +75,7 @@
       "id": "left-key",
       "title": "Left button: do something cool",
       "function": "on_left_key",
-      "guidance": "<p>Runs when the player clicks the <strong>&larr;</strong> button. The simplest thing: move the player one cell to the left.</p><p><code>state['x'] -= 1</code> subtracts one from the x position. <code>draw_scene()</code> will run again automatically afterwards, so the player visibly moves.</p><p>Want to do something else cool instead? Change the theme, paint a streak across the canvas, change a colour somewhere &mdash; up to you.</p>",
+      "guidance": "<p>Runs when the player clicks the <strong>&larr;</strong> button. The simplest thing: move the player one cell to the left.</p><p><code>state['x'] -= 1</code> subtracts one from the x position. <code>draw_scene()</code> will run again automatically afterwards, so the player visibly moves.</p><p>Want to do something else cool instead? Paint a streak across the canvas, change a colour somewhere &mdash; up to you.</p>",
       "starterBody": "state['x'] -= 1\n",
       "editorHeight": 5,
       "validation": {

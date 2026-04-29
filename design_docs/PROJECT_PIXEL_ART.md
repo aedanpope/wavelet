@@ -38,8 +38,7 @@ The file is the **on-disk** representation; the editing UI is a structured view 
 # Saved:   2026-04-29
 
 use_canvas(GRID20)
-
-THEME = 'sunset'   # try: 'sunset', 'forest', 'ocean', 'space'
+state = {'x': 10, 'y': 10}
 
 # ── Task 1: corners ───────────────────────────────
 def draw_corners():
@@ -93,7 +92,7 @@ When the student clicks **Run Project**:
    - Call `draw_scene()` again (so the picture rebuilds from scratch — no need for the student to track diffs).
    - Flush.
 
-   **Reset between presses, not paint-on-top.** Every press re-runs `draw_scene()` from a cleared canvas. Persistent state (player position, score, theme) is held in the preamble's `state` dict, which `draw_scene` reads.
+   **Reset between presses, not paint-on-top.** Every press re-runs `draw_scene()` from a cleared canvas. Persistent state (player position, score, etc.) is held in the preamble's `state` dict, which `draw_scene` reads.
 
 This "fully redraw on every event" model is much simpler than diffing and is fine at 20×20.
 
@@ -149,7 +148,7 @@ A project JSON now describes only **the harness frame** plus **per-task editor m
   // chip at the top of the page so kids know they exist.
   "preamble": [
     "use_canvas(GRID20)",
-    "state = {'x': 10, 'y': 10, 'theme': 'sunset'}"
+    "state = {'x': 10, 'y': 10}"
   ],
 
   "tasks": [
@@ -256,7 +255,7 @@ A tractable v1 build, in dependency order:
 |---|---|---|
 | 1 | Function-signature visibility | **Option A**: greyed read-only `def name():` line at the top of each editor; body editable, indented one level. |
 | 2 | Reset vs. paint-on-top between key events | **Reset.** Every key press re-runs `draw_scene()` on a freshly cleared canvas. |
-| 3 | Persistence between events | **`state` dict in the preamble**, e.g. `state = {'x': 10, 'y': 10, 'theme': 'sunset'}`. Students mutate keys in `on_*_key`, read them in `draw_scene`. We *force* this pattern — no `global` keyword, no top-level student variables. |
+| 3 | Persistence between events | **`state` dict in the preamble**, e.g. `state = {'x': 10, 'y': 10}`. Students mutate keys in `on_*_key`, read them in `draw_scene`. We *force* this pattern — no `global` keyword, no top-level student variables. |
 | 4 | Validation strictness | Per-rule knobs (`exact`, `anyColor`) so we tighten the hello-world corners task and loosen creative ones. `function_runs_clean` passes on `pass`. |
 | 5 | On-disk parsing | `ast` walk of top-level `FunctionDef`s. Missing functions → backfill from `starterBody`. Unknown top-level code → read-only "Extras" panel, preserved on save. |
 | 6 | Replay-while-typing | **Off by default; deferred past v1.** Big "Run Project" button does an instant flush. |
