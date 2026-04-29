@@ -39,8 +39,11 @@
                     <p id="project-description"></p>
                 </div>
                 <div class="header-actions">
-                    <!-- Save / Open deferred to v1.5 -->
+                    <span id="current-file" class="current-file" style="display: none;" title="Currently open file"></span>
+                    <button class="reset-btn" id="open-file-btn" title="Load a project from a .py file">📂 Open</button>
+                    <button class="reset-btn" id="save-file-btn" title="Save your project (Ctrl+S)">💾 Save</button>
                 </div>
+                <input type="file" id="file-input" accept=".py,text/x-python,text/plain" style="display: none;">
             </header>
 
             <!-- Sticky stage: canvas + controls -->
@@ -75,6 +78,16 @@
             <!-- Task cards stack -->
             <div class="project-tasks" id="project-tasks">
                 <!-- Task cards rendered dynamically -->
+            </div>
+
+            <!-- Extras: any top-level code in an opened file that isn't a known
+                 task or preamble line. Read-only, preserved on save. -->
+            <div class="project-extras" id="project-extras" style="display: none;">
+                <div class="extras-header">
+                    <h3>Extras (from your file)</h3>
+                    <p>Code we kept from your file but can't edit here. It still runs as part of your project, and will be saved back to the file unchanged.</p>
+                </div>
+                <pre class="extras-code" id="extras-code"></pre>
             </div>
         </div>
     </div>

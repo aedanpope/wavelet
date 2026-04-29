@@ -7,10 +7,20 @@
 const PARAM_PROJECT = 'project';
 const DEFAULT_PROJECT = 'pixel-art';
 const BODY_INDENT = '    ';
+const SUPPORTS_FSA = typeof window !== 'undefined' && 'showOpenFilePicker' in window;
+const PY_FILE_TYPE = {
+    description: 'Python file',
+    accept: { 'text/x-python': ['.py'] }
+};
+const FILE_HEADER_MARKER = '# Wavelet';
 
 let executor = null;
 let projectDef = null;
 const taskEditors = new Map(); // taskId -> { cm, statusEl, defLineEl, lastError }
+let currentFileHandle = null;
+let dirty = false;
+let savedFlashTimer = null;
+let currentExtras = ''; // raw source of any unrecognised top-level code from an opened file
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -71,6 +81,23 @@ function renderProject() {
     document.getElementById('run-project-btn').addEventListener('click', runProject);
     document.querySelectorAll('.dpad-btn').forEach(btn => {
         btn.addEventListener('click', () => onKeyPress(btn.dataset.key));
+    });
+
+    // Save / Open
+    document.getElementById('save-file-btn').addEventListener('click', saveProject);
+    document.getElementById('open-file-btn').addEventListener('click', openProject);
+    document.getElementById('file-input').addEventListener('change', handleFallbackFileInput);
+
+    document.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 's') {
+            e.preventDefault();
+            saveProject();
+        }
+    });
+
+    // Warn before leaving with unsaved edits.
+    window.addEventListener('beforeunload', e => {
+        if (dirty) { e.preventDefault(); e.returnValue = ''; }
     });
 }
 
@@ -143,6 +170,12 @@ function initTaskEditors() {
         });
         const heightLines = task.editorHeight || 6;
         cm.setSize('100%', `${heightLines * 1.5}em`);
+        cm.on('change', (_cm, change) => {
+            // Programmatic loads (openProject) come through with origin 'setValue'
+            // and shouldn't mark the buffer dirty.
+            if (change.origin === 'setValue') return;
+            markDirty();
+        });
         entry.cm = cm;
     }
 }
@@ -243,7 +276,7 @@ function assembleProgram() {
 
     for (const task of projectDef.tasks) {
         const entry = taskEditors.get(task.id);
-        const rawBody = entry ? entry.cm.getValue() : (task.starterBody || '');
+        const rawBody = entry && entry.cm ? entry.cm.getValue() : (task.starterBody || '');
         const wrapped = wrapAsFunction(task.function, rawBody);
 
         const compileError = checkSyntax(wrapped);
@@ -255,6 +288,12 @@ function assembleProgram() {
         } else {
             lines.push(wrapped);
         }
+        lines.push('');
+    }
+
+    // Extras: opaque to the editing UI, but they still run.
+    if (currentExtras && currentExtras.trim()) {
+        lines.push(currentExtras);
         lines.push('');
     }
 
@@ -424,6 +463,298 @@ function applyValidationResult(taskId, result) {
         entry.statusEl.textContent = '✗ ' + (result.message || 'not yet');
         entry.errorEl.style.display = 'none';
     }
+}
+
+// ─── Save / Open ─────────────────────────────────────────────────────────
+// On disk the project is one .py file: header comment + preamble + one def
+// per task + any "Extras" preserved verbatim from a previously-opened file.
+// The file is fully runnable Python — students can paste it into IDLE.
+
+function assembleFileForDisk() {
+    const today = new Date().toISOString().slice(0, 10);
+    const lines = [
+        `${FILE_HEADER_MARKER} ${projectDef.title}`,
+        `# Project: ${projectDef.id}`,
+        `# Saved:   ${today}`,
+        '',
+    ];
+    for (const line of (projectDef.preamble || [])) lines.push(line);
+    lines.push('');
+
+    projectDef.tasks.forEach((task, idx) => {
+        const entry = taskEditors.get(task.id);
+        const body = entry && entry.cm ? entry.cm.getValue() : (task.starterBody || '');
+        lines.push(`# Task ${idx + 1}: ${task.title}`);
+        lines.push(wrapAsFunction(task.function, body));
+        lines.push('');
+    });
+
+    if (currentExtras && currentExtras.trim()) {
+        lines.push('# ── Extras (preserved from your file) ──');
+        lines.push(currentExtras.replace(/\s+$/g, ''));
+        lines.push('');
+    }
+
+    return lines.join('\n');
+}
+
+async function saveProject() {
+    if (SUPPORTS_FSA) await saveProjectViaFSA();
+    else saveProjectViaDownload();
+}
+
+async function openProject() {
+    if (SUPPORTS_FSA) await openProjectViaFSA();
+    else document.getElementById('file-input').click();
+}
+
+async function saveProjectViaFSA() {
+    let handle = currentFileHandle && currentFileHandle.createWritable ? currentFileHandle : null;
+    if (!handle) {
+        try {
+            handle = await window.showSaveFilePicker({
+                suggestedName: suggestedFilename(),
+                types: [PY_FILE_TYPE]
+            });
+        } catch (err) {
+            if (err.name === 'AbortError') return;
+            alert('Could not open the save dialog.');
+            return;
+        }
+    }
+    try {
+        const writable = await handle.createWritable();
+        await writable.write(assembleFileForDisk());
+        await writable.close();
+        currentFileHandle = handle;
+        markClean();
+        flashSaved();
+    } catch (err) {
+        alert('Could not save that file: ' + (err.message || err.name));
+    }
+}
+
+function saveProjectViaDownload() {
+    const suggested = (currentFileHandle && currentFileHandle.name) || suggestedFilename();
+    let name = prompt('Save as:', suggested);
+    if (name === null) return;
+    name = name.trim();
+    if (!name) name = suggestedFilename();
+    if (!/\.[a-z0-9]+$/i.test(name)) name += '.py';
+
+    const blob = new Blob([assembleFileForDisk()], { type: 'text/x-python;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    currentFileHandle = { name };
+    markClean();
+    flashSaved();
+}
+
+async function openProjectViaFSA() {
+    let handle;
+    try {
+        [handle] = await window.showOpenFilePicker({ types: [PY_FILE_TYPE], multiple: false });
+    } catch (err) {
+        if (err.name === 'AbortError') return;
+        alert('Could not open the file picker.');
+        return;
+    }
+    try {
+        const file = await handle.getFile();
+        const text = await file.text();
+        if (!loadFileIntoEditors(text, file.name)) return; // user cancelled banner
+        currentFileHandle = handle;
+        markClean();
+    } catch (err) {
+        alert('Could not read that file: ' + (err.message || err.name));
+    }
+}
+
+function handleFallbackFileInput(e) {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+        if (!loadFileIntoEditors(ev.target.result || '', file.name)) return;
+        // Fallback path can't write back — track only the name for the next download prompt.
+        currentFileHandle = { name: file.name };
+        markClean();
+    };
+    reader.onerror = () => alert('Could not read that file.');
+    reader.readAsText(file);
+}
+
+// Returns true if the file was applied, false if the user cancelled.
+function loadFileIntoEditors(text, filename) {
+    const looksLikeProject = text.trimStart().startsWith(FILE_HEADER_MARKER);
+    if (!looksLikeProject) {
+        const ok = confirm(
+            `"${filename}" doesn't look like a saved Wavelet project (no marker comment).\n\n` +
+            `Open it anyway? Any function whose name matches a task will be loaded; everything else goes into the read-only Extras panel.`
+        );
+        if (!ok) return false;
+    }
+
+    const dirtyBefore = anyEditorDifferentFromStarter();
+    if (dirtyBefore && !confirm('Replace your current project with the contents of this file?')) {
+        return false;
+    }
+
+    const knownNames = projectDef.tasks.map(t => t.function);
+    const preambleSet = new Set((projectDef.preamble || []).map(s => s.trim()));
+    const parsed = parseProjectFile(text, knownNames, preambleSet);
+
+    const missing = [];
+    for (const task of projectDef.tasks) {
+        const entry = taskEditors.get(task.id);
+        if (!entry || !entry.cm) continue;
+        if (parsed.bodies.has(task.function)) {
+            entry.cm.setValue(parsed.bodies.get(task.function));
+        } else {
+            entry.cm.setValue(task.starterBody || '');
+            missing.push(task.title);
+        }
+        entry.errorEl.style.display = 'none';
+        entry.statusEl.className = 'task-status task-status-pending';
+        entry.statusEl.textContent = '○ not run yet';
+    }
+
+    currentExtras = parsed.extras;
+    renderExtras();
+
+    const status = document.getElementById('project-status');
+    const bits = [];
+    bits.push(`Opened <strong>${escapeHtml(filename)}</strong>.`);
+    if (missing.length) bits.push(`Reset to starter: ${escapeHtml(missing.join(', '))}.`);
+    if (parsed.extras.trim()) bits.push(`${parsed.extras.trim().split('\n').length} line(s) preserved as Extras.`);
+    bits.push('Click <strong>Run Project</strong> to try it.');
+    status.innerHTML = bits.join(' ');
+
+    return true;
+}
+
+function renderExtras() {
+    const panel = document.getElementById('project-extras');
+    const codeEl = document.getElementById('extras-code');
+    if (currentExtras && currentExtras.trim()) {
+        codeEl.textContent = currentExtras;
+        panel.style.display = '';
+    } else {
+        codeEl.textContent = '';
+        panel.style.display = 'none';
+    }
+}
+
+// Parse a project .py file via Python's ast module (in Pyodide).
+// Returns { bodies: Map(funcName -> body source), extras: string }.
+function parseProjectFile(src, knownNames, preambleSet) {
+    const py = executor.getPyodide();
+    py.globals.set('_wavelet_src', src);
+    py.globals.set('_wavelet_known', py.toPy(knownNames));
+    py.globals.set('_wavelet_preamble', py.toPy([...preambleSet]));
+    try {
+        py.runPython(`
+import ast, textwrap
+def _wavelet_parse_project():
+    src = _wavelet_src
+    known = set(_wavelet_known)
+    preamble_lines = set(_wavelet_preamble)
+    try:
+        tree = ast.parse(src)
+    except SyntaxError as e:
+        return {'bodies': {}, 'extras': src, 'error': f'line {e.lineno}: {e.msg}'}
+
+    bodies = {}
+    extras_segments = []
+    for node in tree.body:
+        seg = ast.get_source_segment(src, node) or ''
+        if isinstance(node, ast.FunctionDef) and node.name in known:
+            # Strip the def line, dedent the body.
+            lines = seg.split('\\n')
+            body = textwrap.dedent('\\n'.join(lines[1:]))
+            bodies[node.name] = body.rstrip() + '\\n' if body.strip() else ''
+        else:
+            stripped = seg.strip()
+            if stripped in preamble_lines or stripped == '':
+                continue
+            extras_segments.append(seg)
+    return {'bodies': bodies, 'extras': '\\n\\n'.join(extras_segments), 'error': None}
+`);
+        const result = py.globals.get('_wavelet_parse_project')().toJs({ dict_converter: Object.fromEntries });
+        const bodies = new Map();
+        for (const [k, v] of Object.entries(result.bodies)) bodies.set(k, v);
+        return { bodies, extras: result.extras || '', error: result.error };
+    } finally {
+        py.globals.delete('_wavelet_src');
+        py.globals.delete('_wavelet_known');
+        py.globals.delete('_wavelet_preamble');
+    }
+}
+
+function anyEditorDifferentFromStarter() {
+    for (const [, entry] of taskEditors) {
+        if (!entry.cm) continue;
+        const starter = entry.task.starterBody || '';
+        if (entry.cm.getValue() !== starter) return true;
+    }
+    return false;
+}
+
+function suggestedFilename() {
+    return `${projectDef.id}.py`;
+}
+
+// ─── Dirty / saved indicator ─────────────────────────────────────────────
+
+function markDirty() {
+    if (dirty) return;
+    dirty = true;
+    updateFileLabel();
+}
+
+function markClean() {
+    dirty = false;
+    updateFileLabel();
+}
+
+function updateFileLabel() {
+    const label = document.getElementById('current-file');
+    if (!label) return;
+    if (label.classList.contains('saved-flash')) return;
+    label.classList.toggle('dirty', dirty);
+    if (currentFileHandle && currentFileHandle.name) {
+        label.textContent = currentFileHandle.name;
+        label.style.display = '';
+    } else if (dirty) {
+        label.textContent = 'Unsaved';
+        label.style.display = '';
+    } else {
+        label.textContent = '';
+        label.style.display = 'none';
+    }
+}
+
+function flashSaved() {
+    const label = document.getElementById('current-file');
+    if (!label) return;
+    if (savedFlashTimer) clearTimeout(savedFlashTimer);
+    label.classList.remove('dirty');
+    label.classList.add('saved-flash');
+    label.textContent = '✓ Saved';
+    label.style.display = '';
+    savedFlashTimer = setTimeout(() => {
+        savedFlashTimer = null;
+        label.classList.remove('saved-flash');
+        updateFileLabel();
+    }, 1500);
 }
 
 // ─── Utilities ───────────────────────────────────────────────────────────

@@ -2158,6 +2158,44 @@ code {
     font-size: 0.85rem;
 }
 
+/* Extras panel — read-only stash of unrecognised top-level code from an
+   opened file. Shown only when extras exist; they still run as part of the
+   project and are written back unchanged on save. */
+.project-extras {
+    margin: 0 28px 30px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.extras-header {
+    background: #e9ecef;
+    padding: 10px 16px;
+    border-bottom: 1px solid #dee2e6;
+}
+.extras-header h3 {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    color: #495057;
+}
+.extras-header p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+.extras-code {
+    margin: 0;
+    padding: 12px 16px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.9rem;
+    color: #495057;
+    background: white;
+    white-space: pre;
+    overflow-x: auto;
+    max-height: 240px;
+    overflow-y: auto;
+}
+
 /* Narrow viewports: stack canvas above controls */
 @media (max-width: 768px) {
     .project-stage {
@@ -2173,7 +2211,10 @@ code {
     }
     .project-tasks,
     .project-intro,
-    .project-preamble {
+    .project-preamble,
+    .project-extras {
+        margin-left: 16px;
+        margin-right: 16px;
         padding-left: 16px;
         padding-right: 16px;
     }
