@@ -2118,31 +2118,37 @@ code {
     font-size: 0.9em;
 }
 
-/* The editor frame visually unifies the locked def line with the body editor. */
+/* Editor frame visually unifies the locked def line with the body editor.
+   Uses the monokai background so the def line and editor read as one
+   continuous code surface — only the inability to click in cues that the
+   def line is fixed. */
 .task-editor-frame {
-    border: 1px solid #ced4da;
+    background: #272822;          /* monokai bg, matches the editor below */
+    border: 1px solid #1e1f1a;
     border-radius: 6px;
     overflow: hidden;
 }
 
 .task-def-line {
-    background: #e9ecef;
-    color: #495057;
-    padding: 6px 12px;
-    font-family: 'Consolas', 'Monaco', monospace;
+    background: #272822;          /* monokai bg */
+    color: #f8f8f2;               /* monokai default text (parens, colon) */
+    padding: 6px 8px;             /* matches CodeMirror's natural left padding */
+    font-family: 'Source Code Pro', 'Menlo', 'Consolas', 'DejaVu Sans Mono', monospace;
     font-size: 0.95rem;
-    border-bottom: 1px solid #ced4da;
+    line-height: 1.4;
     user-select: none;
+    cursor: default;
 }
-.task-def-line .kw { color: #5e35b1; font-weight: 700; }
-.task-def-line .fn { color: #0277bd; font-weight: 700; }
+.task-def-line .kw { color: #f92672; }   /* monokai keyword (def) */
+.task-def-line .fn { color: #a6e22e; }   /* monokai function name */
 
 .task-editor .CodeMirror {
     height: auto;
     font-size: 0.95rem;
 }
-/* Match the indentation of a real Python function body — visually shift the
-   editor right by 4 chars so what students type lines up under the def. */
+/* Match the indentation of a real Python function body — shift the editor
+   text right by 4 chars so what students type lines up as the function body
+   under the def line. */
 .task-editor .CodeMirror-lines {
     padding-left: 2.4em;
 }
