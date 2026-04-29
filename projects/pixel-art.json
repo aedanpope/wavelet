@@ -1,0 +1,127 @@
+{
+  "id": "pixel-art",
+  "title": "Pixel Art Animation",
+  "description": "Build a tiny scene that comes alive when you press the arrow buttons.",
+  "intro": "<p>Build your own pixel-art scene that <strong>animates when you press the arrow buttons</strong>. You'll fill in a few small functions, then click <em>Run Project</em> to see them all run together.</p><p>The canvas is a 20&times;20 grid. Coordinates are <code>(x, y)</code> from <code>(0, 0)</code> in the bottom-left to <code>(19, 19)</code> in the top-right.</p><p>You'll be working with a shared <code>state</code> dictionary &mdash; that's how your scene remembers things between key presses (like the player's position).</p>",
+  "canvas": "GRID20",
+  "preamble": [
+    "use_canvas(GRID20)",
+    "state = {'x': 10, 'y': 10, 'theme': 'sunset'}"
+  ],
+  "tasks": [
+    {
+      "id": "corners",
+      "title": "Colour the corners",
+      "function": "draw_corners",
+      "guidance": "<p>Warm-up: draw a coloured cell in each of the four corners of the canvas.</p><p>The corners are at <code>(0, 0)</code>, <code>(19, 0)</code>, <code>(0, 19)</code>, and <code>(19, 19)</code>. Use <code>draw(x, y, 'colour')</code> &mdash; pick whatever colours you like.</p>",
+      "starterBody": "draw(0, 0, 'red')\n# add the other three corners\n\n",
+      "editorHeight": 6,
+      "validation": {
+        "rules": [
+          {
+            "type": "function_fills_cells",
+            "cells": [[0, 0], [19, 0], [0, 19], [19, 19]],
+            "exact": true,
+            "anyColor": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "border",
+      "title": "Draw a border",
+      "function": "draw_border",
+      "guidance": "<p>A border goes all the way around the edge of the canvas. There are 76 cells in the border &mdash; way too many to type one by one. Use <code>for</code> loops instead.</p><p>Tip: you'll need <em>four</em> loops &mdash; bottom row, top row, left column, right column. Or one loop with some clever maths!</p>",
+      "starterBody": "for x in range(20):\n    draw(x, 0, 'blue')\n# now do the top row, left column, and right column\n\n",
+      "editorHeight": 10,
+      "validation": {
+        "rules": [
+          {
+            "type": "function_fills_cells",
+            "cells": "border",
+            "exact": true,
+            "anyColor": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "player",
+      "title": "Draw the player",
+      "function": "draw_player",
+      "guidance": "<p>The player lives at <code>state['x']</code>, <code>state['y']</code> &mdash; the harness sets these to <code>(10, 10)</code> before your code runs.</p><p>Draw something to represent the player at that position. The simplest version is a single <code>draw(state['x'], state['y'], 'yellow')</code>. Want a bigger character? Draw multiple cells around the centre.</p>",
+      "starterBody": "draw(state['x'], state['y'], 'yellow')\n",
+      "editorHeight": 6,
+      "validation": {
+        "rules": [
+          { "type": "function_runs_clean" }
+        ]
+      }
+    },
+    {
+      "id": "scene",
+      "title": "Build the scene",
+      "function": "draw_scene",
+      "guidance": "<p>This function runs every time you press a button. Its job is to put the whole picture together by calling your other functions.</p><p>Order matters &mdash; later draws appear on top of earlier ones. Background first, player last.</p>",
+      "starterBody": "draw_border()\ndraw_corners()\ndraw_player()\n",
+      "editorHeight": 6,
+      "validation": {
+        "rules": [
+          { "type": "function_runs_clean" }
+        ]
+      }
+    },
+    {
+      "id": "left-key",
+      "title": "Left button: do something cool",
+      "function": "on_left_key",
+      "guidance": "<p>Runs when the player clicks the <strong>&larr;</strong> button. The simplest thing: move the player one cell to the left.</p><p><code>state['x'] -= 1</code> subtracts one from the x position. <code>draw_scene()</code> will run again automatically afterwards, so the player visibly moves.</p><p>Want to do something else cool instead? Change the theme, paint a streak across the canvas, change a colour somewhere &mdash; up to you.</p>",
+      "starterBody": "state['x'] -= 1\n",
+      "editorHeight": 5,
+      "validation": {
+        "rules": [
+          { "type": "function_runs_clean" }
+        ]
+      }
+    },
+    {
+      "id": "right-key",
+      "title": "Right button: do something cool",
+      "function": "on_right_key",
+      "guidance": "<p>Runs when the player clicks the <strong>&rarr;</strong> button. Mirror of left &mdash; or do something completely different.</p>",
+      "starterBody": "state['x'] += 1\n",
+      "editorHeight": 5,
+      "validation": {
+        "rules": [
+          { "type": "function_runs_clean" }
+        ]
+      }
+    },
+    {
+      "id": "up-key",
+      "title": "Up button: do something cool",
+      "function": "on_up_key",
+      "guidance": "<p>Runs when the player clicks the <strong>&uarr;</strong> button. Remember: in our coordinate system, <em>up</em> means a bigger <code>y</code>.</p>",
+      "starterBody": "state['y'] += 1\n",
+      "editorHeight": 5,
+      "validation": {
+        "rules": [
+          { "type": "function_runs_clean" }
+        ]
+      }
+    },
+    {
+      "id": "down-key",
+      "title": "Down button: do something cool",
+      "function": "on_down_key",
+      "guidance": "<p>Runs when the player clicks the <strong>&darr;</strong> button. Down means a smaller <code>y</code>.</p>",
+      "starterBody": "state['y'] -= 1\n",
+      "editorHeight": 5,
+      "validation": {
+        "rules": [
+          { "type": "function_runs_clean" }
+        ]
+      }
+    }
+  ]
+}

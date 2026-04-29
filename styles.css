@@ -1883,3 +1883,299 @@ code {
     min-height: 60px;
 }
 
+/* ── Project page ────────────────────────────────────────────── */
+
+/* Sticky stage at the top of the page: canvas + run + dpad + status */
+.project-stage {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #f1f3f5;
+    border-bottom: 1px solid #dee2e6;
+    padding: 16px 24px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 24px;
+    align-items: center;
+}
+
+.project-canvas-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* When the project canvas isn't initialised yet, show a placeholder block. */
+.project-canvas-wrapper .output {
+    background: white;
+    border: 2px dashed #ced4da;
+    border-radius: 8px;
+    min-width: 480px;
+    min-height: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #adb5bd;
+    font-style: italic;
+}
+
+.project-canvas-wrapper .output:has(canvas) {
+    background: transparent;
+    border: none;
+    min-width: 0;
+    min-height: 0;
+}
+
+.project-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.run-project-btn {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+    transition: all 0.2s ease;
+}
+
+.run-project-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(16, 185, 129, 0.4);
+}
+
+/* 3x3 grid: ↑ on top, ← ↓ → on bottom row */
+.dpad {
+    display: grid;
+    grid-template-columns: 50px 50px 50px;
+    grid-template-rows: 50px 50px;
+    gap: 4px;
+}
+
+.dpad-btn {
+    background: white;
+    border: 2px solid #adb5bd;
+    border-radius: 8px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.dpad-btn:hover { background: #e9ecef; border-color: #6c757d; }
+.dpad-btn:active {
+    background: #495057;
+    color: white;
+    transform: scale(0.95);
+}
+
+.dpad-up    { grid-column: 2; grid-row: 1; }
+.dpad-left  { grid-column: 1; grid-row: 2; }
+.dpad-down  { grid-column: 2; grid-row: 2; }
+.dpad-right { grid-column: 3; grid-row: 2; }
+
+.project-status {
+    color: #495057;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+/* Intro prose */
+.project-intro {
+    padding: 20px 28px;
+    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+    border-bottom: 1px solid #c7d2fe;
+    color: #1e293b;
+    line-height: 1.5;
+}
+.project-intro p { margin: 0 0 8px; }
+.project-intro p:last-child { margin-bottom: 0; }
+
+/* Preamble strip — communicates "this code always runs first" */
+.project-preamble {
+    margin: 20px 28px 0;
+    background: #fff8e1;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.preamble-label {
+    background: #fde68a;
+    color: #92400e;
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.preamble-code {
+    margin: 0;
+    padding: 10px 16px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.9rem;
+    color: #78350f;
+    background: #fffbeb;
+    white-space: pre;
+}
+
+/* Task stack */
+.project-tasks {
+    padding: 20px 28px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* Task card with the connecting left rail */
+.project-task {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-left: 5px solid #667eea;
+    border-radius: 8px;
+    padding: 18px 20px;
+    position: relative;
+}
+
+/* Bridges the gap between cards so the rail looks continuous. */
+.project-task::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: -18px;
+    width: 5px;
+    height: 18px;
+    background: #667eea;
+}
+.project-task:first-of-type::before { display: none; }
+
+.project-task-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.project-task-titles {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.task-number {
+    background: #667eea;
+    color: white;
+    font-weight: 700;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.task-title {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.task-status {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+.task-status-pending { background: #f1f3f5; color: #6c757d; }
+.task-status-pass    { background: #d1fae5; color: #065f46; }
+.task-status-fail    { background: #fee2e2; color: #991b1b; }
+
+.task-guidance {
+    color: #495057;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+.task-guidance p { margin: 0 0 8px; }
+.task-guidance p:last-child { margin-bottom: 0; }
+.task-guidance code {
+    background: #f1f3f5;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+/* The editor frame visually unifies the locked def line with the body editor. */
+.task-editor-frame {
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.task-def-line {
+    background: #e9ecef;
+    color: #495057;
+    padding: 6px 12px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #ced4da;
+    user-select: none;
+}
+.task-def-line .kw { color: #5e35b1; font-weight: 700; }
+.task-def-line .fn { color: #0277bd; font-weight: 700; }
+
+.task-editor .CodeMirror {
+    height: auto;
+    font-size: 0.95rem;
+}
+/* Match the indentation of a real Python function body — visually shift the
+   editor right by 4 chars so what students type lines up under the def. */
+.task-editor .CodeMirror-lines {
+    padding-left: 2.4em;
+}
+
+.task-error {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    color: #991b1b;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.85rem;
+}
+
+/* Narrow viewports: stack canvas above controls */
+@media (max-width: 768px) {
+    .project-stage {
+        grid-template-columns: 1fr;
+        position: static;
+    }
+    .project-canvas-wrapper .output {
+        min-width: 0;
+        min-height: 360px;
+    }
+    .project-controls {
+        align-items: center;
+    }
+    .project-tasks,
+    .project-intro,
+    .project-preamble {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}
+

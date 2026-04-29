@@ -1,0 +1,14 @@
+{
+  "projects": [
+    {
+      "id": "pixel-art",
+      "title": "Pixel Art Animation",
+      "description": "Build a tiny scene that comes alive when you press the arrow buttons.",
+      "file": "pixel-art.json"
+    }
+  ],
+  "metadata": {
+    "version": "0.1",
+    "lastUpdated": "2026-04-29"
+  }
+}

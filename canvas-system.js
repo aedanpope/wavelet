@@ -13,6 +13,14 @@ const CanvasConfig = {
         showGridLines: true,
         showCoordinates: true
     },
+    GRID20: {
+        name: 'GRID20',
+        dimensions: [20, 20],
+        cellSize: 24,  // Desktop: 24px per cell = 480px total
+        mobileCellSize: 18,  // Mobile: 18px per cell = 360px total
+        showGridLines: true,
+        showCoordinates: false
+    },
     GRID100: {
         name: 'GRID100',
         dimensions: [100, 100],
@@ -46,15 +54,16 @@ _canvas_state = {
 
 # Grid size constants (exposed to students)
 GRID3 = 'GRID3'
+GRID20 = 'GRID20'
 GRID100 = 'GRID100'
 `);
 
     // Create use_canvas function
     const useCanvas = function(gridSize) {
         // Validate grid size
-        if (gridSize !== 'GRID3' && gridSize !== 'GRID100') {
+        if (gridSize !== 'GRID3' && gridSize !== 'GRID20' && gridSize !== 'GRID100') {
             console.error(`Invalid grid size: ${gridSize}`);
-            pyodide.runPython(`print("Warning: Invalid grid size. Use GRID3 or GRID100.")`);
+            pyodide.runPython(`print("Warning: Invalid grid size. Use GRID3, GRID20, or GRID100.")`);
             return;
         }
 

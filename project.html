@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project - Python Learning Platform</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="version.js" onerror="window.APP_VERSION='dev-fallback'"></script>
+    <script>
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <h2>Loading Project...</h2>
+                <p>Please wait while we set up Python and load your project</p>
+            </div>
+        </div>
+
+        <!-- Project Interface -->
+        <div id="project-interface" class="worksheet-interface" style="display: none;">
+
+            <!-- Header -->
+            <header class="worksheet-header">
+                <button class="back-btn" onclick="window.location.href='index.html'">← Back</button>
+                <div class="worksheet-info">
+                    <h1 id="project-title">Project</h1>
+                    <p id="project-description"></p>
+                </div>
+                <div class="header-actions">
+                    <!-- Save / Open deferred to v1.5 -->
+                </div>
+            </header>
+
+            <!-- Sticky stage: canvas + controls -->
+            <div class="project-stage">
+                <div class="project-canvas-wrapper">
+                    <!-- id="output-0" so canvas-system.js can find it -->
+                    <div class="output" id="output-0"></div>
+                </div>
+                <div class="project-controls">
+                    <button class="run-project-btn" id="run-project-btn">▶ Run Project</button>
+                    <div class="dpad" id="dpad" aria-label="Direction pad">
+                        <button class="dpad-btn dpad-up"    data-key="up"    aria-label="Up">↑</button>
+                        <button class="dpad-btn dpad-left"  data-key="left"  aria-label="Left">←</button>
+                        <button class="dpad-btn dpad-down"  data-key="down"  aria-label="Down">↓</button>
+                        <button class="dpad-btn dpad-right" data-key="right" aria-label="Right">→</button>
+                    </div>
+                    <div class="project-status" id="project-status">
+                        Click <strong>Run Project</strong> to start.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project intro -->
+            <div class="project-intro" id="project-intro"></div>
+
+            <!-- Preamble (always-runs strip) -->
+            <div class="project-preamble" id="project-preamble">
+                <div class="preamble-label">Always runs first</div>
+                <pre class="preamble-code" id="preamble-code"></pre>
+            </div>
+
+            <!-- Task cards stack -->
+            <div class="project-tasks" id="project-tasks">
+                <!-- Task cards rendered dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script src="error-handler.js"></script>
+    <script src="canvas-system.js"></script>
+    <script src="code-executor.js"></script>
+    <script src="project.js"></script>
+</body>
+</html>
