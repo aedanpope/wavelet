@@ -251,6 +251,23 @@ function initTaskEditors() {
             if (change.origin === 'setValue') return;
             markDirty();
         });
+
+        // Keep the locked `def` line aligned with the editor's line-number
+        // gutter — without this the def starts at column 0 while the body
+        // content sits right of the gutter, and the visual indent reads as
+        // wrong-by-30px. Re-sync on every change because the gutter widens
+        // when line counts cross a digit boundary (9 → 10, 99 → 100).
+        const defLineEl = editorEl.parentElement &&
+            editorEl.parentElement.querySelector('.task-def-line');
+        if (defLineEl) {
+            const sync = () => {
+                const gutter = cm.getGutterElement();
+                if (gutter) defLineEl.style.paddingLeft = gutter.offsetWidth + 'px';
+            };
+            sync();
+            cm.on('change', sync);
+        }
+
         entry.cm = cm;
     }
 }

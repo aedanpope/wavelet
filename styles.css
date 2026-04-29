@@ -2151,10 +2151,11 @@ code {
     height: auto;
     font-size: 0.95rem;
 }
-/* Match the indentation of a real Python function body — shift the editor
-   text right by 2 chars so what students type lines up as the function body
-   under the def line. */
-.task-editor .CodeMirror-lines {
+/* Task body editors visually indent their content one Python step (2 chars)
+   so what students type reads as the body of the locked def line above.
+   The Setup editor is top-level Python, not a function body, so it skips
+   this indent and sits flush with the line numbers. */
+.task-editor:not(.setup-editor) .CodeMirror-lines {
     padding-left: 1.2em;
 }
 
