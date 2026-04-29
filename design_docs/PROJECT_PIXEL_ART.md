@@ -19,7 +19,7 @@ Page layout:
   - A small editor (CodeMirror) holding only the *body* of that function. Indented one level. Students can't change the signature line.
   - A status pill (✓ pass / ✗ fail / open-ended) updated after each run.
 - **Save / Open** buttons on the page header, reusing the scratchpad's File System Access flow.
-- **Keyboard zone** under the canvas — a focusable div that captures arrow keys and dispatches them to `on_*_key()`.
+- **Direction-pad** (4 on-screen buttons: ← ↑ → ↓) under the canvas. Pressing a button calls the corresponding `on_*_key()` then re-runs `draw_scene()`. Buttons rather than physical arrow keys because (a) CodeMirror eats the arrows when the editor has focus and (b) iPad and touch laptops get parity for free with mouse-click users.
 
 Visual hint that all editors run together: a continuous **left rail** (a 4px coloured stripe) runs down the left edge of every task card and connects them, so the cards read as panels of a single program rather than independent problems. The "Run Project" button at the top can pulse the rail green→top-to-bottom on a successful run, reinforcing "all of these execute together, in order".
 
@@ -88,10 +88,12 @@ When the student clicks **Run Project**:
 3. `pyodide.runPythonAsync(assembled_code)` — defines all functions and sets up state.
 4. Call `draw_scene()` from JS. Commands buffer up.
 5. Flush canvas — the static scene appears.
-6. Bind keyboard listeners on the canvas's focus zone. On a key event:
+6. Wire up the direction-pad buttons. On a button click:
    - Call the relevant `on_*_key()` function.
    - Call `draw_scene()` again (so the picture rebuilds from scratch — no need for the student to track diffs).
    - Flush.
+
+   **Reset between presses, not paint-on-top.** Every press re-runs `draw_scene()` from a cleared canvas. Persistent state (player position, score, theme) is held in the preamble's `state` dict, which `draw_scene` reads.
 
 This "fully redraw on every event" model is much simpler than diffing and is fine at 20×20.
 
@@ -205,55 +207,63 @@ A project JSON now describes only **the harness frame** plus **per-task editor m
 
 Two new validation rule kinds — `function_fills_cells` and `function_runs_clean` — extend the existing system, used only by projects.
 
+### 7a. Validation rule semantics (locked)
+
+**`function_fills_cells`** — "after running this function (and *only* this function) on a fresh canvas, did the listed cells end up coloured?"
+
+```jsonc
+{
+  "type": "function_fills_cells",
+  "cells": [[0,0],[19,0],[0,19],[19,19]],
+  "anyColor": true,        // optional: ignore colour, only check positions
+  "exact": true            // optional: require *only* these cells, no extras
+}
+```
+
+Per-question knobs let us be strict where it matters and loose where the student's creativity should pass:
+
+- **Hello-world "Colour the corners"**: `exact: true, anyColor: true` — exactly four cells, positions locked, any colour the student chose.
+- **"Draw a border"**: `exact: true, anyColor: true` against the full ring of edge cells.
+- **Free-form decoration tasks (if any later)**: `exact: false, anyColor: true` — student must hit the listed cells but is free to add more.
+
+**`function_runs_clean`** — "calling this function with no args raises no exception".
+
+- Empty body (`pass`) → ✓ green. An empty creative slot is a valid in-progress state.
+- Body that runs without error → ✓ green.
+- Body that raises → ✗ red, with the error surfaced on the card.
+
+This rule is what backs every open-ended task (`on_left_key`, `draw_scene`, etc.).
+
 ## 8. Build order
 
 A tractable v1 build, in dependency order:
 
 1. **GRID20** in `canvas-system.js` (one config object) — 5 min.
 2. **Project JSON** sketched above — content work, no plumbing.
-3. **Project page (`project.html` + `project.js`)** — *new* layout: header, canvas, run button, vertical stack of task cards each with its own CodeMirror, file save/open. Reuses `code-executor.js`, `canvas-system.js`. ~1 day.
-4. **Code assembler** — concatenate preamble + each task's wrapped body into one Python program; per-task `compile()` for syntax safety net. ~half-day.
-5. **Per-function validation runner** — call one function in isolation on a hidden canvas, compare grid. Builds on existing `solution_code` validator. ~half-day.
-6. **Keyboard binding** — focus zone under canvas, listen for arrow keys, dispatch to `on_*_key()`. ~1 hour.
-7. **File save/open** — assemble file on save; on open, parse with Python's `ast` (in Pyodide) to extract function bodies back into editors. ~half-day.
-8. **Animated replay** — toggle `flushCanvas` to walk commands on `setInterval` instead of synchronously. ~1 hour.
-9. **Polish**: dirty indicator, left-rail visual, run-success rail pulse.
-10. **Remove WS7** from `worksheets/index.json`, update course outline status.
+3. **Project page (`project.html` + `project.js`)** — *new* layout: header, canvas, run button, vertical stack of task cards each with its own CodeMirror, direction-pad, file save/open. Reuses `code-executor.js`, `canvas-system.js`. ~1 day.
+4. **Code assembler** — concatenate preamble + each task's wrapped body into one Python program; per-task `compile()` for the syntax safety net described in §3. ~half-day.
+5. **Per-function validation runner** — call one function in isolation on a hidden canvas, compare grid. New `function_fills_cells` and `function_runs_clean` rule types. ~half-day.
+6. **Direction-pad wiring** — four buttons, on click call `on_*_key()` then `draw_scene()` then flush. ~1 hour.
+7. **File save/open** — assemble file on save; on open, parse with Python's `ast` (in Pyodide) to extract function bodies back into editors; backfill missing functions from `starterBody`; stash unknown top-level code in a read-only "Extras" panel. ~half-day.
+8. **Polish**: dirty indicator, left-rail visual, run-success rail pulse, loose-header "open anyway?" banner.
+9. **Remove WS7** from `worksheets/index.json`, update course outline status.
 
-## 9. Open questions
+**Deferred past v1:** turtle-style animated replay (the `setInterval` walk of the command buffer). The default is instant flush; we'll revisit once the rest of the project flow is stable and we've watched real students use it.
 
-Resolved by the v2 model:
+## 9. Locked decisions
 
-- ~~Per-function editor vs single file~~ — **per-function**, this revision.
-- ~~Where helper functions live~~ — **no free-form helpers in v1.** If a student wants reuse, the answer is "call your other task functions from `draw_scene`". Once a class outgrows this we can add an explicit "Your own helpers" task slot.
-
-Still to decide:
-
-1. **Function signatures: locked-and-visible, or hidden behind a label?**
-   - Option A — show `def draw_corners():` as a non-editable line at the top of the editor (greyed background). Teaches what a function is, matches WS7 functions content. The locked region needs a CodeMirror read-only marker.
-   - Option B — render the signature as page text outside the editor ("Function: `draw_corners()`") and put only the body in the editor with no leading indent. Cleaner UI, but the student never sees a real `def` line until they do real Python elsewhere.
-   - **Lean A.** Slightly more work; better pedagogy.
-
-2. **Reset between key presses, or paint-on-top?** Reset is simpler and matches the "scene + state dict" mental model. Paint-on-top is more like Scratch but means students must reason about persistent canvas. **Lean reset.**
-
-3. **State-dict vs. globals.** A pre-declared `state = {'x': 10, 'y': 10, 'theme': 'sunset'}` in the preamble is friendlier than `global` keyword. Students mutate `state['x']` in `on_*_key`, read it in `draw_scene`. Confirm we're going this route — it's the cleanest answer to "how does a left-press persist position?".
-
-4. **Validation rule semantics.**
-   - `function_fills_cells`: "after running this function (and *only* this function) on a fresh canvas, did the listed cells end up coloured?" Loose on colour. Probably should also tolerate extra cells (student colours the corners *and* a fifth cell) — pass.
-   - `function_runs_clean`: imports the assembled module, calls the function once with no args, asserts no exception. Open-ended tasks pass on any non-error code, including an empty `pass`. Should we instead require *some* `draw()` call to count? Lean no — empty creative slot is a valid student choice if they're not done.
-
-5. **On-disk file ↔ editor parsing.** Save = mechanical concat, easy. **Open** is the load-bearing question:
-   - The harness needs each function body extracted back into the right editor.
-   - Use Pyodide's `ast` module: parse the file, walk top-level `FunctionDef` nodes, slice the source between `node.body[0].lineno` and the end of the function. Robust to extra blank lines / comments inside the body.
-   - **What if the file has been edited externally** (e.g. student opened it in IDLE and added a helper function)? v1: any unrecognised top-level code goes into a read-only "Extras (from your file)" panel that's preserved on save but not editable in-app. Loud but not destructive.
-   - **What if a known function is missing?** Backfill from the project's `starterBody`.
-
-6. **Replay-while-typing.** Default off (instant); a "✏️ Animate drawing" toggle on the run button enables turtle-style replay. Same answer as v1 of this doc.
-
-7. **Save header — strict or loose?** Loose. We accept any `.py` file; if it has the marker comment, great; if not, attempt to parse anyway and surface a banner like "This doesn't look like a saved Wavelet project — opening it might lose your work. Open anyway?"
-
-8. **iPad keyboard.** Arrow keys aren't accessible on touch. v1: on-screen "← ↑ → ↓" button cluster under the canvas, *always shown* (not just on touch) — the buttons also help students who don't realise they need to focus the canvas to receive key events.
+| # | Decision | Choice |
+|---|---|---|
+| 1 | Function-signature visibility | **Option A**: greyed read-only `def name():` line at the top of each editor; body editable, indented one level. |
+| 2 | Reset vs. paint-on-top between key events | **Reset.** Every key press re-runs `draw_scene()` on a freshly cleared canvas. |
+| 3 | Persistence between events | **`state` dict in the preamble**, e.g. `state = {'x': 10, 'y': 10, 'theme': 'sunset'}`. Students mutate keys in `on_*_key`, read them in `draw_scene`. We *force* this pattern — no `global` keyword, no top-level student variables. |
+| 4 | Validation strictness | Per-rule knobs (`exact`, `anyColor`) so we tighten the hello-world corners task and loosen creative ones. `function_runs_clean` passes on `pass`. |
+| 5 | On-disk parsing | `ast` walk of top-level `FunctionDef`s. Missing functions → backfill from `starterBody`. Unknown top-level code → read-only "Extras" panel, preserved on save. |
+| 6 | Replay-while-typing | **Off by default; deferred past v1.** Big "Run Project" button does an instant flush. |
+| 7 | Input mechanism | **On-screen direction-pad** (4 HTML buttons) under the canvas — works on iPad/touch and avoids the CodeMirror-eats-arrow-keys problem. No physical-key binding in v1. |
+| 8 | Save-file header | **Loose.** Marker comment is helpful but optional; non-marker files open with a "doesn't look like a Wavelet project, open anyway?" banner. |
+| 9 | Helper functions | **Not in v1.** If a student wants reuse, they call other task functions from `draw_scene`. We add a "Your own helpers" slot only if a class outgrows this. |
 
 ---
 
-Once these are pinned down, items 1–8 in §8 are independent enough to do incrementally with student-visible progress at every step.
+Design is locked. Items 1–9 in §8 are independently shippable in order; each leaves the project in a runnable state.
