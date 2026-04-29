@@ -58,17 +58,20 @@ npm run deploy:docker
 
 The project deploys to Cloudflare Pages. Production: `wavelet.zone`. Pages project slug: `wavelet-e8x`.
 
-Per-branch preview URL pattern (branch name lowercased, `/` and other non-alphanumerics replaced with `-`):
+**Always use `scripts/cloudflare-alias.py` to generate the preview URL — never compute it by hand.** Eyeballing character counts is error-prone (Cloudflare truncates at 28 chars and trims trailing `-`).
 
+```bash
+python3 scripts/cloudflare-alias.py                  # current branch
+python3 scripts/cloudflare-alias.py <branch-name>    # explicit branch
 ```
-https://<sanitized-branch-name>.wavelet-e8x.pages.dev
-```
 
-Example: branch `claude/test-cloud-code-8WTmb` → `https://claude-test-cloud-code-8wtmb.wavelet-e8x.pages.dev`.
+The rule the script encodes: lowercase the branch name, replace runs of non-alphanumeric chars with `-`, truncate to 28 chars, strip any trailing `-`. Examples:
 
-**Cloudflare truncates the alias at ~28 chars.** If the sanitized slug is longer, drop characters from the end (and trim any trailing `-`). Example: branch `claude/modernize-worksheet-2-TPGZj` → sanitized `claude-modernize-worksheet-2-tpgzj` (34 chars) → truncated alias `claude-modernize-worksheet-2` → `https://claude-modernize-worksheet-2.wavelet-e8x.pages.dev`. Always send the truncated form when the sanitized slug exceeds 28 chars.
+- `claude/test-cloud-code-8WTmb` → `https://claude-test-cloud-code-8wtmb.wavelet-e8x.pages.dev` (28 chars, no truncation)
+- `claude/onedrive-file-picker-ZjviR` → `https://claude-onedrive-file-picker.wavelet-e8x.pages.dev` (truncated at the dash before `zjvir`, trailing `-` stripped)
+- `claude/modernize-worksheet-2-TPGZj` → `https://claude-modernize-worksheet-2.wavelet-e8x.pages.dev`
 
-When working on a PR or feature branch, share this URL with the user so they can preview the change once Cloudflare finishes building. (If neither the full nor the truncated alias resolves, Cloudflare may have hashed the slug — point them to the Pages dashboard for the exact deployment URL.)
+When working on a PR or feature branch, share the script's output so the user can preview the change once Cloudflare finishes building. If that alias doesn't resolve, the per-deployment hash URL (`https://<8-hex>.wavelet-e8x.pages.dev`) can be read from the Cloudflare Pages commit status on the pushed SHA via the GitHub MCP.
 
 ## Architecture
 
