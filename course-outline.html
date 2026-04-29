@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Outline - Python Learning Platform</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Page-local styles for the course outline. Kept here so we don't
+           accumulate one-off classes in styles.css. */
+        .course-intro {
+            background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+            border-left: 4px solid #6366f1;
+            padding: 20px 24px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            color: #1e293b;
+        }
+        .course-intro p { color: #334155; margin: 0 0 10px; }
+        .course-intro p:last-child { margin-bottom: 0; }
+
+        .week-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+        .week-table th, .week-table td {
+            text-align: left;
+            padding: 10px 12px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: top;
+        }
+        .week-table th {
+            background: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+        }
+        .week-table tr.phase-divider td {
+            background: #fafafa;
+            font-style: italic;
+            color: #6c757d;
+            border-top: 2px solid #dee2e6;
+        }
+        .status {
+            display: inline-block;
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .status.ready  { background: #d1fae5; color: #065f46; }
+        .status.todo   { background: #fef3c7; color: #92400e; }
+        .status.design { background: #e0e7ff; color: #3730a3; }
+        .status.cut    { background: #fee2e2; color: #991b1b; text-decoration: line-through; }
+
+        .project-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .project-option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .project-option h3 {
+            color: #2c3e50;
+            margin: 0 0 8px;
+            font-size: 1.15rem;
+        }
+        .project-option .pitch {
+            font-style: italic;
+            color: #6c757d;
+            margin-bottom: 12px;
+        }
+        .project-option ul {
+            margin: 0;
+            padding-left: 18px;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+        .project-option li { margin-bottom: 4px; }
+
+        .todo-list {
+            list-style: none;
+            padding: 0;
+        }
+        .todo-list li {
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+        }
+        .todo-list li.blocker { border-left-color: #dc2626; }
+        .todo-list li.design  { border-left-color: #f59e0b; }
+        .todo-list .todo-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 4px;
+            margin-right: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .todo-list .todo-tag.build  { background: #dbeafe; color: #1e40af; }
+        .todo-list .todo-tag.design { background: #fef3c7; color: #92400e; }
+        .todo-list .todo-tag.decide { background: #fce7f3; color: #9d174d; }
+        .todo-list .todo-tag.cut    { background: #fee2e2; color: #991b1b; }
+
+        .outline-section {
+            margin-bottom: 40px;
+        }
+        .outline-section h2 {
+            font-size: 1.6rem;
+            color: #2c3e50;
+            margin: 0 0 16px;
+        }
+        .outline-section h2 .lede {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-weight: 400;
+            margin-left: 8px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="worksheet-selection">
+            <header>
+                <h1>🗺️ Course Outline</h1>
+                <p>A 10-week introduction to Python for upper primary students.</p>
+            </header>
+
+            <div class="course-intro">
+                <p><strong>Shape:</strong> 7 stateless learning worksheets that build core Python concepts, followed by a 2&ndash;3 week <strong>project deliverable</strong> students iterate on, save to a file, and take home or use for grading.</p>
+                <p><strong>Why this shape:</strong> worksheets give every student a guaranteed floor (validated, scaffolded, easy/medium/hard tiers); the project gives them a ceiling (something open-ended they own and can show off). The save-to-file flow shipped in the scratchpad is the bridge &mdash; students take their work between sessions and home.</p>
+            </div>
+
+            <section class="outline-section">
+                <h2>Week-by-week <span class="lede">7 worksheets + 3 project weeks = 10 lessons</span></h2>
+                <table class="week-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 60px;">Week</th>
+                            <th>Focus</th>
+                            <th>Concepts</th>
+                            <th style="width: 90px;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>WS1 &mdash; The Python Calculator</td><td>print, arithmetic</td><td><span class="status ready">ready</span></td></tr>
+                        <tr><td>2</td><td>WS2 &mdash; Storing Your Numbers</td><td>variables, assignment</td><td><span class="status ready">ready</span></td></tr>
+                        <tr><td>3</td><td>WS3 &mdash; Making Things Repeat</td><td>for loops, range</td><td><span class="status ready">ready</span></td></tr>
+                        <tr><td>4</td><td>WS4 &mdash; Making Decisions</td><td>if / elif / else, comparisons</td><td><span class="status ready">ready</span></td></tr>
+                        <tr><td>5</td><td>WS5 &mdash; Working with Text</td><td>strings, f-strings, input</td><td><span class="status ready">ready</span></td></tr>
+                        <tr><td>6</td><td>WS6 &mdash; Lists &amp; Indexing</td><td>lists, indexing, len, iteration</td><td><span class="status ready">ready</span></td></tr>
+                        <tr><td>7</td><td>WS7 &mdash; Functions <em>(new)</em></td><td>def, parameters, return, reuse</td><td><span class="status todo">to build</span></td></tr>
+                        <tr class="phase-divider"><td colspan="4">&mdash; Project phase &mdash; pick one deliverable, iterate across the final lessons &mdash;</td></tr>
+                        <tr><td>8</td><td>Project: kick-off &amp; first draft</td><td>pick a brief, scaffold from a starter, save to file</td><td><span class="status design">to design</span></td></tr>
+                        <tr><td>9</td><td>Project: iterate &amp; extend</td><td>add features, refine, debug, re-save</td><td><span class="status design">to design</span></td></tr>
+                        <tr><td>10</td><td>Project: finish, share, present</td><td>final save, take home, show classmates</td><td><span class="status design">to design</span></td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="outline-section">
+                <h2>Project deliverable <span class="lede">three candidate briefs &mdash; not yet locked in</span></h2>
+                <p style="color: #495057; margin-bottom: 16px;">Each option is sized for ~3 lessons of a self-paced upper-primary student, leans on concepts from WS1&ndash;WS7, fits in a single <code>.py</code> file students save and re-open in the scratchpad, and is something a kid can actually show a parent. Running multiple briefs in parallel lets teachers pitch the one that suits their class &mdash; and gives extension/lunchtime-club students a second project to tackle.</p>
+
+                <div class="project-options">
+                    <div class="project-option">
+                        <h3>🎮 Choose-Your-Own-Adventure</h3>
+                        <p class="pitch">A branching text story the player navigates by typing choices.</p>
+                        <ul>
+                            <li>Concepts: input, strings/f-strings, if/elif, functions for each scene, lists for inventory</li>
+                            <li>Extension: scoring, randomised events, multiple endings</li>
+                            <li>Show-off factor: family/friends play it from a saved file</li>
+                            <li>Risk: weakest visual payoff &mdash; pure text</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-option">
+                        <h3>🎨 Pixel-Art Scene Builder</h3>
+                        <p class="pitch">A drawn scene on the canvas grid &mdash; sunset, cityscape, character portrait.</p>
+                        <ul>
+                            <li>Concepts: lists of coordinates, for loops, functions like <code>draw_tree(x, y)</code> or <code>draw_window(x, y)</code></li>
+                            <li>Extension: animation loop (frame buffering), interactive cursor, palette swap</li>
+                            <li>Show-off factor: high &mdash; print as a poster, share screenshot</li>
+                            <li>Absorbs the discarded "Drawing with Code" worksheet content as the project on-ramp instead of a standalone WS</li>
+                        </ul>
+                    </div>
+
+                    <div class="project-option">
+                        <h3>❓ Quiz / Trivia Game</h3>
+                        <p class="pitch">A multi-question quiz the student authors and a friend plays.</p>
+                        <ul>
+                            <li>Concepts: lists of questions, loops over them, conditionals for scoring, functions for the quiz loop</li>
+                            <li>Extension: categories, difficulty levels, high-score tracking, true/false vs. multiple choice</li>
+                            <li>Show-off factor: students enjoy <em>writing</em> questions as much as playing &mdash; great cross-curriculum hook (geography quiz, maths quiz, etc.)</li>
+                            <li>Lowest tech risk &mdash; uses only concepts already in WS1&ndash;WS7</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="outline-section">
+                <h2>TODOs to ship the course</h2>
+                <ul class="todo-list">
+                    <li class="blocker">
+                        <span class="todo-tag build">build</span>
+                        <strong>Worksheet 7: Functions.</strong> Author a new WS7 covering <code>def</code>, parameters, return values, and reuse. Motivate it with a "DRY my code" hook (e.g. repeated print blocks, repeated drawing code if Pixel Art is in play).
+                    </li>
+                    <li class="cut">
+                        <span class="todo-tag cut">cut</span>
+                        <strong>Discard standalone "Drawing with Code" worksheet.</strong> Remove the current WS7 from <code>worksheets/index.json</code>. Salvage its problems &mdash; the canvas API intro, grid coordinates, looped row/column drawing &mdash; into starter material for the Pixel-Art project brief, where they motivate the work instead of being homework.
+                    </li>
+                    <li class="design">
+                        <span class="todo-tag decide">decide</span>
+                        <strong>Pick the project brief(s) to ship.</strong> Likely run 2&ndash;3 in parallel so classes can choose, extension students get a second option, and lunchtime clubs have something fresh. Lock in default for week 8 kick-off.
+                    </li>
+                    <li class="design">
+                        <span class="todo-tag design">design</span>
+                        <strong>Project page in the platform.</strong> A new entry point (sibling to the worksheet selector) that pitches each brief, links to a starter <code>.py</code> file, and opens it in the scratchpad. Decide: dedicated <code>"type": "project"</code> worksheet block vs. just curated scratchpad starters.
+                    </li>
+                    <li class="design">
+                        <span class="todo-tag design">design</span>
+                        <strong>Project rubric &amp; grading guide.</strong> Per-brief: what does "complete" look like, what's a stretch goal, how do teachers mark it? Include a printable rubric for parent/teacher reference.
+                    </li>
+                    <li>
+                        <span class="todo-tag build">build</span>
+                        <strong>"Reopen last project" affordance.</strong> The scratchpad's File System Access save flow needs a smooth re-entry path so students don't waste lesson 9/10 minutes re-finding their file. Persist the <code>FileSystemFileHandle</code> in IndexedDB (noted in ROADMAP Phase 4).
+                    </li>
+                    <li>
+                        <span class="todo-tag build">build</span>
+                        <strong>iPad save UX gap.</strong> Safari can't overwrite the same file &mdash; each save creates a new download. For a multi-week project this is painful. At minimum, document the workaround for teachers; ideally, surface a clear in-app warning on iPad.
+                    </li>
+                    <li>
+                        <span class="todo-tag build">build</span>
+                        <strong>Teacher pack.</strong> Per-worksheet learning objectives, common student mistakes, answer keys; per-project rubric and example finished artefacts. Markdown + print stylesheet is enough for v1.
+                    </li>
+                    <li>
+                        <span class="todo-tag decide">decide</span>
+                        <strong>WS5 polish:</strong> add the comma-separated <code>print()</code> args mini-section flagged in ROADMAP &mdash; small but used by WS6 and likely by every project brief.
+                    </li>
+                </ul>
+            </section>
+
+            <a class="back-link" href="index.html">&larr; Back to home</a>
+        </div>
+    </div>
+</body>
+</html>
