@@ -135,24 +135,33 @@ Goal: give teachers a way to see how students are doing without a backend.
 
 Goal: let students build something over multiple sessions.
 
-**The login friction problem:**
-- Full auth (Google, etc.) is the smoothest UX but adds significant complexity and privacy considerations (primary school students)
-- Options ranked by friction:
+### Scratchpad file save/open (shipped Apr 2026)
+
+The scratchpad has Open / Save buttons backed by two paths:
+- **File System Access API** on Chromium (Edge / Chrome on Windows — the dominant classroom case). True round-trip: first Save shows a Save As dialog, subsequent Saves overwrite the same file silently with a "✓ Saved" flash. The native Windows file picker integrates OneDrive folders directly with no OAuth required — students just navigate to their OneDrive in Explorer, same as Word.
+- **Fallback** (Safari / iPad / Firefox): hidden `<input type="file">` for open, prompt-named blob download for save. iPad's Files app surfaces OneDrive as a location once the OneDrive app is installed.
+- **Dirty indicator + `beforeunload` warning** so accidental tab close prompts a save. Dirty state is set only on real user edits; restoring code from localStorage on page load doesn't fire the warning.
+
+The key insight that simplified this: on the platforms students actually use (Windows Edge/Chrome, iPad Safari) the OS-native file picker already integrates with OneDrive. No Microsoft Graph / MSAL / Azure app registration needed. This collapses what was originally framed as the "OAuth" row in the friction table into the "Save file" row.
+
+### Login friction options (still relevant for worksheet-side persistence)
 
 | Approach | Friction | Complexity |
 |---|---|---|
-| localStorage only (current) | Zero | Zero — but lost on device change |
-| Download/upload save file | Low | Low — student saves a `.wavelet` file, uploads to resume |
+| localStorage only | Zero | Zero — but lost on device change |
+| OS-native file picker (FSA + fallback) **← shipped for scratchpad** | Low | Low — leans on OneDrive integration in File Explorer / Files app |
 | Device-local key (crypto) | Low | Medium — generate a UUID stored in localStorage, use as a "save code" students write down |
 | Teacher-managed class codes | Medium | Medium — teacher creates a class, students enter a code, backend stores progress |
-| OAuth (Google/Microsoft) | Low for students, high setup | High — needs backend, privacy policy, school IT approval |
+| OAuth (Google/Microsoft) | Low for students, high setup | High — needs backend, privacy policy, school IT approval. Not needed if OS picker covers OneDrive. |
 
-**Recommendation:** download/upload save file first — it's offline-friendly, no accounts, no server, and familiar to students who've used Scratch or similar. A "save code" approach (short alphanumeric key students copy) is a good second step if teacher feedback shows file management is a problem.
+### Worksheet-side persistence (next)
 
-**Project worksheet type:**
-- New `"type": "project"` block in worksheet JSON
-- Persistent canvas state + code across sessions
-- Milestone checkpoints (structured like problems but less prescriptive)
+The scratchpad pattern likely scales to worksheets, but a few decisions remain:
+
+- **Project worksheet type:** new `"type": "project"` block that captures both code and canvas state in a single JSON file. Milestone checkpoints (structured like problems but less prescriptive).
+- **Handle persistence:** `FileSystemFileHandle` can be stored in IndexedDB and reused across sessions (with a one-time `requestPermission` re-prompt) so students don't re-pick the file every visit. Skipped in the scratchpad v1.
+- **Save-on-load vs. soft fallback:** force the round-trip habit (no progress unless saved to file) or keep localStorage as a quiet backup? Probably the latter — primary kids will forget to save, and a silent localStorage tier prevents tears.
+- **iPad gap:** Safari has no `showSaveFilePicker`, so true round-trip overwrite isn't possible there. The fallback download path works but creates a new file each save. For project workflows where students return to the same file across sessions, this is a real UX gap on iPad worth flagging in teacher materials.
 
 ---
 
