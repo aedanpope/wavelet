@@ -392,6 +392,21 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.current-file.dirty::before {
+    content: "●";
+    color: #fbbf24; /* amber */
+    margin-right: 6px;
+    font-style: normal;
+}
+
+.current-file.saved-flash {
+    background: rgba(34, 197, 94, 0.35); /* green */
+    color: white;
+    font-style: normal;
+    font-weight: 600;
 }
 
 .worksheet-info h1 {

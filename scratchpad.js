@@ -7,6 +7,8 @@ let codeEditor = null;
 let inputConfigs = []; // Array of { id, name, type, placeholder }
 let tracePlayer = null;
 let currentFileHandle = null; // Set when a file is opened/saved via the File System Access API.
+let dirty = false; // True when editor content differs from last write/open.
+let savedFlashTimer = null;
 
 const SUPPORTS_FSA = typeof window !== 'undefined' && 'showOpenFilePicker' in window;
 const PY_FILE_TYPE = {
@@ -112,6 +114,12 @@ function initCodeEditor() {
         extraKeys: { 'Tab': cm => cm.replaceSelection('  ', 'end') }
     });
     codeEditor.setSize(null, height * 23 + 10);
+    codeEditor.on('change', (cm, change) => {
+        // Programmatic loads (restoreState, openCode, clear) come through with origin 'setValue'
+        // and shouldn't mark the buffer dirty.
+        if (change.origin === 'setValue') return;
+        markDirty();
+    });
     codeEditor.on('change', debounce(saveState, 500));
 }
 
@@ -126,7 +134,21 @@ function setupEventListeners() {
             document.getElementById('trace-player').style.display = 'none';
             restoreOutput();
             codeEditor.setValue('');
+            // Drop the file association — a subsequent Save should prompt for a name
+            // rather than silently overwriting the previous file with empty contents.
+            currentFileHandle = null;
+            markClean();
             saveState();
+        }
+    });
+
+    // Warn before leaving with unsaved edits — file-write hasn't happened, so closing the
+    // tab risks losing work if localStorage gets cleared (shared school laptop, browser
+    // wipe, etc.).
+    window.addEventListener('beforeunload', e => {
+        if (dirty) {
+            e.preventDefault();
+            e.returnValue = '';
         }
     });
 
@@ -242,7 +264,7 @@ async function openCodeViaFSA() {
         const text = await file.text();
         codeEditor.setValue(text);
         currentFileHandle = handle;
-        updateCurrentFileLabel();
+        markClean();
         saveState();
     } catch (err) {
         alert('Could not read that file. Try again or pick a different file.');
@@ -269,7 +291,8 @@ async function saveCodeViaFSA() {
         await writable.write(codeEditor.getValue());
         await writable.close();
         currentFileHandle = handle;
-        updateCurrentFileLabel();
+        markClean();
+        flashSaved();
     } catch (err) {
         alert('Could not save that file: ' + (err.message || err.name));
     }
@@ -292,6 +315,11 @@ function saveCodeViaDownload() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+
+    // Track the most recent download name so the next prompt pre-fills with it.
+    currentFileHandle = { name };
+    markClean();
+    flashSaved();
 }
 
 function handleFallbackFileInput(e) {
@@ -309,7 +337,7 @@ function handleFallbackFileInput(e) {
         codeEditor.setValue(ev.target.result || '');
         // Fallback path can't write back to the chosen file — track only the name for the next download prompt.
         currentFileHandle = { name: file.name };
-        updateCurrentFileLabel();
+        markClean();
         saveState();
     };
     reader.onerror = () => alert('Could not read that file. Try again or pick a different file.');
@@ -322,13 +350,48 @@ function handleFallbackFileInput(e) {
 function updateCurrentFileLabel() {
     const label = document.getElementById('current-file');
     if (!label) return;
+    // Don't clobber the in-progress save flash; it'll re-render itself when it expires.
+    if (label.classList.contains('saved-flash')) return;
+
+    label.classList.toggle('dirty', dirty);
     if (currentFileHandle && currentFileHandle.name) {
         label.textContent = currentFileHandle.name;
+        label.style.display = '';
+    } else if (dirty) {
+        label.textContent = 'Unsaved';
         label.style.display = '';
     } else {
         label.textContent = '';
         label.style.display = 'none';
     }
+}
+
+function markDirty() {
+    if (dirty) return;
+    dirty = true;
+    updateCurrentFileLabel();
+}
+
+function markClean() {
+    dirty = false;
+    updateCurrentFileLabel();
+}
+
+function flashSaved() {
+    const label = document.getElementById('current-file');
+    if (!label) return;
+    if (savedFlashTimer) clearTimeout(savedFlashTimer);
+
+    label.classList.remove('dirty');
+    label.classList.add('saved-flash');
+    label.textContent = '✓ Saved';
+    label.style.display = '';
+
+    savedFlashTimer = setTimeout(() => {
+        savedFlashTimer = null;
+        label.classList.remove('saved-flash');
+        updateCurrentFileLabel();
+    }, 1500);
 }
 
 function applyEditorHeight() {
