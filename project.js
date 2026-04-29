@@ -30,6 +30,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderProject();
         await initPython();
         revealInterface();
+        // CodeMirror needs the parent to be visible (non-display:none) before it
+        // can measure itself. Initialise the per-task editors only after reveal,
+        // otherwise they render blank until first focus.
+        initTaskEditors();
     } catch (err) {
         console.error('Project failed to load:', err);
         document.getElementById('loading-overlay').innerHTML = `
@@ -110,8 +114,22 @@ function renderTaskCard(task, idx) {
     taskError.style.display = 'none';
     card.appendChild(taskError);
 
-    // Initialise CodeMirror after the element is in the DOM
-    requestAnimationFrame(() => {
+    // Stash references; CodeMirror itself is initialised later (see
+    // initTaskEditors), once the parent is visible and can be measured.
+    taskEditors.set(task.id, {
+        cm: null,
+        editorEl,
+        statusEl: header.querySelector('[data-status]'),
+        errorEl: taskError,
+        task,
+    });
+
+    return card;
+}
+
+function initTaskEditors() {
+    for (const entry of taskEditors.values()) {
+        const { editorEl, task } = entry;
         const cm = CodeMirror(editorEl, {
             value: task.starterBody || '',
             mode: 'python',
@@ -125,16 +143,8 @@ function renderTaskCard(task, idx) {
         });
         const heightLines = task.editorHeight || 6;
         cm.setSize('100%', `${heightLines * 1.5}em`);
-
-        taskEditors.set(task.id, {
-            cm,
-            statusEl: header.querySelector('[data-status]'),
-            errorEl: taskError,
-            task,
-        });
-    });
-
-    return card;
+        entry.cm = cm;
+    }
 }
 
 // ─── Run flow ────────────────────────────────────────────────────────────
