@@ -126,13 +126,10 @@ function renderSetupCard() {
     const editorFrame = document.createElement('div');
     editorFrame.className = 'task-editor-frame';
 
-    // Locked lines (use_canvas, etc.) rendered like the def line on a task card.
-    for (const line of (projectDef.lockedPreamble || [])) {
-        const lockedLine = document.createElement('div');
-        lockedLine.className = 'task-def-line setup-locked-line';
-        lockedLine.textContent = line;
-        editorFrame.appendChild(lockedLine);
-    }
+    // Locked preamble lines (use_canvas etc.) still run, but we don't expose
+    // them in the Setup card UI — students don't need to see them, and one
+    // (use_canvas) hardly belongs next to "your variables". The lines are
+    // still emitted at run/save time from projectDef.lockedPreamble.
 
     const editorEl = document.createElement('div');
     editorEl.className = 'task-editor setup-editor';
@@ -345,29 +342,33 @@ function assembleProgram() {
     }
     lines.push('');
 
-    // Auto-inject `global` for every name assigned in the preamble so students
-    // can write `x -= 1` inside a function without hitting Python's scoping
-    // rules. Without this they'd need to type `global x` themselves — a
-    // detail we don't want to teach yet. If the preamble has a syntax error
-    // we just skip injection (the project will fail to load with a clear
-    // error anyway).
-    const globalNames = scanGlobals(editablePreamble);
-    const globalDecl = globalNames.length ? `global ${globalNames.join(', ')}` : null;
+    // Auto-inject `global` so students can write `x -= 1` inside a function
+    // without hitting Python's UnboundLocalError. Crucially, we inject only
+    // the candidate names that are *assigned* in this specific function body
+    // (Assign/AugAssign/AnnAssign targets) — never just because a name is
+    // referenced. If we injected unconditionally, a `for x in range(20)` loop
+    // inside draw_border would clobber the global x (treating the loop var as
+    // a global write), which broke the left/right buttons in the first cut.
+    const candidateGlobals = scanGlobals(editablePreamble);
 
     for (const task of projectDef.tasks) {
         const entry = taskEditors.get(task.id);
         const rawBody = entry && entry.cm ? entry.cm.getValue() : (task.starterBody || '');
-        const wrapped = wrapAsFunction(task.function, rawBody, globalDecl);
 
-        const compileError = checkSyntax(wrapped);
+        // Tentatively wrap with no global decl so we can inspect the AST.
+        const wrappedNoGlobals = wrapAsFunction(task.function, rawBody, null);
+        const compileError = checkSyntax(wrappedNoGlobals);
         if (compileError) {
             taskErrors.set(task.id, compileError);
-            // Substitute a no-op so the rest of the project still loads
             lines.push(`def ${task.function}():`);
             lines.push(`${BODY_INDENT}pass  # (replaced because of a syntax error in your code)`);
-        } else {
-            lines.push(wrapped);
+            lines.push('');
+            continue;
         }
+
+        const assignedHere = scanAssignedGlobals(wrappedNoGlobals, candidateGlobals);
+        const globalDecl = assignedHere.length ? `global ${assignedHere.join(', ')}` : null;
+        lines.push(wrapAsFunction(task.function, rawBody, globalDecl));
         lines.push('');
     }
 
@@ -391,6 +392,57 @@ function wrapAsFunction(name, body, globalDecl) {
     }
     const indented = bodyLines.map(l => BODY_INDENT + l).join('\n');
     return `def ${name}():\n${indented}`;
+}
+
+// Given a wrapped `def fn():\n    body…` source and a list of candidate names
+// (the global candidates from the preamble), return the subset that are
+// actually assigned to inside the function body. We deliberately ignore
+// `For.target` so a `for x in range(20)` loop variable stays local even when
+// `x` is a global elsewhere — otherwise the loop clobbers the global.
+function scanAssignedGlobals(wrappedSrc, candidates) {
+    if (!candidates || candidates.length === 0) return [];
+    const py = executor.getPyodide();
+    py.globals.set('_wavelet_fn_src', wrappedSrc);
+    py.globals.set('_wavelet_fn_candidates', py.toPy(candidates));
+    try {
+        py.runPython(`
+import ast as _ast
+def _wavelet_scan_assigned():
+    src = _wavelet_fn_src
+    candidates = list(_wavelet_fn_candidates)
+    try:
+        tree = _ast.parse(src)
+    except SyntaxError:
+        return []
+    if not tree.body or not isinstance(tree.body[0], _ast.FunctionDef):
+        return []
+    fn = tree.body[0]
+    assigned = set()
+    def visit_target(node):
+        if isinstance(node, _ast.Name):
+            assigned.add(node.id)
+        elif isinstance(node, (_ast.Tuple, _ast.List)):
+            for el in node.elts:
+                visit_target(el)
+    for node in _ast.walk(fn):
+        # Note: For.target is intentionally NOT counted — loop variables
+        # should remain local even when their name matches a global.
+        if isinstance(node, _ast.Assign):
+            for tgt in node.targets:
+                visit_target(tgt)
+        elif isinstance(node, (_ast.AugAssign, _ast.AnnAssign)):
+            visit_target(node.target)
+    return [c for c in candidates if c in assigned]
+`);
+        const fn = py.globals.get('_wavelet_scan_assigned');
+        return fn().toJs();
+    } catch (err) {
+        console.warn('scanAssignedGlobals failed:', err);
+        return [];
+    } finally {
+        py.globals.delete('_wavelet_fn_src');
+        py.globals.delete('_wavelet_fn_candidates');
+    }
 }
 
 // Parse the preamble source via Python's ast and return the names assigned
@@ -616,13 +668,22 @@ function assembleFileForDisk() {
     // Saved file is plain runnable Python (paste into IDLE etc.) — that means
     // any `x -= 1` inside a function won't work without `global x`. Inject
     // those declarations here too so the on-disk file matches what the
-    // harness runs in the browser.
-    const globalNames = scanGlobals(editablePreamble);
-    const globalDecl = globalNames.length ? `global ${globalNames.join(', ')}` : null;
+    // harness runs in the browser. Same per-function scoping as the
+    // run-time assembler: only inject for names actually assigned in each
+    // body, not for names that just happen to be referenced.
+    const candidateGlobals = scanGlobals(editablePreamble);
 
     projectDef.tasks.forEach((task, idx) => {
         const entry = taskEditors.get(task.id);
         const body = entry && entry.cm ? entry.cm.getValue() : (task.starterBody || '');
+        const wrappedNoGlobals = wrapAsFunction(task.function, body, null);
+        // If the body has a syntax error we can't AST-scan it; fall back to
+        // no global decl. The harness already surfaces the error at run time.
+        let globalDecl = null;
+        if (!checkSyntax(wrappedNoGlobals)) {
+            const assigned = scanAssignedGlobals(wrappedNoGlobals, candidateGlobals);
+            globalDecl = assigned.length ? `global ${assigned.join(', ')}` : null;
+        }
         lines.push(`# Task ${idx + 1}: ${task.title}`);
         lines.push(wrapAsFunction(task.function, body, globalDecl));
         lines.push('');
