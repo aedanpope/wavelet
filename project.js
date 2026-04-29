@@ -17,6 +17,7 @@ const FILE_HEADER_MARKER = '# Wavelet';
 let executor = null;
 let projectDef = null;
 const taskEditors = new Map(); // taskId -> { cm, statusEl, defLineEl, lastError }
+let setupEditor = null; // CodeMirror for the editable preamble
 let currentFileHandle = null;
 let dirty = false;
 let savedFlashTimer = null;
@@ -70,7 +71,7 @@ function renderProject() {
     document.getElementById('project-title').textContent = projectDef.title;
     document.getElementById('project-description').textContent = projectDef.description || '';
     document.getElementById('project-intro').innerHTML = projectDef.intro || '';
-    document.getElementById('preamble-code').textContent = (projectDef.preamble || []).join('\n');
+    renderSetupCard();
 
     const tasksEl = document.getElementById('project-tasks');
     tasksEl.innerHTML = '';
@@ -99,6 +100,49 @@ function renderProject() {
     window.addEventListener('beforeunload', e => {
         if (dirty) { e.preventDefault(); e.returnValue = ''; }
     });
+}
+
+function renderSetupCard() {
+    const host = document.getElementById('project-setup-host');
+    host.innerHTML = '';
+    const card = document.createElement('article');
+    card.className = 'project-task project-setup';
+
+    const header = document.createElement('header');
+    header.className = 'project-task-header';
+    header.innerHTML = `
+        <div class="project-task-titles">
+            <span class="task-number setup-number">⚙</span>
+            <h3 class="task-title">Setup</h3>
+        </div>
+    `;
+    card.appendChild(header);
+
+    const guidance = document.createElement('div');
+    guidance.className = 'task-guidance';
+    guidance.innerHTML = '<p>Variables here exist before any function runs &mdash; you can read or change them in any task below. Add more if you want to remember more things between key presses (a score, a colour, a high-water mark&hellip;).</p>';
+    card.appendChild(guidance);
+
+    const editorFrame = document.createElement('div');
+    editorFrame.className = 'task-editor-frame';
+
+    // Locked lines (use_canvas, etc.) rendered like the def line on a task card.
+    for (const line of (projectDef.lockedPreamble || [])) {
+        const lockedLine = document.createElement('div');
+        lockedLine.className = 'task-def-line setup-locked-line';
+        lockedLine.textContent = line;
+        editorFrame.appendChild(lockedLine);
+    }
+
+    const editorEl = document.createElement('div');
+    editorEl.className = 'task-editor setup-editor';
+    editorFrame.appendChild(editorEl);
+
+    card.appendChild(editorFrame);
+    host.appendChild(card);
+
+    // Defer CM init to initTaskEditors() (parent must be visible first).
+    host._editorEl = editorEl;
 }
 
 function renderTaskCard(task, idx) {
@@ -155,6 +199,27 @@ function renderTaskCard(task, idx) {
 }
 
 function initTaskEditors() {
+    // Setup editor first so it's positioned above the task editors.
+    const setupHost = document.getElementById('project-setup-host');
+    if (setupHost && setupHost._editorEl) {
+        setupEditor = CodeMirror(setupHost._editorEl, {
+            value: projectDef.editablePreamble || '',
+            mode: 'python',
+            theme: 'monokai',
+            lineNumbers: false,
+            indentUnit: 4,
+            tabSize: 4,
+            indentWithTabs: false,
+            lineWrapping: true,
+            viewportMargin: Infinity,
+        });
+        setupEditor.setSize('100%', '7em');
+        setupEditor.on('change', (_cm, change) => {
+            if (change.origin === 'setValue') return;
+            markDirty();
+        });
+    }
+
     for (const entry of taskEditors.values()) {
         const { editorEl, task } = entry;
         const cm = CodeMirror(editorEl, {
@@ -268,16 +333,31 @@ function assembleProgram() {
     const lines = [];
     const taskErrors = new Map();
 
-    // Preamble
-    for (const line of (projectDef.preamble || [])) {
+    // Locked preamble (we own these — use_canvas, etc.)
+    for (const line of (projectDef.lockedPreamble || [])) {
         lines.push(line);
     }
+
+    // Editable preamble (student-owned globals)
+    const editablePreamble = setupEditor ? setupEditor.getValue() : (projectDef.editablePreamble || '');
+    if (editablePreamble.trim()) {
+        lines.push(editablePreamble.replace(/\s+$/g, ''));
+    }
     lines.push('');
+
+    // Auto-inject `global` for every name assigned in the preamble so students
+    // can write `x -= 1` inside a function without hitting Python's scoping
+    // rules. Without this they'd need to type `global x` themselves — a
+    // detail we don't want to teach yet. If the preamble has a syntax error
+    // we just skip injection (the project will fail to load with a clear
+    // error anyway).
+    const globalNames = scanGlobals(editablePreamble);
+    const globalDecl = globalNames.length ? `global ${globalNames.join(', ')}` : null;
 
     for (const task of projectDef.tasks) {
         const entry = taskEditors.get(task.id);
         const rawBody = entry && entry.cm ? entry.cm.getValue() : (task.starterBody || '');
-        const wrapped = wrapAsFunction(task.function, rawBody);
+        const wrapped = wrapAsFunction(task.function, rawBody, globalDecl);
 
         const compileError = checkSyntax(wrapped);
         if (compileError) {
@@ -300,16 +380,60 @@ function assembleProgram() {
     return { code: lines.join('\n'), taskErrors };
 }
 
-function wrapAsFunction(name, body) {
+function wrapAsFunction(name, body, globalDecl) {
     const trimmed = (body || '').replace(/\s+$/g, '');
+    const bodyLines = [];
+    if (globalDecl) bodyLines.push(globalDecl);
     if (trimmed === '') {
-        return `def ${name}():\n${BODY_INDENT}pass`;
+        bodyLines.push('pass');
+    } else {
+        for (const line of trimmed.split('\n')) bodyLines.push(line);
     }
-    const indented = trimmed
-        .split('\n')
-        .map(line => BODY_INDENT + line)
-        .join('\n');
+    const indented = bodyLines.map(l => BODY_INDENT + l).join('\n');
     return `def ${name}():\n${indented}`;
+}
+
+// Parse the preamble source via Python's ast and return the names assigned
+// at module level — these become candidates for the auto-injected `global`.
+function scanGlobals(src) {
+    if (!src || !src.trim()) return [];
+    const py = executor.getPyodide();
+    py.globals.set('_wavelet_preamble_src', src);
+    try {
+        py.runPython(`
+import ast as _ast
+def _wavelet_scan_globals(src):
+    try:
+        tree = _ast.parse(src)
+    except SyntaxError:
+        return []
+    names = []
+    seen = set()
+    def visit_target(node):
+        if isinstance(node, _ast.Name):
+            if node.id not in seen:
+                seen.add(node.id)
+                names.append(node.id)
+        elif isinstance(node, (_ast.Tuple, _ast.List)):
+            for el in node.elts:
+                visit_target(el)
+    for node in tree.body:
+        if isinstance(node, _ast.Assign):
+            for tgt in node.targets:
+                visit_target(tgt)
+        elif isinstance(node, (_ast.AugAssign, _ast.AnnAssign)):
+            visit_target(node.target)
+    return names
+`);
+        const fn = py.globals.get('_wavelet_scan_globals');
+        const result = fn(src);
+        return result.toJs();
+    } catch (err) {
+        console.warn('scanGlobals failed:', err);
+        return [];
+    } finally {
+        py.globals.delete('_wavelet_preamble_src');
+    }
 }
 
 function checkSyntax(src) {
@@ -478,14 +602,29 @@ function assembleFileForDisk() {
         `# Saved:   ${today}`,
         '',
     ];
-    for (const line of (projectDef.preamble || [])) lines.push(line);
+
+    // Locked preamble we own
+    for (const line of (projectDef.lockedPreamble || [])) lines.push(line);
+
+    // Editable preamble (student globals)
+    const editablePreamble = setupEditor ? setupEditor.getValue() : (projectDef.editablePreamble || '');
+    if (editablePreamble.trim()) {
+        lines.push(editablePreamble.replace(/\s+$/g, ''));
+    }
     lines.push('');
+
+    // Saved file is plain runnable Python (paste into IDLE etc.) — that means
+    // any `x -= 1` inside a function won't work without `global x`. Inject
+    // those declarations here too so the on-disk file matches what the
+    // harness runs in the browser.
+    const globalNames = scanGlobals(editablePreamble);
+    const globalDecl = globalNames.length ? `global ${globalNames.join(', ')}` : null;
 
     projectDef.tasks.forEach((task, idx) => {
         const entry = taskEditors.get(task.id);
         const body = entry && entry.cm ? entry.cm.getValue() : (task.starterBody || '');
         lines.push(`# Task ${idx + 1}: ${task.title}`);
-        lines.push(wrapAsFunction(task.function, body));
+        lines.push(wrapAsFunction(task.function, body, globalDecl));
         lines.push('');
     });
 
@@ -609,8 +748,8 @@ function loadFileIntoEditors(text, filename) {
     }
 
     const knownNames = projectDef.tasks.map(t => t.function);
-    const preambleSet = new Set((projectDef.preamble || []).map(s => s.trim()));
-    const parsed = parseProjectFile(text, knownNames, preambleSet);
+    const lockedSet = new Set((projectDef.lockedPreamble || []).map(s => s.trim()));
+    const parsed = parseProjectFile(text, knownNames, lockedSet);
 
     const missing = [];
     for (const task of projectDef.tasks) {
@@ -625,6 +764,10 @@ function loadFileIntoEditors(text, filename) {
         entry.errorEl.style.display = 'none';
         entry.statusEl.className = 'task-status task-status-pending';
         entry.statusEl.textContent = '○ not run yet';
+    }
+
+    if (setupEditor) {
+        setupEditor.setValue(parsed.editablePreamble || projectDef.editablePreamble || '');
     }
 
     currentExtras = parsed.extras;
@@ -654,52 +797,96 @@ function renderExtras() {
 }
 
 // Parse a project .py file via Python's ast module (in Pyodide).
-// Returns { bodies: Map(funcName -> body source), extras: string }.
-function parseProjectFile(src, knownNames, preambleSet) {
+// Categorisation of top-level nodes:
+//   - FunctionDef with known name        -> task editor body (with auto-
+//                                           injected `global ...` stripped)
+//   - Statement matching a locked line   -> dropped (we own & regenerate)
+//   - Imports / assignments              -> editable preamble editor
+//   - Anything else (incl. unknown defs) -> Extras
+function parseProjectFile(src, knownNames, lockedSet) {
     const py = executor.getPyodide();
     py.globals.set('_wavelet_src', src);
     py.globals.set('_wavelet_known', py.toPy(knownNames));
-    py.globals.set('_wavelet_preamble', py.toPy([...preambleSet]));
+    py.globals.set('_wavelet_locked', py.toPy([...lockedSet]));
     try {
         py.runPython(`
-import ast, textwrap
+import ast, textwrap, re
+
+_GLOBAL_RE = re.compile(r'^\\s*global\\s+[A-Za-z_][A-Za-z0-9_,\\s]*$')
+
+def _wavelet_strip_injected_global(body_src):
+    # Drop a leading 'global ...' line if present — the harness re-injects
+    # it on the next Run/Save so we don't want it to pile up in the editor.
+    lines = body_src.split('\\n')
+    # Skip leading blank lines.
+    i = 0
+    while i < len(lines) and lines[i].strip() == '':
+        i += 1
+    if i < len(lines) and _GLOBAL_RE.match(lines[i]):
+        del lines[i]
+        # Also drop a single blank line right after if it's there, to keep things tidy.
+        if i < len(lines) and lines[i].strip() == '':
+            del lines[i]
+    return '\\n'.join(lines)
+
 def _wavelet_parse_project():
     src = _wavelet_src
     known = set(_wavelet_known)
-    preamble_lines = set(_wavelet_preamble)
+    locked = set(_wavelet_locked)
     try:
         tree = ast.parse(src)
     except SyntaxError as e:
-        return {'bodies': {}, 'extras': src, 'error': f'line {e.lineno}: {e.msg}'}
+        return {'bodies': {}, 'editablePreamble': '', 'extras': src,
+                'error': f'line {e.lineno}: {e.msg}'}
 
     bodies = {}
+    editable_segments = []
     extras_segments = []
+
+    PREAMBLE_TYPES = (ast.Import, ast.ImportFrom, ast.Assign, ast.AugAssign, ast.AnnAssign)
+
     for node in tree.body:
         seg = ast.get_source_segment(src, node) or ''
+        stripped = seg.strip()
+        if not stripped:
+            continue
         if isinstance(node, ast.FunctionDef) and node.name in known:
-            # Strip the def line, dedent the body.
             lines = seg.split('\\n')
             body = textwrap.dedent('\\n'.join(lines[1:]))
+            body = _wavelet_strip_injected_global(body)
             bodies[node.name] = body.rstrip() + '\\n' if body.strip() else ''
+        elif stripped in locked:
+            continue  # we own this line, regenerated on save
+        elif isinstance(node, PREAMBLE_TYPES):
+            editable_segments.append(seg)
         else:
-            stripped = seg.strip()
-            if stripped in preamble_lines or stripped == '':
-                continue
             extras_segments.append(seg)
-    return {'bodies': bodies, 'extras': '\\n\\n'.join(extras_segments), 'error': None}
+
+    return {
+        'bodies': bodies,
+        'editablePreamble': '\\n'.join(editable_segments) + ('\\n' if editable_segments else ''),
+        'extras': '\\n\\n'.join(extras_segments),
+        'error': None,
+    }
 `);
         const result = py.globals.get('_wavelet_parse_project')().toJs({ dict_converter: Object.fromEntries });
         const bodies = new Map();
         for (const [k, v] of Object.entries(result.bodies)) bodies.set(k, v);
-        return { bodies, extras: result.extras || '', error: result.error };
+        return {
+            bodies,
+            editablePreamble: result.editablePreamble || '',
+            extras: result.extras || '',
+            error: result.error,
+        };
     } finally {
         py.globals.delete('_wavelet_src');
         py.globals.delete('_wavelet_known');
-        py.globals.delete('_wavelet_preamble');
+        py.globals.delete('_wavelet_locked');
     }
 }
 
 function anyEditorDifferentFromStarter() {
+    if (setupEditor && setupEditor.getValue() !== (projectDef.editablePreamble || '')) return true;
     for (const [, entry] of taskEditors) {
         if (!entry.cm) continue;
         const starter = entry.task.starterBody || '';

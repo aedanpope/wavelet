@@ -2,12 +2,12 @@
   "id": "pixel-art",
   "title": "Pixel Art Animation",
   "description": "Build a tiny scene that comes alive when you press the arrow buttons.",
-  "intro": "<p>Build your own pixel-art scene that <strong>animates when you press the arrow buttons</strong>. You'll fill in a few small functions, then click <em>Run Project</em> to see them all run together.</p><p>The canvas is a 20&times;20 grid. Coordinates are <code>(x, y)</code> from <code>(0, 0)</code> in the bottom-left to <code>(19, 19)</code> in the top-right.</p><p>You'll be working with a shared <code>state</code> dictionary &mdash; that's how your scene remembers things between key presses (like the player's position).</p>",
+  "intro": "<p>Build your own pixel-art scene that <strong>animates when you press the arrow buttons</strong>. You'll fill in a few small functions, then click <em>Run Project</em> to see them all run together.</p><p>The canvas is a 20&times;20 grid. Coordinates are <code>(x, y)</code> from <code>(0, 0)</code> in the bottom-left to <code>(19, 19)</code> in the top-right.</p><p>The <strong>Setup</strong> section below holds variables that any of your functions can read and change &mdash; the player's position lives there as <code>x</code> and <code>y</code>. Add more variables there if you want.</p>",
   "canvas": "GRID20",
-  "preamble": [
-    "use_canvas(GRID20)",
-    "state = {'x': 10, 'y': 10}"
+  "lockedPreamble": [
+    "use_canvas(GRID20)"
   ],
+  "editablePreamble": "x = 10\ny = 10\n# you can add more variables here\n",
   "tasks": [
     {
       "id": "corners",
@@ -49,8 +49,8 @@
       "id": "player",
       "title": "Draw the player",
       "function": "draw_player",
-      "guidance": "<p>The player lives at <code>state['x']</code>, <code>state['y']</code> &mdash; the harness sets these to <code>(10, 10)</code> before your code runs.</p><p>Draw something to represent the player at that position. The simplest version is a single <code>draw(state['x'], state['y'], 'yellow')</code>. Want a bigger character? Draw multiple cells around the centre.</p>",
-      "starterBody": "draw(state['x'], state['y'], 'yellow')\n",
+      "guidance": "<p>The player lives at <code>x, y</code> &mdash; the Setup section starts these at <code>(10, 10)</code>.</p><p>Draw something to represent the player at that position. The simplest version is a single <code>draw(x, y, 'yellow')</code>. Want a bigger character? Draw multiple cells around the centre.</p>",
+      "starterBody": "draw(x, y, 'yellow')\n",
       "editorHeight": 6,
       "validation": {
         "rules": [
@@ -75,8 +75,8 @@
       "id": "left-key",
       "title": "Left button: do something cool",
       "function": "on_left_key",
-      "guidance": "<p>Runs when the player clicks the <strong>&larr;</strong> button. The simplest thing: move the player one cell to the left.</p><p><code>state['x'] -= 1</code> subtracts one from the x position. <code>draw_scene()</code> will run again automatically afterwards, so the player visibly moves.</p><p>Want to do something else cool instead? Paint a streak across the canvas, change a colour somewhere &mdash; up to you.</p>",
-      "starterBody": "state['x'] -= 1\n",
+      "guidance": "<p>Runs when the player clicks the <strong>&larr;</strong> button. The simplest thing: move the player one cell to the left.</p><p><code>x -= 1</code> subtracts one from <code>x</code>. <code>draw_scene()</code> will run again automatically afterwards, so the player visibly moves.</p><p>Want to do something else cool instead? Paint a streak across the canvas, change a colour somewhere &mdash; up to you.</p>",
+      "starterBody": "x -= 1\n",
       "editorHeight": 5,
       "validation": {
         "rules": [
@@ -89,7 +89,7 @@
       "title": "Right button: do something cool",
       "function": "on_right_key",
       "guidance": "<p>Runs when the player clicks the <strong>&rarr;</strong> button. Mirror of left &mdash; or do something completely different.</p>",
-      "starterBody": "state['x'] += 1\n",
+      "starterBody": "x += 1\n",
       "editorHeight": 5,
       "validation": {
         "rules": [
@@ -102,7 +102,7 @@
       "title": "Up button: do something cool",
       "function": "on_up_key",
       "guidance": "<p>Runs when the player clicks the <strong>&uarr;</strong> button. Remember: in our coordinate system, <em>up</em> means a bigger <code>y</code>.</p>",
-      "starterBody": "state['y'] += 1\n",
+      "starterBody": "y += 1\n",
       "editorHeight": 5,
       "validation": {
         "rules": [
@@ -115,7 +115,7 @@
       "title": "Down button: do something cool",
       "function": "on_down_key",
       "guidance": "<p>Runs when the player clicks the <strong>&darr;</strong> button. Down means a smaller <code>y</code>.</p>",
-      "starterBody": "state['y'] -= 1\n",
+      "starterBody": "y -= 1\n",
       "editorHeight": 5,
       "validation": {
         "rules": [

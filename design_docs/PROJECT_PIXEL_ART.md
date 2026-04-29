@@ -255,7 +255,7 @@ A tractable v1 build, in dependency order:
 |---|---|---|
 | 1 | Function-signature visibility | **Option A**: greyed read-only `def name():` line at the top of each editor; body editable, indented one level. |
 | 2 | Reset vs. paint-on-top between key events | **Reset.** Every key press re-runs `draw_scene()` on a freshly cleared canvas. |
-| 3 | Persistence between events | **`state` dict in the preamble**, e.g. `state = {'x': 10, 'y': 10}`. Students mutate keys in `on_*_key`, read them in `draw_scene`. We *force* this pattern — no `global` keyword, no top-level student variables. |
+| 3 | Persistence between events | **Plain global variables** in an editable Setup section, e.g. `x = 10`, `y = 10`. Students write `x -= 1` directly in handlers; the harness auto-injects `global x, y, …` at the top of every wrapped function body so they don't hit Python's scoping trap. The `use_canvas(GRID20)` line stays locked above the editable preamble. (Initial design used a `state` dict to side-step scoping; reverted because dictionaries weren't taught yet and the indexing syntax `state['x']` added more concepts than it saved.) |
 | 4 | Validation strictness | Per-rule knobs (`exact`, `anyColor`) so we tighten the hello-world corners task and loosen creative ones. `function_runs_clean` passes on `pass`. |
 | 5 | On-disk parsing | `ast` walk of top-level `FunctionDef`s. Missing functions → backfill from `starterBody`. Unknown top-level code → read-only "Extras" panel, preserved on save. |
 | 6 | Replay-while-typing | **Off by default; deferred past v1.** Big "Run Project" button does an instant flush. |
