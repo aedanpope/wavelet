@@ -378,6 +378,20 @@ body {
     gap: 8px;
     flex-wrap: wrap;
     justify-content: flex-end;
+    align-items: center;
+}
+
+.current-file {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.85rem;
+    font-style: italic;
+    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .worksheet-info h1 {

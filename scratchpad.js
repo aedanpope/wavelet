@@ -6,6 +6,13 @@ let codeExecutor = null;
 let codeEditor = null;
 let inputConfigs = []; // Array of { id, name, type, placeholder }
 let tracePlayer = null;
+let currentFileHandle = null; // Set when a file is opened/saved via the File System Access API.
+
+const SUPPORTS_FSA = typeof window !== 'undefined' && 'showOpenFilePicker' in window;
+const PY_FILE_TYPE = {
+    description: 'Python file',
+    accept: { 'text/x-python': ['.py'] }
+};
 
 // TracePlayer is defined in trace-player.js, loaded before this script.
 
@@ -178,29 +185,116 @@ function setupEventListeners() {
     document.getElementById('add-input-btn').addEventListener('click', addInput);
 
     // Save / Open file
-    document.getElementById('save-file-btn').addEventListener('click', saveCodeToFile);
-    document.getElementById('open-file-btn').addEventListener('click', () => {
-        document.getElementById('file-input').click();
+    document.getElementById('save-file-btn').addEventListener('click', saveCode);
+    document.getElementById('open-file-btn').addEventListener('click', openCode);
+    document.getElementById('file-input').addEventListener('change', handleFallbackFileInput);
+
+    // Ctrl/Cmd+S — students reach for this from Word; intercept the browser's "save page" default.
+    document.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 's') {
+            e.preventDefault();
+            saveCode();
+        }
     });
-    document.getElementById('file-input').addEventListener('change', loadCodeFromFile);
 }
 
 // ── Save / Open File ────────────────────────────────────────────────────────
+// Two paths:
+//   - File System Access API (Chromium incl. Edge/Chrome on Windows): true round-trip.
+//     Open returns a handle; subsequent Save overwrites that file in place.
+//   - Fallback (Safari/iPad, Firefox): hidden <input type="file"> for open, prompt-named
+//     blob download for save.
 
-function saveCodeToFile() {
-    const code = codeEditor ? codeEditor.getValue() : '';
-    const blob = new Blob([code], { type: 'text/x-python;charset=utf-8' });
+async function openCode() {
+    if (SUPPORTS_FSA) {
+        await openCodeViaFSA();
+    } else {
+        document.getElementById('file-input').click();
+    }
+}
+
+async function saveCode() {
+    if (SUPPORTS_FSA) {
+        await saveCodeViaFSA();
+    } else {
+        saveCodeViaDownload();
+    }
+}
+
+async function openCodeViaFSA() {
+    let handle;
+    try {
+        [handle] = await window.showOpenFilePicker({
+            types: [PY_FILE_TYPE],
+            multiple: false
+        });
+    } catch (err) {
+        if (err.name === 'AbortError') return; // user cancelled — silent
+        alert('Could not open the file picker.');
+        return;
+    }
+
+    const existing = codeEditor ? codeEditor.getValue().trim() : '';
+    if (existing && !confirm('Replace your current code with the contents of this file?')) return;
+
+    try {
+        const file = await handle.getFile();
+        const text = await file.text();
+        codeEditor.setValue(text);
+        currentFileHandle = handle;
+        updateCurrentFileLabel();
+        saveState();
+    } catch (err) {
+        alert('Could not read that file. Try again or pick a different file.');
+    }
+}
+
+async function saveCodeViaFSA() {
+    let handle = currentFileHandle;
+    if (!handle) {
+        try {
+            handle = await window.showSaveFilePicker({
+                suggestedName: 'scratchpad.py',
+                types: [PY_FILE_TYPE]
+            });
+        } catch (err) {
+            if (err.name === 'AbortError') return;
+            alert('Could not open the save dialog.');
+            return;
+        }
+    }
+
+    try {
+        const writable = await handle.createWritable();
+        await writable.write(codeEditor.getValue());
+        await writable.close();
+        currentFileHandle = handle;
+        updateCurrentFileLabel();
+    } catch (err) {
+        alert('Could not save that file: ' + (err.message || err.name));
+    }
+}
+
+function saveCodeViaDownload() {
+    const suggested = (currentFileHandle && currentFileHandle.name) || 'scratchpad.py';
+    let name = prompt('Save as:', suggested);
+    if (name === null) return; // user cancelled
+    name = name.trim();
+    if (!name) name = 'scratchpad.py';
+    if (!/\.[a-z0-9]+$/i.test(name)) name += '.py';
+
+    const blob = new Blob([codeEditor.getValue()], { type: 'text/x-python;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'scratchpad.py';
+    a.download = name;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 }
 
-function loadCodeFromFile(e) {
+function handleFallbackFileInput(e) {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
 
@@ -213,6 +307,9 @@ function loadCodeFromFile(e) {
     const reader = new FileReader();
     reader.onload = ev => {
         codeEditor.setValue(ev.target.result || '');
+        // Fallback path can't write back to the chosen file — track only the name for the next download prompt.
+        currentFileHandle = { name: file.name };
+        updateCurrentFileLabel();
         saveState();
     };
     reader.onerror = () => alert('Could not read that file. Try again or pick a different file.');
@@ -220,6 +317,18 @@ function loadCodeFromFile(e) {
 
     // Reset so picking the same file again still fires `change`.
     e.target.value = '';
+}
+
+function updateCurrentFileLabel() {
+    const label = document.getElementById('current-file');
+    if (!label) return;
+    if (currentFileHandle && currentFileHandle.name) {
+        label.textContent = currentFileHandle.name;
+        label.style.display = '';
+    } else {
+        label.textContent = '';
+        label.style.display = 'none';
+    }
 }
 
 function applyEditorHeight() {
