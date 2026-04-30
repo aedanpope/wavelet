@@ -12,7 +12,7 @@
     },
     {
       "title": "Your first function",
-      "content": "<p>This program <strong>defines</strong> a function called <code>say_hi</code> and then <strong>calls</strong> it. Look at the two parts:</p><ul><li><code>def say_hi():</code> creates the tool</li><li><code>say_hi()</code> uses the tool</li></ul><p>The code under <code>def</code> only runs when you <em>call</em> the function with <code>say_hi()</code>.</p>",
+      "content": "<p>This program <strong>defines</strong> a function called <code>say_hi</code> and then <strong>calls</strong> it. Look at the two parts:</p><ul><li><code>def say_hi():</code> creates the function</li><li><code>say_hi()</code> uses the function</li></ul><p>The code under <code>def</code> only runs when you <em>call</em> the function with <code>say_hi()</code>.</p>",
       "task": "Run the code and watch what happens.",
       "starterCode": "def say_hi():\n  print(\"Hi there!\")\n\nsay_hi()",
       "hint": "Just press 'Run Code'. The function prints once because it's called once.",
