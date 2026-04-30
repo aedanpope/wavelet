@@ -179,7 +179,7 @@ function renderTaskCard(task, idx) {
 
     const defLine = document.createElement('div');
     defLine.className = 'task-def-line';
-    defLine.innerHTML = `<span class="kw">def</span> <span class="fn">${escapeHtml(task.function)}</span>():`;
+    defLine.innerHTML = `<span class="def-lineno" data-lineno></span><span class="def-content"><span class="kw">def</span> <span class="fn">${escapeHtml(task.function)}</span>():</span>`;
     editorFrame.appendChild(defLine);
 
     const editorEl = document.createElement('div');
@@ -198,6 +198,8 @@ function renderTaskCard(task, idx) {
     taskEditors.set(task.id, {
         cm: null,
         editorEl,
+        defLineEl: defLine,
+        defLinenoEl: defLine.querySelector('[data-lineno]'),
         statusEl: header.querySelector('[data-status]'),
         errorEl: taskError,
         task,
@@ -224,8 +226,10 @@ function initTaskEditors() {
         });
         setupEditor.setSize('100%', '7em');
         setupEditor.on('change', (_cm, change) => {
-            if (change.origin === 'setValue') return;
-            markDirty();
+            // setValue (programmatic load) shouldn't dirty the buffer, but
+            // line offsets always need to follow line-count changes.
+            if (change.origin !== 'setValue') markDirty();
+            recomputeLineOffsets();
         });
     }
 
@@ -246,29 +250,69 @@ function initTaskEditors() {
         const heightLines = task.editorHeight || 6;
         cm.setSize('100%', `${heightLines * 1.5}em`);
         cm.on('change', (_cm, change) => {
-            // Programmatic loads (openProject) come through with origin 'setValue'
-            // and shouldn't mark the buffer dirty.
-            if (change.origin === 'setValue') return;
-            markDirty();
+            // Programmatic loads (openProject) come through with origin
+            // 'setValue' and shouldn't mark the buffer dirty — but line
+            // offsets always need to follow line-count changes either way.
+            if (change.origin !== 'setValue') markDirty();
+            recomputeLineOffsets();
         });
 
-        // Keep the locked `def` line aligned with the editor's line-number
-        // gutter — without this the def starts at column 0 while the body
-        // content sits right of the gutter, and the visual indent reads as
-        // wrong-by-30px. Re-sync on every change because the gutter widens
-        // when line counts cross a digit boundary (9 → 10, 99 → 100).
-        const defLineEl = editorEl.parentElement &&
-            editorEl.parentElement.querySelector('.task-def-line');
-        if (defLineEl) {
-            const sync = () => {
-                const gutter = cm.getGutterElement();
-                if (gutter) defLineEl.style.paddingLeft = gutter.offsetWidth + 'px';
-            };
-            sync();
-            cm.on('change', sync);
-        }
-
         entry.cm = cm;
+    }
+
+    // Initial sync after every editor exists.
+    recomputeLineOffsets();
+}
+
+// ─── Continuous line numbers ────────────────────────────────────────────
+// Each editor is a slice of the assembled program. firstLineNumber on each
+// CodeMirror is set so the displayed numbers match the line numbers Pyodide
+// reports in tracebacks. Recomputed whenever any editor's line count changes
+// (typing, loading a file, etc.) so insertions ripple downstream.
+
+function countLines(s) {
+    if (!s) return 0;
+    return s.split('\n').length;
+}
+
+function recomputeLineOffsets() {
+    if (!setupEditor) return;
+    let line = 1;
+
+    // Setup editor — first thing in the assembled program now that
+    // use_canvas() runs as a separate JS-driven step.
+    setupEditor.setOption('firstLineNumber', line);
+    line += setupEditor.lineCount();
+    line += 1; // blank separator emitted by the assembler
+
+    // Each task: one line for `def name():`, then the body lines.
+    for (const task of projectDef.tasks) {
+        const entry = taskEditors.get(task.id);
+        if (!entry || !entry.cm) continue;
+        if (entry.defLinenoEl) entry.defLinenoEl.textContent = String(line);
+        line += 1; // the def line itself
+        entry.cm.setOption('firstLineNumber', line);
+        // Body line count: empty body still emits `pass` from the assembler,
+        // so use max(1, count).
+        const bodyLines = Math.max(1, entry.cm.lineCount());
+        line += bodyLines;
+        line += 1; // blank separator
+    }
+
+    // Re-sync def line padding to the freshly-rendered gutter widths so the
+    // def number column lines up with the editor's line-number column.
+    syncDefLinePaddings();
+}
+
+// The CodeMirror gutter width depends on the digits of firstLineNumber +
+// lineCount, so it can shift when offsets change. Pad each def line to match.
+function syncDefLinePaddings() {
+    for (const entry of taskEditors.values()) {
+        if (!entry.cm || !entry.defLineEl) continue;
+        const gutter = entry.cm.getGutterElement();
+        if (!gutter) continue;
+        // Use the gutter's measured width so def `1` lines up with body `1`.
+        entry.defLineEl.style.setProperty('--gutter-width', gutter.offsetWidth + 'px');
     }
 }
 
@@ -292,6 +336,18 @@ async function runProject() {
     await executor.resetPythonEnvironment(0);
     setupCanvasFunctions(executor.getPyodide(), 0);
     const py = executor.getPyodide();
+
+    // 0. Locked preamble — kept off the line-numbered surface students see, so
+    //    line numbers in the editors match the running program. Failures here
+    //    are project config bugs, not student errors.
+    for (const line of (projectDef.lockedPreamble || [])) {
+        try {
+            await py.runPythonAsync(line);
+        } catch (err) {
+            displayGlobalError(`Couldn't initialise the canvas: ${extractPythonError(err)}`);
+            return finalizeRunStatus();
+        }
+    }
 
     // 1. Setup preamble. A failure here is the student's variables.
     if (!preambleSyntaxErr && seg.preambleSrc.trim()) {
@@ -547,28 +603,20 @@ function scrollToFirstError() {
 function assembleProgramSegmented() {
     const taskErrors = new Map();
 
-    // Preamble: locked (we own) + editable (student globals).
-    const preambleLines = [];
-    for (const line of (projectDef.lockedPreamble || [])) preambleLines.push(line);
+    // Preamble: only the editable section. The locked preamble (use_canvas)
+    // is invoked separately from JS during runProject so it doesn't take a
+    // line number that students can't see — the visible editor line numbers
+    // match the running program's line numbers.
     const editablePreamble = setupEditor ? setupEditor.getValue() : (projectDef.editablePreamble || '');
-    if (editablePreamble.trim()) preambleLines.push(editablePreamble.replace(/\s+$/g, ''));
-    const preambleSrc = preambleLines.join('\n');
-
-    // Auto-inject `global` so students can write `x -= 1` inside a function
-    // without hitting Python's UnboundLocalError. We inject only the
-    // candidate names that are *assigned* in this specific function body
-    // (Assign/AugAssign/AnnAssign targets) — never just because a name is
-    // referenced, and `For.target` is excluded so `for x in range(20)` doesn't
-    // clobber the global.
-    const candidateGlobals = scanGlobals(editablePreamble);
+    const preambleSrc = editablePreamble.trim() ? editablePreamble.replace(/\s+$/g, '') : '';
 
     const fnLines = [];
     for (const task of projectDef.tasks) {
         const entry = taskEditors.get(task.id);
         const rawBody = entry && entry.cm ? entry.cm.getValue() : (task.starterBody || '');
 
-        const wrappedNoGlobals = wrapAsFunction(task.function, rawBody, null);
-        const compileError = checkSyntax(wrappedNoGlobals);
+        const wrapped = wrapAsFunction(task.function, rawBody);
+        const compileError = checkSyntax(wrapped);
         if (compileError) {
             taskErrors.set(task.id, compileError);
             fnLines.push(`def ${task.function}():`);
@@ -577,9 +625,7 @@ function assembleProgramSegmented() {
             continue;
         }
 
-        const assignedHere = scanAssignedGlobals(wrappedNoGlobals, candidateGlobals);
-        const globalDecl = assignedHere.length ? `global ${assignedHere.join(', ')}` : null;
-        fnLines.push(wrapAsFunction(task.function, rawBody, globalDecl));
+        fnLines.push(wrapped);
         fnLines.push('');
     }
     const fnDefsSrc = fnLines.join('\n');
@@ -599,111 +645,11 @@ function assembleProgram() {
     return { code: lines.join('\n'), taskErrors: seg.taskErrors };
 }
 
-function wrapAsFunction(name, body, globalDecl) {
+function wrapAsFunction(name, body) {
     const trimmed = (body || '').replace(/\s+$/g, '');
-    const bodyLines = [];
-    if (globalDecl) bodyLines.push(globalDecl);
-    if (trimmed === '') {
-        bodyLines.push('pass');
-    } else {
-        for (const line of trimmed.split('\n')) bodyLines.push(line);
-    }
+    const bodyLines = trimmed === '' ? ['pass'] : trimmed.split('\n');
     const indented = bodyLines.map(l => BODY_INDENT + l).join('\n');
     return `def ${name}():\n${indented}`;
-}
-
-// Given a wrapped `def fn():\n    body…` source and a list of candidate names
-// (the global candidates from the preamble), return the subset that are
-// actually assigned to inside the function body. We deliberately ignore
-// `For.target` so a `for x in range(20)` loop variable stays local even when
-// `x` is a global elsewhere — otherwise the loop clobbers the global.
-function scanAssignedGlobals(wrappedSrc, candidates) {
-    if (!candidates || candidates.length === 0) return [];
-    const py = executor.getPyodide();
-    py.globals.set('_wavelet_fn_src', wrappedSrc);
-    py.globals.set('_wavelet_fn_candidates', py.toPy(candidates));
-    try {
-        py.runPython(`
-import ast as _ast
-def _wavelet_scan_assigned():
-    src = _wavelet_fn_src
-    candidates = list(_wavelet_fn_candidates)
-    try:
-        tree = _ast.parse(src)
-    except SyntaxError:
-        return []
-    if not tree.body or not isinstance(tree.body[0], _ast.FunctionDef):
-        return []
-    fn = tree.body[0]
-    assigned = set()
-    def visit_target(node):
-        if isinstance(node, _ast.Name):
-            assigned.add(node.id)
-        elif isinstance(node, (_ast.Tuple, _ast.List)):
-            for el in node.elts:
-                visit_target(el)
-    for node in _ast.walk(fn):
-        # Note: For.target is intentionally NOT counted — loop variables
-        # should remain local even when their name matches a global.
-        if isinstance(node, _ast.Assign):
-            for tgt in node.targets:
-                visit_target(tgt)
-        elif isinstance(node, (_ast.AugAssign, _ast.AnnAssign)):
-            visit_target(node.target)
-    return [c for c in candidates if c in assigned]
-`);
-        const fn = py.globals.get('_wavelet_scan_assigned');
-        return fn().toJs();
-    } catch (err) {
-        console.warn('scanAssignedGlobals failed:', err);
-        return [];
-    } finally {
-        py.globals.delete('_wavelet_fn_src');
-        py.globals.delete('_wavelet_fn_candidates');
-    }
-}
-
-// Parse the preamble source via Python's ast and return the names assigned
-// at module level — these become candidates for the auto-injected `global`.
-function scanGlobals(src) {
-    if (!src || !src.trim()) return [];
-    const py = executor.getPyodide();
-    py.globals.set('_wavelet_preamble_src', src);
-    try {
-        py.runPython(`
-import ast as _ast
-def _wavelet_scan_globals(src):
-    try:
-        tree = _ast.parse(src)
-    except SyntaxError:
-        return []
-    names = []
-    seen = set()
-    def visit_target(node):
-        if isinstance(node, _ast.Name):
-            if node.id not in seen:
-                seen.add(node.id)
-                names.append(node.id)
-        elif isinstance(node, (_ast.Tuple, _ast.List)):
-            for el in node.elts:
-                visit_target(el)
-    for node in tree.body:
-        if isinstance(node, _ast.Assign):
-            for tgt in node.targets:
-                visit_target(tgt)
-        elif isinstance(node, (_ast.AugAssign, _ast.AnnAssign)):
-            visit_target(node.target)
-    return names
-`);
-        const fn = py.globals.get('_wavelet_scan_globals');
-        const result = fn(src);
-        return result.toJs();
-    } catch (err) {
-        console.warn('scanGlobals failed:', err);
-        return [];
-    } finally {
-        py.globals.delete('_wavelet_preamble_src');
-    }
 }
 
 function checkSyntax(src) {
@@ -883,27 +829,11 @@ function assembleFileForDisk() {
     }
     lines.push('');
 
-    // Saved file is plain runnable Python (paste into IDLE etc.) — that means
-    // any `x -= 1` inside a function won't work without `global x`. Inject
-    // those declarations here too so the on-disk file matches what the
-    // harness runs in the browser. Same per-function scoping as the
-    // run-time assembler: only inject for names actually assigned in each
-    // body, not for names that just happen to be referenced.
-    const candidateGlobals = scanGlobals(editablePreamble);
-
     projectDef.tasks.forEach((task, idx) => {
         const entry = taskEditors.get(task.id);
         const body = entry && entry.cm ? entry.cm.getValue() : (task.starterBody || '');
-        const wrappedNoGlobals = wrapAsFunction(task.function, body, null);
-        // If the body has a syntax error we can't AST-scan it; fall back to
-        // no global decl. The harness already surfaces the error at run time.
-        let globalDecl = null;
-        if (!checkSyntax(wrappedNoGlobals)) {
-            const assigned = scanAssignedGlobals(wrappedNoGlobals, candidateGlobals);
-            globalDecl = assigned.length ? `global ${assigned.join(', ')}` : null;
-        }
         lines.push(`# Task ${idx + 1}: ${task.title}`);
-        lines.push(wrapAsFunction(task.function, body, globalDecl));
+        lines.push(wrapAsFunction(task.function, body));
         lines.push('');
     });
 
@@ -1089,24 +1019,7 @@ function parseProjectFile(src, knownNames, lockedSet) {
     py.globals.set('_wavelet_locked', py.toPy([...lockedSet]));
     try {
         py.runPython(`
-import ast, textwrap, re
-
-_GLOBAL_RE = re.compile(r'^\\s*global\\s+[A-Za-z_][A-Za-z0-9_,\\s]*$')
-
-def _wavelet_strip_injected_global(body_src):
-    # Drop a leading 'global ...' line if present — the harness re-injects
-    # it on the next Run/Save so we don't want it to pile up in the editor.
-    lines = body_src.split('\\n')
-    # Skip leading blank lines.
-    i = 0
-    while i < len(lines) and lines[i].strip() == '':
-        i += 1
-    if i < len(lines) and _GLOBAL_RE.match(lines[i]):
-        del lines[i]
-        # Also drop a single blank line right after if it's there, to keep things tidy.
-        if i < len(lines) and lines[i].strip() == '':
-            del lines[i]
-    return '\\n'.join(lines)
+import ast, textwrap
 
 def _wavelet_parse_project():
     src = _wavelet_src
@@ -1132,7 +1045,6 @@ def _wavelet_parse_project():
         if isinstance(node, ast.FunctionDef) and node.name in known:
             lines = seg.split('\\n')
             body = textwrap.dedent('\\n'.join(lines[1:]))
-            body = _wavelet_strip_injected_global(body)
             bodies[node.name] = body.rstrip() + '\\n' if body.strip() else ''
         elif stripped in locked:
             continue  # we own this line, regenerated on save

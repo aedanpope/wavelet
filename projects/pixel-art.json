@@ -88,9 +88,9 @@
       "id": "left-key",
       "title": "Left button: do something cool",
       "function": "on_left_key",
-      "guidance": "<p>Runs when the player clicks the <strong>&larr;</strong> button. The simplest thing: move the player one cell to the left.</p><p><code>player_x -= 1</code> subtracts one from <code>player_x</code>. <code>draw_scene()</code> will run again automatically afterwards, so the player visibly moves.</p><p>Want to do something else cool instead? Paint a streak across the canvas, change a colour somewhere &mdash; up to you.</p>",
-      "starterBody": "player_x -= 1\n",
-      "editorHeight": 5,
+      "guidance": "<p>Runs when the player clicks the <strong>&larr;</strong> button. The simplest thing: move the player one cell to the left.</p><p><code>player_x -= 1</code> subtracts one from <code>player_x</code>. <code>draw_scene()</code> will run again automatically afterwards, so the player visibly moves.</p><p><strong>Why the <code>global</code> line?</strong> Without it, Python thinks <code>player_x</code> is a brand-new variable inside this function. <code>global player_x</code> tells Python &ldquo;the <code>player_x</code> I mean is the one from Setup &mdash; change <em>that</em> one&rdquo;. You'll need a <code>global</code> line at the top of any function that <em>changes</em> a Setup variable (just reading is fine without it).</p><p>Want to do something else cool instead? Paint a streak across the canvas, change a colour somewhere &mdash; up to you.</p>",
+      "starterBody": "global player_x\nplayer_x -= 1\n",
+      "editorHeight": 6,
       "validation": {
         "rules": [
           { "type": "function_runs_clean" }
@@ -102,8 +102,8 @@
       "title": "Right button: do something cool",
       "function": "on_right_key",
       "guidance": "<p>Runs when the player clicks the <strong>&rarr;</strong> button. Mirror of left &mdash; or do something completely different.</p>",
-      "starterBody": "player_x += 1\n",
-      "editorHeight": 5,
+      "starterBody": "global player_x\nplayer_x += 1\n",
+      "editorHeight": 6,
       "validation": {
         "rules": [
           { "type": "function_runs_clean" }
@@ -115,8 +115,8 @@
       "title": "Up button: do something cool",
       "function": "on_up_key",
       "guidance": "<p>Runs when the player clicks the <strong>&uarr;</strong> button. Remember: in our coordinate system, <em>up</em> means a bigger <code>player_y</code>.</p>",
-      "starterBody": "player_y += 1\n",
-      "editorHeight": 5,
+      "starterBody": "global player_y\nplayer_y += 1\n",
+      "editorHeight": 6,
       "validation": {
         "rules": [
           { "type": "function_runs_clean" }
@@ -128,8 +128,8 @@
       "title": "Down button: do something cool",
       "function": "on_down_key",
       "guidance": "<p>Runs when the player clicks the <strong>&darr;</strong> button. Down means a smaller <code>player_y</code>.</p>",
-      "starterBody": "player_y -= 1\n",
-      "editorHeight": 5,
+      "starterBody": "global player_y\nplayer_y -= 1\n",
+      "editorHeight": 6,
       "validation": {
         "rules": [
           { "type": "function_runs_clean" }
