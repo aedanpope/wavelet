@@ -54,7 +54,7 @@
       "validation": {
         "rules": [
           {"type": "code_contains", "pattern": "def cheer", "description": "Define a function called cheer"},
-          {"type": "code_contains", "pattern": "cheer()", "description": "Call the function with cheer()"},
+          {"type": "ast_has_function_call", "function": "cheer", "description": "Call your function by writing cheer() on its own line"},
           {"type": "output_contains", "pattern": "Hooray", "description": "The function should print Hooray!"}
         ]
       }
