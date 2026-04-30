@@ -260,7 +260,14 @@ function initTaskEditors() {
         entry.cm = cm;
     }
 
-    // Initial sync after every editor exists.
+    // Force a layout pass so getGutterElement().offsetWidth has the real width
+    // by the time we measure it. Without this, the first sync runs before the
+    // editor has rendered and the def-line column comes out narrower than the
+    // editor's gutter.
+    if (setupEditor) setupEditor.refresh();
+    for (const entry of taskEditors.values()) {
+        if (entry.cm) entry.cm.refresh();
+    }
     recomputeLineOffsets();
 }
 
@@ -299,9 +306,10 @@ function recomputeLineOffsets() {
         line += 1; // blank separator
     }
 
-    // Re-sync def line padding to the freshly-rendered gutter widths so the
-    // def number column lines up with the editor's line-number column.
-    syncDefLinePaddings();
+    // Defer the gutter measurement to the next frame. CodeMirror's gutter
+    // re-renders asynchronously when firstLineNumber changes (the digit count
+    // can shift), so measuring synchronously would catch the stale width.
+    requestAnimationFrame(syncDefLinePaddings);
 }
 
 // The CodeMirror gutter width depends on the digits of firstLineNumber +
@@ -311,8 +319,10 @@ function syncDefLinePaddings() {
         if (!entry.cm || !entry.defLineEl) continue;
         const gutter = entry.cm.getGutterElement();
         if (!gutter) continue;
-        // Use the gutter's measured width so def `1` lines up with body `1`.
-        entry.defLineEl.style.setProperty('--gutter-width', gutter.offsetWidth + 'px');
+        const width = gutter.offsetWidth;
+        if (width > 0) {
+            entry.defLineEl.style.setProperty('--gutter-width', width + 'px');
+        }
     }
 }
 
@@ -403,15 +413,26 @@ async function runProject() {
     finalizeRunStatus();
 }
 
-// Pyodide's err.message is a multi-line traceback. The student-facing line is
-// the last "ErrorType: message" line — the rest is implementation detail.
+// Pyodide's err.message is a multi-line traceback. Pull out the last
+// "ErrorType: message" line as the student-facing payload, and prefix it with
+// the deepest "line N" reference from the traceback if there is one — so a
+// SyntaxError on line 4 reads as "Line 4: SyntaxError: invalid syntax".
 function extractPythonError(err) {
     const msg = (err && err.message) ? err.message : String(err);
     const lines = msg.split('\n').map(s => s.trim()).filter(Boolean);
-    for (let i = lines.length - 1; i >= 0; i--) {
-        if (/^[A-Z][A-Za-z]*(Error|Exception|Warning):/.test(lines[i])) return lines[i];
+    let lineNo = null;
+    for (const ln of lines) {
+        const m = ln.match(/line\s+(\d+)/i);
+        if (m) lineNo = parseInt(m[1], 10);
     }
-    return lines[lines.length - 1] || msg;
+    let core = lines[lines.length - 1] || msg;
+    for (let i = lines.length - 1; i >= 0; i--) {
+        if (/^[A-Z][A-Za-z]*(Error|Exception|Warning):/.test(lines[i])) {
+            core = lines[i];
+            break;
+        }
+    }
+    return lineNo ? `Line ${lineNo}: ${core}` : core;
 }
 
 async function installAttributionHelper() {
@@ -421,27 +442,33 @@ async function installAttributionHelper() {
     py.runPython(`
 def _wavelet_call_safely(fn_name):
     # Walks the exception traceback to find the deepest frame whose function
-    # is one of the project's tasks. That's where the bug lives.
+    # is one of the project's tasks. That's where the bug lives. Captures the
+    # line number too so the message can point students at the exact line.
     known = set(_wavelet_known_names)
     fn = globals().get(fn_name)
     if not callable(fn):
         return {'ok': False,
                 'error_msg': f"'{fn_name}' is not defined yet",
-                'in_function': fn_name}
+                'in_function': fn_name,
+                'line': None}
     try:
         fn()
-        return {'ok': True, 'in_function': None, 'error_msg': None}
+        return {'ok': True, 'in_function': None, 'error_msg': None, 'line': None}
     except Exception as e:
         deepest = fn_name
+        deepest_line = None
         tb = e.__traceback__
         while tb is not None:
             frame_name = tb.tb_frame.f_code.co_name
             if frame_name in known:
                 deepest = frame_name
+                deepest_line = tb.tb_lineno
             tb = tb.tb_next
+        prefix = f'Line {deepest_line}: ' if deepest_line else ''
         return {'ok': False,
-                'error_msg': f'{type(e).__name__}: {e}',
-                'in_function': deepest}
+                'error_msg': f'{prefix}{type(e).__name__}: {e}',
+                'in_function': deepest,
+                'line': deepest_line}
 `);
 }
 

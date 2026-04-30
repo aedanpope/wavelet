@@ -2151,12 +2151,15 @@ code {
     padding: 4px 0;
 }
 .task-def-line .def-lineno {
-    flex: 0 0 var(--gutter-width, 30px);
+    /* Mirror CodeMirror's .CodeMirror-linenumber so the column lines up with
+       the editor's gutter even before JS has measured the gutter width. */
     box-sizing: border-box;
-    padding: 0 3px 0 5px;          /* match CodeMirror's .CodeMirror-linenumber */
+    min-width: var(--gutter-width, 28px);
+    padding: 0 3px 0 5px;
     text-align: right;
     color: #999;                   /* CodeMirror default linenumber colour */
     font-size: 0.95rem;
+    font-family: 'Source Code Pro', 'Menlo', 'Consolas', 'DejaVu Sans Mono', monospace;
 }
 .task-def-line .def-content { padding-left: 4px; }
 .task-def-line .kw { color: #f92672; }   /* monokai keyword (def) */
