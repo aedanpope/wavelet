@@ -1,126 +1,397 @@
 {
   "id": "worksheet-7",
-  "title": "Worksheet 7: Drawing with Code",
-  "description": "Learn to create visual patterns by drawing on a grid using coordinates.",
+  "title": "Worksheet 7: Functions",
+  "description": "Make your own Python tools using def, parameters, and return — then put them together.",
   "problems": [
     {
-      "title": "Your First Pixel",
-      "content": "Welcome to grid drawing! You can color cells on a grid using the <code>draw()</code> function. The grid uses coordinates like a graph in math class: (x, y). The bottom-left corner is (0, 0).\n\nTry running this code to see a single red cell appear!",
-      "task": "Run the code to draw a red cell at position (1, 1).",
-      "starterCode": "use_canvas(GRID3)\n\n# Draw a red cell in the center\ndraw(1, 1, 'red')",
-      "hint": "Just click 'Run Code' to see the cell appear on the canvas above!",
+      "type": "concept",
+      "icon": "🔧",
+      "title": "Python comes with tools — today you make new ones",
+      "content": "<p>You already use Python's built-in tools all the time:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>print(\"hello\")\nlen([1, 2, 3])\nrange(5)</pre><p>Today you learn how to make <strong>your own tools</strong>. Once you've made one, you can use it as many times as you like — just like <code>print</code>.</p><p>The keyword that makes a new tool is <code>def</code>. It stands for <em>define</em>.</p>",
+      "footer": "A function is a named piece of code you can run whenever you want."
+    },
+    {
+      "title": "Your first function",
+      "content": "<p>This program <strong>defines</strong> a function called <code>say_hi</code> and then <strong>calls</strong> it. Look at the two parts:</p><ul><li><code>def say_hi():</code> creates the tool</li><li><code>say_hi()</code> uses the tool</li></ul><p>The code under <code>def</code> only runs when you <em>call</em> the function with <code>say_hi()</code>.</p>",
+      "task": "Run the code and watch what happens.",
+      "starterCode": "def say_hi():\n  print(\"Hi there!\")\n\nsay_hi()",
+      "hint": "Just press 'Run Code'. The function prints once because it's called once.",
+      "codeHeight": 5,
+      "difficulty": "easy",
+      "validation": {
+        "rules": [
+          {"type": "code_contains", "pattern": "def say_hi", "description": "Keep the def say_hi() line"},
+          {"type": "code_contains", "pattern": "say_hi()", "description": "Call the function with say_hi()"},
+          {"type": "output_not_empty"}
+        ]
+      }
+    },
+    {
+      "title": "Call it more than once",
+      "content": "<p>Once a function is defined, you can call it as many times as you like. Each call runs the body again.</p>",
+      "task": "Add two more <code>say_hi()</code> calls so the message prints three times in total.",
+      "starterCode": "def say_hi():\n  print(\"Hi there!\")\n\nsay_hi()\n",
+      "hint": "Just write <code>say_hi()</code> on two new lines below.",
       "codeHeight": 6,
-      "canvas": true,
+      "difficulty": "easy",
       "validation": {
         "rules": [
           {
             "type": "solution_code",
-            "solutionCode": "use_canvas(GRID3)\ndraw(1, 1, 'red')"
+            "solutionCode": "def say_hi():\n  print(\"Hi there!\")\n\nsay_hi()\nsay_hi()\nsay_hi()"
           }
         ]
       }
     },
     {
-      "title": "Draw a Horizontal Line",
-      "content": "Now let's draw multiple cells to create a line. A horizontal line goes from left to right at the same y-coordinate.\n\nThe grid is 3×3, so the coordinates go from (0, 0) to (2, 2). Let's draw a black line across the middle row at y=1.",
-      "task": "Draw a black horizontal line at y=1 by coloring cells (0, 1), (1, 1), and (2, 1).",
-      "starterCode": "use_canvas(GRID3)\n\n# Draw three cells to make a horizontal line\n# draw(x, y) draws black by default\n\n",
-      "hint": "You need three draw() calls: draw(0, 1), draw(1, 1), and draw(2, 1)",
+      "title": "Write your own function",
+      "content": "<p>Your turn. Make a function called <code>cheer</code> that prints <code>\"Hooray!\"</code>, then call it.</p>",
+      "task": "Define <code>cheer</code> and call it once.",
+      "starterCode": "# Define cheer here\n\n\n# Call it here\n",
+      "hint": "Write <code>def cheer():</code>, then indent <code>print(\"Hooray!\")</code> on the next line. Below the function, write <code>cheer()</code> to call it.",
       "codeHeight": 6,
-      "canvas": true,
+      "difficulty": "easy",
+      "validation": {
+        "rules": [
+          {"type": "code_contains", "pattern": "def cheer", "description": "Define a function called cheer"},
+          {"type": "code_contains", "pattern": "cheer()", "description": "Call the function with cheer()"},
+          {"type": "output_contains", "pattern": "Hooray", "description": "The function should print Hooray!"}
+        ]
+      }
+    },
+    {
+      "type": "concept",
+      "icon": "📥",
+      "title": "Parameters — your tool takes an input",
+      "content": "<p>Just like <code>print</code> needs to know <em>what</em> to print, your tool can take an input too. The input goes in the brackets after the function name:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>def greet(name):\n  print(\"Hi, \" + name)\n\ngreet(\"Ali\")    # Hi, Ali\ngreet(\"Sam\")    # Hi, Sam</pre><p>The word inside the brackets — here, <code>name</code> — is called a <strong>parameter</strong>. When you call the function, the value you pass becomes that parameter inside the body.</p>",
+      "footer": "Same function. Different inputs. Different output."
+    },
+    {
+      "title": "Greet two friends",
+      "content": "<p>Look at how <code>greet</code> uses the parameter <code>name</code>. Each call sends a different value in.</p>",
+      "task": "Run the code and watch how the same function produces two different greetings.",
+      "starterCode": "def greet(name):\n  print(f\"Hi, {name}!\")\n\ngreet(\"Ali\")\ngreet(\"Sam\")",
+      "hint": "Press Run. Notice the function prints twice — once for each call.",
+      "codeHeight": 6,
+      "difficulty": "easy",
       "validation": {
         "rules": [
           {
             "type": "solution_code",
-            "solutionCode": "use_canvas(GRID3)\ndraw(0, 1)\ndraw(1, 1)\ndraw(2, 1)"
+            "solutionCode": "def greet(name):\n  print(f\"Hi, {name}!\")\n\ngreet(\"Ali\")\ngreet(\"Sam\")"
           }
         ]
       }
     },
     {
-      "title": "Color the Corners",
-      "content": "Let's make a pattern by coloring the four corner cells of the grid. The corners are at coordinates: (0, 0), (2, 0), (0, 2), and (2, 2).\n\nYou can use different colors! Try 'blue', 'green', 'yellow', 'purple', or any color name you know.",
-      "task": "Draw blue cells in all four corners of the grid.",
-      "starterCode": "use_canvas(GRID3)\n\n# Color all four corners blue\n\n",
-      "hint": "You need four draw() calls for the corners: (0, 0), (2, 0), (0, 2), and (2, 2)",
+      "title": "Edit farewell",
+      "content": "<p>Here's a function called <code>farewell</code>. The body says goodbye, but it's a bit boring.</p>",
+      "task": "Change the body of <code>farewell</code> so it prints <code>See you tomorrow, {name}!</code> instead. Don't change the def line or the calls.",
+      "starterCode": "def farewell(name):\n  print(f\"Bye {name}.\")\n\nfarewell(\"Ali\")\nfarewell(\"Sam\")",
+      "hint": "Change the f-string inside <code>print(...)</code> to <code>f\"See you tomorrow, {name}!\"</code>.",
       "codeHeight": 6,
-      "canvas": true,
+      "difficulty": "easy",
       "validation": {
         "rules": [
-          {
-            "type": "solution_code",
-            "solutionCode": "use_canvas(GRID3)\ndraw(0, 0, 'blue')\ndraw(2, 0, 'blue')\ndraw(0, 2, 'blue')\ndraw(2, 2, 'blue')"
-          }
+          {"type": "code_contains", "pattern": "def farewell(name):", "description": "Keep the def farewell(name): line"},
+          {"type": "output_contains", "pattern": "See you tomorrow, Ali!", "description": "Output should contain 'See you tomorrow, Ali!'"},
+          {"type": "output_contains", "pattern": "See you tomorrow, Sam!", "description": "Output should contain 'See you tomorrow, Sam!'"}
         ]
       }
     },
     {
-      "title": "Your First Loop with Drawing",
-      "content": "Now let's use a loop to draw! A loop lets us repeat actions without writing the same code over and over.\n\nWe'll use GRID100 - a much bigger canvas with 100×100 cells. Instead of drawing 100 cells one by one, we can use a loop!",
-      "task": "Use a for loop to draw a red horizontal line at y=50 across the entire width of the canvas.",
-      "starterCode": "use_canvas(GRID100)\n\n# Use a for loop to draw across x from 0 to 99\nfor x in range(100):\n  # Your draw() call here\n  ",
-      "hint": "Inside the loop, use draw(x, 50, 'red') to color each cell",
-      "codeHeight": 6,
-      "canvas": true,
-      "validation": {
-        "rules": [
-          {
-            "type": "solution_code",
-            "solutionCode": "use_canvas(GRID100)\nfor x in range(100):\n  draw(x, 50, 'red')"
-          }
-        ]
-      }
+      "type": "concept",
+      "icon": "↩️",
+      "title": "Print vs return — give back an answer",
+      "content": "<p>Some Python tools <strong>do things</strong>. Others <strong>give back an answer</strong>:</p><ul><li><code>print(\"hi\")</code> — shows <code>hi</code> on the screen. Doesn't give anything back.</li><li><code>len([1, 2, 3])</code> — gives back <code>3</code>. You can save it: <code>n = len([1, 2, 3])</code>.</li></ul><p>Your functions can do the same. Use <code>return</code> instead of <code>print</code> to give an answer back:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>def shout(text):\n  return text + \"!\"\n\nx = shout(\"hi\")    # x is now \"hi!\"\nprint(x)           # shows hi!</pre><p>The next few problems use a <strong>spec table</strong>. It calls your function with different inputs and shows what it gave back. Your job is to make every row pass.</p>",
+      "footer": "print SHOWS the answer. return GIVES IT BACK so you can use it later."
     },
     {
-      "title": "Draw a Vertical Line with a Loop",
-      "content": "Great! Now let's draw a vertical line using a loop. A vertical line has the same x-coordinate but different y-coordinates.",
-      "task": "Use a for loop to draw a blue vertical line at x=30 from top to bottom.",
-      "starterCode": "use_canvas(GRID100)\n\n# Use a for loop to draw from y=0 to y=99\n\n",
-      "hint": "Use: for y in range(100): draw(30, y, 'blue')",
+      "title": "Meet the spec table",
+      "content": "<p>Here's a function <code>loud</code> that takes some text and gives back a louder version. Look at the spec table below the editor — it shows three calls and what each one should give back.</p>",
+      "task": "Run the code. The spec table should fill in green ticks for every row.",
+      "starterCode": "def loud(text):\n  return text + \"!!!\"",
+      "hint": "Just press Run. The spec table calls <code>loud(\"hi\")</code>, <code>loud(\"yay\")</code>, and <code>loud(\"oh\")</code> and checks each return value.",
       "codeHeight": 4,
-      "canvas": true,
+      "difficulty": "easy",
       "validation": {
         "rules": [
           {
-            "type": "solution_code",
-            "solutionCode": "use_canvas(GRID100)\nfor y in range(100):\n  draw(30, y, 'blue')"
+            "type": "function_spec",
+            "functionName": "loud",
+            "cases": [
+              {"args": ["hi"], "expected": "hi!!!"},
+              {"args": ["yay"], "expected": "yay!!!"},
+              {"args": ["oh"], "expected": "oh!!!"}
+            ]
           }
         ]
       }
     },
     {
-      "title": "Create a Rainbow",
-      "content": "Now for something colorful! We can create a rainbow by drawing horizontal stripes with different colors.\n\nWe'll use a list of colors and a loop to draw multiple colored lines.",
-      "task": "Draw a rainbow with horizontal stripes at y=40, 45, 50, 55, 60, and 65 using the colors: red, orange, yellow, green, blue, purple.",
-      "starterCode": "use_canvas(GRID100)\n\ncolors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']\n\n# Loop through each color\nfor i in range(6):\n  # Calculate y position: start at 40, add i*5\n  y = 40 + i * 5\n  \n  # Draw a horizontal line at this y position\n  for x in range(100):\n    # Draw with colors[i]\n    ",
-      "hint": "Inside the inner loop, use draw(x, y, colors[i])",
-      "codeHeight": 14,
-      "canvas": true,
+      "title": "Returning a number",
+      "content": "<p>Functions can return numbers too, not just strings. Here's <code>double</code> — it gives back twice the number you pass in.</p>",
+      "task": "Run the code and watch the spec table fill in.",
+      "starterCode": "def double(n):\n  return n * 2",
+      "hint": "Press Run. The spec table calls <code>double(2)</code>, <code>double(3)</code>, <code>double(7)</code> and checks each return value.",
+      "codeHeight": 4,
+      "difficulty": "easy",
       "validation": {
         "rules": [
           {
-            "type": "solution_code",
-            "solutionCode": "use_canvas(GRID100)\ncolors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple']\nfor i in range(6):\n  y = 40 + i * 5\n  for x in range(100):\n    draw(x, y, colors[i])"
+            "type": "function_spec",
+            "functionName": "double",
+            "cases": [
+              {"args": [2], "expected": 4},
+              {"args": [3], "expected": 6},
+              {"args": [7], "expected": 14}
+            ]
           }
         ]
       }
     },
     {
-      "title": "Fill a Square",
-      "content": "Let's use nested loops to fill in a square! Nested loops let us work with both x and y at the same time.\n\nWe'll draw a 20×20 green square in the middle of the canvas.",
-      "task": "Draw a green square from (40, 40) to (59, 59) using nested loops.",
-      "starterCode": "use_canvas(GRID100)\n\n# Loop through x from 40 to 59\nfor x in range(40, 60):\n  # Loop through y from 40 to 59\n  for y in range(40, 60):\n    # Draw each cell green\n    ",
-      "hint": "Inside both loops, use draw(x, y, 'green')",
+      "title": "Turn double into square",
+      "content": "<p>You've seen <code>double(n)</code> return <code>n * 2</code>. Now make a function called <code>square</code> that returns <code>n</code> times itself: <code>n * n</code>.</p>",
+      "task": "Rename the function to <code>square</code> and change the body so the spec table goes green.",
+      "starterCode": "def double(n):\n  return n * 2",
+      "hint": "Two changes: rename <code>double</code> to <code>square</code>, and change <code>n * 2</code> to <code>n * n</code>.",
+      "codeHeight": 4,
+      "difficulty": "easy",
+      "validation": {
+        "rules": [
+          {
+            "type": "function_spec",
+            "functionName": "square",
+            "cases": [
+              {"args": [3], "expected": 9},
+              {"args": [5], "expected": 25},
+              {"args": [7], "expected": 49},
+              {"args": [10], "expected": 100}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Two parameters",
+      "content": "<p>A function can take more than one input. Just list them inside the brackets, separated by a comma:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>def combine(first, last):\n  return first + \" \" + last</pre><p>Now <code>combine</code> needs <em>two</em> values when you call it: <code>combine(\"Sam\", \"Lee\")</code>.</p>",
+      "task": "Run the code and watch the spec table check two-parameter calls.",
+      "starterCode": "def combine(first, last):\n  return first + \" \" + last",
+      "hint": "Press Run. The spec table calls <code>combine(\"Sam\", \"Lee\")</code>, <code>combine(\"Pat\", \"Kim\")</code>, etc.",
+      "codeHeight": 4,
+      "difficulty": "medium",
+      "validation": {
+        "rules": [
+          {
+            "type": "function_spec",
+            "functionName": "combine",
+            "cases": [
+              {"args": ["Sam", "Lee"], "expected": "Sam Lee"},
+              {"args": ["Pat", "Kim"], "expected": "Pat Kim"},
+              {"args": ["Ali", "Smith"], "expected": "Ali Smith"}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Roll-call format",
+      "content": "<p>School roll-calls usually go <em>last name, first name</em> — like <code>\"Lee, Sam\"</code>.</p>",
+      "task": "Change the body of <code>combine</code> so it returns the last name first, then a comma and a space, then the first name.",
+      "starterCode": "def combine(first, last):\n  return first + \" \" + last",
+      "hint": "Swap the order of <code>first</code> and <code>last</code>, and use <code>\", \"</code> in the middle instead of <code>\" \"</code>.",
+      "codeHeight": 4,
+      "difficulty": "medium",
+      "validation": {
+        "rules": [
+          {
+            "type": "function_spec",
+            "functionName": "combine",
+            "cases": [
+              {"args": ["Sam", "Lee"], "expected": "Lee, Sam"},
+              {"args": ["Pat", "Kim"], "expected": "Kim, Pat"},
+              {"args": ["Ali", "Smith"], "expected": "Smith, Ali"}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Don't forget to return",
+      "content": "<p>This function <em>computes</em> the right answer but it never gives it back. The spec table shows <code>None</code> for every row — that's what Python uses when a function returns nothing.</p>",
+      "task": "Add a <code>return</code> so the spec passes.",
+      "starterCode": "def triple(n):\n  result = n * 3\n  # this function forgot to return!",
+      "hint": "On the last line, write <code>return result</code> (with the same indent as <code>result = ...</code>).",
+      "codeHeight": 5,
+      "difficulty": "medium",
+      "validation": {
+        "rules": [
+          {"type": "code_contains", "pattern": "return", "description": "Add a return statement"},
+          {
+            "type": "function_spec",
+            "functionName": "triple",
+            "cases": [
+              {"args": [2], "expected": 6},
+              {"args": [4], "expected": 12},
+              {"args": [10], "expected": 30}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Write area from scratch",
+      "content": "<p>Time to write your own. The <code>area</code> function takes a width and a height and gives back the area of the rectangle (width times height).</p>",
+      "task": "Write a function called <code>area</code> with two parameters: <code>w</code> and <code>h</code>. Return <code>w * h</code>.",
+      "starterCode": "# Write your area function below\n",
+      "hint": "Start with <code>def area(w, h):</code>. On the next line (indented), write <code>return w * h</code>.",
+      "codeHeight": 5,
+      "difficulty": "medium",
+      "validation": {
+        "rules": [
+          {"type": "code_contains", "pattern": "def area", "description": "Define a function called area"},
+          {"type": "code_contains", "pattern": "return", "description": "Use return to give back the answer"},
+          {
+            "type": "function_spec",
+            "functionName": "area",
+            "cases": [
+              {"args": [3, 4], "expected": 12},
+              {"args": [5, 5], "expected": 25},
+              {"args": [2, 7], "expected": 14},
+              {"args": [10, 1], "expected": 10}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "concept",
+      "icon": "🧩",
+      "title": "Tools using other tools",
+      "content": "<p>Once a function is defined, your <em>other</em> functions can use it too. That's how big programs get built — small tools combine into bigger ones.</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>def shout(text):\n  return text + \"!!!\"\n\ndef double_shout(text):\n  return shout(text) + \" \" + shout(text)\n\nprint(double_shout(\"yay\"))   # yay!!! yay!!!</pre><p>The next few problems give you a row of <strong>buttons</strong> next to your code. Each button calls your function with different inputs — you don't have to type the calls yourself. Just write the function, click Run, then click the buttons to try it out.</p>",
+      "footer": "Combine small tools to build big ones."
+    },
+    {
+      "title": "Watch stars run",
+      "content": "<p>This function prints <code>n</code> stars on a line. The trick is that <code>\"*\" * n</code> repeats the star <code>n</code> times — you saw that in Worksheet 5.</p>",
+      "task": "Click Run, then click each button below to see <code>stars</code> called with different values.",
+      "starterCode": "def stars(n):\n  print(\"*\" * n)",
+      "hint": "Press Run first to define the function. Then try the buttons — each one calls <code>stars</code> with a different number.",
+      "codeHeight": 4,
+      "difficulty": "easy",
+      "validation": {
+        "rules": [
+          {
+            "type": "function_buttons",
+            "calls": ["stars(3)", "stars(7)", "stars(12)"],
+            "solutionCode": "def stars(n):\n  print(\"*\" * n)"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Make a row",
+      "content": "<p><code>stars</code> only prints stars. Let's generalise it: a <code>row</code> function takes a <em>character</em> and a <em>number</em>, and prints that character repeated.</p>",
+      "task": "Write <code>row(char, n)</code> so it prints <code>char</code> repeated <code>n</code> times. Then click the buttons to try it.",
+      "starterCode": "# Write row(char, n) below\n",
+      "hint": "Two parameters: <code>def row(char, n):</code>. Body: <code>print(char * n)</code>.",
+      "codeHeight": 4,
+      "difficulty": "medium",
+      "validation": {
+        "rules": [
+          {"type": "code_contains", "pattern": "def row", "description": "Define a function called row"},
+          {
+            "type": "function_buttons",
+            "calls": ["row('*', 5)", "row('#', 8)", "row('@', 3)"],
+            "solutionCode": "def row(char, n):\n  print(char * n)"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Build a box",
+      "content": "<p>A box is just a row, repeated. The <code>box</code> function should print an <code>n</code>-by-<code>n</code> square of stars by calling <code>row</code> in a loop.</p><p><code>row</code> is already defined for you — your <code>box</code> function should <em>use</em> it.</p>",
+      "task": "Write <code>box(n)</code> that calls <code>row(\"*\", n)</code> a total of <code>n</code> times. Click Run, then try the buttons.",
+      "starterCode": "def row(char, n):\n  print(char * n)\n\ndef box(n):\n  # call row n times\n",
+      "hint": "Inside <code>box</code>, write a <code>for</code> loop: <code>for i in range(n):</code>, then indent <code>row(\"*\", n)</code>.",
       "codeHeight": 8,
-      "canvas": true,
+      "difficulty": "hard",
       "validation": {
         "rules": [
+          {"type": "code_contains", "pattern": "def box", "description": "Define a function called box"},
+          {"type": "code_contains", "pattern": "row(", "description": "Your box function should call row()"},
           {
-            "type": "solution_code",
-            "solutionCode": "use_canvas(GRID100)\nfor x in range(40, 60):\n  for y in range(40, 60):\n    draw(x, y, 'green')"
+            "type": "function_buttons",
+            "calls": ["box(3)", "box(5)", "box(7)"],
+            "solutionCode": "def row(char, n):\n  print(char * n)\n\ndef box(n):\n  for i in range(n):\n    row(\"*\", n)"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Triangle",
+      "content": "<p>A triangle starts with a row of 1 star, then 2 stars, then 3, all the way up to <code>n</code>. You can build it by calling <code>row</code> with different lengths inside a loop.</p>",
+      "task": "Write <code>triangle(n)</code> that prints rows of stars, growing from 1 up to <code>n</code>.",
+      "starterCode": "def row(char, n):\n  print(char * n)\n\ndef triangle(n):\n  # print rows of length 1, 2, 3, ... up to n\n",
+      "hint": "Use <code>for i in range(1, n+1):</code> so <code>i</code> goes 1, 2, 3, ... up to <code>n</code>. Inside, call <code>row(\"*\", i)</code>.",
+      "codeHeight": 8,
+      "difficulty": "hard",
+      "validation": {
+        "rules": [
+          {"type": "code_contains", "pattern": "def triangle", "description": "Define a function called triangle"},
+          {"type": "code_contains", "pattern": "row(", "description": "Your triangle function should call row()"},
+          {
+            "type": "function_buttons",
+            "calls": ["triangle(4)", "triangle(7)"],
+            "solutionCode": "def row(char, n):\n  print(char * n)\n\ndef triangle(n):\n  for i in range(1, n+1):\n    row(\"*\", i)"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Design your own shape",
+      "content": "<p>Time to invent your own. Write a function that prints any shape you like — a tall pillar, a diamond, your initial, anything.</p><p>You can use <code>row</code> inside it, or just <code>print</code> directly. Whatever you make, give it a name and call it at the bottom so it shows in the output.</p>",
+      "task": "Write your own function that prints a shape, then call it.",
+      "starterCode": "def row(char, n):\n  print(char * n)\n\n# Define your own function below, then call it\n",
+      "hint": "Try something like <code>def pillar(n):</code> with a loop that calls <code>row(\"#\", 1)</code> n times. Or get creative!",
+      "codeHeight": 10,
+      "difficulty": "medium",
+      "validation": {
+        "rules": [
+          {"type": "code_contains", "pattern": "def ", "description": "Define your own function"},
+          {"type": "output_not_empty", "description": "Call your function so it prints something"}
+        ]
+      }
+    },
+    {
+      "title": "Total of a list",
+      "content": "<p>Let's combine functions with what you learned in Worksheet 6. Write a function called <code>total</code> that takes a list of prices and returns their sum.</p>",
+      "task": "Write <code>total(prices)</code> that adds up all the prices in the list and returns the total.",
+      "starterCode": "# Write total(prices) below\n",
+      "hint": "Start a running total at 0. Use <code>for price in prices:</code> and add each price to the total. At the end, <code>return</code> the total.",
+      "codeHeight": 8,
+      "difficulty": "hard",
+      "validation": {
+        "rules": [
+          {"type": "code_contains", "pattern": "def total", "description": "Define a function called total"},
+          {"type": "code_contains", "pattern": "return", "description": "Use return to give back the total"},
+          {
+            "type": "function_spec",
+            "functionName": "total",
+            "cases": [
+              {"args": [[2, 3, 5]], "expected": 10},
+              {"args": [[10, 20, 30, 40]], "expected": 100},
+              {"args": [[7]], "expected": 7},
+              {"args": [[]], "expected": 0}
+            ]
           }
         ]
       }
     }
-  ]
+  ],
+  "metadata": {
+    "version": "1.0",
+    "created": "2026-04-30"
+  }
 }

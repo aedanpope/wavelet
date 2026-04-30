@@ -244,6 +244,131 @@ function validateInputs(problem, problemIndex) {
     };
 }
 
+// Compare two values the way Python would (==), via JS primitives.
+function valuesEqual(a, b) {
+    if (a === b) return true;
+    if (a == null && b == null) return true;
+    if (Array.isArray(a) && Array.isArray(b)) {
+        return a.length === b.length && a.every((x, i) => valuesEqual(x, b[i]));
+    }
+    return false;
+}
+
+// Convert a Pyodide return value to a plain JS value (unwrap PyProxy if needed,
+// then destroy the proxy to avoid leaks).
+function unwrapPy(val) {
+    if (val == null) return null;
+    if (typeof val === 'object' && typeof val.toJs === 'function') {
+        const js = val.toJs();
+        if (typeof val.destroy === 'function') val.destroy();
+        return js;
+    }
+    return val;
+}
+
+// Populate a problem's spec-table panel by calling the named function in the
+// current Pyodide globals once per case. Sets row class .pass / .fail on each
+// "your answer" cell so the table reads at a glance after a Run.
+function populateSpecPanel(problem, problemIndex) {
+    const rule = ProblemRenderer.findRule(problem.validation && problem.validation.rules, 'function_spec');
+    if (!rule) return;
+    const pyodide = codeExecutor.getPyodide();
+    const fn = pyodide.globals.get(rule.functionName);
+
+    rule.cases.forEach((c, i) => {
+        const actualEl = document.getElementById(`spec-actual-${problemIndex}-${i}`);
+        const statusEl = document.getElementById(`spec-status-${problemIndex}-${i}`);
+        if (!actualEl || !statusEl) return;
+        actualEl.classList.remove('pass', 'fail');
+
+        if (!fn) {
+            actualEl.innerHTML = `<span class="spec-error">not defined</span>`;
+            statusEl.innerHTML = `<span class="spec-cross">✗</span>`;
+            actualEl.classList.add('fail');
+            return;
+        }
+
+        let actual;
+        let errored = false;
+        try {
+            actual = unwrapPy(fn(...c.args));
+        } catch (e) {
+            errored = true;
+        }
+
+        if (errored) {
+            actualEl.innerHTML = `<span class="spec-error">error</span>`;
+            statusEl.innerHTML = `<span class="spec-cross">✗</span>`;
+            actualEl.classList.add('fail');
+            return;
+        }
+
+        const passed = valuesEqual(actual, c.expected);
+        actualEl.innerHTML = `<code>${ProblemRenderer.pyRepr(actual)}</code>`;
+        statusEl.innerHTML = passed
+            ? `<span class="spec-tick">✓</span>`
+            : `<span class="spec-cross">✗</span>`;
+        actualEl.classList.add(passed ? 'pass' : 'fail');
+    });
+
+    if (fn && typeof fn.destroy === 'function') fn.destroy();
+}
+
+// Wire a problem's call-button strip to call into the live Pyodide env.
+// Each click runs the call expression with print captured, and renders the
+// result (output + return value) above/below the strip.
+function wireCallButtons(problem, problemIndex) {
+    const rule = ProblemRenderer.findRule(problem.validation && problem.validation.rules, 'function_buttons');
+    if (!rule) return;
+
+    rule.calls.forEach((call, i) => {
+        const btn = document.getElementById(`call-btn-${problemIndex}-${i}`);
+        if (!btn) return;
+        btn.disabled = false;
+        btn.onclick = async () => {
+            const resultEl = document.getElementById(`call-result-${problemIndex}`);
+            const pyodide = codeExecutor.getPyodide();
+            const pyStr = a => {
+                if (a === true) return 'True';
+                if (a === false) return 'False';
+                if (a === null) return 'None';
+                return String(a);
+            };
+            const origPrint = pyodide.globals.get('print');
+            let captured = '';
+            pyodide.globals.set('print', (...args) => {
+                captured += args.map(pyStr).join(' ') + '\n';
+            });
+
+            let returnValue = null;
+            let errMsg = null;
+            try {
+                returnValue = await pyodide.runPythonAsync(call);
+            } catch (e) {
+                errMsg = e.message;
+            } finally {
+                pyodide.globals.set('print', origPrint);
+            }
+
+            let html = `<div class="call-result-label">&gt; ${call}</div>`;
+            if (errMsg) {
+                const info = ErrorHandler.extractErrorInfo(errMsg);
+                html += `<pre class="call-result-error">${info.fullMessage}</pre>`;
+            } else {
+                if (captured) html += `<pre class="call-result-output">${captured}</pre>`;
+                const unwrapped = unwrapPy(returnValue);
+                if (unwrapped !== null && unwrapped !== undefined) {
+                    html += `<div class="call-result-return">returned <code>${ProblemRenderer.pyRepr(unwrapped)}</code></div>`;
+                }
+                if (!captured && (unwrapped === null || unwrapped === undefined)) {
+                    html += `<div class="call-result-quiet">(no output, no return)</div>`;
+                }
+            }
+            resultEl.innerHTML = html;
+        };
+    });
+}
+
 // Run Python code for a specific problem
 async function runCode(problemIndex) {
     let code = codeEditors[problemIndex].getValue();
@@ -285,7 +410,12 @@ async function runCode(problemIndex) {
 
         // Execute code with output capture
         const executionResult = await codeExecutor.executeCode(code, output, problemIndex);
-        
+
+        // Populate spec-table / wire call-buttons against the live Pyodide
+        // env so students see results from the same run they triggered.
+        populateSpecPanel(problem, problemIndex);
+        wireCallButtons(problem, problemIndex);
+
         // Collect user's actual input values for better first-failure error messages
         const userInputValues = {};
         if (problem.inputs && problem.inputs.length > 0) {
