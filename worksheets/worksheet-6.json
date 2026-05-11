@@ -366,16 +366,16 @@
     },
     {
       "title": "Make a numbered list",
-      "content": "Let's combine index looping with f-strings to make a nice numbered list! Since Python indices start at 0, we add 1 to make human-friendly numbers.",
-      "task": "The list currently numbers items starting from 0. Change <code>{i}</code> to <code>{i + 1}</code> so the numbering starts at 1 instead.",
+      "content": "Let's combine index looping with comma-print to make a numbered list. Since Python indices start at 0, we add 1 to make human-friendly numbers.",
+      "task": "The list currently numbers items starting from 0. Change <code>i</code> to <code>i + 1</code> so the numbering starts at 1 instead.",
       "codeHeight": 4,
-      "starterCode": "animals = ['cat', 'dog', 'fish']\nfor i in range(len(animals)):\n  print(f\"{i}. {animals[i]}\")",
-      "hint": "Change <code>{i}</code> to <code>{i + 1}</code> inside the f-string.",
+      "starterCode": "animals = ['cat', 'dog', 'fish']\nfor i in range(len(animals)):\n  print(i, animals[i])",
+      "hint": "Change <code>i</code> to <code>i + 1</code> inside the <code>print(...)</code>.",
       "validation": {
         "rules": [
           {
             "type": "solution_code",
-            "solutionCode": "animals = ['cat', 'dog', 'fish']\nfor i in range(len(animals)):\n  print(f\"{i + 1}. {animals[i]}\")"
+            "solutionCode": "animals = ['cat', 'dog', 'fish']\nfor i in range(len(animals)):\n  print(i + 1, animals[i])"
           }
         ]
       }
@@ -383,10 +383,10 @@
     {
       "title": "Your own numbered list",
       "content": "Now write a numbered list from scratch!",
-      "task": "Write a <code>for</code> loop that prints each favourite numbered, like: <code>1. Minecraft</code>. Change the list to your own 4 favourites (games, books, movies — anything!) if you like.",
+      "task": "Write a <code>for</code> loop that prints each favourite numbered, like: <code>1 Minecraft</code>. Change the list to your own 4 favourites (games, books, movies — anything!) if you like.",
       "codeHeight": 5,
       "starterCode": "favs = ['Minecraft', 'Roblox', 'Fortnite', 'Lego']\n",
-      "hint": "Use <code>for i in range(len(favs)):</code> and print with <code>print(f\"{i + 1}. {favs[i]}\")</code> or <code>print(i + 1, favs[i])</code>.",
+      "hint": "Use <code>for i in range(len(favs)):</code> and print with <code>print(i + 1, favs[i])</code>.",
       "validation": {
         "rules": [
           {

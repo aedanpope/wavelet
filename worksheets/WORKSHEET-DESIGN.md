@@ -83,7 +83,7 @@ For each new concept, follow this sequence:
 - Focus should be on one specific edit/addition
 - Variable names differ from previous examples
 
-**Example:** "If statements with f-strings" - provide `n = get_input()` so students focus on the new skill (combining if/else with f-strings), not remembering variable names.
+**Example:** "If statements with comma-print" — provide `n = get_input()` so students focus on the new skill (combining if/else with comma-separated `print()` args), not remembering variable names.
 
 ---
 
@@ -170,8 +170,8 @@ If you must use `code_contains_regex`, always add a `description`:
 ✅ Good:
 {
   "type": "code_contains_regex",
-  "pattern": "print\\s*\\(\\s*f\".*\\{name\\}.*\"\\s*\\)",
-  "description": "Use an f-string with {name} in the print statement"
+  "pattern": "print\\s*\\(.*,\\s*name.*\\)",
+  "description": "Use print with a comma to combine the text and the name variable"
 }
 
 ❌ Bad:
@@ -220,13 +220,13 @@ For "write a program to calculate X + Y" problems, students could just hardcode 
 
 ```
 ✅ Good progression:
-Q1: Introduce f-strings with static string
-Q2: Edit f-string to change greeting
-Q3: Use f-string with number variable
-Q4: Use f-string with input
+Q1: Introduce comma-print with two static strings
+Q2: Edit comma-print to change the greeting
+Q3: Use comma-print with a number variable
+Q4: Use comma-print with input
 
 ❌ Bad:
-Q1: Use f-strings with input, loops, and if statements
+Q1: Use comma-print with input, loops, and if statements
 ```
 
 ### Build Prerequisites First
@@ -286,7 +286,7 @@ else:
 ```
 ❌ Bad: "Write a program that gets two numbers and adds them" (pure WS2 review)
 
-✅ Good: "Get two numbers and print the result with an f-string: '{x} + {y} = {result}'"
+✅ Good: "Get two numbers and print the result with comma-print: `print(x, '+', y, '=', result)`"
 (Reviews WS2 but practices new WS5 concept)
 ```
 

@@ -78,7 +78,7 @@ There are three flavours:
 | 2 | Assign variables, use `get_input()` (single and named), do calculations with variables, use descriptive variable names |
 | 3 | Write `for` loops with explicit lists and `range()`, use `range(start, stop)`, nest `print` inside loops, use the accumulator pattern (`total = total + i`), create text patterns with `'*' * n` |
 | 4 | Use `if`/`elif`/`else`, all 6 comparison operators, `and`, `get_choice()` buttons, nest `if` inside `for`, use `%` modulo |
-| 5 | Use strings with `""` and `''`, f-strings with `{var}`, string concatenation (`+`), `break` keyword, flag variables (`found = False`), combine all prior concepts (loops + if + strings + modulo) |
+| 5 | Use strings with `""` and `''`, print with comma-separated arguments (`print('a', var, 'b')`), `break` keyword, flag variables (`found = False`), combine all prior concepts (loops + if + strings + modulo) |
 
 ---
 
@@ -168,8 +168,8 @@ Each worksheet adds about 2-3 lines to the maximum expected write-from-scratch l
 
 When a worksheet uses a concept from a previous worksheet in a new combination, include a brief reminder problem:
 
-- **WS5** has "Loop reminder" (problem 7) — a simple `for i in range(1, 6): print(i)` run-and-observe before combining loops with f-strings.
-- **WS5** has "If statement reminder" (problem 12) — a simple if/else before combining with f-strings.
+- **WS5** has a "Loop reminder" — a simple `for i in range(1, 6): print(i)` run-and-observe before combining loops with comma-print.
+- **WS5** has an "If statement reminder" — a simple if/else before combining with comma-print.
 - These should be **1 problem max** per recalled concept. Don't re-teach — just give students a chance to recall.
 
 ---
@@ -207,11 +207,13 @@ When a worksheet uses a concept from a previous worksheet in a new combination, 
 - **Heaviest use of concept cards and traces** (4 cards, 3 traces) because branching logic is abstract.
 - **Note:** Modulo (%) is introduced here AND reinforced in WS5. This cross-worksheet reinforcement is intentional.
 
-### WS5: Working with Text (24 problems)
+### WS5: Working with Text
 
-- **Concept:** Strings and f-strings.
-- **Sub-concepts in order:** (1) Basic string printing, (2) f-strings, (3) Editing f-strings, (4) Single vs double quotes, (5) Quote bug fix, (6) Numbers in f-strings, (7) Loop reminder + loops with f-strings, (8) Writing f-strings from scratch, (9) f-strings with input, (10) String concatenation, (11) If statement reminder + if with f-strings, (12) Greeting programs, (13) Full introduction (name + age), (14) Modulo reminder + even/odd, (15) Even/odd with f-strings, (16) Finding factors (loop + if + f-string), (17) `break`, (18) Flag variables, (19) Prime number challenge.
-- **Key design choice:** Uses "reminder" problems (simple loop, simple if) before combining with f-strings. This prevents cognitive overload.
+- **Concept:** Strings and `print()` with comma-separated arguments.
+- **One new idea only.** The single new piece of syntax is `print('a', var, 'b')` — Python prints each item with a space between. Everything else in the worksheet (variables, input, if/else, loops, modulo) is revision, with comma-print as the fresh surface that lets the revision feel new.
+- **Deliberately excluded:** f-strings and `+` string concatenation. Both are useful, but adding them here would smuggle two more new ideas into a worksheet whose job is consolidation. They can land in a later worksheet if needed.
+- **Sub-concepts in order:** (1) Basic string printing, (2) Print with commas (the new concept), (3) Single vs double quotes, (4) Quote bug fixes, (5) Numbers with comma-print, (6) Comma-placement bug fixes, (7) Loop reminder + loops with comma-print, (8) Input with comma-print, (9) If statement reminder + if with comma-print, (10) Greetings / full introductions, (11) Modulo reminder + even/odd, (12) Finding factors (loop + if + comma-print), (13) `break`, (14) Flag variables, (15) Prime number challenge.
+- **Key design choice:** Uses "reminder" problems (simple loop, simple if) before combining with comma-print. This prevents cognitive overload.
 - **Note:** `break` and flag variables are introduced here, not in WS4. This is because WS4 already has enough new concepts. Don't try to cram everything into the worksheet where it "logically" belongs — spread it out.
 
 ---
@@ -234,7 +236,7 @@ Students have already USED lists in WS3 — they've written `for i in [1, 2, 3]:
 6. **`len()`** — how many items? Connect to `range(len(my_list))`.
 7. **Iterating with `for`** — `for item in my_list:` (they know this!) vs `for i in range(len(my_list)):` (new — index-based iteration).
 8. **`append()`** — adding items to a list. Building a list in a loop.
-9. **Combining with prior concepts** — lists + if (filtering), lists + f-strings (formatted output).
+9. **Combining with prior concepts** — lists + if (filtering), lists + comma-print (formatted output like `print(i, animals[i])`).
 10. **Challenges** — e.g. find the biggest number, count occurrences, reverse a list.
 11. **Creative challenge.**
 

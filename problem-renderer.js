@@ -13,10 +13,98 @@
 
 const ProblemRenderer = (() => {
 
+    // Format a JS value the way Python would render it (source-repr style)
+    // so spec-table cells read like Python literals: 7, "hi!!!", True, None.
+    function pyRepr(v) {
+        if (v === null || v === undefined) return 'None';
+        if (v === true) return 'True';
+        if (v === false) return 'False';
+        if (typeof v === 'string') return '"' + v.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
+        if (Array.isArray(v)) return '[' + v.map(pyRepr).join(', ') + ']';
+        return String(v);
+    }
+
+    function fmtCall(fnName, args) {
+        return fnName + '(' + (args || []).map(pyRepr).join(', ') + ')';
+    }
+
+    function findRule(rules, type) {
+        if (!rules) return null;
+        return rules.find(r => r.type === type) || null;
+    }
+
+    // Spec-table panel. One row per case: call expression, expected value,
+    // your-answer cell (filled in after a Run), pass/fail tick.
+    function createSpecPanel(rule, problemIndex) {
+        const div = document.createElement('div');
+        div.className = 'spec-panel';
+        div.id = `spec-panel-${problemIndex}`;
+        const rowsHTML = (rule.cases || []).map((c, i) => `
+            <tr data-case="${i}">
+              <td class="spec-call"><code>${fmtCall(rule.functionName, c.args)}</code></td>
+              <td class="spec-expected"><code>${pyRepr(c.expected)}</code></td>
+              <td class="spec-actual" id="spec-actual-${problemIndex}-${i}"><span class="spec-pending">?</span></td>
+              <td class="spec-status" id="spec-status-${problemIndex}-${i}"></td>
+            </tr>
+        `).join('');
+        div.innerHTML = `
+            <div class="spec-panel-header">
+              <span class="spec-panel-icon">📋</span>
+              <span class="spec-panel-title">Spec table</span>
+              <span class="spec-panel-hint">Run your code to fill the table.</span>
+            </div>
+            <table class="spec-table">
+              <thead>
+                <tr>
+                  <th>call</th>
+                  <th>expected</th>
+                  <th>your answer</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>${rowsHTML}</tbody>
+            </table>
+        `;
+        return div.outerHTML;
+    }
+
+    // Call-button strip. One button per call expression. Buttons start
+    // disabled until the student's code has been Run successfully (so the
+    // function is defined). Result panel above the strip shows the most
+    // recent call's output.
+    function createButtonStrip(rule, problemIndex) {
+        const div = document.createElement('div');
+        div.className = 'call-buttons-panel';
+        div.id = `buttons-panel-${problemIndex}`;
+        const buttonsHTML = (rule.calls || []).map((call, i) => `
+            <button class="call-btn" id="call-btn-${problemIndex}-${i}" data-call="${call.replace(/"/g, '&quot;')}" disabled>
+              ${call}
+            </button>
+        `).join('');
+        div.innerHTML = `
+            <div class="call-buttons-header">
+              <span class="call-buttons-icon">🔘</span>
+              <span class="call-buttons-title">Try calling your function</span>
+              <span class="call-buttons-hint">Run your code first, then click any button.</span>
+            </div>
+            <div class="call-buttons-strip">${buttonsHTML}</div>
+            <div class="call-result" id="call-result-${problemIndex}">
+              <span class="call-result-empty">Click a button above to call your function.</span>
+            </div>
+        `;
+        return div.outerHTML;
+    }
+
     function createProblemElement(problem, index) {
         const problemDiv = document.createElement('div');
         problemDiv.className = 'problem-container';
         problemDiv.id = `problem-${index}`;
+
+        const specRule = findRule(problem.validation && problem.validation.rules, 'function_spec');
+        const specPanelHTML = specRule ? createSpecPanel(specRule, index) : '';
+
+        const buttonsRule = findRule(problem.validation && problem.validation.rules, 'function_buttons');
+        const buttonsPanelHTML = buttonsRule ? createButtonStrip(buttonsRule, index) : '';
 
         let inputsHTML = '';
         if (problem.inputs && problem.inputs.length > 0) {
@@ -62,6 +150,8 @@ const ProblemRenderer = (() => {
                     </div>
                     <div class="code-editor" id="code-editor-${index}"></div>
                     ${inputsHTML}
+                    ${specPanelHTML}
+                    ${buttonsPanelHTML}
                     <div class="output-section">
                         <div class="output-header">
                             <span>Output</span>
@@ -248,6 +338,9 @@ const ProblemRenderer = (() => {
         createEditor,
         createTraceEditor,
         displayOutput,
+        pyRepr,
+        fmtCall,
+        findRule,
     };
 })();
 

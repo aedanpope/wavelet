@@ -361,6 +361,12 @@ async function validateRule(code, output, rule, problem, problemIndex, codeExecu
             }
             return { isValid: true };
             
+        case 'function_spec':
+            return await validateFunctionSpec(code, rule, codeExecutor);
+
+        case 'function_buttons':
+            return await validateFunctionButtons(code, rule, codeExecutor);
+
         case 'solution_code':
             // Use the imported validateSolutionCode function
             if (typeof window !== 'undefined' && window.SolutionCodeValidator) {
@@ -382,6 +388,136 @@ async function validateRule(code, output, rule, problem, problemIndex, codeExecu
             console.warn(`Unknown validation rule type: ${rule.type}`);
             return { isValid: true };
     }
+}
+
+// Format a JS value the way Python would render it. Mirrors ProblemRenderer.pyRepr
+// but kept local so validation tests can run in Node without DOM dependencies.
+function reprForFeedback(v) {
+    if (v === null || v === undefined) return 'None';
+    if (v === true) return 'True';
+    if (v === false) return 'False';
+    if (typeof v === 'string') return '"' + v + '"';
+    if (Array.isArray(v)) return '[' + v.map(reprForFeedback).join(', ') + ']';
+    return String(v);
+}
+
+function valuesEqualForSpec(a, b) {
+    if (a === b) return true;
+    if (a == null && b == null) return true;
+    if (Array.isArray(a) && Array.isArray(b)) {
+        return a.length === b.length && a.every((x, i) => valuesEqualForSpec(x, b[i]));
+    }
+    return false;
+}
+
+function unwrapPyVal(val) {
+    if (val == null) return null;
+    if (typeof val === 'object' && typeof val.toJs === 'function') {
+        const js = val.toJs();
+        if (typeof val.destroy === 'function') val.destroy();
+        return js;
+    }
+    return val;
+}
+
+// Validate a function_spec rule. Resets the Python env, runs the student's
+// code so the function is defined, then calls it once per case and compares
+// the return value to `expected`. First failure wins.
+async function validateFunctionSpec(code, rule, codeExecutor) {
+    if (!codeExecutor || !codeExecutor.getPyodide) {
+        return { isValid: false, errorType: 'function_spec_unavailable', message: 'Spec validation is not available' };
+    }
+    const pyodide = codeExecutor.getPyodide();
+
+    try {
+        await codeExecutor.resetPythonEnvironment();
+    } catch (_) { /* keep going */ }
+
+    // Suppress prints during validation; the spec only checks return values.
+    const origPrint = pyodide.globals.get('print');
+    pyodide.globals.set('print', () => {});
+    try {
+        try {
+            await pyodide.runPythonAsync(code);
+        } catch (e) {
+            return { isValid: false, errorType: 'function_spec_runtime', message: 'Your code had an error before the function could be tested: ' + (e.message || e) };
+        }
+
+        const fn = pyodide.globals.get(rule.functionName);
+        if (!fn) {
+            return { isValid: false, errorType: 'function_spec_missing', message: `Define a function called \`${rule.functionName}\`.` };
+        }
+
+        for (const c of rule.cases) {
+            let actual;
+            try {
+                actual = unwrapPyVal(fn(...c.args));
+            } catch (e) {
+                if (typeof fn.destroy === 'function') fn.destroy();
+                return { isValid: false, errorType: 'function_spec_call_error', message: `${rule.functionName}(${c.args.map(reprForFeedback).join(', ')}) raised an error: ${e.message || e}` };
+            }
+            if (!valuesEqualForSpec(actual, c.expected)) {
+                if (typeof fn.destroy === 'function') fn.destroy();
+                return {
+                    isValid: false,
+                    errorType: 'function_spec_mismatch',
+                    message: `Spec failed: ${rule.functionName}(${c.args.map(reprForFeedback).join(', ')}) returned ${reprForFeedback(actual)}, but expected ${reprForFeedback(c.expected)}.`
+                };
+            }
+        }
+        if (typeof fn.destroy === 'function') fn.destroy();
+        return { isValid: true };
+    } finally {
+        pyodide.globals.set('print', origPrint);
+    }
+}
+
+// Validate a function_buttons rule. Runs the student's code AND the solution
+// code each in fresh envs, then runs each `call` expression in both, comparing
+// captured print output. Anything else (e.g. missing function) shows up as a
+// runtime error in the student env.
+async function validateFunctionButtons(code, rule, codeExecutor) {
+    if (!codeExecutor || !codeExecutor.getPyodide) {
+        return { isValid: false, errorType: 'function_buttons_unavailable', message: 'Button validation is not available' };
+    }
+    const pyodide = codeExecutor.getPyodide();
+
+    async function runAndCapture(setupCode, callExpr) {
+        try { await codeExecutor.resetPythonEnvironment(); } catch (_) {}
+        const origPrint = pyodide.globals.get('print');
+        let out = '';
+        const pyStr = a => a === true ? 'True' : a === false ? 'False' : a == null ? 'None' : String(a);
+        pyodide.globals.set('print', (...args) => { out += args.map(pyStr).join(' ') + '\n'; });
+        try {
+            await pyodide.runPythonAsync(setupCode);
+            await pyodide.runPythonAsync(callExpr);
+            return { ok: true, output: out.trim() };
+        } catch (e) {
+            return { ok: false, error: e.message || String(e), output: out.trim() };
+        } finally {
+            pyodide.globals.set('print', origPrint);
+        }
+    }
+
+    for (const call of rule.calls) {
+        const studentResult = await runAndCapture(code, call);
+        const solutionResult = await runAndCapture(rule.solutionCode, call);
+        if (!solutionResult.ok) {
+            // Solution code itself broke — bug in worksheet, fail loud
+            return { isValid: false, errorType: 'function_buttons_solution_error', message: `Worksheet bug: solution code errored on \`${call}\`: ${solutionResult.error}` };
+        }
+        if (!studentResult.ok) {
+            return { isValid: false, errorType: 'function_buttons_student_error', message: `\`${call}\` raised an error in your code: ${studentResult.error}` };
+        }
+        if (studentResult.output !== solutionResult.output) {
+            return {
+                isValid: false,
+                errorType: 'function_buttons_mismatch',
+                message: `\`${call}\` printed:\n${studentResult.output || '(nothing)'}\nbut expected:\n${solutionResult.output || '(nothing)'}`
+            };
+        }
+    }
+    return { isValid: true };
 }
 
 // Note: validateSolutionCode and related functions have been moved to validate-solution-code.js
