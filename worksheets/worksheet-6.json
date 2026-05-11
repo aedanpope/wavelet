@@ -6,14 +6,14 @@
     {
       "type": "concept",
       "icon": "📋",
-      "title": "Lists: you already know them",
-      "content": "<p>Remember writing <code>for i in [1, 2, 3]:</code> in Worksheet 3? That <code>[1, 2, 3]</code> is a <strong>list</strong></p><p>A list holds multiple items in order, wrapped in square brackets <code>[]</code> and separated by commas:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>numbers = [10, 20, 30]\nwords = ['hello', 'world']</pre><p>You can store a list in a variable and use it later, just like you do with numbers and strings.</p>",
+      "title": "What is a list?",
+      "content": "<p>Back in Worksheet 3, we wrote loops like <code>for i in [1, 2, 3]:</code>. That <code>[1, 2, 3]</code> part is called a <strong>list</strong>.</p><p>A list holds multiple items in order, wrapped in square brackets <code>[]</code> and separated by commas:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>numbers = [10, 20, 30]\nwords = ['hello', 'world']</pre><p>You can store a list in a variable and use it later, just like you do with numbers and strings.</p>",
       "footer": "A list is items inside square brackets [], separated by commas."
     },
     {
-      "title": "You've seen this before",
-      "content": "Remember this from Worksheet 3? You used lists inside <code>for</code> loops to repeat code with different values.",
-      "task": "Run this code, it's the same kind of loop you wrote in Worksheet 3.",
+      "title": "A for-loop warm-up",
+      "content": "Back in Worksheet 3, we put lists inside <code>for</code> loops to repeat code with different values. Let's warm up with one.",
+      "task": "Run this code to see the loop in action.",
       "starterCode": "for colour in ['red', 'blue', 'green']:\n  print(colour)",
       "hint": "Just press the 'Run Code' button to see the output.",
       "validation": {
@@ -300,12 +300,12 @@
       "type": "concept",
       "icon": "🔄",
       "title": "Two ways to loop through a list",
-      "content": "<p>You already know how to loop through a list to get each <strong>item</strong>:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>for animal in animals:\n  print(animal)</pre><p>But sometimes you need the <strong>position number</strong> (index) too. Use <code>range(len(my_list))</code> to loop through the indices:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>for i in range(len(animals)):\n  print(i, animals[i])</pre><p>Remember from Worksheet 3: <code>range(3)</code> gives the numbers 0, 1, 2. So <code>range(len(animals))</code> gives one index for each item</p><p>The first way is simpler. Use it when you just need the items. Use the second way when you need to know <em>where</em> each item is in the list.</p>",
+      "content": "<p>One way to loop through a list is to grab each <strong>item</strong>:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>for animal in animals:\n  print(animal)</pre><p>But sometimes you need the <strong>position number</strong> (index) too. Use <code>range(len(my_list))</code> to loop through the indices:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>for i in range(len(animals)):\n  print(i, animals[i])</pre><p>Quick reminder: <code>range(3)</code> gives the numbers 0, 1, 2. So <code>range(len(animals))</code> gives one index for each item.</p><p>The first way is simpler. Use it when you just need the items. Use the second way when you need to know <em>where</em> each item is in the list.</p>",
       "footer": "for item in list → gives items. for i in range(len(list)) → gives indices."
     },
     {
       "title": "Loop through items",
-      "content": "You already know this from Worksheet 3. You can loop through every item in a list.",
+      "content": "Let's start with the simple way: a <code>for</code> loop grabs each item from the list, one at a time.",
       "task": "Run this code to print each animal on its own line.",
       "codeHeight": 4,
       "starterCode": "animals = ['cat', 'dog', 'fish']\nfor animal in animals:\n  print(animal)",
