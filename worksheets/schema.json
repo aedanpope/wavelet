@@ -372,6 +372,7 @@
           "properties": {
             "type": {"const": "ast_has_list_literal"},
             "minItems": {"type": "integer", "minimum": 1, "description": "Minimum number of items the list must contain"},
+            "nItems": {"type": "integer", "minimum": 0, "description": "Exact number of items the list must contain"},
             "message": {"type": "string"},
             "description": {"type": "string"}
           },

@@ -285,8 +285,8 @@
         "rules": [
           {
             "type": "ast_has_list_literal",
-            "minItems": 5,
-            "message": "Your list needs 5 items."
+            "nItems": 5,
+            "message": "Your list needs exactly 5 items."
           },
           {
             "type": "ast_has_function_call",
