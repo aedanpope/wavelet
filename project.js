@@ -1,8 +1,9 @@
 // Project page: per-function editor model.
-// Loads a project JSON, renders one CodeMirror editor per task (function body
-// only), and assembles them into a single Python program at run time. Each
-// task body is wrapped as `def <name>():\n<indented body>`. Per-task compile()
-// catches SyntaxErrors so one bad body doesn't kill the whole project.
+// Loads a project JSON and renders one CodeMirror editor per task. Each
+// editor's source is the whole `def fn():\n  body` — line 0 is locked via a
+// beforeChange handler so students can only edit the body. At run time each
+// def is exec'd as its own runPythonAsync, so Pyodide's traceback line
+// numbers map 1:1 onto what the student sees in that editor's gutter.
 
 const PARAM_PROJECT = 'project';
 const DEFAULT_PROJECT = 'pixel-art';
@@ -16,7 +17,7 @@ const FILE_HEADER_MARKER = '# Wavelet';
 
 let executor = null;
 let projectDef = null;
-const taskEditors = new Map(); // taskId -> { cm, statusEl, defLineEl, lastError }
+const taskEditors = new Map(); // taskId -> { cm, editorEl, statusEl, errorEl, task }
 let setupEditor = null; // CodeMirror for the editable preamble
 let currentFileHandle = null;
 let dirty = false;
@@ -177,11 +178,6 @@ function renderTaskCard(task, idx) {
     const editorFrame = document.createElement('div');
     editorFrame.className = 'task-editor-frame';
 
-    const defLine = document.createElement('div');
-    defLine.className = 'task-def-line';
-    defLine.innerHTML = `<span class="def-lineno" data-lineno></span><span class="def-content"><span class="kw">def</span> <span class="fn">${escapeHtml(task.function)}</span>():</span>`;
-    editorFrame.appendChild(defLine);
-
     const editorEl = document.createElement('div');
     editorEl.className = 'task-editor';
     editorFrame.appendChild(editorEl);
@@ -193,13 +189,11 @@ function renderTaskCard(task, idx) {
     taskError.style.display = 'none';
     card.appendChild(taskError);
 
-    // Stash references; CodeMirror itself is initialised later (see
-    // initTaskEditors), once the parent is visible and can be measured.
+    // CodeMirror itself is initialised later (see initTaskEditors), once the
+    // parent is visible and can be measured.
     taskEditors.set(task.id, {
         cm: null,
         editorEl,
-        defLineEl: defLine,
-        defLinenoEl: defLine.querySelector('[data-lineno]'),
         statusEl: header.querySelector('[data-status]'),
         errorEl: taskError,
         task,
@@ -226,17 +220,14 @@ function initTaskEditors() {
         });
         setupEditor.setSize('100%', '7em');
         setupEditor.on('change', (_cm, change) => {
-            // setValue (programmatic load) shouldn't dirty the buffer, but
-            // line offsets always need to follow line-count changes.
             if (change.origin !== 'setValue') markDirty();
-            recomputeLineOffsets();
         });
     }
 
     for (const entry of taskEditors.values()) {
         const { editorEl, task } = entry;
         const cm = CodeMirror(editorEl, {
-            value: task.starterBody || '',
+            value: buildEditorSource(task.function, task.starterBody),
             mode: 'python',
             theme: 'monokai',
             lineNumbers: true,
@@ -247,83 +238,40 @@ function initTaskEditors() {
             lineWrapping: true,
             viewportMargin: Infinity, // grow to fit content
         });
-        const heightLines = task.editorHeight || 6;
+        // Lock line 0 (the `def fn():` line) — students never edit it, but
+        // it's part of the editor's source so its line number sits in the
+        // same gutter as the body and Pyodide tracebacks line up.
+        cm.on('beforeChange', (_cm, change) => {
+            if (change.origin === 'setValue') return;
+            if (change.from.line === 0) change.cancel();
+        });
+        cm.addLineClass(0, 'background', 'cm-def-line');
+        cm.addLineClass(0, 'wrap', 'cm-def-line-wrap');
+
+        const heightLines = (task.editorHeight || 6) + 1; // +1 for the def line
         cm.setSize('100%', `${heightLines * 1.5}em`);
         cm.on('change', (_cm, change) => {
-            // Programmatic loads (openProject) come through with origin
-            // 'setValue' and shouldn't mark the buffer dirty — but line
-            // offsets always need to follow line-count changes either way.
             if (change.origin !== 'setValue') markDirty();
-            recomputeLineOffsets();
         });
 
         entry.cm = cm;
     }
 
-    // Force a layout pass so getGutterElement().offsetWidth has the real width
-    // by the time we measure it. Without this, the first sync runs before the
-    // editor has rendered and the def-line column comes out narrower than the
-    // editor's gutter.
+    // Force a layout pass so editor widths settle now that the parent is visible.
     if (setupEditor) setupEditor.refresh();
     for (const entry of taskEditors.values()) {
         if (entry.cm) entry.cm.refresh();
     }
-    recomputeLineOffsets();
 }
 
-// ─── Continuous line numbers ────────────────────────────────────────────
-// Each editor is a slice of the assembled program. firstLineNumber on each
-// CodeMirror is set so the displayed numbers match the line numbers Pyodide
-// reports in tracebacks. Recomputed whenever any editor's line count changes
-// (typing, loading a file, etc.) so insertions ripple downstream.
-
-function countLines(s) {
-    if (!s) return 0;
-    return s.split('\n').length;
-}
-
-function recomputeLineOffsets() {
-    if (!setupEditor) return;
-    let line = 1;
-
-    // Setup editor — first thing in the assembled program now that
-    // use_canvas() runs as a separate JS-driven step.
-    setupEditor.setOption('firstLineNumber', line);
-    line += setupEditor.lineCount();
-    line += 1; // blank separator emitted by the assembler
-
-    // Each task: one line for `def name():`, then the body lines.
-    for (const task of projectDef.tasks) {
-        const entry = taskEditors.get(task.id);
-        if (!entry || !entry.cm) continue;
-        if (entry.defLinenoEl) entry.defLinenoEl.textContent = String(line);
-        line += 1; // the def line itself
-        entry.cm.setOption('firstLineNumber', line);
-        // Body line count: empty body still emits `pass` from the assembler,
-        // so use max(1, count).
-        const bodyLines = Math.max(1, entry.cm.lineCount());
-        line += bodyLines;
-        line += 1; // blank separator
-    }
-
-    // Defer the gutter measurement to the next frame. CodeMirror's gutter
-    // re-renders asynchronously when firstLineNumber changes (the digit count
-    // can shift), so measuring synchronously would catch the stale width.
-    requestAnimationFrame(syncDefLinePaddings);
-}
-
-// The CodeMirror gutter width depends on the digits of firstLineNumber +
-// lineCount, so it can shift when offsets change. Pad each def line to match.
-function syncDefLinePaddings() {
-    for (const entry of taskEditors.values()) {
-        if (!entry.cm || !entry.defLineEl) continue;
-        const gutter = entry.cm.getGutterElement();
-        if (!gutter) continue;
-        const width = gutter.offsetWidth;
-        if (width > 0) {
-            entry.defLineEl.style.setProperty('--gutter-width', width + 'px');
-        }
-    }
+// Build the full editor source for a task: `def fn():` line + indented body.
+// Called only at editor init and when loading a file — once the editor exists,
+// the student's keystrokes are the source of truth.
+function buildEditorSource(fnName, body) {
+    const trimmed = (body || '').replace(/\s+$/g, '');
+    const bodyLines = trimmed === '' ? ['pass'] : trimmed.split('\n');
+    const indented = bodyLines.map(l => l === '' ? '' : BODY_INDENT + l).join('\n');
+    return `def ${fnName}():\n${indented}\n`;
 }
 
 // ─── Run flow ────────────────────────────────────────────────────────────
@@ -331,12 +279,9 @@ function syncDefLinePaddings() {
 async function runProject() {
     resetAllStatus();
 
-    // Build the program in three segments so we can attribute exec failures
+    // Build the program in three pieces so we can attribute exec failures
     // to whichever section caused them (Setup vs. function defs vs. Extras).
     const seg = assembleProgramSegmented();
-
-    // Surface per-task syntax errors caught by the assembler before we run anything.
-    for (const [taskId, errMsg] of seg.taskErrors) markTaskError(taskId, errMsg);
 
     // Setup syntax-check upfront so a broken preamble doesn't masquerade as a
     // runtime error in some unrelated task.
@@ -369,15 +314,19 @@ async function runProject() {
         }
     }
 
-    // 2. Function definitions. Wrapping is JS-controlled, so this only fails
-    // if our wrapping has a bug — extremely unlikely. Surface as a global
-    // banner so we notice in the field.
-    if (seg.fnDefsSrc.trim()) {
+    // 2. Per-task function definitions. Each def is its own runPythonAsync so
+    //    Pyodide's tb_lineno (and SyntaxError line numbers) are local to that
+    //    task editor's source — what the student sees in the gutter matches
+    //    what the error message reports.
+    for (const def of seg.fnDefs) {
+        if (def.syntaxError) {
+            markTaskError(def.taskId, def.syntaxError);
+            continue;
+        }
         try {
-            await py.runPythonAsync(seg.fnDefsSrc);
+            await py.runPythonAsync(def.src);
         } catch (err) {
-            displayGlobalError(`Couldn't load your functions: ${extractPythonError(err)}`);
-            return finalizeRunStatus();
+            markTaskError(def.taskId, extractPythonError(err));
         }
     }
 
@@ -623,13 +572,11 @@ function scrollToFirstError() {
 
 // ─── Code assembly ───────────────────────────────────────────────────────
 
-// Build the runnable program in three segments — preamble, function defs,
-// extras — so the run loop can exec each piece separately and attribute
-// failures to the right card. assembleFileForDisk uses the same building
-// blocks but adds the on-disk header / per-task labels.
+// Build the runnable program in three pieces — preamble, per-task function
+// defs, extras — so the run loop can exec each separately and attribute
+// failures to the right card. Each fnDef is its own runPythonAsync call so
+// Pyodide's tb_lineno matches that editor's native line numbering 1:1.
 function assembleProgramSegmented() {
-    const taskErrors = new Map();
-
     // Preamble: only the editable section. The locked preamble (use_canvas)
     // is invoked separately from JS during runProject so it doesn't take a
     // line number that students can't see — the visible editor line numbers
@@ -637,46 +584,17 @@ function assembleProgramSegmented() {
     const editablePreamble = setupEditor ? setupEditor.getValue() : (projectDef.editablePreamble || '');
     const preambleSrc = editablePreamble.trim() ? editablePreamble.replace(/\s+$/g, '') : '';
 
-    const fnLines = [];
+    const fnDefs = [];
     for (const task of projectDef.tasks) {
         const entry = taskEditors.get(task.id);
-        const rawBody = entry && entry.cm ? entry.cm.getValue() : (task.starterBody || '');
-
-        const wrapped = wrapAsFunction(task.function, rawBody);
-        const compileError = checkSyntax(wrapped);
-        if (compileError) {
-            taskErrors.set(task.id, compileError);
-            fnLines.push(`def ${task.function}():`);
-            fnLines.push(`${BODY_INDENT}pass  # (replaced because of a syntax error in your code)`);
-            fnLines.push('');
-            continue;
-        }
-
-        fnLines.push(wrapped);
-        fnLines.push('');
+        const src = entry && entry.cm ? entry.cm.getValue() : buildEditorSource(task.function, task.starterBody);
+        const syntaxError = checkSyntax(src);
+        fnDefs.push({ taskId: task.id, fn: task.function, src, syntaxError });
     }
-    const fnDefsSrc = fnLines.join('\n');
 
     const extrasSrc = (currentExtras && currentExtras.trim()) ? currentExtras : '';
 
-    return { preambleSrc, fnDefsSrc, extrasSrc, taskErrors };
-}
-
-// Single-blob form used only by old call sites we haven't refactored yet.
-function assembleProgram() {
-    const seg = assembleProgramSegmented();
-    const lines = [];
-    if (seg.preambleSrc) { lines.push(seg.preambleSrc); lines.push(''); }
-    if (seg.fnDefsSrc) { lines.push(seg.fnDefsSrc); }
-    if (seg.extrasSrc) { lines.push(seg.extrasSrc); lines.push(''); }
-    return { code: lines.join('\n'), taskErrors: seg.taskErrors };
-}
-
-function wrapAsFunction(name, body) {
-    const trimmed = (body || '').replace(/\s+$/g, '');
-    const bodyLines = trimmed === '' ? ['pass'] : trimmed.split('\n');
-    const indented = bodyLines.map(l => BODY_INDENT + l).join('\n');
-    return `def ${name}():\n${indented}`;
+    return { preambleSrc, fnDefs, extrasSrc };
 }
 
 function checkSyntax(src) {
@@ -858,9 +776,11 @@ function assembleFileForDisk() {
 
     projectDef.tasks.forEach((task, idx) => {
         const entry = taskEditors.get(task.id);
-        const body = entry && entry.cm ? entry.cm.getValue() : (task.starterBody || '');
+        const src = entry && entry.cm
+            ? entry.cm.getValue()
+            : buildEditorSource(task.function, task.starterBody);
         lines.push(`# Task ${idx + 1}: ${task.title}`);
-        lines.push(wrapAsFunction(task.function, body));
+        lines.push(src.replace(/\s+$/g, ''));
         lines.push('');
     });
 
@@ -992,9 +912,9 @@ function loadFileIntoEditors(text, filename) {
         const entry = taskEditors.get(task.id);
         if (!entry || !entry.cm) continue;
         if (parsed.bodies.has(task.function)) {
-            entry.cm.setValue(parsed.bodies.get(task.function));
+            entry.cm.setValue(buildEditorSource(task.function, parsed.bodies.get(task.function)));
         } else {
-            entry.cm.setValue(task.starterBody || '');
+            entry.cm.setValue(buildEditorSource(task.function, task.starterBody));
             missing.push(task.title);
         }
         entry.errorEl.style.display = 'none';
@@ -1107,7 +1027,7 @@ function anyEditorDifferentFromStarter() {
     if (setupEditor && setupEditor.getValue() !== (projectDef.editablePreamble || '')) return true;
     for (const [, entry] of taskEditors) {
         if (!entry.cm) continue;
-        const starter = entry.task.starterBody || '';
+        const starter = buildEditorSource(entry.task.function, entry.task.starterBody);
         if (entry.cm.getValue() !== starter) return true;
     }
     return false;

@@ -2134,47 +2134,20 @@ code {
     overflow: hidden;
 }
 
-/* Def line poses as the first numbered line of its task in the assembled
-   program. We render the line number ourselves (mimicking CodeMirror's
-   gutter styling) so it sits in the same visual column as the body's line
-   numbers below; --gutter-width is set in JS from cm.getGutterElement(). */
-.task-def-line {
-    background: #272822;          /* monokai bg */
-    color: #f8f8f2;               /* monokai default text (parens, colon) */
-    font-family: 'Source Code Pro', 'Menlo', 'Consolas', 'DejaVu Sans Mono', monospace;
-    font-size: 0.95rem;
-    line-height: 1.4;
-    user-select: none;
-    cursor: default;
-    display: flex;
-    align-items: baseline;
-    padding: 4px 0;
-}
-.task-def-line .def-lineno {
-    /* Mirror CodeMirror's .CodeMirror-linenumber so the column lines up with
-       the editor's gutter even before JS has measured the gutter width. */
-    box-sizing: border-box;
-    min-width: var(--gutter-width, 28px);
-    padding: 0 3px 0 5px;
-    text-align: right;
-    color: #999;                   /* CodeMirror default linenumber colour */
-    font-size: 0.95rem;
-    font-family: 'Source Code Pro', 'Menlo', 'Consolas', 'DejaVu Sans Mono', monospace;
-}
-.task-def-line .def-content { padding-left: 4px; }
-.task-def-line .kw { color: #f92672; }   /* monokai keyword (def) */
-.task-def-line .fn { color: #a6e22e; }   /* monokai function name */
-
 .task-editor .CodeMirror {
     height: auto;
     font-size: 0.95rem;
 }
-/* Task body editors visually indent their content one Python step (2 chars)
-   so what students type reads as the body of the locked def line above.
-   The Setup editor is top-level Python, not a function body, so it skips
-   this indent and sits flush with the line numbers. */
-.task-editor:not(.setup-editor) .CodeMirror-lines {
-    padding-left: 1.2em;
+
+/* Line 0 of each task editor is the locked `def fn():` line. Tint it so it
+   reads as scaffolding rather than student code. The class is applied via
+   CodeMirror.addLineClass(0, 'background', ...) and (..., 'wrap', ...). */
+.task-editor .CodeMirror-line.cm-def-line-wrap,
+.task-editor .CodeMirror-linebackground.cm-def-line {
+    background: rgba(255, 255, 255, 0.04);
+}
+.task-editor .CodeMirror-line.cm-def-line-wrap {
+    cursor: not-allowed;
 }
 
 .task-error {
