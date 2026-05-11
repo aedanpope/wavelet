@@ -6,12 +6,12 @@
     {
       "type": "concept",
       "icon": "📋",
-      "title": "Lists — you already know them!",
-      "content": "<p>Remember writing <code>for i in [1, 2, 3]:</code> in Worksheet 3? That <code>[1, 2, 3]</code> is a <strong>list</strong>!</p><p>A list holds multiple items in order, wrapped in square brackets <code>[]</code> and separated by commas:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>numbers = [10, 20, 30]\nwords = ['hello', 'world']</pre><p>You can store a list in a variable and use it later — just like you do with numbers and strings.</p>",
+      "title": "Lists — you already know them",
+      "content": "<p>Remember writing <code>for i in [1, 2, 3]:</code> in Worksheet 3? That <code>[1, 2, 3]</code> is a <strong>list</strong></p><p>A list holds multiple items in order, wrapped in square brackets <code>[]</code> and separated by commas:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>numbers = [10, 20, 30]\nwords = ['hello', 'world']</pre><p>You can store a list in a variable and use it later — just like you do with numbers and strings.</p>",
       "footer": "A list is items inside square brackets [], separated by commas."
     },
     {
-      "title": "You've seen this before!",
+      "title": "You've seen this before",
       "content": "Remember this from Worksheet 3? You used lists inside <code>for</code> loops to repeat code with different values.",
       "task": "Run this code — it's the same kind of loop you wrote in Worksheet 3.",
       "starterCode": "for colour in ['red', 'blue', 'green']:\n  print(colour)",
@@ -27,10 +27,10 @@
     },
     {
       "title": "Storing a list in a variable",
-      "content": "That <code>['red', 'blue', 'green']</code> is a list. Just like numbers and text, you can store a list in a variable!",
+      "content": "That <code>['red', 'blue', 'green']</code> is a list. Just like numbers and text, you can store a list in a variable",
       "task": "Run this code to see what happens when you print a whole list.",
       "starterCode": "colours = ['red', 'blue', 'green']\nprint(colours)",
-      "hint": "The whole list gets printed, square brackets and all!",
+      "hint": "The whole list gets printed, square brackets and all",
       "validation": {
         "rules": [
           {
@@ -42,7 +42,7 @@
     },
     {
       "title": "Make a bigger list",
-      "content": "Lists can be any length! This one has 3 numbers, but let's make it bigger.",
+      "content": "Lists can be any length. This one has 3 numbers, but let's make it bigger.",
       "task": "Change the list so it contains five numbers: <code>10, 20, 30, 40, 50</code>.",
       "starterCode": "numbers = [1, 2, 3]\nprint(numbers)",
       "hint": "Replace everything inside the square brackets: <code>[10, 20, 30, 40, 50]</code>.",
@@ -56,9 +56,9 @@
       }
     },
     {
-      "title": "Don't forget the brackets!",
-      "content": "A list in Python must be wrapped in square brackets <code>[]</code>. If you forget them, Python creates a different kind of container called a <em>tuple</em> by accident!",
-      "task": "Run the code. Notice the output has <code>()</code> parentheses instead of <code>[]</code> square brackets — that means Python made a tuple, not a list! Add square brackets around the items to fix it.",
+      "title": "Don't forget the brackets",
+      "content": "A list in Python must be wrapped in square brackets <code>[]</code>. If you forget them, Python creates a different kind of container called a <em>tuple</em> by accident",
+      "task": "Run the code. Notice the output has <code>()</code> parentheses instead of <code>[]</code> square brackets — that means Python made a tuple, not a list. Add square brackets around the items to fix it.",
       "starterCode": "fruits = 'apple', 'banana', 'cherry'\nprint(fruits)",
       "hint": "Wrap the items in square brackets: <code>fruits = ['apple', 'banana', 'cherry']</code>",
       "validation": {
@@ -76,8 +76,8 @@
     },
     {
       "title": "Make your own list",
-      "content": "Now create a list entirely from scratch! Choose any three items you like.",
-      "task": "Create a list called <code>things</code> with 3 items and print it. Your items can be anything — colours, animals, foods!",
+      "content": "Now create a list entirely from scratch. Choose any three items you like.",
+      "task": "Create a list called <code>things</code> with 3 items and print it. Your items can be anything — colours, animals, foods",
       "codeHeight": 3,
       "starterCode": "",
       "hint": "For example: <code>things = ['pizza', 'cats', 'rain']</code> on the first line, then <code>print(things)</code> on the second.",
@@ -101,7 +101,7 @@
       "type": "concept",
       "icon": "🎯",
       "title": "Picking items: how indexing works",
-      "content": "<p>Every item in a list has a position number called an <strong>index</strong>. Python starts counting from <strong>0</strong>, not 1!</p><table style='border-collapse:collapse;margin:12px 0;font-family:monospace;'><tr style='background:#e0e7ff;'><td style='padding:8px 16px;border:1px solid #94a3b8;text-align:center;'><strong>Index</strong></td><td style='padding:8px 16px;border:1px solid #94a3b8;text-align:center;'>0</td><td style='padding:8px 16px;border:1px solid #94a3b8;text-align:center;'>1</td><td style='padding:8px 16px;border:1px solid #94a3b8;text-align:center;'>2</td></tr><tr><td style='padding:8px 16px;border:1px solid #94a3b8;text-align:center;'><strong>Item</strong></td><td style='padding:8px 16px;border:1px solid #94a3b8;text-align:center;'>'cat'</td><td style='padding:8px 16px;border:1px solid #94a3b8;text-align:center;'>'dog'</td><td style='padding:8px 16px;border:1px solid #94a3b8;text-align:center;'>'fish'</td></tr></table><p>To get a single item, write the list name followed by the index in square brackets: <code>animals[0]</code> gives <code>'cat'</code>.</p>",
+      "content": "<p>Every item in a list has a position number called an <strong>index</strong>. Python starts counting from <strong>0</strong>, not 1</p><table style='border-collapse:collapse;margin:12px 0;font-family:monospace;'><tr style='background:#e0e7ff;'><td style='padding:8px 16px;border:1px solid #94a3b8;text-align:center;'><strong>Index</strong></td><td style='padding:8px 16px;border:1px solid #94a3b8;text-align:center;'>0</td><td style='padding:8px 16px;border:1px solid #94a3b8;text-align:center;'>1</td><td style='padding:8px 16px;border:1px solid #94a3b8;text-align:center;'>2</td></tr><tr><td style='padding:8px 16px;border:1px solid #94a3b8;text-align:center;'><strong>Item</strong></td><td style='padding:8px 16px;border:1px solid #94a3b8;text-align:center;'>'cat'</td><td style='padding:8px 16px;border:1px solid #94a3b8;text-align:center;'>'dog'</td><td style='padding:8px 16px;border:1px solid #94a3b8;text-align:center;'>'fish'</td></tr></table><p>To get a single item, write the list name followed by the index in square brackets: <code>animals[0]</code> gives <code>'cat'</code>.</p>",
       "footer": "Python starts counting from 0, not 1. The first item is always at index 0."
     },
     {
@@ -121,7 +121,7 @@
     },
     {
       "title": "Your first index",
-      "content": "Let's try it! Use an index to pick out a single item from a list.",
+      "content": "Let's try it. Use an index to pick out a single item from a list.",
       "task": "Run this code to see the first animal in the list.",
       "starterCode": "animals = ['cat', 'dog', 'fish']\nprint(animals[0])",
       "hint": "<code>[0]</code> means \"the first item.\" Python starts counting from 0.",
@@ -155,8 +155,8 @@
       }
     },
     {
-      "title": "The off-by-one trap!",
-      "content": "This is a very common mistake! If a list has 3 items, the valid indices are 0, 1, and 2 — <strong>not</strong> 1, 2, and 3.",
+      "title": "The off-by-one trap",
+      "content": "This is a very common mistake. If a list has 3 items, the valid indices are 0, 1, and 2 — <strong>not</strong> 1, 2, and 3.",
       "task": "Run this code to see the error. The list has 3 items but the code tries index <code>3</code>. Fix it so it prints the last item.",
       "starterCode": "pets = ['cat', 'dog', 'fish']\nprint(pets[3])",
       "hint": "A 3-item list has indices 0, 1, and 2. The last item is at index <code>2</code>, not <code>3</code>.",
@@ -176,7 +176,7 @@
     },
     {
       "title": "Print two items",
-      "content": "You can use indexing multiple times to print different items from the same list. Lists of numbers work the same way as lists of words!",
+      "content": "You can use indexing multiple times to print different items from the same list. Lists of numbers work the same way as lists of words",
       "task": "Write two <code>print()</code> statements to print the first and last scores from the list.",
       "codeHeight": 4,
       "starterCode": "scores = [85, 92, 78, 96]\n",
@@ -202,8 +202,8 @@
     },
     {
       "title": "Changing an item",
-      "content": "You can change any item in a list by assigning a new value to its index — just like changing a variable!",
-      "task": "Run this code. The teacher re-marked your second test — your score should be 100, not 92! Watch how the list updates.",
+      "content": "You can change any item in a list by assigning a new value to its index — just like changing a variable",
+      "task": "Run this code. The teacher re-marked your second test — your score should be 100, not 92. Watch how the list updates.",
       "codeHeight": 5,
       "starterCode": "scores = [85, 92, 78]\nprint(scores)\nscores[1] = 100\nprint(scores)",
       "hint": "Notice how 92 at index 1 gets replaced with 100.",
@@ -218,7 +218,7 @@
     },
     {
       "title": "Your turn: change an item",
-      "content": "Now you try! Change the last fruit in the list.",
+      "content": "Now you try. Change the last fruit in the list.",
       "task": "Add a line between the list and the print to change <code>'cherry'</code> (at index 2) to <code>'mango'</code>. The output should be <code>['apple', 'banana', 'mango']</code>.",
       "codeHeight": 4,
       "starterCode": "fruits = ['apple', 'banana', 'cherry']\n\nprint(fruits)",
@@ -269,7 +269,7 @@
     },
     {
       "title": "Your own list and its length",
-      "content": "Now try combining a list with <code>len()</code> yourself!",
+      "content": "Now try combining a list with <code>len()</code> yourself",
       "task": "Change the list to contain your own 5 favourite things. Then add a second print line to show how many items are in your list, like: <code>print('Number of items:', len(favs))</code>.",
       "codeHeight": 4,
       "starterCode": "favs = ['change', 'these', 'items']\nprint(favs)\n",
@@ -300,12 +300,12 @@
       "type": "concept",
       "icon": "🔄",
       "title": "Two ways to loop through a list",
-      "content": "<p>You already know how to loop through a list to get each <strong>item</strong>:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>for animal in animals:\n  print(animal)</pre><p>But sometimes you need the <strong>position number</strong> (index) too. Use <code>range(len(my_list))</code> to loop through the indices:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>for i in range(len(animals)):\n  print(i, animals[i])</pre><p>Remember from Worksheet 3: <code>range(3)</code> gives the numbers 0, 1, 2. So <code>range(len(animals))</code> gives one index for each item!</p><p>The first way is simpler — use it when you just need the items. Use the second way when you need to know <em>where</em> each item is in the list.</p>",
+      "content": "<p>You already know how to loop through a list to get each <strong>item</strong>:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>for animal in animals:\n  print(animal)</pre><p>But sometimes you need the <strong>position number</strong> (index) too. Use <code>range(len(my_list))</code> to loop through the indices:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>for i in range(len(animals)):\n  print(i, animals[i])</pre><p>Remember from Worksheet 3: <code>range(3)</code> gives the numbers 0, 1, 2. So <code>range(len(animals))</code> gives one index for each item</p><p>The first way is simpler — use it when you just need the items. Use the second way when you need to know <em>where</em> each item is in the list.</p>",
       "footer": "for item in list → gives items. for i in range(len(list)) → gives indices."
     },
     {
       "title": "Loop through items",
-      "content": "You already know this from Worksheet 3! You can loop through every item in a list.",
+      "content": "You already know this from Worksheet 3. You can loop through every item in a list.",
       "task": "Run this code to print each animal on its own line.",
       "codeHeight": 4,
       "starterCode": "animals = ['cat', 'dog', 'fish']\nfor animal in animals:\n  print(animal)",
@@ -321,7 +321,7 @@
     },
     {
       "title": "Announce each item",
-      "content": "You can print more than just the item itself — add a label or message before it!",
+      "content": "You can print more than just the item itself — add a label or message before it",
       "task": "Write a <code>for</code> loop that goes through each colour and prints a message like <code>I like red</code>, <code>I like blue</code>, etc.",
       "codeHeight": 4,
       "starterCode": "colours = ['red', 'blue', 'green']\n",
@@ -350,7 +350,7 @@
     },
     {
       "title": "Loop with index numbers",
-      "content": "This is the new way! <code>range(len(temps))</code> gives you the numbers 0, 1, 2 — the valid indices. Then you use <code>temps[i]</code> to get each item.",
+      "content": "This is the new way. <code>range(len(temps))</code> gives you the numbers 0, 1, 2 — the valid indices. Then you use <code>temps[i]</code> to get each item.",
       "task": "Run this code to see each temperature printed with its index number.",
       "codeHeight": 4,
       "starterCode": "temps = [22, 18, 25]\nfor i in range(len(temps)):\n  print(i, temps[i])",
@@ -382,8 +382,8 @@
     },
     {
       "title": "Your own numbered list",
-      "content": "Now write a numbered list from scratch!",
-      "task": "Write a <code>for</code> loop that prints each favourite numbered, like: <code>1 Minecraft</code>. Change the list to your own 4 favourites (games, books, movies — anything!) if you like.",
+      "content": "Now write a numbered list from scratch",
+      "task": "Write a <code>for</code> loop that prints each favourite numbered, like: <code>1 Minecraft</code>. Change the list to your own 4 favourites (games, books, movies — anything) if you like.",
       "codeHeight": 5,
       "starterCode": "favs = ['Minecraft', 'Roblox', 'Fortnite', 'Lego']\n",
       "hint": "Use <code>for i in range(len(favs)):</code> and print with <code>print(i + 1, favs[i])</code>.",
@@ -411,7 +411,7 @@
     },
     {
       "title": "Growing a list with append",
-      "content": "You can add new items to the end of a list using <code>.append()</code>. The list gets bigger!",
+      "content": "You can add new items to the end of a list using <code>.append()</code>. The list gets bigger",
       "task": "Run this code to see the list grow from 2 items to 3.",
       "codeHeight": 5,
       "starterCode": "fruits = ['apple', 'banana']\nprint(fruits)\nfruits.append('cherry')\nprint(fruits)",
@@ -427,7 +427,7 @@
     },
     {
       "title": "Append your own items",
-      "content": "Now add more items to the list yourself!",
+      "content": "Now add more items to the list yourself",
       "task": "Add <code>'mango'</code> and <code>'grape'</code> to the list using two more <code>.append()</code> lines. The final list should have 5 items.",
       "codeHeight": 7,
       "starterCode": "fruits = ['apple', 'banana']\nfruits.append('cherry')\n\n\nprint(fruits)",
@@ -447,9 +447,9 @@
       }
     },
     {
-      "title": "The append trap!",
-      "content": "A very common mistake! <code>.append()</code> updates the list directly but doesn't give you anything back. If you try to save the result, you lose your list and get <code>None</code> instead!",
-      "task": "Run this code to see the bug — it prints <code>None</code>! Fix it by removing <code>numbers = </code> from the line with <code>.append()</code>.",
+      "title": "The append trap",
+      "content": "A very common mistake. <code>.append()</code> updates the list directly but doesn't give you anything back. If you try to save the result, you lose your list and get <code>None</code> instead",
+      "task": "Run this code to see the bug — it prints <code>None</code>. Fix it by removing <code>numbers = </code> from the line with <code>.append()</code>.",
       "codeHeight": 4,
       "starterCode": "numbers = [1, 2, 3]\nnumbers = numbers.append(4)\nprint(numbers)",
       "hint": "The line should just be <code>numbers.append(4)</code> — don't try to save the result.",
@@ -470,12 +470,12 @@
       "type": "concept",
       "icon": "📦",
       "title": "Starting with an empty list",
-      "content": "<p>You can create a list with <strong>nothing in it</strong> — an empty list:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>numbers = []</pre><p>Then use <code>.append()</code> inside a loop to fill it up, one item at a time. This is one of the most useful patterns in programming!</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>numbers = []\nfor i in range(1, 4):\n  numbers.append(i)\nprint(numbers)  # [1, 2, 3]</pre>",
+      "content": "<p>You can create a list with <strong>nothing in it</strong> — an empty list:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>numbers = []</pre><p>Then use <code>.append()</code> inside a loop to fill it up, one item at a time. This is one of the most useful patterns in programming</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>numbers = []\nfor i in range(1, 4):\n  numbers.append(i)\nprint(numbers)  # [1, 2, 3]</pre>",
       "footer": "Start empty, then append in a loop — a very common pattern."
     },
     {
       "title": "Watch a list grow",
-      "content": "Here's the empty-list pattern in action. The list starts empty and gets bigger with each loop!",
+      "content": "Here's the empty-list pattern in action. The list starts empty and gets bigger with each loop",
       "task": "Run this code and watch how the list grows from <code>[]</code> to <code>[1, 2, 3, 4, 5]</code>.",
       "codeHeight": 5,
       "starterCode": "numbers = []\nfor i in range(1, 6):\n  numbers.append(i)\n  print(numbers)",
@@ -491,11 +491,11 @@
     },
     {
       "title": "Build a list in a loop",
-      "content": "Now try it yourself! The code above printed the list as it grew — but usually you just print the final result.",
+      "content": "Now try it yourself. The code above printed the list as it grew — but usually you just print the final result.",
       "task": "Fill in the loop body to append the numbers 1 to 5, then print the final list. The output should be <code>[1, 2, 3, 4, 5]</code>.",
       "codeHeight": 5,
       "starterCode": "numbers = []\nfor i in range(1, 6):\n  # append i to the list\n\nprint(numbers)",
-      "hint": "Replace the comment with <code>numbers.append(i)</code>. Make sure it's indented inside the loop!",
+      "hint": "Replace the comment with <code>numbers.append(i)</code>. Make sure it's indented inside the loop",
       "validation": {
         "rules": [
           {
@@ -517,7 +517,7 @@
     },
     {
       "title": "Filtering with if",
-      "content": "Only printing some items, not all! Lists and <code>if</code> statements are a powerful combo — you can loop through a list and only act on items that match a condition.<br><br>Watch the indenting carefully! The <code>if</code> goes inside the <code>for</code> (2 spaces), and the <code>print</code> goes inside the <code>if</code> (4 spaces — that's double):<pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>for num in numbers:\n  if num &gt; 5:\n    print(num)</pre>",
+      "content": "Only printing some items, not all. Lists and <code>if</code> statements are a powerful combo — you can loop through a list and only act on items that match a condition.<br><br>Watch the indenting carefully. The <code>if</code> goes inside the <code>for</code> (2 spaces), and the <code>print</code> goes inside the <code>if</code> (4 spaces — that's double):<pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>for num in numbers:\n  if num &gt; 5:\n    print(num)</pre>",
       "task": "This code prints all the numbers. Add an <code>if</code> statement inside the loop so it only prints numbers greater than 5.",
       "codeHeight": 5,
       "starterCode": "numbers = [2, 8, 3, 10, 1, 7, 4]\nfor num in numbers:\n  print(num)",
@@ -538,7 +538,7 @@
     },
     {
       "title": "Build a filtered list",
-      "content": "Here's a powerful pattern: loop through one list, use <code>if</code> to check each item, and <code>.append()</code> the ones you want into a new list!",
+      "content": "Here's a powerful pattern: loop through one list, use <code>if</code> to check each item, and <code>.append()</code> the ones you want into a new list",
       "task": "Create a new list called <code>big</code> that contains only the numbers greater than 5 from the <code>numbers</code> list. Print the new list.",
       "codeHeight": 7,
       "starterCode": "numbers = [2, 8, 3, 10, 1, 7, 4]\nbig = []\n",
@@ -569,7 +569,7 @@
     },
     {
       "title": "Square numbers",
-      "content": "Let's combine input, loops, and append to build a list from scratch! Square numbers are what you get when you multiply a number by itself: 1\u00d71=1, 2\u00d72=4, 3\u00d73=9, 4\u00d74=16, and so on.",
+      "content": "Let's combine input, loops, and append to build a list from scratch. Square numbers are what you get when you multiply a number by itself: 1\u00d71=1, 2\u00d72=4, 3\u00d73=9, 4\u00d74=16, and so on.",
       "task": "Get a number <code>n</code> from the user, then build a list of the first <code>n</code> square numbers using a loop and <code>.append()</code>. Print the final list.",
       "codeHeight": 6,
       "inputs": [
@@ -629,7 +629,7 @@
     },
     {
       "title": "Challenge: Find the smallest",
-      "content": "Now use the same pattern — but find the <strong>smallest</strong> number instead!",
+      "content": "Now use the same pattern — but find the <strong>smallest</strong> number instead",
       "task": "Write a program that finds and prints the smallest number in the list. Start with the first number as your \"smallest so far\" and update it when you find something smaller.",
       "codeHeight": 7,
       "starterCode": "numbers = [34, 7, 23, 89, 12, 56, 45]\n",
@@ -705,11 +705,11 @@
     },
     {
       "title": "Creative challenge: Your list program",
-      "content": "Time to be creative! Use what you've learned about lists to build something cool.",
-      "task": "Write a program that creates a list and does something interesting with it. You must use a list, a <code>for</code> loop, and at least one of: indexing, <code>.append()</code>, <code>len()</code>, or an <code>if</code> statement. Show your teacher!",
+      "content": "Time to be creative. Use what you've learned about lists to build something cool.",
+      "task": "Write a program that creates a list and does something interesting with it. You must use a list, a <code>for</code> loop, and at least one of: indexing, <code>.append()</code>, <code>len()</code>, or an <code>if</code> statement. Show your teacher",
       "codeHeight": 10,
       "starterCode": "",
-      "hint": "Some ideas: a quiz with answers stored in a list, a top-5 countdown, a program that collects even numbers into a new list, or a favourite-things ranker. Anything goes!",
+      "hint": "Some ideas: a quiz with answers stored in a list, a top-5 countdown, a program that collects even numbers into a new list, or a favourite-things ranker. Anything goes",
       "validation": {
         "rules": [
           {
