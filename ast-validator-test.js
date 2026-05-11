@@ -116,6 +116,24 @@ const unitTests = [
         rule: { type: 'ast_has_list_literal' },
         expected: false
     },
+    {
+        name: 'ast_has_list_literal nItems: exact match passes',
+        code: 'nums = [1, 2, 3, 4, 5]\nprint(nums)',
+        rule: { type: 'ast_has_list_literal', nItems: 5 },
+        expected: true
+    },
+    {
+        name: 'ast_has_list_literal nItems: too few fails',
+        code: 'nums = [1, 2, 3]\nprint(nums)',
+        rule: { type: 'ast_has_list_literal', nItems: 5 },
+        expected: false
+    },
+    {
+        name: 'ast_has_list_literal nItems: too many fails',
+        code: 'nums = [1, 2, 3, 4, 5, 6]\nprint(nums)',
+        rule: { type: 'ast_has_list_literal', nItems: 5 },
+        expected: false
+    },
 
     // ast_no_assign_to_method_result
     {

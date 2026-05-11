@@ -367,6 +367,16 @@ function validateASTRule(astData, rule) {
                     };
                 }
             }
+            if (typeof rule.nItems === 'number') {
+                const hasExact = literals.some(l => (l.size || 0) === rule.nItems);
+                if (!hasExact) {
+                    return {
+                        isValid: false,
+                        errorType: 'ast_has_list_literal_failed',
+                        message: rule.message || `Your list needs exactly ${rule.nItems} items.`
+                    };
+                }
+            }
             return { isValid: true };
         }
 
