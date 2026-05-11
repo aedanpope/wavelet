@@ -325,7 +325,7 @@
       "task": "Write a <code>for</code> loop that goes through each colour and prints a message like <code>I like red</code>, <code>I like blue</code>, etc.",
       "codeHeight": 4,
       "starterCode": "colours = ['red', 'blue', 'green']\n",
-      "hint": "Use <code>for colour in colours:</code> then <code>print('I like', colour)</code> inside the loop.",
+      "hint": "Loop through <code>colours</code> with a <code>for</code> loop. Inside the loop, use <code>print()</code> with two things separated by a comma: the label <code>'I like'</code> and the loop variable.",
       "validation": {
         "rules": [
           {
@@ -386,7 +386,7 @@
       "task": "Write a <code>for</code> loop that prints each favourite numbered, like: <code>1 Minecraft</code>. Change the list to your own 4 favourites (games, books, movies, anything) if you like.",
       "codeHeight": 5,
       "starterCode": "favs = ['Minecraft', 'Roblox', 'Fortnite', 'Lego']\n",
-      "hint": "Use <code>for i in range(len(favs)):</code> and print with <code>print(i + 1, favs[i])</code>.",
+      "hint": "Use <code>range(len(favs))</code> in your <code>for</code> loop so <code>i</code> takes each index. Inside, print two things: the position number (add 1 so it starts at 1, not 0) and the item at that index.",
       "validation": {
         "rules": [
           {
@@ -521,7 +521,7 @@
       "task": "This code prints all the numbers. Add an <code>if</code> statement inside the loop so it only prints numbers greater than 5.",
       "codeHeight": 5,
       "starterCode": "numbers = [2, 8, 3, 10, 1, 7, 4]\nfor num in numbers:\n  print(num)",
-      "hint": "Add <code>if num &gt; 5:</code> before the print. Then <strong>indent the print with 4 spaces</strong> (double indent) so it's inside both the <code>for</code> AND the <code>if</code>.",
+      "hint": "Add an <code>if</code> line that checks whether <code>num</code> is greater than 5, just before the print. Then <strong>indent the print with 4 spaces</strong> (double indent) so it's inside both the <code>for</code> AND the <code>if</code>.",
       "validation": {
         "rules": [
           {
@@ -542,7 +542,7 @@
       "task": "Create a new list called <code>big</code> that contains only the numbers greater than 5 from the <code>numbers</code> list. Print the new list.",
       "codeHeight": 7,
       "starterCode": "numbers = [2, 8, 3, 10, 1, 7, 4]\nbig = []\n",
-      "hint": "Loop through numbers with <code>for num in numbers:</code>. Inside the loop, use <code>if num > 5:</code> and then <code>big.append(num)</code>. Print <code>big</code> after the loop.",
+      "hint": "Loop through every number. Inside the loop, use an <code>if</code> to check whether it's greater than 5, and if so, append it to <code>big</code>. Print <code>big</code> after the loop ends.",
       "validation": {
         "rules": [
           {
@@ -580,7 +580,7 @@
         }
       ],
       "starterCode": "n = get_input()\n",
-      "hint": "Start with <code>squares = []</code>. Loop with <code>for i in range(1, n + 1):</code> and append <code>i * i</code>. Print the list after the loop.",
+      "hint": "Start with an empty list called <code>squares</code>. Use <code>range</code> to loop from 1 up to <code>n</code>, and append each square (<code>i</code> times itself) to the list. Print the list once the loop is done.",
       "validation": {
         "rules": [
           {
@@ -633,7 +633,7 @@
       "task": "Write a program that finds and prints the smallest number in the list. Start with the first number as your \"smallest so far\" and update it when you find something smaller.",
       "codeHeight": 7,
       "starterCode": "numbers = [34, 7, 23, 89, 12, 56, 45]\n",
-      "hint": "Start with <code>smallest = numbers[0]</code>. Loop through the list with <code>for num in numbers:</code>. If <code>num &lt; smallest</code>, update smallest. Print it after the loop.",
+      "hint": "Start by assuming the first item is the smallest. Then loop through every number. If you find one that's smaller than your current smallest, update your <code>smallest</code> variable. Print it once the loop is done.",
       "validation": {
         "rules": [
           {
@@ -670,7 +670,7 @@
         }
       ],
       "starterCode": "numbers = [1, 3, 5, 3, 7, 3, 9, 1]\ntarget = get_input()\n",
-      "hint": "Start with <code>count = 0</code>. Loop through numbers with <code>for num in numbers:</code>. If <code>num == target</code>, add 1 to count. Print count after the loop.",
+      "hint": "Start a counter at 0. Loop through every number, and each time one equals <code>target</code>, add 1 to the counter. Print the counter once the loop finishes.",
       "validation": {
         "rules": [
           {
