@@ -270,10 +270,10 @@
     {
       "title": "Your own list and its length",
       "content": "Now try combining a list with <code>len()</code> yourself",
-      "task": "Change the list to contain your own 5 favourite things. Then add a second print line to show how many items are in your list, like: <code>print('Number of items:', len(favs))</code>.",
+      "task": "Change the list to contain 5 things in your pencil case. Then add a second print line to show how many items are in your list, like: <code>print('Number of items:', len(pencil_case))</code>.",
       "codeHeight": 4,
-      "starterCode": "favs = ['change', 'these', 'items']\nprint(favs)\n",
-      "hint": "Change the items in the list to your own choices, making sure there are 5 items. Then add <code>print('Number of items:', len(favs))</code> on a new line.",
+      "starterCode": "pencil_case = ['change', 'these', 'items']\nprint(pencil_case)\n",
+      "hint": "Change the items in the list to things from your pencil case, making sure there are 5 items. Then add <code>print('Number of items:', len(pencil_case))</code> on a new line.",
       "validation": {
         "rules": [
           {
