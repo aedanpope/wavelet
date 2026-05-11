@@ -6,6 +6,11 @@ name: lowercase, non-alphanumerics replaced with `-`, truncated to 28 chars,
 and any trailing `-` stripped. Use this to share preview URLs without waiting
 for a deployment to land or guessing at character counts.
 
+The 28-char limit routinely truncates mid-word (e.g.
+`claude/course-structure-design-xU7wk` -> `claude-course-structure-desi`),
+which is exactly the case humans get wrong when eyeballing. Always run this
+script -- never hand-compute the alias.
+
 Usage:
     python3 scripts/cloudflare-alias.py                    # uses current git branch
     python3 scripts/cloudflare-alias.py <branch-name>      # explicit branch

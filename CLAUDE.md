@@ -58,7 +58,7 @@ npm run deploy:docker
 
 The project deploys to Cloudflare Pages. Production: `wavelet.zone`. Pages project slug: `wavelet-e8x`.
 
-**Always use `scripts/cloudflare-alias.py` to generate the preview URL — never compute it by hand.** Eyeballing character counts is error-prone (Cloudflare truncates at 28 chars and trims trailing `-`).
+**Always run `scripts/cloudflare-alias.py` to generate the preview URL — never compute it by hand, and never paste a URL you produced from memory.** The 28-char truncation routinely chops mid-word, in places that look wrong but are correct. If you guess, you will mislead the user with a 404.
 
 ```bash
 python3 scripts/cloudflare-alias.py                  # current branch
@@ -70,6 +70,7 @@ The rule the script encodes: lowercase the branch name, replace runs of non-alph
 - `claude/test-cloud-code-8WTmb` → `https://claude-test-cloud-code-8wtmb.wavelet-e8x.pages.dev` (28 chars, no truncation)
 - `claude/onedrive-file-picker-ZjviR` → `https://claude-onedrive-file-picker.wavelet-e8x.pages.dev` (truncated at the dash before `zjvir`, trailing `-` stripped)
 - `claude/modernize-worksheet-2-TPGZj` → `https://claude-modernize-worksheet-2.wavelet-e8x.pages.dev`
+- `claude/course-structure-design-xU7wk` → `https://claude-course-structure-desi.wavelet-e8x.pages.dev` (cut **mid-word** at char 28: `design` becomes `desi`. This is the case humans most often get wrong when eyeballing — always run the script.)
 
 When working on a PR or feature branch, share the script's output so the user can preview the change once Cloudflare finishes building. If that alias doesn't resolve, the per-deployment hash URL (`https://<8-hex>.wavelet-e8x.pages.dev`) can be read from the Cloudflare Pages commit status on the pushed SHA via the GitHub MCP.
 

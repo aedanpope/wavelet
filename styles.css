@@ -1883,6 +1883,344 @@ code {
     min-height: 60px;
 }
 
+/* ── Project page ────────────────────────────────────────────── */
+
+/* Sticky stage at the top of the page: canvas + run + dpad + status */
+.project-stage {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #f1f3f5;
+    border-bottom: 1px solid #dee2e6;
+    padding: 16px 24px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 24px;
+    align-items: center;
+}
+
+.project-canvas-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* When the project canvas isn't initialised yet, show a placeholder block. */
+.project-canvas-wrapper .output {
+    background: white;
+    border: 2px dashed #ced4da;
+    border-radius: 8px;
+    min-width: 480px;
+    min-height: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #adb5bd;
+    font-style: italic;
+}
+
+.project-canvas-wrapper .output:has(canvas) {
+    background: transparent;
+    border: none;
+    min-width: 0;
+    min-height: 0;
+}
+
+.project-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.run-project-btn {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+    transition: all 0.2s ease;
+}
+
+.run-project-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(16, 185, 129, 0.4);
+}
+
+/* 3x3 grid: ↑ on top, ← ↓ → on bottom row */
+.dpad {
+    display: grid;
+    grid-template-columns: 50px 50px 50px;
+    grid-template-rows: 50px 50px;
+    gap: 4px;
+}
+
+.dpad-btn {
+    background: white;
+    border: 2px solid #adb5bd;
+    border-radius: 8px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.dpad-btn:hover { background: #e9ecef; border-color: #6c757d; }
+.dpad-btn:active {
+    background: #495057;
+    color: white;
+    transform: scale(0.95);
+}
+
+.dpad-up    { grid-column: 2; grid-row: 1; }
+.dpad-left  { grid-column: 1; grid-row: 2; }
+.dpad-down  { grid-column: 2; grid-row: 2; }
+.dpad-right { grid-column: 3; grid-row: 2; }
+
+.project-status {
+    color: #495057;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.project-status .status-fail-text {
+    color: #991b1b;
+    font-weight: 600;
+}
+.project-status .status-jump-btn {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.project-status .status-jump-btn:hover {
+    background: #b91c1c;
+}
+
+/* Intro prose */
+.project-intro {
+    padding: 20px 28px;
+    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+    border-bottom: 1px solid #c7d2fe;
+    color: #1e293b;
+    line-height: 1.5;
+}
+.project-intro p { margin: 0 0 8px; }
+.project-intro p:last-child { margin-bottom: 0; }
+
+/* Setup card — host wraps it so it gets the same outer padding as the
+   tasks stack but stays a single card rather than a list. */
+.project-setup-host {
+    padding: 20px 28px 0;
+}
+.project-setup .setup-number {
+    background: #6b7280;     /* greyer than the task circles to read as "config" */
+    font-size: 1rem;
+}
+
+/* Task stack */
+.project-tasks {
+    padding: 20px 28px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* Task card with the connecting left rail */
+.project-task {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-left: 5px solid #667eea;
+    border-radius: 8px;
+    padding: 18px 20px;
+    position: relative;
+}
+
+/* Bridges the gap between cards so the rail looks continuous. */
+.project-task::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: -18px;
+    width: 5px;
+    height: 18px;
+    background: #667eea;
+}
+.project-task:first-of-type::before { display: none; }
+
+.project-task-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.project-task-titles {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.task-number {
+    background: #667eea;
+    color: white;
+    font-weight: 700;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.task-title {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.task-status {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+.task-status-pending { background: #f1f3f5; color: #6c757d; }
+.task-status-pass    { background: #d1fae5; color: #065f46; }
+.task-status-fail    { background: #fee2e2; color: #991b1b; }
+
+.task-guidance {
+    color: #495057;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+.task-guidance p { margin: 0 0 8px; }
+.task-guidance p:last-child { margin-bottom: 0; }
+.task-guidance code {
+    background: #f1f3f5;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+/* Editor frame visually unifies the locked def line with the body editor.
+   Uses the monokai background so the def line and editor read as one
+   continuous code surface — only the inability to click in cues that the
+   def line is fixed. */
+.task-editor-frame {
+    background: #272822;          /* monokai bg, matches the editor below */
+    border: 1px solid #1e1f1a;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.task-editor .CodeMirror {
+    height: auto;
+    font-size: 0.95rem;
+}
+
+/* Line 0 of each task editor is the locked `def fn():` line. Tint it so it
+   reads as scaffolding rather than student code. The class is applied via
+   CodeMirror.addLineClass(0, 'background', ...) and (..., 'wrap', ...). */
+.task-editor .CodeMirror-line.cm-def-line-wrap,
+.task-editor .CodeMirror-linebackground.cm-def-line {
+    background: rgba(255, 255, 255, 0.04);
+}
+.task-editor .CodeMirror-line.cm-def-line-wrap {
+    cursor: not-allowed;
+}
+
+.task-error {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    color: #991b1b;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.85rem;
+}
+
+/* Extras panel — read-only stash of unrecognised top-level code from an
+   opened file. Shown only when extras exist; they still run as part of the
+   project and are written back unchanged on save. */
+.project-extras {
+    margin: 0 28px 30px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.extras-header {
+    background: #e9ecef;
+    padding: 10px 16px;
+    border-bottom: 1px solid #dee2e6;
+}
+.extras-header h3 {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    color: #495057;
+}
+.extras-header p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+.extras-code {
+    margin: 0;
+    padding: 12px 16px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.9rem;
+    color: #495057;
+    background: white;
+    white-space: pre;
+    overflow-x: auto;
+    max-height: 240px;
+    overflow-y: auto;
+}
+
+/* Narrow viewports: stack canvas above controls */
+@media (max-width: 768px) {
+    .project-stage {
+        grid-template-columns: 1fr;
+        position: static;
+    }
+    .project-canvas-wrapper .output {
+        min-width: 0;
+        min-height: 360px;
+    }
+    .project-controls {
+        align-items: center;
+    }
+    .project-tasks,
+    .project-intro,
+    .project-setup-host,
+    .project-extras {
+        margin-left: 16px;
+        margin-right: 16px;
+        padding-left: 16px;
+        padding-right: 16px;
+    }
 /* ─── Spec table panel ─── */
 .spec-panel {
     background: #f8fafc;
