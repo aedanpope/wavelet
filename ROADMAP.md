@@ -42,8 +42,9 @@ WS10 Interactive II / Animation  🔲 to build (depends on WS9)
 
 Goal: get to a complete, teachable course before adding infrastructure.
 
-### WS5 iteration: comma-separated print args
-WS5 teaches f-strings and string concatenation but never introduces `print('a', var, 'b')` with comma-separated arguments. This is a gap: WS6 uses it for `print('I have', len(animals), 'pets')` and it appears naturally in `print(i, animals[i])` for index-based iteration. A short run-then-edit pair should be added to WS5 (after the f-string section, before loops+f-strings) showing that `print()` can take multiple comma-separated values separated by spaces.
+### WS5 — comma-separated print args (shipped)
+
+WS5 was reworked to drop f-strings and string concatenation in favour of a single new idea: <code>print('a', var, 'b')</code> with comma-separated arguments. Everything else in the worksheet is consolidation — variables, input, if/else, loops, modulo — using the new comma-print as the formatting tool. This keeps the cognitive load on one fresh concept rather than three.
 
 ### WS6: Lists & Indexing (next to build)
 Key concepts: creating lists, indexing (`list[0]`), negative indexing, `len()`, iterating with `for`, `append()`.

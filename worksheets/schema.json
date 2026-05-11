@@ -417,6 +417,45 @@
           },
           "required": ["type"],
           "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "function_spec"},
+            "functionName": {"type": "string", "minLength": 1, "description": "Name of the function the student must define"},
+            "cases": {
+              "type": "array",
+              "minItems": 1,
+              "description": "Test cases. The student's function is called with `args` and the return value compared to `expected`.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "args": {"type": "array", "description": "Positional arguments to pass"},
+                  "expected": {"description": "Expected return value (any JSON value)"}
+                },
+                "required": ["args", "expected"]
+              }
+            },
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type", "functionName", "cases"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
+            "type": {"const": "function_buttons"},
+            "calls": {
+              "type": "array",
+              "minItems": 1,
+              "description": "Python expressions to call the student's function(s) with",
+              "items": {"type": "string", "minLength": 1}
+            },
+            "solutionCode": {"type": "string", "minLength": 1, "description": "Reference implementation; printed output of each call must match"},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type", "calls", "solutionCode"],
+          "additionalProperties": false
         }
       ]
     }

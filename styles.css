@@ -1883,3 +1883,177 @@ code {
     min-height: 60px;
 }
 
+/* ─── Spec table panel ─── */
+.spec-panel {
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    padding: 16px 20px;
+}
+.spec-panel-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.spec-panel-icon { font-size: 1.1rem; }
+.spec-panel-title {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 0.95rem;
+}
+.spec-panel-hint {
+    color: #64748b;
+    font-size: 0.85rem;
+    font-style: italic;
+}
+.spec-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    overflow: hidden;
+    font-size: 0.95rem;
+}
+.spec-table th, .spec-table td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #f1f5f9;
+}
+.spec-table tr:last-child td { border-bottom: none; }
+.spec-table th {
+    background: #f1f5f9;
+    color: #475569;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.spec-table code {
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+.spec-call code      { background: #ede9fe; color: #5b21b6; }
+.spec-expected code  { background: #dcfce7; color: #14532d; }
+.spec-actual.pass code { background: #dcfce7; color: #14532d; }
+.spec-actual.fail code { background: #fee2e2; color: #991b1b; }
+.spec-pending {
+    color: #94a3b8;
+    font-style: italic;
+}
+.spec-error {
+    color: #991b1b;
+    font-style: italic;
+    font-size: 0.85rem;
+}
+.spec-status { width: 32px; text-align: center; }
+.spec-tick  { color: #16a34a; font-weight: 700; font-size: 1.1rem; }
+.spec-cross { color: #dc2626; font-weight: 700; font-size: 1.1rem; }
+
+/* ─── Call-button strip ─── */
+.call-buttons-panel {
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    padding: 16px 20px;
+}
+.call-buttons-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.call-buttons-icon { font-size: 1.1rem; }
+.call-buttons-title {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 0.95rem;
+}
+.call-buttons-hint {
+    color: #64748b;
+    font-size: 0.85rem;
+    font-style: italic;
+}
+.call-buttons-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.call-btn {
+    padding: 8px 14px;
+    background: #ede9fe;
+    color: #5b21b6;
+    border: 2px solid #c4b5fd;
+    border-radius: 6px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.call-btn:hover:not(:disabled) {
+    background: #ddd6fe;
+    border-color: #a78bfa;
+    transform: translateY(-1px);
+}
+.call-btn:active:not(:disabled) { transform: translateY(0); }
+.call-btn:disabled {
+    background: #f1f5f9;
+    color: #94a3b8;
+    border-color: #e2e8f0;
+    cursor: not-allowed;
+}
+.call-result {
+    background: #1e293b;
+    color: #e2e8f0;
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.9rem;
+    min-height: 40px;
+}
+.call-result-empty {
+    color: #94a3b8;
+    font-style: italic;
+}
+.call-result-label {
+    color: #a78bfa;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+.call-result-output {
+    color: #e2e8f0;
+    margin: 0;
+    white-space: pre-wrap;
+    background: transparent;
+    padding: 0;
+    border: none;
+    font-family: inherit;
+}
+.call-result-return {
+    color: #86efac;
+    margin-top: 4px;
+}
+.call-result-return code {
+    background: rgba(134, 239, 172, 0.15);
+    color: #bbf7d0;
+    padding: 1px 6px;
+    border-radius: 3px;
+}
+.call-result-error {
+    color: #fca5a5;
+    margin: 0;
+    white-space: pre-wrap;
+    background: transparent;
+    padding: 0;
+    border: none;
+    font-family: inherit;
+}
+.call-result-quiet {
+    color: #94a3b8;
+    font-style: italic;
+}
+

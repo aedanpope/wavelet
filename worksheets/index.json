@@ -38,13 +38,13 @@
     },
     {
       "id": "worksheet-7",
-      "title": "Worksheet 7: Drawing with Code",
-      "description": "Learn to create visual patterns by drawing on a grid using coordinates.",
+      "title": "Worksheet 7: Functions",
+      "description": "Make your own Python tools using def, parameters, and return — then put them together.",
       "file": "worksheet-7.json"
     }
   ],
   "metadata": {
     "version": "1.0",
-    "lastUpdated": "2025-10-29"
+    "lastUpdated": "2026-04-30"
   }
 }
