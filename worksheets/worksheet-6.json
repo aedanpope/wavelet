@@ -43,14 +43,21 @@
     {
       "title": "Make a bigger list",
       "content": "Lists can be any length. This one has 3 numbers, but let's make it bigger.",
-      "task": "Change the list so it contains five numbers: <code>10, 20, 30, 40, 50</code>.",
+      "task": "Change the list so it has 5 numbers — any 5 you choose.",
       "starterCode": "numbers = [1, 2, 3]\nprint(numbers)",
-      "hint": "Replace everything inside the square brackets: <code>[10, 20, 30, 40, 50]</code>.",
+      "hint": "Replace the items inside the square brackets with 5 numbers, separated by commas. Keep the brackets.",
       "validation": {
         "rules": [
           {
-            "type": "solution_code",
-            "solutionCode": "numbers = [10, 20, 30, 40, 50]\nprint(numbers)"
+            "type": "ast_has_list_literal",
+            "minItems": 5,
+            "message": "Your list needs 5 numbers."
+          },
+          {
+            "type": "output_not_empty"
+          },
+          {
+            "type": "no_errors"
           }
         ]
       }
@@ -60,7 +67,7 @@
       "content": "A list in Python must be wrapped in square brackets <code>[]</code>. If you forget them, Python creates a different kind of container called a <em>tuple</em> by accident",
       "task": "Run the code. Notice the output has <code>()</code> parentheses instead of <code>[]</code> square brackets, which means Python made a tuple, not a list. Add square brackets around the items to fix it.",
       "starterCode": "fruits = 'apple', 'banana', 'cherry'\nprint(fruits)",
-      "hint": "Wrap the items in square brackets: <code>fruits = ['apple', 'banana', 'cherry']</code>",
+      "hint": "Put a <code>[</code> right after <code>=</code> and a <code>]</code> at the end of the line.",
       "validation": {
         "rules": [
           {
@@ -137,15 +144,15 @@
     {
       "title": "Pick a different animal",
       "content": "Change the index number to pick a different animal from the list.",
-      "task": "Change <code>[0]</code> to <code>[2]</code> to print the third animal.",
+      "task": "Change the index so the code prints the <strong>last</strong> animal in the list instead of the first.",
       "starterCode": "animals = ['cat', 'dog', 'fish']\nprint(animals[0])",
-      "hint": "The third item is at index 2 (remember: 0, 1, 2).",
+      "hint": "Indices start at 0. So in a 3-item list, what number is the last item at?",
       "validation": {
         "rules": [
           {
             "type": "code_contains",
             "pattern": "animals[2]",
-            "message": "Use animals[2] to get the third item"
+            "message": "Check the index — the last item in a 3-item list isn't at the index you'd think."
           },
           {
             "type": "solution_code",
@@ -180,7 +187,7 @@
       "task": "Write two <code>print()</code> statements to print the first and last scores from the list.",
       "codeHeight": 4,
       "starterCode": "scores = [85, 92, 78, 96]\n",
-      "hint": "Use <code>print(scores[0])</code> for the first score and <code>print(scores[3])</code> for the last.",
+      "hint": "The first score is at index 0. A list with 4 items has indices 0, 1, 2 and ... ? Use that for the last score.",
       "validation": {
         "rules": [
           {
@@ -222,7 +229,7 @@
       "task": "Add a line between the list and the print to change <code>'cherry'</code> (at index 2) to <code>'mango'</code>. The output should be <code>['apple', 'banana', 'mango']</code>.",
       "codeHeight": 4,
       "starterCode": "fruits = ['apple', 'banana', 'cherry']\n\nprint(fruits)",
-      "hint": "Add <code>fruits[2] = 'mango'</code> between the first line and the print.",
+      "hint": "Use the same square-bracket indexing as before, but put it on the <strong>left</strong> of an <code>=</code> sign to overwrite an item. The last fruit is at index 2.",
       "validation": {
         "rules": [
           {
@@ -273,7 +280,7 @@
       "task": "Change the list to contain 5 things in your pencil case. Then add a second print line to show how many items are in your list, like: <code>print('Number of items:', len(pencil_case))</code>.",
       "codeHeight": 4,
       "starterCode": "pencil_case = ['change', 'these', 'items']\nprint(pencil_case)\n",
-      "hint": "Change the items in the list to things from your pencil case, making sure there are 5 items. Then add <code>print('Number of items:', len(pencil_case))</code> on a new line.",
+      "hint": "Replace the placeholder items with 5 things from your pencil case. Then write a second <code>print()</code> on a new line that uses <code>len()</code> on your list, with a label like <code>'Number of items:'</code> in front.",
       "validation": {
         "rules": [
           {
