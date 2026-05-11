@@ -50,8 +50,8 @@
         "rules": [
           {
             "type": "ast_has_list_literal",
-            "minItems": 5,
-            "message": "Your list needs 5 numbers."
+            "nItems": 5,
+            "message": "Your list needs exactly 5 numbers."
           },
           {
             "type": "output_not_empty"
@@ -92,8 +92,8 @@
         "rules": [
           {
             "type": "ast_has_list_literal",
-            "minItems": 3,
-            "message": "Your list needs 3 items."
+            "nItems": 3,
+            "message": "Your list needs exactly 3 items."
           },
           {
             "type": "output_not_empty"
