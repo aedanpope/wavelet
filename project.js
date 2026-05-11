@@ -539,8 +539,9 @@ function displayGlobalError(msg) {
     if (status) status.innerHTML = `<strong>Error:</strong> ${escapeHtml(msg)}`;
 }
 
-// Count failed cards, render the summary in the sticky stage, and scroll to
-// the first error if there is one. Called at the end of every run / key press.
+// Count failed cards and render the summary in the sticky stage. The "Jump
+// to first" button is opt-in — we don't auto-scroll, so the canvas stays
+// visible after a run.
 function finalizeRunStatus() {
     const failingCards = document.querySelectorAll('.project-task .task-status-fail');
     const status = document.getElementById('project-status');
@@ -555,7 +556,6 @@ function finalizeRunStatus() {
         <button type="button" class="status-jump-btn" id="status-jump-btn">Jump to first ↓</button>
     `;
     document.getElementById('status-jump-btn').addEventListener('click', scrollToFirstError);
-    scrollToFirstError();
 }
 
 // Smooth-scroll to the first failing card, leaving the sticky stage clear.
