@@ -63,14 +63,14 @@
       "type": "concept",
       "icon": "📥",
       "title": "Parameters — your tool takes an input",
-      "content": "<p>Just like <code>print</code> needs to know <em>what</em> to print, your tool can take an input too. The input goes in the brackets after the function name:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>def greet(name):\n  print(\"Hi, \" + name)\n\ngreet(\"Ali\")    # Hi, Ali\ngreet(\"Sam\")    # Hi, Sam</pre><p>The word inside the brackets — here, <code>name</code> — is called a <strong>parameter</strong>. When you call the function, the value you pass becomes that parameter inside the body.</p>",
+      "content": "<p>Just like <code>print</code> needs to know <em>what</em> to print, your function can take an input too. The input goes in the brackets after the function name:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>def greet(name):\n  print('Hi,', name)\n\ngreet('Ali')    # Hi, Ali\ngreet('Sam')    # Hi, Sam</pre><p>The word inside the brackets — here, <code>name</code> — is called a <strong>parameter</strong>. When you call the function, the value you pass becomes that parameter inside the body.</p>",
       "footer": "Same function. Different inputs. Different output."
     },
     {
       "title": "Greet two friends",
       "content": "<p>Look at how <code>greet</code> uses the parameter <code>name</code>. Each call sends a different value in.</p>",
       "task": "Run the code and watch how the same function produces two different greetings.",
-      "starterCode": "def greet(name):\n  print(f\"Hi, {name}!\")\n\ngreet(\"Ali\")\ngreet(\"Sam\")",
+      "starterCode": "def greet(name):\n  print('Hi,', name)\n\ngreet('Ali')\ngreet('Sam')",
       "hint": "Press Run. Notice the function prints twice — once for each call.",
       "codeHeight": 6,
       "difficulty": "easy",
@@ -78,7 +78,7 @@
         "rules": [
           {
             "type": "solution_code",
-            "solutionCode": "def greet(name):\n  print(f\"Hi, {name}!\")\n\ngreet(\"Ali\")\ngreet(\"Sam\")"
+            "solutionCode": "def greet(name):\n  print('Hi,', name)\n\ngreet('Ali')\ngreet('Sam')"
           }
         ]
       }
@@ -86,16 +86,16 @@
     {
       "title": "Edit farewell",
       "content": "<p>Here's a function called <code>farewell</code>. The body says goodbye, but it's a bit boring.</p>",
-      "task": "Change the body of <code>farewell</code> so it prints <code>See you tomorrow, {name}!</code> instead. Don't change the def line or the calls.",
-      "starterCode": "def farewell(name):\n  print(f\"Bye {name}.\")\n\nfarewell(\"Ali\")\nfarewell(\"Sam\")",
-      "hint": "Change the f-string inside <code>print(...)</code> to <code>f\"See you tomorrow, {name}!\"</code>.",
+      "task": "Change the body of <code>farewell</code> so it prints <code>See you tomorrow,</code> followed by the name. Don't change the def line or the calls.",
+      "starterCode": "def farewell(name):\n  print('Bye', name)\n\nfarewell('Ali')\nfarewell('Sam')",
+      "hint": "Change <code>'Bye'</code> to <code>'See you tomorrow,'</code> — Python will print a space and then the name.",
       "codeHeight": 6,
       "difficulty": "easy",
       "validation": {
         "rules": [
           {"type": "code_contains", "pattern": "def farewell(name):", "description": "Keep the def farewell(name): line"},
-          {"type": "output_contains", "pattern": "See you tomorrow, Ali!", "description": "Output should contain 'See you tomorrow, Ali!'"},
-          {"type": "output_contains", "pattern": "See you tomorrow, Sam!", "description": "Output should contain 'See you tomorrow, Sam!'"}
+          {"type": "output_contains", "pattern": "See you tomorrow, Ali", "description": "Output should contain 'See you tomorrow, Ali'"},
+          {"type": "output_contains", "pattern": "See you tomorrow, Sam", "description": "Output should contain 'See you tomorrow, Sam'"}
         ]
       }
     },
