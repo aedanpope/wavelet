@@ -185,7 +185,17 @@ async function validateRule(code, output, rule, problem, problemIndex, codeExecu
             }
             
             return { isValid: true };
-            
+
+        case 'code_not_contains':
+            if (code.includes(rule.pattern)) {
+                return {
+                    isValid: false,
+                    errorType: 'code_not_contains_failed',
+                    message: rule.message || rule.description || `Code must not contain '${rule.pattern}'`
+                };
+            }
+            return { isValid: true };
+
         case 'code_contains_regex':
             const codeRegexPattern = new RegExp(rule.pattern, 'i'); // case insensitive
             const regexResult = codeRegexPattern.test(code);
