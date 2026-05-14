@@ -164,6 +164,29 @@ Each worksheet adds about 2-3 lines to the maximum expected write-from-scratch l
 - **Challenge problems:** Relax validation. Use `output_contains`, `code_contains`, `output_not_empty`. The student might solve it differently than you expected.
 - **Creative challenges:** Use the loosest possible validation — `code_contains` for the required construct (e.g. `for`), `output_not_empty`, and nothing else.
 
+#### Pair requirement rules with a correctness rule
+
+The validator reports up to two failure messages per attempt: one **requirement** failure (📋 amber) and one **correctness** failure (❌ red). Both render in stacked boxes.
+
+- **Correctness rules** are `solution_code`, `function_spec`, and `function_buttons` — they compare the student's actual output against the canonical solution.
+- **Requirement rules** are everything else (`code_contains`, `code_contains_regex`, `ast_has_*`, `output_contains`, `print_count`, `assignment_count`, etc.) — they check structural constraints.
+
+A common authoring bug is writing a problem with **only requirement rules**. The student fixes "you must call foo() 3 times" and the validator goes green, even though their output is wrong. Always include at least one correctness rule so the red box can show output diffs when the structure is right but the answer isn't.
+
+The two roles are complementary: structural rules tell the student *what their code must do* (call this, define that, use this keyword); the correctness rule tells them *what the output must look like*. Pair them.
+
+Example — Problem 2 of WS7 ("Call it more than once"):
+```json
+"rules": [
+  {"type": "code_contains", "pattern": "def say_hi", "description": "Keep the def say_hi() line"},
+  {"type": "ast_has_function_call", "function": "say_hi", "minCount": 3, "description": "Call say_hi() three times"},
+  {"type": "solution_code", "solutionCode": "def say_hi():\n  print(\"Hi there!\")\n\nsay_hi()\nsay_hi()\nsay_hi()"}
+]
+```
+A student who writes `print("Hi asd!")` and calls `say_hi()` twice now sees both: 📋 "call say_hi() at least 3 times" *and* ❌ "your output should be Hi there!\nHi there!\nHi there!". Without the `solution_code` rule, only the requirement message fires.
+
+When to skip the correctness rule: open-ended problems where the student might solve it differently (Challenge / Creative problems above). For everything else, include one.
+
 ### "Reminder" Problems
 
 When a worksheet uses a concept from a previous worksheet in a new combination, include a brief reminder problem:

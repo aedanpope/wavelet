@@ -38,7 +38,7 @@
         "rules": [
           {"type": "code_contains", "pattern": "def say_hi", "description": "Keep the def say_hi() line"},
           {"type": "ast_has_function_call", "function": "say_hi", "minCount": 3, "description": "Call say_hi() three times"},
-          {"type": "output_contains", "pattern": "Hi there!", "description": "Output should contain the greeting"}
+          {"type": "solution_code", "solutionCode": "def say_hi():\n  print(\"Hi there!\")\n\nsay_hi()\nsay_hi()\nsay_hi()"}
         ]
       }
     },
@@ -54,7 +54,7 @@
         "rules": [
           {"type": "code_contains", "pattern": "def cheer", "description": "Define a function called cheer"},
           {"type": "ast_has_function_call", "function": "cheer", "description": "Call your function by writing cheer() on its own line"},
-          {"type": "output_contains", "pattern": "Hooray", "description": "The function should print Hooray"}
+          {"type": "solution_code", "solutionCode": "def cheer():\n  print(\"Hooray!\")\n\ncheer()"}
         ]
       }
     },
@@ -94,8 +94,7 @@
         "rules": [
           {"type": "code_contains", "pattern": "def farewell(name):", "description": "Keep the def farewell(name): line"},
           {"type": "ast_has_function_call", "function": "farewell", "minCount": 2, "description": "Call farewell() twice (once for Ali, once for Sam)"},
-          {"type": "output_contains", "pattern": "See you tomorrow, Ali", "description": "Output should contain 'See you tomorrow, Ali'"},
-          {"type": "output_contains", "pattern": "See you tomorrow, Sam", "description": "Output should contain 'See you tomorrow, Sam'"}
+          {"type": "solution_code", "solutionCode": "def farewell(name):\n  print('See you tomorrow,', name)\n\nfarewell('Ali')\nfarewell('Sam')"}
         ]
       }
     },
@@ -119,8 +118,7 @@
           {"type": "code_contains", "pattern": "def double(n):", "description": "Keep the def double(n): line"},
           {"type": "code_contains", "pattern": "return", "description": "Use return to give back the answer"},
           {"type": "ast_has_function_call", "function": "double", "minCount": 2, "description": "Call double() twice (once for 5, once for 12)"},
-          {"type": "output_contains", "pattern": "10", "description": "Double of 5 should print 10"},
-          {"type": "output_contains", "pattern": "24", "description": "Double of 12 should print 24"}
+          {"type": "solution_code", "solutionCode": "def double(n):\n  return n * 2\n\nprint(double(5))\nprint(double(12))"}
         ]
       }
     },
