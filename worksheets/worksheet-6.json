@@ -262,10 +262,10 @@
     {
       "title": "Print a list's length",
       "content": "You can give <code>print()</code> multiple things separated by commas and it prints them all with spaces in between, like <code>print('Number of animals:', len(animals))</code>.",
-      "task": "Use <code>len()</code> to print how many books are in the list, with a label like <code>Number of books:</code>.",
+      "task": "Use <code>len()</code> to print how many books are in the list.",
       "codeHeight": 3,
       "starterCode": "books = ['Matilda', 'Holes', 'Wonder', 'Hatchet', 'Boy']\n",
-      "hint": "On a new line, call <code>print()</code> with two things separated by a comma: a short label in quotes, and <code>len(books)</code>.",
+      "hint": "On a new line, call <code>print()</code> with <code>len(books)</code> inside.",
       "validation": {
         "rules": [
           {
