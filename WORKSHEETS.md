@@ -168,8 +168,10 @@ Each worksheet adds about 2-3 lines to the maximum expected write-from-scratch l
 
 The validator reports up to two failure messages per attempt: one **requirement** failure (📋 amber) and one **correctness** failure (❌ red). Both render in stacked boxes.
 
-- **Correctness rules** ("is the answer right?", checked against output) are `solution_code`, `function_spec`, `function_buttons`, and `output_contains`.
+- **Correctness rules** ("is the answer right?", checked against output) currently include `solution_code`, `function_spec`, `function_buttons`, and `output_contains`.
 - **Requirement rules** ("is your code structured the right way?", checked against code or minimal execution) are everything else: `code_contains`, `code_contains_regex`, `ast_has_*`, `output_not_empty`, `print_count`, `assignment_count`, `input_count`, etc.
+
+The classification is implemented per rule case in `validation.js`: a rule's failure result includes `kind: 'correctness'` when it's an answer check (delegated rules use the `tagCorrectness` helper). Absence of `kind` means requirement. When adding a new rule type, set its kind in its case rather than editing a central list.
 
 `output_contains` counts as correctness — it's effectively a lightweight `solution_code` checking a substring of expected output. Pairing it with structural rules already gets you the split-feedback UX, so not every problem needs a full `solution_code`.
 

@@ -72,7 +72,8 @@ async function validateAnswer(code, output, problem, problemIndex, codeExecutor,
     // Split rules into "requirement" (structural/constraint checks) and
     // "correctness" (output/spec comparisons against a reference solution).
     // Collect the first failure of each kind so we can show both messages.
-    const CORRECTNESS_RULE_TYPES = new Set(['solution_code', 'function_spec', 'function_buttons', 'output_contains']);
+    // Each rule case in validateRule() tags its own failure result with
+    // kind: 'correctness' if applicable; absence of kind means requirement.
     let requirementFailure = null;
     let correctnessFailure = null;
     let firstFailedRule = null;
@@ -81,7 +82,7 @@ async function validateAnswer(code, output, problem, problemIndex, codeExecutor,
         const ruleResult = await validateRule(code, output, rule, problem, problemIndex, codeExecutor, userInputValues, astData);
 
         if (typeof ruleResult === 'object' && ruleResult.isValid === false) {
-            const isCorrectness = CORRECTNESS_RULE_TYPES.has(rule.type);
+            const isCorrectness = ruleResult.kind === 'correctness';
             if (isCorrectness && !correctnessFailure) {
                 correctnessFailure = ruleResult;
             } else if (!isCorrectness && !requirementFailure) {
@@ -121,6 +122,14 @@ async function validateAnswer(code, output, problem, problemIndex, codeExecutor,
 }
 
 
+
+// Stamp a delegated rule result so the orchestrator routes failures to the
+// red 'correctness' message slot. Cases that build their own result object
+// should set kind: 'correctness' inline instead of calling this.
+function tagCorrectness(result) {
+    if (result && result.isValid === false) result.kind = 'correctness';
+    return result;
+}
 
 // Validate a single validation rule
 // Returns detailed error message objects for better educational feedback
@@ -259,11 +268,12 @@ async function validateRule(code, output, rule, problem, problemIndex, codeExecu
                 return {
                     isValid: false,
                     errorType: errorType,
-                    message: message
+                    message: message,
+                    kind: 'correctness'
                 };
             }
             return { isValid: true };
-            
+
         case 'output_contains_regex':
             const outputRegexPattern = new RegExp(rule.pattern, 'i'); // case insensitive
             const outputRegexResult = outputRegexPattern.test(output);
@@ -400,25 +410,26 @@ async function validateRule(code, output, rule, problem, problemIndex, codeExecu
             return { isValid: true };
             
         case 'function_spec':
-            return await validateFunctionSpec(code, rule, codeExecutor);
+            return tagCorrectness(await validateFunctionSpec(code, rule, codeExecutor));
 
         case 'function_buttons':
-            return await validateFunctionButtons(code, rule, codeExecutor);
+            return tagCorrectness(await validateFunctionButtons(code, rule, codeExecutor));
 
         case 'solution_code':
             // Use the imported validateSolutionCode function
             if (typeof window !== 'undefined' && window.SolutionCodeValidator) {
-                return await window.SolutionCodeValidator.validateSolutionCode(code, output, rule, problem, problemIndex, codeExecutor, userInputValues);
+                return tagCorrectness(await window.SolutionCodeValidator.validateSolutionCode(code, output, rule, problem, problemIndex, codeExecutor, userInputValues));
             } else if (typeof module !== 'undefined' && module.exports) {
                 // Node.js environment - import dynamically
                 const { validateSolutionCode } = require('./validate-solution-code.js');
-                return await validateSolutionCode(code, output, rule, problem, problemIndex, codeExecutor, userInputValues);
+                return tagCorrectness(await validateSolutionCode(code, output, rule, problem, problemIndex, codeExecutor, userInputValues));
             } else {
                 console.error('SolutionCodeValidator not available');
                 return {
                     isValid: false,
                     errorType: 'solution_code_validator_unavailable',
-                    message: "Solution code validation is not available"
+                    message: "Solution code validation is not available",
+                    kind: 'correctness'
                 };
             }
             
