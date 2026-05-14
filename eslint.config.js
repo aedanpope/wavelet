@@ -20,11 +20,15 @@ module.exports = [
         fetch: 'readonly',
         alert: 'readonly',
         confirm: 'readonly',
+        prompt: 'readonly',
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
         setInterval: 'readonly',
         clearInterval: 'readonly',
+        URL: 'readonly',
         URLSearchParams: 'readonly',
+        Blob: 'readonly',
+        FileReader: 'readonly',
 
         // Node.js globals (for scripts)
         process: 'readonly',
@@ -47,7 +51,14 @@ module.exports = [
         ErrorHandler: 'writable',
         InputSystem: 'writable',
         Validation: 'writable',
-        CodeExecutor: 'writable'
+        CodeExecutor: 'writable',
+        ProgressStore: 'writable',
+        ProblemRenderer: 'writable',
+        TracePlayer: 'writable',
+        setupCanvasFunctions: 'writable',
+        autoFlushCanvas: 'writable',
+        resetCanvasState: 'writable',
+        escHtml: 'writable'
       }
     },
     rules: {
@@ -81,7 +92,15 @@ module.exports = [
       'no-throw-literal': 'error',
 
       // Scope
-      'no-redeclare': 'error',
+      // builtinGlobals:false so files can declare the modules they own
+      // (e.g. `class CodeExecutor` in code-executor.js) without conflicting
+      // with the globals list that other files use to reference them.
+      'no-redeclare': ['error', { builtinGlobals: false }],
+
+      // Off: the validation.js rule switch uses bare `let`/`const` in each
+      // case (every case returns, so no leakage). Wrapping every arm in
+      // braces would be 24 sites of pure visual noise.
+      'no-case-declarations': 'off',
       'no-shadow': ['warn', {
         builtinGlobals: false,
         hoist: 'functions'

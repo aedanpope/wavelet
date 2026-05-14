@@ -265,7 +265,7 @@ if height > 140:
             ]
         },
         expectedResult: false,
-        expectedMessage: "With input height = 130, your program output:\nYou can ride!\nbut expected output:\n"
+        expectedMessage: "With input height = 150, your program's output was correct:\nYou can ride!\n\nBut with input height = 130, your program output:\nYou can ride!\nbut expected output:\n"
     },
     {
         id: "missing-input-test",
@@ -349,7 +349,7 @@ else:
             ]
         },
         expectedResult: false,
-        expectedMessage: "With input num = 7, code = 123, your program output:\naccess denied\nbut expected output:\nAccess granted"
+        expectedMessage: "With input num = 5, code = 123, your program's output was correct:\naccess denied\n\nBut with input num = 7, code = 123, your program output:\naccess denied\nbut expected output:\nAccess granted"
     },
     {
         id: "todo-secret-password-no-logic",
@@ -381,7 +381,7 @@ else:
             ]
         },
         expectedResult: false,
-        expectedMessage: "With input num = 7, code = 123, your program output:\nAccess denied\nbut expected output:\nAccess granted"
+        expectedMessage: "With input num = 5, code = 123, your program's output was correct:\nAccess denied\n\nBut with input num = 7, code = 123, your program output:\nAccess denied\nbut expected output:\nAccess granted"
     },
     {
         id: "todo-secret-password-correct",

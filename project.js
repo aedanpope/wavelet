@@ -477,7 +477,7 @@ async function onKeyPress(direction) {
     }
 
     // Clear + redraw scene with attribution.
-    try { await py.runPythonAsync('clear()'); } catch (_e) {}
+    try { await py.runPythonAsync('clear()'); } catch (_e) { /* clear is best-effort */ }
     const sceneResult = await callWithAttribution('draw_scene');
     if (!sceneResult.ok) {
         const taskId = taskIdForFunction(sceneResult.in_function);

@@ -203,7 +203,7 @@ async function validateRule(code, output, rule, problem, problemIndex, codeExecu
                         .replace(/\\\(/g, '(')   // Replace \( with (
                         .replace(/\\\)/g, ')')   // Replace \) with )
                         .replace(/\\\+/g, '+')   // Replace \+ with +
-                        .replace(/\\\-/g, '-')   // Replace \- with -
+                        .replace(/\\-/g, '-')    // Replace \- with -
                         .replace(/\\\*/g, '*')   // Replace \* with *
                         .replace(/\\\//g, '/')   // Replace \/ with /
                         .replace(/\\\./g, '.')   // Replace \. with .
@@ -511,7 +511,7 @@ async function validateFunctionButtons(code, rule, codeExecutor) {
     const pyodide = codeExecutor.getPyodide();
 
     async function runAndCapture(setupCode, callExpr) {
-        try { await codeExecutor.resetPythonEnvironment(); } catch (_) {}
+        try { await codeExecutor.resetPythonEnvironment(); } catch (_) { /* reset is best-effort */ }
         const origPrint = pyodide.globals.get('print');
         let out = '';
         const pyStr = a => a === true ? 'True' : a === false ? 'False' : a == null ? 'None' : String(a);

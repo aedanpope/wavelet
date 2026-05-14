@@ -2,28 +2,21 @@
 // Implements seed-based black-box testing with dynamic input generation
 
 // Helper function to check if solution output is contained within student output
-// This allows students to have debugging print statements while still validating correctness
-// When exactMatch is true, outputs must match exactly (after trimming)
-function isOutputMatch(studentOutput, solutionOutput, exactMatch = true) {
+// Default (substring, case-insensitive) lets students keep debug prints while still validating correctness.
+// When exactMatch is true, outputs must match exactly after trimming (case-sensitive).
+function isOutputMatch(studentOutput, solutionOutput, exactMatch = false) {
     const student = (studentOutput || '').trim();
     const solution = (solutionOutput || '').trim();
-    
+
     // If solution output is empty, student output should also be empty
     if (solution === '') {
         return student === '';
     }
-    
-    const studentLower = student.toLowerCase();
-    const solutionLower = solution.toLowerCase();
+
     if (exactMatch) {
-        // For exact matching, require outputs to be identical (preserving case)
-        return studentLower === solutionLower;
+        return student === solution;
     }
-    else {
-        // Check if solution output is a substring of student output (case-insensitive)
-        // Allows for e.g. print debugging statements in student code.
-        return studentLower.includes(solutionLower);
-    }
+    return student.toLowerCase().includes(solution.toLowerCase());
 }
 
 // Simple but effective PRNG for deterministic testing
@@ -41,7 +34,7 @@ function createTestGetChoice(seed, maxRuns = 10) {
     const choiceFunction = async function(n) {
         const randomValue = nextRandom(seed, choiceIndex);
         // Ensure we get values 1 through n, not 1 through n+1
-        const choice = Math.floor(randomValue * n) + 1;
+        let choice = Math.floor(randomValue * n) + 1;
         // Safety check to ensure choice is within valid range
         if (choice > n) {
             choice = n;
@@ -250,13 +243,13 @@ async function runMultipleTests(studentCode, solutionCode, problem, maxRuns, cod
             console.log(`[ERROR] Both student and solution code failed with error:`, studentResult.error);
         }
 
-        passed = (studentResult.success && solutionResult.success &&  isOutputMatch(studentResult.output, solutionResult.output, rule.exactMatch)) || sameError
-        
+        const passed = (studentResult.success && solutionResult.success && isOutputMatch(studentResult.output, solutionResult.output, rule.exactMatch)) || sameError;
+
         results.push({
             seed,
             studentResult,
             solutionResult,
-            passed: passed
+            passed
         });
     }
     

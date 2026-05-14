@@ -156,8 +156,16 @@ class BasicHomepageTest {
                 throw new Error(`${file} has no problems or problems is not an array`);
             }
 
+            // Coding problems need title/content/task/hint. Concept cards
+            // and trace players are explanatory blocks — title is enough;
+            // each has its own additional shape (content + footer, or
+            // code + steps) which the JSON schema covers.
             data.problems.forEach((problem, index) => {
-                requiredProblemFields.forEach(field => {
+                const isExplanatory = problem.type === 'concept' || problem.type === 'trace';
+                const fieldsForThisProblem = isExplanatory
+                    ? ['title']
+                    : requiredProblemFields;
+                fieldsForThisProblem.forEach(field => {
                     if (!(field in problem)) {
                         throw new Error(`${file} problem ${index + 1} missing required field: ${field}`);
                     }
