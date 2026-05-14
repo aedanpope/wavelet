@@ -233,9 +233,10 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "fruits[2]",
-            "message": "Use fruits[2] to change the last item"
+            "type": "ast_has_subscript_assign",
+            "target": "fruits",
+            "index": 2,
+            "message": "Change the last item using indexing assignment, like fruits[2] = '...'."
           },
           {
             "type": "solution_code",
