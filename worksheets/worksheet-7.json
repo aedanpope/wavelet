@@ -6,14 +6,14 @@
     {
       "type": "concept",
       "icon": "🔧",
-      "title": "Python comes with tools. Today you make new ones",
-      "content": "<p>Python comes with built-in tools you've seen before, like these:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>print(\"hello\")\nlen([1, 2, 3])\nrange(5)</pre><p>Today you learn how to make <strong>your own tools</strong>. Once you've made one, you can use it as many times as you like, just like <code>print</code>.</p><p>The keyword that makes a new tool is <code>def</code>. It stands for <em>define</em>.</p>",
-      "footer": "A function is a named piece of code you can run whenever you want."
+      "title": "Python comes with <em>functions</em>. Today you make your own",
+      "content": "<p>You've already used Python's built-in <strong>functions</strong> &mdash; tools like <code>print</code>, <code>len</code>, and <code>range</code> that come with Python. The keyword <code>def</code> (short for <em>define</em>) lets you build your own:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>def say_hi():           &larr; define\n  print(\"Hi there!\")    &larr; specify\n\nsay_hi()                &larr; call</pre><p>The body must be <strong>indented</strong> &mdash; that's how Python knows which lines belong to the function. Nothing happens until you <em>call</em> it.</p>",
+      "footer": "A function is a named piece of code you can call whenever you want."
     },
     {
       "title": "Your first function",
       "content": "<p>This program <strong>defines</strong> a function called <code>say_hi</code> and then <strong>calls</strong> it. Look at the two parts:</p><ul><li><code>def say_hi():</code> creates the function</li><li><code>say_hi()</code> uses the function</li></ul><p>The code under <code>def</code> only runs when you <em>call</em> the function with <code>say_hi()</code>.</p>",
-      "task": "Run the code and watch what happens.",
+      "task": "Run the code and watch <code>say_hi()</code> get called.",
       "starterCode": "def say_hi():\n  print(\"Hi there!\")\n\nsay_hi()",
       "hint": "Just press 'Run Code'. The function prints once because it's called once.",
       "codeHeight": 5,
