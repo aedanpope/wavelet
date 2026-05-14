@@ -85,10 +85,10 @@
     },
     {
       "title": "Edit farewell",
-      "content": "<p>Here's a function called <code>farewell</code>. The body says goodbye, but it's a bit boring.</p>",
-      "task": "Change the body of <code>farewell</code> so it prints <code>See you tomorrow,</code> followed by the name. Don't change the def line or the calls.",
-      "starterCode": "def farewell(name):\n  print('Bye', name)\n\nfarewell('Ali')\nfarewell('Sam')",
-      "hint": "Change the first thing inside the <code>print</code>. Python will add a space between the comma-separated values automatically.",
+      "content": "<p>Here's a function called <code>farewell</code>. It only says goodbye to Ali, and the message is a bit boring.</p>",
+      "task": "Change the body of <code>farewell</code> so it prints <code>See you tomorrow,</code> followed by the name. Then add another call so it also says goodbye to <code>'Sam'</code>.",
+      "starterCode": "def farewell(name):\n  print('Bye')\n\nfarewell('Ali')",
+      "hint": "Inside the <code>print</code>, write <code>'See you tomorrow,'</code> then <code>, name</code> so Python adds the name after the message. Then on a new line below, write <code>farewell('Sam')</code>.",
       "codeHeight": 6,
       "difficulty": "easy",
       "validation": {
