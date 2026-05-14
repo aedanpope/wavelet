@@ -278,6 +278,10 @@
           },
           {
             "type": "no_errors"
+          },
+          {
+            "type": "solution_code",
+            "solutionCode": "books = ['Matilda', 'Holes', 'Wonder', 'Hatchet', 'Boy']\nprint(len(books))"
           }
         ]
       }

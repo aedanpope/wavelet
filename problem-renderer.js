@@ -322,10 +322,15 @@ const ProblemRenderer = (() => {
         }
 
         if (message) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `output-message ${type}`;
-            msgDiv.textContent = message;
-            scroll.appendChild(msgDiv);
+            const messages = Array.isArray(message)
+                ? message
+                : [{ kind: type, text: message }];
+            for (const m of messages) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `output-message ${m.kind || type}`;
+                msgDiv.textContent = m.text;
+                scroll.appendChild(msgDiv);
+            }
         }
 
         outputElement.appendChild(scroll);
