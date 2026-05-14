@@ -184,7 +184,7 @@
     {
       "title": "Print two items",
       "content": "You can use indexing multiple times to print different items from the same list. Lists of numbers work the same way as lists of words",
-      "task": "Write two <code>print()</code> statements to print the first and last scores from the list.",
+      "task": "Use <strong>indexing</strong> to write two <code>print()</code> statements — one for the first score and one for the last.",
       "codeHeight": 4,
       "starterCode": "scores = [85, 92, 78, 96]\n",
       "hint": "The first score is at index 0. A list with 4 items has indices 0, 1, 2 and ... ? Use that for the last score.",
@@ -260,16 +260,24 @@
       }
     },
     {
-      "title": "Print a list and its length",
-      "content": "You can give <code>print()</code> multiple things separated by commas and it prints them all with spaces in between.",
-      "task": "Run this code to see the number of animals printed with a label.",
-      "starterCode": "animals = ['cat', 'dog', 'fish', 'bird']\nprint('Number of animals:', len(animals))",
-      "hint": "<code>print()</code> puts a space between each comma-separated item automatically.",
+      "title": "Print a list's length",
+      "content": "You can give <code>print()</code> multiple things separated by commas and it prints them all with spaces in between, like <code>print('Number of animals:', len(animals))</code>.",
+      "task": "Use <code>len()</code> to print how many books are in the list, with a label like <code>Number of books:</code>.",
+      "codeHeight": 3,
+      "starterCode": "books = ['Matilda', 'Holes', 'Wonder', 'Hatchet', 'Boy']\n",
+      "hint": "On a new line, call <code>print()</code> with two things separated by a comma: a short label in quotes, and <code>len(books)</code>.",
       "validation": {
         "rules": [
           {
-            "type": "solution_code",
-            "solutionCode": "animals = ['cat', 'dog', 'fish', 'bird']\nprint('Number of animals:', len(animals))"
+            "type": "ast_has_function_call",
+            "function": "len",
+            "message": "Use len() to count the items in the list."
+          },
+          {
+            "type": "output_not_empty"
+          },
+          {
+            "type": "no_errors"
           }
         ]
       }
@@ -277,10 +285,10 @@
     {
       "title": "Your own list and its length",
       "content": "Now try combining a list with <code>len()</code> yourself",
-      "task": "Change the list to 5 things from your pencil case. Then add a second print line that shows how many items are in your list, with a label of your choosing.",
+      "task": "Make a list of 5 things from your pencil case. Then print how many items are in your list, with a label of your choosing.",
       "codeHeight": 4,
-      "starterCode": "pencil_case = ['change', 'these', 'items']\nprint(pencil_case)\n",
-      "hint": "Replace the placeholder items with 5 things from your pencil case. Then on a new line, use <code>print()</code> with two things separated by a comma: your own short label, and <code>len()</code> applied to your list.",
+      "starterCode": "",
+      "hint": "On the first line, create a list called <code>pencil_case</code> with 5 items. Then use <code>print()</code> with two things separated by a comma: your own short label, and <code>len()</code> applied to your list.",
       "validation": {
         "rules": [
           {
@@ -294,8 +302,7 @@
             "message": "Use len() to count the items in your list."
           },
           {
-            "type": "output_line_count",
-            "minLines": 2
+            "type": "output_not_empty"
           },
           {
             "type": "no_errors"
