@@ -108,7 +108,7 @@
     {
       "title": "Double it",
       "content": "<p>Time to write your first <code>return</code>. The <code>double</code> function takes a number and gives back twice that number.</p>",
-      "task": "Finish the <code>double</code> function by writing its <code>return</code> line. Then call it twice to print double of 5 and double of 12.",
+      "task": "Finish the <code>double</code> function by writing its <code>return</code> line. Then call it twice to print the double of 5 and then of 12, using two lines of <code>print(double(...))</code>.",
       "starterCode": "def double(n):\n  # Write a return statement here\n  \n\n# Now call double() twice to print double of 5 and double of 12\n",
       "hint": "After <code>return</code>, write <code>n * 2</code>. Then below, use <code>print(double(5))</code> and <code>print(double(12))</code> on two new lines.",
       "codeHeight": 8,
