@@ -63,6 +63,7 @@ async function validateAnswer(code, output, problem, problemIndex, codeExecutor,
     // Split rule failures into "requirement" (structural/constraint checks)
     // and "correctness" (rules that compare the student's output to expected).
     // Collect the first failure of each kind so we can show both messages.
+    const CORRECTNESS_RULE_TYPES = new Set(['solution_code', 'function_spec', 'function_buttons', 'output_contains']);
     let requirementFailure = null;
     let correctnessFailure = null;
     let firstFailedRule = null;
@@ -71,10 +72,7 @@ async function validateAnswer(code, output, problem, problemIndex, codeExecutor,
         const ruleResult = await validateRule(code, output, rule, problem, problemIndex, codeExecutor, userInputValues, astData);
 
         if (typeof ruleResult === 'object' && ruleResult.isValid === false) {
-            const isCorrectness = rule.type === 'solution_code'
-                || rule.type === 'function_spec'
-                || rule.type === 'function_buttons'
-                || rule.type === 'output_contains';
+            const isCorrectness = CORRECTNESS_RULE_TYPES.has(rule.type);
             if (isCorrectness && !correctnessFailure) {
                 correctnessFailure = ruleResult;
             } else if (!isCorrectness && !requirementFailure) {
