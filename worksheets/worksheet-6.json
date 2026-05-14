@@ -285,10 +285,10 @@
     {
       "title": "Your own list and its length",
       "content": "Now try combining a list with <code>len()</code> yourself",
-      "task": "Make a list of 5 things from your pencil case. Then print how many items are in your list, with a label of your choosing.",
+      "task": "Change the list to 5 things from your pencil case. Then print the length with a label of your choosing, like <code>print('Items in my pencil case:', len(pencil_case))</code>.",
       "codeHeight": 4,
-      "starterCode": "",
-      "hint": "On the first line, create a list called <code>pencil_case</code> with 5 items. Then use <code>print()</code> with two things separated by a comma: your own short label, and <code>len()</code> applied to your list.",
+      "starterCode": "pencil_case = ['change', 'these', 'items', 'to', 'yours']\n",
+      "hint": "Replace the placeholders with 5 things from your pencil case. Then use <code>print()</code> with two things separated by a comma: your own short label in quotes, and <code>len()</code> applied to your list.",
       "validation": {
         "rules": [
           {
@@ -300,6 +300,12 @@
             "type": "ast_has_function_call",
             "function": "len",
             "message": "Use len() to count the items in your list."
+          },
+          {
+            "type": "ast_has_function_call",
+            "function": "print",
+            "minArgs": 2,
+            "message": "Call print() with a label AND len(...), separated by a comma."
           },
           {
             "type": "output_not_empty"
