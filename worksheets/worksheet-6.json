@@ -184,7 +184,7 @@
     {
       "title": "Print two items",
       "content": "You can use indexing multiple times to print different items from the same list. Lists of numbers work the same way as lists of words",
-      "task": "Use <strong>indexing</strong> to write two <code>print()</code> statements — one for the first score and one for the last.",
+      "task": "Use <strong>indexing</strong> with two <code>print()</code> statements to output the first score and the last score.",
       "codeHeight": 4,
       "starterCode": "scores = [85, 92, 78, 96]\n",
       "hint": "The first score is at index 0. A list with 4 items has indices 0, 1, 2 and ... ? Use that for the last score.",
