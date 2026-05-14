@@ -1,0 +1,59 @@
+name: Apply repository rulesets
+
+# Syncs every JSON file in .github/rulesets/ to GitHub's repository
+# rulesets API. The JSON files are the source of truth.
+#
+# Triggers:
+#   - push to main when a ruleset file changes (automatic sync)
+#   - manual dispatch (re-apply on demand)
+#
+# Auth:
+#   The default GITHUB_TOKEN cannot manage rulesets — it doesn't have
+#   the `administration:write` scope. This workflow uses a repo secret
+#   named RULESET_TOKEN: a fine-grained PAT with the
+#   "Administration: read & write" repository permission, scoped to
+#   this repository. Set it once via Settings → Secrets and variables
+#   → Actions → New repository secret.
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/rulesets/**']
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sync rulesets
+        env:
+          GH_TOKEN: ${{ secrets.RULESET_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${GH_TOKEN}" ]; then
+            echo "::error::RULESET_TOKEN secret is not set. See .github/workflows/apply-rulesets.yml header for setup."
+            exit 1
+          fi
+
+          existing=$(gh api "repos/${OWNER}/${REPO}/rulesets" --jq '[.[] | {id, name}]')
+
+          for file in .github/rulesets/*.json; do
+            name=$(jq -r .name "$file")
+            id=$(echo "$existing" | jq -r --arg n "$name" '.[] | select(.name == $n) | .id' | head -n1)
+            if [ -n "$id" ] && [ "$id" != "null" ]; then
+              echo "Updating ruleset '$name' (id=$id)"
+              gh api -X PUT "repos/${OWNER}/${REPO}/rulesets/$id" --input "$file" > /dev/null
+            else
+              echo "Creating ruleset '$name'"
+              gh api -X POST "repos/${OWNER}/${REPO}/rulesets" --input "$file" > /dev/null
+            fi
+          done
+
+          echo "Done."
