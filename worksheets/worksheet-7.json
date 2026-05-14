@@ -36,10 +36,9 @@
       "difficulty": "easy",
       "validation": {
         "rules": [
-          {
-            "type": "solution_code",
-            "solutionCode": "def say_hi():\n  print(\"Hi there!\")\n\nsay_hi()\nsay_hi()\nsay_hi()"
-          }
+          {"type": "code_contains", "pattern": "def say_hi", "description": "Keep the def say_hi() line"},
+          {"type": "ast_has_function_call", "function": "say_hi", "minCount": 3, "description": "Call say_hi() three times"},
+          {"type": "output_contains", "pattern": "Hi there!", "description": "Output should contain the greeting"}
         ]
       }
     },
@@ -94,6 +93,7 @@
       "validation": {
         "rules": [
           {"type": "code_contains", "pattern": "def farewell(name):", "description": "Keep the def farewell(name): line"},
+          {"type": "ast_has_function_call", "function": "farewell", "minCount": 2, "description": "Call farewell() twice (once for Ali, once for Sam)"},
           {"type": "output_contains", "pattern": "See you tomorrow, Ali", "description": "Output should contain 'See you tomorrow, Ali'"},
           {"type": "output_contains", "pattern": "See you tomorrow, Sam", "description": "Output should contain 'See you tomorrow, Sam'"}
         ]
