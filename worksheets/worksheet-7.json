@@ -107,33 +107,29 @@
       "footer": "<code><strong>print</strong></code> shows the answer. <code><strong>return</strong></code> gives it back so you can use it later."
     },
     {
-      "title": "Meet the spec table",
-      "content": "<p>Here's a function <code>loud</code> that takes some text and gives back a louder version. The <strong>spec table</strong> below the editor calls your function with different inputs and checks what it gave back &mdash; your job is to make every row pass.</p>",
-      "task": "Run the code. The spec table should fill in green ticks for every row.",
-      "starterCode": "def loud(text):\n  return text + \"!!!\"",
-      "hint": "Just press Run. The spec table calls <code>loud(\"hi\")</code>, <code>loud(\"yay\")</code>, and <code>loud(\"oh\")</code> and checks each return value.",
-      "codeHeight": 4,
+      "title": "Double it",
+      "content": "<p>Time to write your first <code>return</code>. The <code>double</code> function takes a number and gives back twice that number.</p>",
+      "task": "Finish the <code>double</code> function by writing its <code>return</code> line. Then call it twice to print double of 5 and double of 12.",
+      "starterCode": "def double(n):\n  # Write a return statement here\n  \n\n# Now call double() twice to print double of 5 and double of 12\n",
+      "hint": "After <code>return</code>, write <code>n * 2</code>. Then below, use <code>print(double(5))</code> and <code>print(double(12))</code> on two new lines.",
+      "codeHeight": 8,
       "difficulty": "easy",
       "validation": {
         "rules": [
-          {
-            "type": "function_spec",
-            "functionName": "loud",
-            "cases": [
-              {"args": ["hi"], "expected": "hi!!!"},
-              {"args": ["yay"], "expected": "yay!!!"},
-              {"args": ["oh"], "expected": "oh!!!"}
-            ]
-          }
+          {"type": "code_contains", "pattern": "def double(n):", "description": "Keep the def double(n): line"},
+          {"type": "code_contains", "pattern": "return", "description": "Use return to give back the answer"},
+          {"type": "ast_has_function_call", "function": "double", "minCount": 2, "description": "Call double() twice (once for 5, once for 12)"},
+          {"type": "output_contains", "pattern": "10", "description": "Double of 5 should print 10"},
+          {"type": "output_contains", "pattern": "24", "description": "Double of 12 should print 24"}
         ]
       }
     },
     {
-      "title": "Returning a number",
-      "content": "<p>Functions can return numbers too, not just strings. Here's <code>double</code>: it gives back twice the number you pass in.</p>",
-      "task": "Run the code and watch the spec table fill in.",
+      "title": "Meet the spec table",
+      "content": "<p>You just wrote <code>double</code> by hand. The <strong>spec table</strong> below the editor calls your function with different inputs and checks what it gave back &mdash; your job is to make every row pass.</p>",
+      "task": "Run the code. The spec table should fill in green ticks for every row.",
       "starterCode": "def double(n):\n  return n * 2",
-      "hint": "Press Run. The spec table calls <code>double(2)</code>, <code>double(3)</code>, <code>double(7)</code> and checks each return value.",
+      "hint": "Just press Run. The spec table calls <code>double(2)</code>, <code>double(7)</code>, and <code>double(50)</code> and checks each return value.",
       "codeHeight": 4,
       "difficulty": "easy",
       "validation": {
@@ -143,8 +139,8 @@
             "functionName": "double",
             "cases": [
               {"args": [2], "expected": 4},
-              {"args": [3], "expected": 6},
-              {"args": [7], "expected": 14}
+              {"args": [7], "expected": 14},
+              {"args": [50], "expected": 100}
             ]
           }
         ]
