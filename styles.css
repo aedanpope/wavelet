@@ -1002,10 +1002,17 @@ body {
     border: 1px solid #9ae6b4;
 }
 
-.output-message.error {
+.output-message.error,
+.output-message.correctness {
     background: #fed7d7;
     color: #742a2a;
     border: 1px solid #feb2b2;
+}
+
+.output-message.requirement {
+    background: #fef3c7;
+    color: #78350f;
+    border: 1px solid #fcd34d;
 }
 
 .output-message.running {

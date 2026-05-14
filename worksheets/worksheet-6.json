@@ -184,7 +184,7 @@
     {
       "title": "Print two items",
       "content": "You can use indexing multiple times to print different items from the same list. Lists of numbers work the same way as lists of words",
-      "task": "Write two <code>print()</code> statements to print the first and last scores from the list.",
+      "task": "Use <strong>indexing</strong> with two <code>print()</code> statements to output the first score and the last score.",
       "codeHeight": 4,
       "starterCode": "scores = [85, 92, 78, 96]\n",
       "hint": "The first score is at index 0. A list with 4 items has indices 0, 1, 2 and ... ? Use that for the last score.",
@@ -233,9 +233,10 @@
       "validation": {
         "rules": [
           {
-            "type": "code_contains",
-            "pattern": "fruits[2]",
-            "message": "Use fruits[2] to change the last item"
+            "type": "ast_has_subscript_assign",
+            "target": "fruits",
+            "index": 2,
+            "message": "Change the last item using indexing assignment, like fruits[2] = '...'."
           },
           {
             "type": "solution_code",
@@ -260,27 +261,39 @@
       }
     },
     {
-      "title": "Print a list and its length",
-      "content": "You can give <code>print()</code> multiple things separated by commas and it prints them all with spaces in between.",
-      "task": "Run this code to see the number of animals printed with a label.",
-      "starterCode": "animals = ['cat', 'dog', 'fish', 'bird']\nprint('Number of animals:', len(animals))",
-      "hint": "<code>print()</code> puts a space between each comma-separated item automatically.",
+      "title": "Print a list's length",
+      "content": "Now you try. <code>len()</code> works on any list — give it a go on this list of books.",
+      "task": "Use <code>len()</code> to print how many books are in the list.",
+      "codeHeight": 3,
+      "starterCode": "books = ['Matilda', 'Holes', 'Wonder', 'Hatchet', 'Boy']\n",
+      "hint": "On a new line, call <code>print()</code> with <code>len(books)</code> inside.",
       "validation": {
         "rules": [
           {
+            "type": "ast_has_function_call",
+            "function": "len",
+            "message": "Use len() to count the items in the list."
+          },
+          {
+            "type": "output_not_empty"
+          },
+          {
+            "type": "no_errors"
+          },
+          {
             "type": "solution_code",
-            "solutionCode": "animals = ['cat', 'dog', 'fish', 'bird']\nprint('Number of animals:', len(animals))"
+            "solutionCode": "books = ['Matilda', 'Holes', 'Wonder', 'Hatchet', 'Boy']\nprint(len(books))"
           }
         ]
       }
     },
     {
-      "title": "Your own list and its length",
-      "content": "Now try combining a list with <code>len()</code> yourself",
-      "task": "Change the list to 5 things from your pencil case. Then add a second print line that shows how many items are in your list, with a label of your choosing.",
+      "title": "Your own list with a label",
+      "content": "Now make your own list and add a label to the output. You can give <code>print()</code> multiple inputs separated by commas, and it prints them all with spaces in between.",
+      "task": "Change the list to be 5 things from your pencil case.<br>Then print the length, but with a label in front of your choosing, like \"how many things\". Call <code>print</code> with multiple inputs to add the label: <code>print(&lt;your label&gt;, &lt;length of the pencil_case list&gt;)</code>",
       "codeHeight": 4,
-      "starterCode": "pencil_case = ['change', 'these', 'items']\nprint(pencil_case)\n",
-      "hint": "Replace the placeholder items with 5 things from your pencil case. Then on a new line, use <code>print()</code> with two things separated by a comma: your own short label, and <code>len()</code> applied to your list.",
+      "starterCode": "pencil_case = ['change', 'these', 'items']\n",
+      "hint": "Replace the placeholders with 5 things from your pencil case. Then use <code>print()</code> with two things separated by a comma: your own short label in quotes, and <code>len()</code> applied to your list.",
       "validation": {
         "rules": [
           {
@@ -294,8 +307,13 @@
             "message": "Use len() to count the items in your list."
           },
           {
-            "type": "output_line_count",
-            "minLines": 2
+            "type": "ast_has_function_call",
+            "function": "print",
+            "minArgs": 2,
+            "message": "Call print() with a label AND len(...), separated by a comma."
+          },
+          {
+            "type": "output_not_empty"
           },
           {
             "type": "no_errors"

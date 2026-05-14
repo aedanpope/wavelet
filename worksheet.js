@@ -431,7 +431,7 @@ async function runCode(problemIndex) {
         }
         const validationResult = await Validation.validateAnswer(code, executionResult.printOutput, problem, problemIndex, codeExecutor, userInputValues);
         
-        displayOutput(output, executionResult.printOutput, validationResult.isValid ? 'success' : 'error', validationResult.message);
+        displayOutput(output, executionResult.printOutput, validationResult.isValid ? 'success' : 'error', validationResult.messages || validationResult.message);
         
         // Update progress if problem is completed
         if (validationResult.isValid && !completedProblems.has(problemIndex)) {

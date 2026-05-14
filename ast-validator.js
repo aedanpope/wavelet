@@ -34,6 +34,7 @@ def _wavelet_analyze(code):
         "fstrings": [],
         "list_literals": [],
         "subscripts": [],
+        "subscript_assignments": [],
         "anti_patterns": []
     }
 
@@ -176,6 +177,22 @@ def _wavelet_analyze(code):
             for target_node in node.targets:
                 target_name = _name(target_node)
                 value_type = type(node.value).__name__
+
+                # Subscript assignment: foo[i] = value
+                if isinstance(target_node, ast.Subscript):
+                    obj_name = _name(target_node.value)
+                    idx = None
+                    slice_node = target_node.slice
+                    if isinstance(slice_node, ast.Constant):
+                        idx = slice_node.value
+                    elif isinstance(slice_node, ast.UnaryOp) and isinstance(slice_node.op, ast.USub):
+                        if isinstance(slice_node.operand, ast.Constant):
+                            idx = -slice_node.operand.value
+                    analysis["subscript_assignments"].append({
+                        "object": obj_name,
+                        "index": idx,
+                        "value_type": value_type
+                    })
 
                 # Anti-pattern: x = list.method()
                 if isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Attribute):
@@ -445,6 +462,34 @@ function validateASTRule(astData, rule) {
                         message: rule.message || `Your f-string needs to include {${missing[0]}} inside the curly braces.`
                     };
                 }
+            }
+            return { isValid: true };
+        }
+
+        case 'ast_has_subscript_assign': {
+            const target = rule.target || null;
+            const hasIndex = typeof rule.index === 'number';
+            let candidates = astData.subscript_assignments || [];
+            if (target) {
+                candidates = candidates.filter(a => a.object === target);
+            }
+            if (hasIndex) {
+                candidates = candidates.filter(a => a.index === rule.index);
+            }
+            if (candidates.length === 0) {
+                let detail;
+                if (target && hasIndex) {
+                    detail = `Change the item using indexing assignment, like \`${target}[${rule.index}] = ...\`.`;
+                } else if (target) {
+                    detail = `Change an item in ${target} using indexing assignment, like \`${target}[i] = ...\`.`;
+                } else {
+                    detail = 'Change a list item using indexing assignment, like `list[i] = value`.';
+                }
+                return {
+                    isValid: false,
+                    errorType: 'ast_has_subscript_assign_failed',
+                    message: rule.message || detail
+                };
             }
             return { isValid: true };
         }

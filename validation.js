@@ -69,26 +69,54 @@ async function validateAnswer(code, output, problem, problemIndex, codeExecutor,
         }
     }
 
+    // Split rules into "requirement" (structural/constraint checks) and
+    // "correctness" (output/spec comparisons against a reference solution).
+    // Collect the first failure of each kind so we can show both messages.
+    const CORRECTNESS_RULE_TYPES = new Set(['solution_code', 'function_spec', 'function_buttons']);
+    let requirementFailure = null;
+    let correctnessFailure = null;
+    let firstFailedRule = null;
+
     for (const rule of validationRules) {
         const ruleResult = await validateRule(code, output, rule, problem, problemIndex, codeExecutor, userInputValues, astData);
-        
+
         if (typeof ruleResult === 'object' && ruleResult.isValid === false) {
-            // Rule failed - return the detailed error message
-            console.log(`Validation failed for rule: ${rule.type} - ${rule.pattern}`);
-            return {
-                isValid: ruleResult.isValid,
-                errorType: ruleResult.errorType,
-                message: '❌ ' + ruleResult.message
-            };
+            const isCorrectness = CORRECTNESS_RULE_TYPES.has(rule.type);
+            if (isCorrectness && !correctnessFailure) {
+                correctnessFailure = ruleResult;
+            } else if (!isCorrectness && !requirementFailure) {
+                requirementFailure = ruleResult;
+            }
+            if (!firstFailedRule) firstFailedRule = rule;
+            if (requirementFailure && correctnessFailure) break;
         }
-        // ruleResult === true or { isValid: true } - continue to next rule
     }
-    
-    // If we get here, validation passed
+
+    if (!requirementFailure && !correctnessFailure) {
+        const successText = '✅ Correct! Well done!';
+        return {
+            isValid: true,
+            errorType: null,
+            message: successText,
+            messages: [{ kind: 'success', text: successText }]
+        };
+    }
+
+    const messages = [];
+    if (requirementFailure) {
+        messages.push({ kind: 'requirement', text: '📋 ' + requirementFailure.message });
+    }
+    if (correctnessFailure) {
+        messages.push({ kind: 'correctness', text: '❌ ' + correctnessFailure.message });
+    }
+
+    console.log(`Validation failed for rule: ${firstFailedRule.type} - ${firstFailedRule.pattern}`);
+    const primary = requirementFailure || correctnessFailure;
     return {
-        isValid: true,
-        errorType: null,
-        message: '✅ Correct! Well done!'
+        isValid: false,
+        errorType: primary.errorType,
+        message: messages.map(m => m.text).join('\n\n'),
+        messages
     };
 }
 
