@@ -43,7 +43,7 @@
     {
       "title": "Make a bigger list",
       "content": "Lists can be any length. This one has 3 numbers, but let's make it bigger.",
-      "task": "Change the list so it has 5 numbers — any 5 you choose.",
+      "task": "Change the list so it has 5 numbers (any 5 you choose).",
       "starterCode": "numbers = [1, 2, 3]\nprint(numbers)",
       "hint": "Replace the items inside the square brackets with 5 numbers, separated by commas. Keep the brackets.",
       "validation": {
@@ -152,7 +152,7 @@
           {
             "type": "code_contains",
             "pattern": "animals[2]",
-            "message": "Check the index — the last item in a 3-item list isn't at the index you'd think."
+            "message": "Check the index: the last item in a 3-item list isn't at the index you'd think."
           },
           {
             "type": "solution_code",
@@ -262,7 +262,7 @@
     },
     {
       "title": "Print a list's length",
-      "content": "Now you try. <code>len()</code> works on any list — give it a go on this list of books.",
+      "content": "Now you try. <code>len()</code> works on any list, so give it a go on this list of books.",
       "task": "Use <code>len()</code> to print how many books are in the list.",
       "codeHeight": 3,
       "starterCode": "books = ['Matilda', 'Holes', 'Wonder', 'Hatchet', 'Boy']\n",

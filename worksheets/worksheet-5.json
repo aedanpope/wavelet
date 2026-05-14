@@ -2,7 +2,7 @@
   "id": "worksheet-5",
   "title": "Worksheet 5: Working with Text",
   "description": "Learn to use strings to work with text and create more expressive programs.",
-  "designNote": "Worksheet 5 is a revision / breather worksheet. Introduce ONE new concept only (print with multiple comma-separated arguments), then use it as a fresh surface to revise prior concepts (variables, input, arithmetic, if/else, loops). Resist adding further new syntax — the job here is consolidation and confidence, not new load. The final section (modulo onwards) is an extension track for fast-finishing students, ending in a prime-number challenge.",
+  "designNote": "Worksheet 5 is a revision / breather worksheet. Introduce ONE new concept only (print with multiple comma-separated arguments), then use it as a fresh surface to revise prior concepts (variables, input, arithmetic, if/else, loops). Resist adding further new syntax. The job here is consolidation and confidence, not new load. The final section (modulo onwards) is an extension track for fast-finishing students, ending in a prime-number challenge.",
   "problems": [
     {
       "title": "Hello World!",
@@ -23,8 +23,8 @@
       "type": "concept",
       "icon": "💬",
       "title": "Print with commas",
-      "content": "<p>Up to now, every <code>print()</code> has shown <strong>one thing</strong>. But <code>print()</code> can actually take <strong>many things</strong> at once — just put commas between them:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>name = 'Sam'\nprint('Hello', name)</pre><p>Python prints each item in order with a <strong>space between them</strong>. That's it — no extra syntax, no quotes inside quotes.</p><p>It works with words, numbers, or a mix:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>age = 10\nprint('I am', age, 'years old')</pre><p>This comma-style <code>print()</code> is the <strong>one new idea</strong> in this worksheet. After that, we'll use it to revise everything you've learned so far — variables, input, if/else, and loops.</p>",
-      "footer": "Put commas between items in print() — Python adds a space between each one."
+      "content": "<p>Up to now, every <code>print()</code> has shown <strong>one thing</strong>. But <code>print()</code> can actually take <strong>many things</strong> at once, just put commas between them:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>name = 'Sam'\nprint('Hello', name)</pre><p>Python prints each item in order with a <strong>space between them</strong>. That's it: no extra syntax, no quotes inside quotes.</p><p>It works with words, numbers, or a mix:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>age = 10\nprint('I am', age, 'years old')</pre><p>This comma-style <code>print()</code> is the <strong>one new idea</strong> in this worksheet. After that, we'll use it to revise everything you've learned so far: variables, input, if/else, and loops.</p>",
+      "footer": "Put commas between items in print(). Python adds a space between each one."
     },
     {
       "type": "trace",
@@ -86,7 +86,7 @@
     },
     {
       "title": "Quote bug - mixing quotes!",
-      "content": "This is a common mistake that everyone makes when learning Python! If you start a string with one type of quote, you must end it with the same type. <br><br>When you run the broken code below, Python says <code>\"unterminated string literal\"</code> — that's Python's way of saying <em>\"your string didn't finish properly — check the quotes match\"</em>.",
+      "content": "This is a common mistake that everyone makes when learning Python! If you start a string with one type of quote, you must end it with the same type. <br><br>When you run the broken code below, Python says <code>\"unterminated string literal\"</code>, which is Python's way of saying <em>\"your string didn't finish properly, check the quotes match\"</em>.",
       "task": "Run this code to see the error. The string starts with a double quote <code>\"</code> but ends with a single quote <code>'</code>. Fix it by making both quotes match.",
       "starterCode": "print(\"Welcome')",
       "hint": "Change the ending single quote ' to a double quote \" so they match. Both quotes should be the same type.",
@@ -101,7 +101,7 @@
     },
     {
       "title": "Fix the bug: comma in the wrong place",
-      "content": "This program has a bug. The comma is in the wrong place — it's <em>inside</em> the quotes instead of separating the two things being printed. Python sees one long string <code>\"Hello,\"</code> and then a bare <code>name</code> with nothing in between, and gets confused.",
+      "content": "This program has a bug. The comma is in the wrong place: it's <em>inside</em> the quotes instead of separating the two things being printed. Python sees one long string <code>\"Hello,\"</code> and then a bare <code>name</code> with nothing in between, and gets confused.",
       "task": "Run the code to see the error. Move the comma so it's <strong>outside</strong> the quotes, separating the string from the variable.",
       "starterCode": "name = \"Sam\"\nprint(\"Hello,\" name)",
       "hint": "Change <code>\"Hello,\" name</code> to <code>\"Hello\", name</code>. The comma lives between the two things inside the <code>print()</code>, not inside the quotes.",
@@ -119,7 +119,7 @@
       "content": "Print with commas works with numbers too. You can mix words and numbers in a single <code>print()</code>.",
       "task": "Run this code to see how a number variable appears in the output.",
       "starterCode": "age = 10\nprint(\"I am\", age, \"years old\")",
-      "hint": "The three pieces — <code>\"I am\"</code>, <code>age</code>, <code>\"years old\"</code> — all get printed with spaces between them.",
+      "hint": "The three pieces (<code>\"I am\"</code>, <code>age</code>, <code>\"years old\"</code>) all get printed with spaces between them.",
       "validation": {
         "rules": [
           {
@@ -213,7 +213,7 @@
     },
     {
       "title": "Fix the bug: capital letters matter",
-      "content": "Python is <strong>very picky</strong> about capital letters. <code>name</code> and <code>Name</code> are treated as two <em>different</em> variables — so if you spell a variable differently from when you made it, Python says it doesn't exist.",
+      "content": "Python is <strong>very picky</strong> about capital letters. <code>name</code> and <code>Name</code> are treated as two <em>different</em> variables, so if you spell a variable differently from when you made it, Python says it doesn't exist.",
       "task": "Run the code to see the error: <code>NameError: name 'Name' is not defined</code>. Fix the typo so both lines use the same lowercase spelling.",
       "starterCode": "name = \"Sam\"\nprint(\"Hello\", Name)",
       "hint": "Change <code>Name</code> on line 2 to <code>name</code> (with a lowercase n), to match the variable on line 1.",
@@ -228,7 +228,7 @@
     },
     {
       "title": "Age with input",
-      "content": "Let's combine print-with-commas with user input. We've already filled in the <code>get_input()</code> line for you — just add the print.",
+      "content": "Let's combine print-with-commas with user input. We've already filled in the <code>get_input()</code> line for you, so just add the print.",
       "task": "The first line stores the entered number in a variable called <code>age</code>. Add a second line that prints <code>\"I am\"</code> followed by <code>age</code>.",
       "inputs": [
         {
@@ -285,7 +285,7 @@
     },
     {
       "title": "Fix the bug: missing colon",
-      "content": "Remember from Worksheet 4 — every <code>if</code> line must end with a colon <code>:</code>. Without it, Python doesn't know the if block has started, and shows a syntax error.",
+      "content": "Remember from Worksheet 4: every <code>if</code> line must end with a colon <code>:</code>. Without it, Python doesn't know the if block has started, and shows a syntax error.",
       "task": "Run the code to see the error. Add the missing <code>:</code> at the end of the <code>if</code> line to fix it.",
       "codeHeight": 5,
       "starterCode": "score = 50\n\nif score >= 50\n  print(\"Pass\")",
@@ -341,7 +341,7 @@
       ],
       "codeHeight": 5,
       "starterCode": "n = get_input()\n\nif n = 10:\n  print(\"Exactly ten\")",
-      "hint": "The <code>n =</code> on the first line is fine — that's storing a value. The bug is the <code>n = 10</code> inside the if — change that single <code>=</code> to <code>==</code>.",
+      "hint": "The <code>n =</code> on the first line is fine, because that's storing a value. The bug is the <code>n = 10</code> inside the if, so change that single <code>=</code> to <code>==</code>.",
       "validation": {
         "rules": [
           {
@@ -368,7 +368,7 @@
       ],
       "codeHeight": 7,
       "starterCode": "n = get_input()\n",
-      "hint": "You need an if/else. Inside each branch, use <code>print()</code> with two things separated by a comma — the variable <code>n</code> and a message string.",
+      "hint": "You need an if/else. Inside each branch, use <code>print()</code> with two things separated by a comma: the variable <code>n</code> and a message string.",
       "validation": {
         "rules": [
           {
@@ -440,7 +440,7 @@
     },
     {
       "title": "Full introduction",
-      "content": "Now let's use lots of things in one print. When a problem has <strong>two</strong> input boxes, we tell <code>get_input()</code> which one to read by putting the input's name in quotes inside the brackets — like <code>get_input('name')</code> on the first line.",
+      "content": "Now let's use lots of things in one print. When a problem has <strong>two</strong> input boxes, we tell <code>get_input()</code> which one to read by putting the input's name in quotes inside the brackets, like <code>get_input('name')</code> on the first line.",
       "task": "The first line reads the <code>name</code> from its input box. Add a second line that reads the <code>age</code> the same way, then a third line that prints: <code>\"My name is\"</code>, <code>name</code>, <code>\"and I am\"</code>, <code>age</code>.",
       "inputs": [
         {
@@ -456,7 +456,7 @@
       ],
       "codeHeight": 4,
       "starterCode": "name = get_input('name')\n",
-      "hint": "Second line: <code>age = get_input('age')</code> — same pattern as the first line. Third line: <code>print(\"My name is\", name, \"and I am\", age)</code>.",
+      "hint": "Second line: <code>age = get_input('age')</code>, the same pattern as the first line. Third line: <code>print(\"My name is\", name, \"and I am\", age)</code>.",
       "validation": {
         "rules": [
           {
@@ -516,7 +516,7 @@
       "type": "concept",
       "icon": "➗",
       "title": "Extension: Modulo %",
-      "content": "<p>From here you'll meet a new math symbol and use it to solve some tricky puzzles — even checking whether a number is prime!</p><p>Python has a symbol called <strong>modulo</strong> — it looks like a percent sign <code>%</code>. It gives you the <strong>remainder</strong> of a division.</p><p>Imagine sharing 10 sweets between 3 friends: each friend gets 3, and 1 is left over. That leftover is what <code>%</code> gives you:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>print(10 % 3)   # 1\nprint(14 % 4)   # 2\nprint(9 % 3)    # 0 — no remainder, 3 divides 9 evenly</pre><p>It sounds small, but <code>%</code> unlocks surprising powers — checking even/odd, finding factors, and detecting prime numbers.</p>",
+      "content": "<p>From here you'll meet a new math symbol and use it to solve some tricky puzzles, even checking whether a number is prime!</p><p>Python has a symbol called <strong>modulo</strong>, which looks like a percent sign <code>%</code>. It gives you the <strong>remainder</strong> of a division.</p><p>Imagine sharing 10 sweets between 3 friends: each friend gets 3, and 1 is left over. That leftover is what <code>%</code> gives you:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>print(10 % 3)   # 1\nprint(14 % 4)   # 2\nprint(9 % 3)    # 0 (no remainder, 3 divides 9 evenly)</pre><p>It sounds small, but <code>%</code> unlocks surprising powers: checking even/odd, finding factors, and detecting prime numbers.</p>",
       "footer": "% = the remainder after division. 10 % 3 = 1."
     },
     {
@@ -608,7 +608,7 @@
       "type": "concept",
       "icon": "📐",
       "title": "Reminder: Indentation Inside a Loop",
-      "content": "<p>When you put an <code>if</code> inside a <code>for</code> loop, you need <strong>two levels of indentation</strong>. Each level adds 2 spaces:</p><pre style=\"background:#fef9c3;border-radius:6px;padding:10px 14px;margin:10px 0;font-size:0.92em;line-height:1.7\"><span style=\"color:#6b7280\">for</span> i <span style=\"color:#6b7280\">in</span> range(3):          <span style=\"color:#9ca3af\"># level 0</span>\n  <span style=\"color:#6b7280\">if</span> i == 1:               <span style=\"color:#9ca3af\"># level 1 — 2 spaces</span>\n    print(i)              <span style=\"color:#9ca3af\"># level 2 — 4 spaces</span></pre><p>The <code>if</code> is indented because it's <em>inside the loop</em>. The <code>print</code> is indented again because it's inside <em>both</em> the loop and the if.</p>",
+      "content": "<p>When you put an <code>if</code> inside a <code>for</code> loop, you need <strong>two levels of indentation</strong>. Each level adds 2 spaces:</p><pre style=\"background:#fef9c3;border-radius:6px;padding:10px 14px;margin:10px 0;font-size:0.92em;line-height:1.7\"><span style=\"color:#6b7280\">for</span> i <span style=\"color:#6b7280\">in</span> range(3):          <span style=\"color:#9ca3af\"># level 0</span>\n  <span style=\"color:#6b7280\">if</span> i == 1:               <span style=\"color:#9ca3af\"># level 1, 2 spaces</span>\n    print(i)              <span style=\"color:#9ca3af\"># level 2, 4 spaces</span></pre><p>The <code>if</code> is indented because it's <em>inside the loop</em>. The <code>print</code> is indented again because it's inside <em>both</em> the loop and the if.</p>",
       "footer": "Rule: every time you go one level deeper, add 2 more spaces."
     },
     {
@@ -617,7 +617,7 @@
       "task": "Write a loop that goes through the numbers 1 to 20 and only prints the <strong>odd</strong> ones. Use <code>% 2</code> to check each one.",
       "codeHeight": 5,
       "starterCode": "for i in range(1, 21):\n  ",
-      "hint": "Inside the loop, use <code>if i % 2 != 0:</code> (remainder is not 0 means odd). Then <code>print(i)</code> indented under the if. Remember: that's two levels of indent — 4 spaces on the print line.",
+      "hint": "Inside the loop, use <code>if i % 2 != 0:</code> (remainder is not 0 means odd). Then <code>print(i)</code> indented under the if. Remember: that's two levels of indent, so 4 spaces on the print line.",
       "validation": {
         "rules": [
           {
@@ -677,7 +677,7 @@
       "type": "concept",
       "icon": "🔍",
       "title": "Building a prime checker",
-      "content": "<p>A <strong>prime number</strong> has exactly two factors: <code>1</code> and itself. Examples: <code>2, 3, 5, 7, 11, 13</code>. Numbers that aren't prime are called <strong>composite</strong> — they have more factors. For example, <code>12</code> has factors <code>1, 2, 3, 4, 6, 12</code>.</p><p>How could a program check if a number is prime? It can look for factors — and the moment it finds one, it knows the number is composite. It doesn't need to keep checking after that.</p><p>The next few problems give you the two tools you need:</p><ul><li><strong><code>break</code></strong> — stops a loop early, as soon as you have your answer</li><li><strong>flag variable</strong> — a <code>True</code>/<code>False</code> variable that remembers what you found</li></ul><p>At the end, you'll put them together in the final challenge: decide if a number is prime or composite.</p>",
+      "content": "<p>A <strong>prime number</strong> has exactly two factors: <code>1</code> and itself. Examples: <code>2, 3, 5, 7, 11, 13</code>. Numbers that aren't prime are called <strong>composite</strong>, because they have more factors. For example, <code>12</code> has factors <code>1, 2, 3, 4, 6, 12</code>.</p><p>How could a program check if a number is prime? It can look for factors, and the moment it finds one, it knows the number is composite. It doesn't need to keep checking after that.</p><p>The next few problems give you the two tools you need:</p><ul><li><strong><code>break</code>:</strong> stops a loop early, as soon as you have your answer</li><li><strong>flag variable:</strong> a <code>True</code>/<code>False</code> variable that remembers what you found</li></ul><p>At the end, you'll put them together in the final challenge: decide if a number is prime or composite.</p>",
       "footer": "A prime number has exactly 2 factors: 1 and itself."
     },
     {

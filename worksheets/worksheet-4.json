@@ -7,8 +7,8 @@
       "type": "concept",
       "icon": "✅",
       "title": "True and False: Python's Yes/No Values",
-      "content": "<p>Python has two special yes/no values called <strong>booleans</strong>: <code>True</code> and <code>False</code>. You can print them just like numbers:</p><p><code>print(True)</code> &nbsp;&nbsp;→ prints <strong>True</strong><br><code>print(False)</code> &nbsp;→ prints <strong>False</strong></p><p>You can also print the result of comparing two numbers — Python will answer with <code>True</code> or <code>False</code>:</p><p><code>print(5 > 3)</code> &nbsp;&nbsp;→ <strong>True</strong> &nbsp;<em>(5 is greater than 3 ✓)</em><br><code>print(2 > 9)</code> &nbsp;&nbsp;→ <strong>False</strong> &nbsp;<em>(2 is not greater than 9 ✗)</em></p>",
-      "footer": "The capital letter matters — Python knows True and False, but not true or false."
+      "content": "<p>Python has two special yes/no values called <strong>booleans</strong>: <code>True</code> and <code>False</code>. You can print them just like numbers:</p><p><code>print(True)</code> &nbsp;&nbsp;→ prints <strong>True</strong><br><code>print(False)</code> &nbsp;→ prints <strong>False</strong></p><p>You can also print the result of comparing two numbers, and Python will answer with <code>True</code> or <code>False</code>:</p><p><code>print(5 > 3)</code> &nbsp;&nbsp;→ <strong>True</strong> &nbsp;<em>(5 is greater than 3 ✓)</em><br><code>print(2 > 9)</code> &nbsp;&nbsp;→ <strong>False</strong> &nbsp;<em>(2 is not greater than 9 ✗)</em></p>",
+      "footer": "The capital letter matters. Python knows True and False, but not true or false."
     },
     {
       "title": "Printing True and False",
@@ -38,7 +38,7 @@
       "task": "Run the code to see the error. Then fix the typo so the program prints <code>True</code>.",
       "codeHeight": 3,
       "starterCode": "print(true)",
-      "hint": "Change <code>true</code> to <code>True</code> — Python needs the capital T.",
+      "hint": "Change <code>true</code> to <code>True</code>: Python needs the capital T.",
       "validation": {
         "rules": [
           {
@@ -79,12 +79,12 @@
       "type": "concept",
       "icon": "🔀",
       "title": "Making Decisions: the if statement",
-      "content": "<p>So far, every line of your code always ran. The <code>if</code> statement changes that — it only runs the indented code <strong>when the condition is <code>True</code></strong>.</p><p>Every <code>if</code> statement has two parts:</p><ul><li><strong>Condition</strong> — the True/False question between <code>if</code> and the colon</li><li><strong>Body</strong> — the indented line(s) that only run when the condition is <code>True</code></li></ul><img src='worksheets/diagrams/if-statement-anatomy.svg' alt='if statement diagram showing condition and body labels' style='width:100%;max-width:420px;display:block;margin:12px 0;'/><p>Python checks the <strong>condition</strong>. If it's <code>True</code>, it runs the <strong>body</strong>. If it's <code>False</code>, it skips the body entirely.</p><p>Notice the <strong>colon</strong> <code>:</code> at the end of the <code>if</code> line — just like loops in Worksheet 3.</p>",
+      "content": "<p>So far, every line of your code always ran. The <code>if</code> statement changes that, by only running the indented code <strong>when the condition is <code>True</code></strong>.</p><p>Every <code>if</code> statement has two parts:</p><ul><li><strong>Condition:</strong> the True/False question between <code>if</code> and the colon</li><li><strong>Body:</strong> the indented line(s) that only run when the condition is <code>True</code></li></ul><img src='worksheets/diagrams/if-statement-anatomy.svg' alt='if statement diagram showing condition and body labels' style='width:100%;max-width:420px;display:block;margin:12px 0;'/><p>Python checks the <strong>condition</strong>. If it's <code>True</code>, it runs the <strong>body</strong>. If it's <code>False</code>, it skips the body entirely.</p><p>Notice the <strong>colon</strong> <code>:</code> at the end of the <code>if</code> line, just like loops in Worksheet 3.</p>",
       "footer": "Condition = the True/False question. Body = the code that runs when True."
     },
     {
       "type": "trace",
-      "title": "When the condition is True — body runs",
+      "title": "When the condition is True, body runs",
       "code": "n = 15\nif n > 10:\n  print('big number')\nprint('done')",
       "steps": [
         {
@@ -182,7 +182,7 @@
     },
     {
       "type": "trace",
-      "title": "When the condition is False — body is skipped",
+      "title": "When the condition is False, body is skipped",
       "code": "n = 8\nif n > 10:\n  print('big number')\nprint('done')",
       "steps": [
         {
@@ -258,7 +258,7 @@
     {
       "title": "Greater Than >",
       "content": "So far, our programs have always run the same way. But what if we want our code to make decisions? The <code>if</code> statement runs code only when a condition is true. We can use math symbols like <code>></code> (greater than) to create these conditions.",
-      "task": "Run the code — <code>age</code> is 6, so <code>age > 5</code> is <code>True</code> and <code>'OK'</code> prints. Now change <code>age</code> to 3 and run again. Notice <code>'OK'</code> no longer prints.",
+      "task": "Run the code. <code>age</code> is 6, so <code>age > 5</code> is <code>True</code> and <code>'OK'</code> prints. Now change <code>age</code> to 3 and run again. Notice <code>'OK'</code> no longer prints.",
       "codeHeight": 5,
       "starterCode": "age = 6\n\nif age > 5:\n  print(\"OK\")",
       "hint": "The code inside the <code>if</code> block only runs when the condition next to the <code>if</code> is <code>True</code>.",
@@ -300,7 +300,7 @@
     {
       "title": "Less Than <",
       "content": "Just like we use <code>></code> for 'greater than', we can use <code><</code> for 'less than'. Let's use our debug print to see how it works.",
-      "task": "Run the code — <code>toys</code> is 4, so <code>toys < 5</code> is <code>True</code> and the message prints. Change <code>toys</code> to 5 and run again — what happens?",
+      "task": "Run the code. <code>toys</code> is 4, so <code>toys < 5</code> is <code>True</code> and the message prints. Change <code>toys</code> to 5 and run again. What happens?",
       "codeHeight": 5,
       "starterCode": "toys = 4\n\nif toys < 5:\n  print(\"Not too many toys\")",
       "hint": "Try the number 5. Is 5 less than 5? The debug line will tell you!",
@@ -342,7 +342,7 @@
     {
       "title": "Equal To ==",
       "content": "This is a very important one! To ask if two things are equal, we use two equals signs: <code>==</code>. A single equals sign <code>=</code> is for giving a value to a variable.",
-      "task": "Run the code — <code>secret_number</code> is 7, so <code>secret_number == 7</code> is <code>True</code> and the message prints. Change <code>secret_number</code> to 6 and run again. Does it print?",
+      "task": "Run the code. <code>secret_number</code> is 7, so <code>secret_number == 7</code> is <code>True</code> and the message prints. Change <code>secret_number</code> to 6 and run again. Does it print?",
       "codeHeight": 5,
       "starterCode": "secret_number = 7\n\nif secret_number == 7:\n  print(\"You guessed it\")",
       "hint": "Remember: one equals <code>=</code> gives a value, two equals <code>==</code> asks a question.",
@@ -435,12 +435,12 @@
       "type": "concept",
       "icon": "🔀",
       "title": "Two Paths: adding else",
-      "content": "<p>So far, when the condition is <code>False</code>, nothing happens. But what if we want to do something in that case too? We add an <code>else</code> block — it runs when the condition is <code>False</code>.</p><img src='worksheets/diagrams/if-else-anatomy.svg' alt='if-else diagram' style='width:100%;max-width:440px;display:block;margin:12px 0;'/><p>Python always goes down <strong>exactly one</strong> path — never both, never neither.</p>",
+      "content": "<p>So far, when the condition is <code>False</code>, nothing happens. But what if we want to do something in that case too? We add an <code>else</code> block, which runs when the condition is <code>False</code>.</p><img src='worksheets/diagrams/if-else-anatomy.svg' alt='if-else diagram' style='width:100%;max-width:440px;display:block;margin:12px 0;'/><p>Python always goes down <strong>exactly one</strong> path, never both, and never neither.</p>",
       "footer": "if = runs when True. else = runs when False. Only one ever runs."
     },
     {
       "type": "trace",
-      "title": "else in action — the False path runs",
+      "title": "else in action: the False path runs",
       "code": "score = 3\nif score >= 5:\n  print('pass')\nelse:\n  print('fail')\nprint('done')",
       "steps": [
         {
@@ -562,7 +562,7 @@
     {
       "title": "Your Turn: Add an else",
       "content": "This program checks if a score is high, but does nothing when it's low. Let's fix that by adding an <code>else</code> block.",
-      "task": "Run the code with <code>score = 3</code> — nothing prints! Add an <code>else</code> block so that when the score is not greater than 8, it prints <code>Keep trying</code>.",
+      "task": "Run the code with <code>score = 3</code>: nothing prints! Add an <code>else</code> block so that when the score is not greater than 8, it prints <code>Keep trying</code>.",
       "codeHeight": 6,
       "starterCode": "score = 3\n\nif score > 8:\n  print(\"Great score\")",
       "hint": "Add <code>else:</code> on the line after the if-block, then indent the next line and write your print statement.",
@@ -641,7 +641,7 @@
       "type": "concept",
       "icon": "🔀",
       "title": "More Than Two Paths: elif",
-      "content": "<p><code>elif</code> means <strong>\"else if\"</strong> — it adds an extra condition to check when the one above it was <code>False</code>. You can have as many <code>elif</code>s as you need.</p><p>The order always goes: <code>if</code> first, then any <code>elif</code>s, then <code>else</code> last. <strong><code>else</code> must always come after all the <code>elif</code>s</strong> — never before.</p><pre style=\"background:#1e293b;padding:12px 16px;border-radius:8px;font-size:0.9rem;line-height:1.8;margin:14px 0;\"><code style=\"color:#f1f5f9;background:transparent;padding:0;border-radius:0;font-size:inherit\"><span style=\"color:#93c5fd;font-weight:700\">if</span> <span style=\"color:#86efac\">condition1</span>:    <span style=\"color:#94a3b8\"># checked first</span>\n<span style=\"color:#64748b\">  ...</span>\n<span style=\"color:#93c5fd;font-weight:700\">elif</span> <span style=\"color:#86efac\">condition2</span>:  <span style=\"color:#94a3b8\"># checked if condition1 was False</span>\n<span style=\"color:#64748b\">  ...</span>\n<span style=\"color:#93c5fd;font-weight:700\">elif</span> <span style=\"color:#86efac\">condition3</span>:  <span style=\"color:#94a3b8\"># checked if both above were False</span>\n<span style=\"color:#64748b\">  ...</span>\n<span style=\"color:#93c5fd;font-weight:700\">else</span>:             <span style=\"color:#94a3b8\"># runs if ALL conditions above were False</span>\n<span style=\"color:#64748b\">  ...</span></code></pre><p>Python checks from top to bottom and runs the <strong>first</strong> block whose condition is <code>True</code> — then skips all the rest. Only one block ever runs.</p>",
+      "content": "<p><code>elif</code> means <strong>\"else if\"</strong>, and adds an extra condition to check when the one above it was <code>False</code>. You can have as many <code>elif</code>s as you need.</p><p>The order always goes: <code>if</code> first, then any <code>elif</code>s, then <code>else</code> last. <strong><code>else</code> must always come after all the <code>elif</code>s</strong>, never before.</p><pre style=\"background:#1e293b;padding:12px 16px;border-radius:8px;font-size:0.9rem;line-height:1.8;margin:14px 0;\"><code style=\"color:#f1f5f9;background:transparent;padding:0;border-radius:0;font-size:inherit\"><span style=\"color:#93c5fd;font-weight:700\">if</span> <span style=\"color:#86efac\">condition1</span>:    <span style=\"color:#94a3b8\"># checked first</span>\n<span style=\"color:#64748b\">  ...</span>\n<span style=\"color:#93c5fd;font-weight:700\">elif</span> <span style=\"color:#86efac\">condition2</span>:  <span style=\"color:#94a3b8\"># checked if condition1 was False</span>\n<span style=\"color:#64748b\">  ...</span>\n<span style=\"color:#93c5fd;font-weight:700\">elif</span> <span style=\"color:#86efac\">condition3</span>:  <span style=\"color:#94a3b8\"># checked if both above were False</span>\n<span style=\"color:#64748b\">  ...</span>\n<span style=\"color:#93c5fd;font-weight:700\">else</span>:             <span style=\"color:#94a3b8\"># runs if ALL conditions above were False</span>\n<span style=\"color:#64748b\">  ...</span></code></pre><p>Python checks from top to bottom and runs the <strong>first</strong> block whose condition is <code>True</code>, then skips all the rest. Only one block ever runs.</p>",
       "footer": "if → elif → elif → else. elif comes before else, always."
     },
     {
@@ -688,13 +688,13 @@
       "type": "concept",
       "icon": "⚖️",
       "title": "All the Comparison Operators",
-      "content": "<p>You have used <code>&gt;</code> and <code>==</code> already. Here are all six comparison operators Python understands — every one of them gives <code>True</code> or <code>False</code>:</p><table style='width:100%;border-collapse:collapse;font-size:0.95rem;margin:10px 0;'><thead><tr style='background:rgba(0,0,0,0.08);'><th style='padding:7px 10px;text-align:left;'>Operator</th><th style='padding:7px 10px;text-align:left;'>Meaning</th><th style='padding:7px 10px;text-align:left;'>Example</th><th style='padding:7px 10px;text-align:left;'>Result</th></tr></thead><tbody><tr><td style='padding:6px 10px;'><code>&gt;</code></td><td style='padding:6px 10px;'>greater than</td><td style='padding:6px 10px;'><code>8 &gt; 3</code></td><td style='padding:6px 10px;'><code>True</code></td></tr><tr style='background:rgba(0,0,0,0.04);'><td style='padding:6px 10px;'><code>&lt;</code></td><td style='padding:6px 10px;'>less than</td><td style='padding:6px 10px;'><code>2 &lt; 7</code></td><td style='padding:6px 10px;'><code>True</code></td></tr><tr><td style='padding:6px 10px;'><code>==</code></td><td style='padding:6px 10px;'>equal to</td><td style='padding:6px 10px;'><code>5 == 5</code></td><td style='padding:6px 10px;'><code>True</code></td></tr><tr style='background:rgba(0,0,0,0.04);'><td style='padding:6px 10px;'><code>!=</code></td><td style='padding:6px 10px;'>not equal to</td><td style='padding:6px 10px;'><code>4 != 9</code></td><td style='padding:6px 10px;'><code>True</code></td></tr><tr><td style='padding:6px 10px;'><code>&gt;=</code></td><td style='padding:6px 10px;'>greater than or equal to</td><td style='padding:6px 10px;'><code>5 &gt;= 5</code></td><td style='padding:6px 10px;'><code>True</code></td></tr><tr style='background:rgba(0,0,0,0.04);'><td style='padding:6px 10px;'><code>&lt;=</code></td><td style='padding:6px 10px;'>less than or equal to</td><td style='padding:6px 10px;'><code>3 &lt;= 3</code></td><td style='padding:6px 10px;'><code>True</code></td></tr></tbody></table>",
-      "footer": "!= means 'not equal' — the ! is read as 'not'."
+      "content": "<p>You have used <code>&gt;</code> and <code>==</code> already. Here are all six comparison operators Python understands. Every one of them gives <code>True</code> or <code>False</code>:</p><table style='width:100%;border-collapse:collapse;font-size:0.95rem;margin:10px 0;'><thead><tr style='background:rgba(0,0,0,0.08);'><th style='padding:7px 10px;text-align:left;'>Operator</th><th style='padding:7px 10px;text-align:left;'>Meaning</th><th style='padding:7px 10px;text-align:left;'>Example</th><th style='padding:7px 10px;text-align:left;'>Result</th></tr></thead><tbody><tr><td style='padding:6px 10px;'><code>&gt;</code></td><td style='padding:6px 10px;'>greater than</td><td style='padding:6px 10px;'><code>8 &gt; 3</code></td><td style='padding:6px 10px;'><code>True</code></td></tr><tr style='background:rgba(0,0,0,0.04);'><td style='padding:6px 10px;'><code>&lt;</code></td><td style='padding:6px 10px;'>less than</td><td style='padding:6px 10px;'><code>2 &lt; 7</code></td><td style='padding:6px 10px;'><code>True</code></td></tr><tr><td style='padding:6px 10px;'><code>==</code></td><td style='padding:6px 10px;'>equal to</td><td style='padding:6px 10px;'><code>5 == 5</code></td><td style='padding:6px 10px;'><code>True</code></td></tr><tr style='background:rgba(0,0,0,0.04);'><td style='padding:6px 10px;'><code>!=</code></td><td style='padding:6px 10px;'>not equal to</td><td style='padding:6px 10px;'><code>4 != 9</code></td><td style='padding:6px 10px;'><code>True</code></td></tr><tr><td style='padding:6px 10px;'><code>&gt;=</code></td><td style='padding:6px 10px;'>greater than or equal to</td><td style='padding:6px 10px;'><code>5 &gt;= 5</code></td><td style='padding:6px 10px;'><code>True</code></td></tr><tr style='background:rgba(0,0,0,0.04);'><td style='padding:6px 10px;'><code>&lt;=</code></td><td style='padding:6px 10px;'>less than or equal to</td><td style='padding:6px 10px;'><code>3 &lt;= 3</code></td><td style='padding:6px 10px;'><code>True</code></td></tr></tbody></table>",
+      "footer": "!= means 'not equal'. The ! is read as 'not'."
     },
     {
       "title": "Not Equal !=",
       "content": "The <code>!=</code> operator checks if two values are <em>different</em>. It's the opposite of <code>==</code>.",
-      "task": "Click both buttons. Button 1 is the secret button — clicking anything else should trigger the <code>!=</code> check. Run a few times to see both messages.",
+      "task": "Click both buttons. Button 1 is the secret button, so clicking anything else should trigger the <code>!=</code> check. Run a few times to see both messages.",
       "interactionType": "buttons",
       "codeHeight": 7,
       "starterCode": "choice = get_choice(3)\n\nif choice != 1:\n  print(\"That is not the secret button\")\nelse:\n  print(\"You found it\")",
@@ -895,12 +895,12 @@
       "type": "concept",
       "icon": "📐",
       "title": "Key Concept: Indentation Inside a Loop",
-      "content": "<p>When you put an <code>if</code> inside a <code>for</code> loop, you need <strong>two levels of indentation</strong>. Each level adds 2 spaces:</p><pre style=\"background:#fef9c3;border-radius:6px;padding:10px 14px;margin:10px 0;font-size:0.92em;line-height:1.7\"><span style=\"color:#6b7280\">for</span> i <span style=\"color:#6b7280\">in</span> range(3):          <span style=\"color:#9ca3af\"># level 0</span>\n  <span style=\"color:#6b7280\">if</span> i == 1:               <span style=\"color:#9ca3af\"># level 1 — 2 spaces</span>\n    print(i)              <span style=\"color:#9ca3af\"># level 2 — 4 spaces</span></pre><p>The <code>if</code> is indented because it's <em>inside the loop</em>. The <code>print</code> is indented again because it's inside <em>both</em> the loop and the if.</p>",
+      "content": "<p>When you put an <code>if</code> inside a <code>for</code> loop, you need <strong>two levels of indentation</strong>. Each level adds 2 spaces:</p><pre style=\"background:#fef9c3;border-radius:6px;padding:10px 14px;margin:10px 0;font-size:0.92em;line-height:1.7\"><span style=\"color:#6b7280\">for</span> i <span style=\"color:#6b7280\">in</span> range(3):          <span style=\"color:#9ca3af\"># level 0</span>\n  <span style=\"color:#6b7280\">if</span> i == 1:               <span style=\"color:#9ca3af\"># level 1, 2 spaces</span>\n    print(i)              <span style=\"color:#9ca3af\"># level 2, 4 spaces</span></pre><p>The <code>if</code> is indented because it's <em>inside the loop</em>. The <code>print</code> is indented again because it's inside <em>both</em> the loop and the if.</p>",
       "footer": "Rule: every time you go one level deeper, add 2 more spaces."
     },
     {
       "title": "Magic Potions: The Adventure",
-      "content": "Now let's make the potion game last for more than one round! By wrapping the code in a <code>for</code> loop, the player gets to make multiple decisions — this is how real games work.",
+      "content": "Now let's make the potion game last for more than one round! By wrapping the code in a <code>for</code> loop, the player gets to make multiple decisions, which is how real games work.",
       "task": "Complete the program so it plays 3 rounds. Each round, print the current health, get a choice, and update health. If choice is 1, add 5 to health. Otherwise, subtract 3. Print the final health at the end.",
       "interactionType": "buttons",
       "codeHeight": 13,

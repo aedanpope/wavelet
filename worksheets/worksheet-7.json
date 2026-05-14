@@ -7,7 +7,7 @@
       "type": "concept",
       "icon": "🔧",
       "title": "Python comes with <em>functions</em>. Today you make your own",
-      "content": "<p>You've already used Python's built-in <strong>functions</strong>, tools like <code>print()</code>, <code>len()</code>, and <code>range()</code> that come with Python.<br>The keyword <b>def</b> (short for <em>define</em>) lets you build your own:</p><pre style='background:#272822;color:#f8f8f2;padding:10px 14px;border-radius:6px;margin:8px 0;'><span style='color:#f92672'>def</span> <span style='color:#fd971f'>say_hi</span>():           <span style='color:#cccccc'>&larr; define</span>\n  <span style='color:#66d9ef'>print</span>(<span style='color:#e6db74'>\"Hi there!\"</span>)    <span style='color:#cccccc'>&larr; specify</span>\n\nsay_hi()                <span style='color:#cccccc'>&larr; call, now \"Hi there!\" gets printed</span></pre><p>The function specification must be <strong>indented</strong> &mdash; that's how Python knows which lines belong to the function. Nothing happens until you <em>call</em> it.</p>",
+      "content": "<p>You've already used Python's built-in <strong>functions</strong>, tools like <code>print()</code>, <code>len()</code>, and <code>range()</code> that come with Python.<br>The keyword <b>def</b> (short for <em>define</em>) lets you build your own:</p><pre style='background:#272822;color:#f8f8f2;padding:10px 14px;border-radius:6px;margin:8px 0;'><span style='color:#f92672'>def</span> <span style='color:#fd971f'>say_hi</span>():           <span style='color:#cccccc'>&larr; define</span>\n  <span style='color:#66d9ef'>print</span>(<span style='color:#e6db74'>\"Hi there!\"</span>)    <span style='color:#cccccc'>&larr; specify</span>\n\nsay_hi()                <span style='color:#cccccc'>&larr; call, now \"Hi there!\" gets printed</span></pre><p>The function specification must be <strong>indented</strong>, so Python knows which lines belong to the function. Nothing happens until you <em>call</em> it.</p>",
       "footer": "A function is a named piece of code you can call whenever you want."
     },
     {
@@ -124,8 +124,8 @@
     },
     {
       "title": "Meet the spec table",
-      "content": "<p>You just wrote <code>double</code> by hand. The <strong>spec table</strong> below the editor calls your function with different inputs and checks what it gave back &mdash; your job is to make every row pass.</p>",
-      "task": "The spec table below is failing every row &mdash; the function is returning the number unchanged instead of doubling it. Fix the body of <code>double</code> so all three rows turn green.",
+      "content": "<p>You just wrote <code>double</code> by hand. The <strong>spec table</strong> below the editor calls your function with different inputs and checks what it gave back. Your job is to make every row pass.</p>",
+      "task": "The spec table below is failing every row, because the function is returning the number unchanged instead of doubling it. Fix the body of <code>double</code> so all three rows turn green.",
       "starterCode": "def double(n):\n  return n * 1",
       "hint": "Look at the first row: <code>double(2)</code> should give back <code>4</code>, but it's giving back <code>2</code>. Change <code>n * 1</code> to <code>n * 2</code>.",
       "codeHeight": 4,
