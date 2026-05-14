@@ -60,11 +60,9 @@ async function validateAnswer(code, output, problem, problemIndex, codeExecutor,
         }
     }
 
-    // Split rules into "requirement" (structural/constraint checks) and
-    // "correctness" (output/spec comparisons against a reference solution).
+    // Split rule failures into "requirement" (structural/constraint checks)
+    // and "correctness" (rules that compare the student's output to expected).
     // Collect the first failure of each kind so we can show both messages.
-    // Each rule case in validateRule() tags its own failure result with
-    // kind: 'correctness' if applicable; absence of kind means requirement.
     let requirementFailure = null;
     let correctnessFailure = null;
     let firstFailedRule = null;
@@ -73,7 +71,10 @@ async function validateAnswer(code, output, problem, problemIndex, codeExecutor,
         const ruleResult = await validateRule(code, output, rule, problem, problemIndex, codeExecutor, userInputValues, astData);
 
         if (typeof ruleResult === 'object' && ruleResult.isValid === false) {
-            const isCorrectness = ruleResult.kind === 'correctness';
+            const isCorrectness = rule.type === 'solution_code'
+                || rule.type === 'function_spec'
+                || rule.type === 'function_buttons'
+                || rule.type === 'output_contains';
             if (isCorrectness && !correctnessFailure) {
                 correctnessFailure = ruleResult;
             } else if (!isCorrectness && !requirementFailure) {
@@ -113,14 +114,6 @@ async function validateAnswer(code, output, problem, problemIndex, codeExecutor,
 }
 
 
-
-// Stamp a delegated rule result so the orchestrator routes failures to the
-// red 'correctness' message slot. Cases that build their own result object
-// should set kind: 'correctness' inline instead of calling this.
-function tagCorrectness(result) {
-    if (result && result.isValid === false) result.kind = 'correctness';
-    return result;
-}
 
 // Validate a single validation rule
 // Returns detailed error message objects for better educational feedback
@@ -259,8 +252,7 @@ async function validateRule(code, output, rule, problem, problemIndex, codeExecu
                 return {
                     isValid: false,
                     errorType: errorType,
-                    message: message,
-                    kind: 'correctness'
+                    message: message
                 };
             }
             return { isValid: true };
@@ -401,26 +393,25 @@ async function validateRule(code, output, rule, problem, problemIndex, codeExecu
             return { isValid: true };
             
         case 'function_spec':
-            return tagCorrectness(await validateFunctionSpec(code, rule, codeExecutor));
+            return await validateFunctionSpec(code, rule, codeExecutor);
 
         case 'function_buttons':
-            return tagCorrectness(await validateFunctionButtons(code, rule, codeExecutor));
+            return await validateFunctionButtons(code, rule, codeExecutor);
 
         case 'solution_code':
             // Use the imported validateSolutionCode function
             if (typeof window !== 'undefined' && window.SolutionCodeValidator) {
-                return tagCorrectness(await window.SolutionCodeValidator.validateSolutionCode(code, output, rule, problem, problemIndex, codeExecutor, userInputValues));
+                return await window.SolutionCodeValidator.validateSolutionCode(code, output, rule, problem, problemIndex, codeExecutor, userInputValues);
             } else if (typeof module !== 'undefined' && module.exports) {
                 // Node.js environment - import dynamically
                 const { validateSolutionCode } = require('./validate-solution-code.js');
-                return tagCorrectness(await validateSolutionCode(code, output, rule, problem, problemIndex, codeExecutor, userInputValues));
+                return await validateSolutionCode(code, output, rule, problem, problemIndex, codeExecutor, userInputValues);
             } else {
                 console.error('SolutionCodeValidator not available');
                 return {
                     isValid: false,
                     errorType: 'solution_code_validator_unavailable',
-                    message: "Solution code validation is not available",
-                    kind: 'correctness'
+                    message: "Solution code validation is not available"
                 };
             }
             

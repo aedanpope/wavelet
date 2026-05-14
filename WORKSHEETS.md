@@ -171,7 +171,7 @@ The validator reports up to two failure messages per attempt: one **requirement*
 - **Correctness rules** ("is the answer right?", checked against output) currently include `solution_code`, `function_spec`, `function_buttons`, and `output_contains`.
 - **Requirement rules** ("is your code structured the right way?", checked against code or minimal execution) are everything else: `code_contains`, `code_contains_regex`, `ast_has_*`, `output_not_empty`, `print_count`, `assignment_count`, `input_count`, etc.
 
-The classification is implemented per rule case in `validation.js`: a rule's failure result includes `kind: 'correctness'` when it's an answer check (delegated rules use the `tagCorrectness` helper). Absence of `kind` means requirement. When adding a new rule type, set its kind in its case rather than editing a central list.
+The classification lives inline in `validateAnswer` (`validation.js`) right next to where the flag is used — a small `rule.type === '…' || …` check. When adding a new rule type, decide whether it belongs in that disjunction.
 
 `output_contains` counts as correctness — it's effectively a lightweight `solution_code` checking a substring of expected output. Pairing it with structural rules already gets you the split-feedback UX, so not every problem needs a full `solution_code`.
 
