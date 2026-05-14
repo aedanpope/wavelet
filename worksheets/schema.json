@@ -362,6 +362,7 @@
             "function": {"type": "string", "minLength": 1},
             "withArg": {"type": "string", "minLength": 1},
             "minArgs": {"type": "integer", "minimum": 1, "description": "Minimum number of arguments the call must pass"},
+            "minCount": {"type": "integer", "minimum": 1, "description": "Minimum number of times the function must be called"},
             "message": {"type": "string"},
             "description": {"type": "string"}
           },
