@@ -381,6 +381,17 @@
         },
         {
           "properties": {
+            "type": {"const": "ast_has_subscript_assign"},
+            "target": {"type": "string", "minLength": 1, "description": "Name of the list variable being assigned into"},
+            "index": {"type": "integer", "description": "Specific index that must be assigned to"},
+            "message": {"type": "string"},
+            "description": {"type": "string"}
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        },
+        {
+          "properties": {
             "type": {"const": "ast_no_assign_to_method_result"},
             "method": {"type": "string", "minLength": 1},
             "message": {"type": "string"},

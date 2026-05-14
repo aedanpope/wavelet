@@ -1,0 +1,13 @@
+#!/bin/bash
+# Validate worksheet JSON before allowing a commit — this is what
+# Cloudflare's build step fails on, so catching it locally avoids
+# broken deploys. Use --no-verify to bypass in emergencies.
+if [ "$WAVELET_AMENDING_VERSION" = "1" ]; then
+  exit 0
+fi
+
+if ! npm run validate:worksheets; then
+  echo ""
+  echo "❌ pre-commit: worksheet validation failed. Fix the errors above, or use --no-verify to bypass."
+  exit 1
+fi
