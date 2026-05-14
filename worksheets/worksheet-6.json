@@ -261,7 +261,7 @@
     },
     {
       "title": "Print a list's length",
-      "content": "You can give <code>print()</code> multiple things separated by commas and it prints them all with spaces in between, like <code>print('Number of animals:', len(animals))</code>.",
+      "content": "Now you try. <code>len()</code> works on any list — give it a go on this list of books.",
       "task": "Use <code>len()</code> to print how many books are in the list.",
       "codeHeight": 3,
       "starterCode": "books = ['Matilda', 'Holes', 'Wonder', 'Hatchet', 'Boy']\n",
@@ -283,8 +283,8 @@
       }
     },
     {
-      "title": "Your own list and its length",
-      "content": "Now try combining a list with <code>len()</code> yourself",
+      "title": "Your own list with a label",
+      "content": "Now make your own list and add a label to the output. You can give <code>print()</code> multiple inputs separated by commas, and it prints them all with spaces in between.",
       "task": "Change the list to be 5 things from your pencil case.<br>Then print the length, but with a label in front of your choosing, like \"how many things\". Call <code>print</code> with multiple inputs to add the label: <code>print(&lt;your label&gt;, &lt;length of the pencil_case list&gt;)</code>",
       "codeHeight": 4,
       "starterCode": "pencil_case = ['change', 'these', 'items']\n",
