@@ -72,7 +72,7 @@ async function validateAnswer(code, output, problem, problemIndex, codeExecutor,
     // Split rules into "requirement" (structural/constraint checks) and
     // "correctness" (output/spec comparisons against a reference solution).
     // Collect the first failure of each kind so we can show both messages.
-    const CORRECTNESS_RULE_TYPES = new Set(['solution_code', 'function_spec', 'function_buttons']);
+    const CORRECTNESS_RULE_TYPES = new Set(['solution_code', 'function_spec', 'function_buttons', 'output_contains']);
     let requirementFailure = null;
     let correctnessFailure = null;
     let firstFailedRule = null;

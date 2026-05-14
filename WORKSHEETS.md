@@ -168,8 +168,10 @@ Each worksheet adds about 2-3 lines to the maximum expected write-from-scratch l
 
 The validator reports up to two failure messages per attempt: one **requirement** failure (📋 amber) and one **correctness** failure (❌ red). Both render in stacked boxes.
 
-- **Correctness rules** are `solution_code`, `function_spec`, and `function_buttons` — they compare the student's actual output against the canonical solution.
-- **Requirement rules** are everything else (`code_contains`, `code_contains_regex`, `ast_has_*`, `output_contains`, `print_count`, `assignment_count`, etc.) — they check structural constraints.
+- **Correctness rules** ("is the answer right?", checked against output) are `solution_code`, `function_spec`, `function_buttons`, and `output_contains`.
+- **Requirement rules** ("is your code structured the right way?", checked against code or minimal execution) are everything else: `code_contains`, `code_contains_regex`, `ast_has_*`, `output_not_empty`, `print_count`, `assignment_count`, `input_count`, etc.
+
+`output_contains` counts as correctness — it's effectively a lightweight `solution_code` checking a substring of expected output. Pairing it with structural rules already gets you the split-feedback UX, so not every problem needs a full `solution_code`.
 
 A common authoring bug is writing a problem with **only requirement rules**. The student fixes "you must call foo() 3 times" and the validator goes green, even though their output is wrong. Always include at least one correctness rule so the red box can show output diffs when the structure is right but the answer isn't.
 
