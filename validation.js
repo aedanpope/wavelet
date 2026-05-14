@@ -22,17 +22,8 @@ function normalizeNumericalComparison(output, pattern) {
 async function validateAnswer(code, output, problem, problemIndex, codeExecutor, userInputValues = {}) {
     const codeTrimmed = code.trim();
     const outputTrimmed = output.trim();
-    
-    // Basic validation checks that apply to all problems
     const codeWithoutComments = codeTrimmed.replace(/#.*$/gm, '').trim();
-    if (codeWithoutComments.length < 3) {
-        return {
-            isValid: false,
-            errorType: 'insufficient_code',
-            message: 'Please enter more code to run.'
-        };
-    }
-    
+
     // Check for common errors that should fail validation
     if (output.includes('NameError') || output.includes('SyntaxError') || 
         output.includes('TypeError') || output.includes('AttributeError') ||
