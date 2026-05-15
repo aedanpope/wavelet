@@ -1,1 +1,1 @@
-window.APP_VERSION = '6d35d96e2e173f075eb8a7cda0e49a70f58b149e';
+window.APP_VERSION = 'ac0fb06bf86203af73d1b966a03bfd001f7ecd84';

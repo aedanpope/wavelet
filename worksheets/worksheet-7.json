@@ -242,87 +242,57 @@
     },
     {
       "title": "Watch stars run",
-      "content": "<p>This function prints <code>n</code> stars on a line. The trick is that <code>\"*\" * n</code> repeats the star <code>n</code> times. Python's <code>*</code> operator can repeat strings, not just multiply numbers.</p><p>Notice the row of <strong>buttons</strong> below the editor: each one calls your function with a different number, so you don't have to type the calls yourself. Click Run to define the function, then click each button to try it.</p>",
-      "task": "Click Run, then click each button below to see <code>stars</code> called with different values.",
-      "starterCode": "def stars(n):\n  print(\"*\" * n)",
-      "hint": "Press Run first to define the function. Then try the buttons: each one calls <code>stars</code> with a different number.",
-      "codeHeight": 4,
+      "content": "<p>This function prints <code>n</code> stars on a line. The trick is that <code>\"*\" * n</code> repeats the star <code>n</code> times. Python's <code>*</code> operator can repeat strings, not just multiply numbers.</p><p>The starter calls <code>stars</code> three times with different numbers, so you can see the output for each.</p>",
+      "task": "Run the code and watch <code>stars</code> get called with three different values.",
+      "starterCode": "def stars(n):\n  print(\"*\" * n)\n\nstars(3)\nstars(5)\nstars(8)",
+      "hint": "Just press Run. The function prints once for each call, so you should see three lines of stars.",
+      "codeHeight": 7,
       "difficulty": "easy",
       "validation": {
         "rules": [
-          {
-            "type": "function_buttons",
-            "calls": ["stars(3)", "stars(7)", "stars(12)"],
-            "solutionCode": "def stars(n):\n  print(\"*\" * n)"
-          }
-        ]
-      }
-    },
-    {
-      "title": "Make a row",
-      "content": "<p><code>stars</code> only prints stars. Let's generalise it: a <code>row</code> function takes a <em>character</em> and a <em>number</em>, and prints that character repeated.</p>",
-      "task": "Write <code>row(char, n)</code> so it prints <code>char</code> repeated <code>n</code> times. Then click the buttons to try it.",
-      "starterCode": "# Write row(char, n) below\n",
-      "hint": "Two parameters in the brackets. Inside, <code>print</code> the character multiplied by the number (the <code>*</code> operator repeats strings).",
-      "codeHeight": 4,
-      "difficulty": "medium",
-      "validation": {
-        "rules": [
-          {"type": "code_contains", "pattern": "def row", "description": "Define a function called row"},
-          {
-            "type": "function_buttons",
-            "calls": ["row('*', 5)", "row('#', 8)", "row('@', 3)"],
-            "solutionCode": "def row(char, n):\n  print(char * n)"
-          }
+          {"type": "code_contains", "pattern": "def stars(n):", "description": "Keep the def stars(n): line"},
+          {"type": "solution_code", "solutionCode": "def stars(n):\n  print(\"*\" * n)\n\nstars(3)\nstars(5)\nstars(8)"}
         ]
       }
     },
     {
       "title": "Build a box",
-      "content": "<p>A box is just a row, repeated. The <code>box</code> function should print an <code>n</code>-by-<code>n</code> square of stars by calling <code>row</code> in a loop.</p><p><code>row</code> is already defined for you. Your <code>box</code> function should <em>use</em> it.</p>",
-      "task": "Write <code>box(n)</code> that calls <code>row(\"*\", n)</code> a total of <code>n</code> times. Click Run, then try the buttons.",
-      "starterCode": "def row(char, n):\n  print(char * n)\n\ndef box(n):\n  # call row n times\n",
-      "hint": "Inside <code>box</code>, use a <code>for</code> loop that runs <code>n</code> times. Each time through, call <code>row</code> to print one line of <code>n</code> stars.",
-      "codeHeight": 8,
+      "content": "<p>A box is just a row of stars, repeated. The <code>box</code> function should print an <code>n</code>-by-<code>n</code> square by calling <code>stars(n)</code> a total of <code>n</code> times.</p><p><code>stars</code> is already defined for you. Your <code>box</code> function should <em>use</em> it.</p>",
+      "task": "Write <code>box(n)</code> so it calls <code>stars(n)</code> a total of <code>n</code> times. The starter already calls <code>box(3)</code> and <code>box(5)</code> at the bottom.",
+      "starterCode": "def stars(n):\n  print(\"*\" * n)\n\ndef box(n):\n  # call stars(n) n times\n  \n\nbox(3)\nbox(5)",
+      "hint": "Inside <code>box</code>, use a <code>for</code> loop that runs <code>n</code> times. Each time through, call <code>stars(n)</code> to print one line.",
+      "codeHeight": 10,
       "difficulty": "hard",
       "validation": {
         "rules": [
           {"type": "code_contains", "pattern": "def box", "description": "Define a function called box"},
-          {"type": "code_contains", "pattern": "row(", "description": "Your box function should call row()"},
-          {
-            "type": "function_buttons",
-            "calls": ["box(3)", "box(5)", "box(7)"],
-            "solutionCode": "def row(char, n):\n  print(char * n)\n\ndef box(n):\n  for i in range(n):\n    row(\"*\", n)"
-          }
+          {"type": "ast_has_function_call", "function": "stars", "description": "Your box function should call stars()"},
+          {"type": "solution_code", "solutionCode": "def stars(n):\n  print(\"*\" * n)\n\ndef box(n):\n  for i in range(n):\n    stars(n)\n\nbox(3)\nbox(5)"}
         ]
       }
     },
     {
       "title": "Triangle",
-      "content": "<p>A triangle starts with a row of 1 star, then 2 stars, then 3, all the way up to <code>n</code>. You can build it by calling <code>row</code> with different lengths inside a loop.</p>",
-      "task": "Write <code>triangle(n)</code> that prints rows of stars, growing from 1 up to <code>n</code>.",
-      "starterCode": "def row(char, n):\n  print(char * n)\n\ndef triangle(n):\n  # print rows of length 1, 2, 3, ... up to n\n",
-      "hint": "Use <code>range</code> with a start and end so <code>i</code> goes 1, 2, 3, ..., up to <code>n</code>. Inside the loop, call <code>row</code> with <code>i</code> stars.",
-      "codeHeight": 8,
+      "content": "<p>A triangle starts with a row of 1 star, then 2 stars, then 3, all the way up to <code>n</code>. You can build it by calling <code>stars</code> with different lengths inside a loop.</p>",
+      "task": "Write <code>triangle(n)</code> so it prints rows of stars, growing from 1 up to <code>n</code>. The starter already calls <code>triangle(4)</code> and <code>triangle(7)</code> at the bottom.",
+      "starterCode": "def stars(n):\n  print(\"*\" * n)\n\ndef triangle(n):\n  # print rows of length 1, 2, 3, ... up to n\n  \n\ntriangle(4)\ntriangle(7)",
+      "hint": "Use <code>range</code> with a start and end so <code>i</code> goes 1, 2, 3, ..., up to <code>n</code>. Inside the loop, call <code>stars(i)</code>.",
+      "codeHeight": 10,
       "difficulty": "hard",
       "validation": {
         "rules": [
           {"type": "code_contains", "pattern": "def triangle", "description": "Define a function called triangle"},
-          {"type": "code_contains", "pattern": "row(", "description": "Your triangle function should call row()"},
-          {
-            "type": "function_buttons",
-            "calls": ["triangle(4)", "triangle(7)"],
-            "solutionCode": "def row(char, n):\n  print(char * n)\n\ndef triangle(n):\n  for i in range(1, n+1):\n    row(\"*\", i)"
-          }
+          {"type": "ast_has_function_call", "function": "stars", "description": "Your triangle function should call stars()"},
+          {"type": "solution_code", "solutionCode": "def stars(n):\n  print(\"*\" * n)\n\ndef triangle(n):\n  for i in range(1, n+1):\n    stars(i)\n\ntriangle(4)\ntriangle(7)"}
         ]
       }
     },
     {
       "title": "Design your own shape",
-      "content": "<p>Time to invent your own. Write a function that prints any shape you like: a tall pillar, a diamond, your initial, anything.</p><p>You can use <code>row</code> inside it, or just <code>print</code> directly. Whatever you make, give it a name and call it at the bottom so it shows in the output.</p>",
+      "content": "<p>Time to invent your own. Write a function that prints any shape you like: a tall pillar, a diamond, your initial, anything.</p><p>You can use <code>stars</code> inside it, or just <code>print</code> directly. Whatever you make, give it a name and call it at the bottom so it shows in the output.</p>",
       "task": "Write your own function that prints a shape, then call it.",
-      "starterCode": "def row(char, n):\n  print(char * n)\n\n# Define your own function below, then call it\n",
-      "hint": "Try something like a <code>pillar</code> function with a loop that calls <code>row</code> with a single character. Or get creative.",
+      "starterCode": "def stars(n):\n  print(\"*\" * n)\n\n# Define your own function below, then call it\n",
+      "hint": "Try something like a <code>pillar</code> function with a loop that calls <code>stars(1)</code>. Or get creative.",
       "codeHeight": 10,
       "difficulty": "medium",
       "validation": {
