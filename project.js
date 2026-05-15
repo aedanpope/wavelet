@@ -6,7 +6,7 @@
 // numbers map 1:1 onto what the student sees in that editor's gutter.
 
 const PARAM_PROJECT = 'project';
-const DEFAULT_PROJECT = 'pixel-art';
+const DEFAULT_PROJECT = 'pixel-game';
 const BODY_INDENT = '  ';
 const SUPPORTS_FSA = typeof window !== 'undefined' && 'showOpenFilePicker' in window;
 const PY_FILE_TYPE = {

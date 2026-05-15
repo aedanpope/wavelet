@@ -1,6 +1,6 @@
 {
-  "id": "pixel-art",
-  "title": "Pixel Art Animation",
+  "id": "pixel-game",
+  "title": "Pixel Game",
   "description": "Build a tiny scene that comes alive when you press the arrow buttons.",
   "intro": "<p>Build your own pixel-art scene that <strong>animates when you press the arrow buttons</strong>. You'll fill in a few small functions, then click <em>Run Project</em> to see them all run together.</p><p>The canvas is a 20&times;20 grid. Coordinates are <code>(x, y)</code> from <code>(0, 0)</code> in the bottom-left to <code>(19, 19)</code> in the top-right.</p><p>The <strong>Setup</strong> section below holds variables that any of your functions can read and change &mdash; the player's position lives there as <code>player_x</code> and <code>player_y</code>. Add more variables there if you want.</p>",
   "canvas": "GRID20",
