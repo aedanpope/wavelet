@@ -123,7 +123,7 @@ function renderSetupCard() {
 
     const guidance = document.createElement('div');
     guidance.className = 'task-guidance';
-    guidance.innerHTML = '<p>The locked top line creates a <code>state</code> object that every function can read and change. The space below is yours, add more attributes if you want to remember more things between key presses (a score, a colour, a high-water mark&hellip;).</p>';
+    guidance.innerHTML = '<p>The locked top line creates the <code>state</code> object. Below it are the player\'s position variables, read or change them in any task. Add your own if you want to remember other things between key presses (a score, a colour, a high-water mark&hellip;).</p>';
     card.appendChild(guidance);
 
     const editorFrame = document.createElement('div');
@@ -219,7 +219,7 @@ function initTaskEditors() {
             viewportMargin: Infinity,
         });
         const seedLines = countSeedLines();
-        setupEditor.setSize('100%', '9.5em');
+        setupEditor.setSize('100%', '11em');
         // Lock the leading seed lines — same pattern as the `def fn():` line on
         // task editors. Any edit whose `from.line` is inside the seed is cancelled,
         // which also blocks backspace at the start of the first editable line.

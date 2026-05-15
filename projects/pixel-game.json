@@ -8,8 +8,8 @@
     "use_canvas(GRID20)",
     "from types import SimpleNamespace"
   ],
-  "setupSeed": "state = SimpleNamespace(player_x=10, player_y=10)\n",
-  "editablePreamble": "# Add your own state variables here, e.g.\n# state.score = 0\n# state.colour = 'red'\n",
+  "setupSeed": "state = SimpleNamespace()\n",
+  "editablePreamble": "state.player_x = 10\nstate.player_y = 10\n# Add your own state variables below, e.g.\n# state.score = 0\n# state.colour = 'red'\n",
   "tasks": [
     {
       "id": "corners",
