@@ -64,9 +64,9 @@
       "id": "player",
       "title": "Draw the player",
       "function": "draw_player",
-      "guidance": "<p>The player lives at <code>state.player_x</code>, <code>state.player_y</code>. The State section starts these at <code>(10, 10)</code>.</p><p>Draw something to represent the player at that position. The simplest version is a single <code>draw(state.player_x, state.player_y, 'yellow')</code>. Want a bigger character? Draw multiple cells around the centre.</p>",
-      "starterBody": "draw(state.player_x, state.player_y, 'yellow')\n",
-      "editorHeight": 6,
+      "guidance": "<p>The player lives at <code>state.player_x</code>, <code>state.player_y</code>. The State section starts these at <code>(10, 10)</code>.</p><p>The starter copies those into local <code>x</code> and <code>y</code> so you can tweak them, then draws a single yellow cell. Want a bigger character? Add more <code>draw</code> calls for cells around the centre, like <code>draw(x + 1, y, 'yellow')</code> or <code>draw(x, y + 1, 'red')</code>.</p>",
+      "starterBody": "x = state.player_x\ny = state.player_y\ndraw(x, y, 'yellow')\n",
+      "editorHeight": 8,
       "validation": {
         "rules": [
           { "type": "function_runs_clean" }
