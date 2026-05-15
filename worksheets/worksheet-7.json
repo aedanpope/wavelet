@@ -11,20 +11,17 @@
       "footer": "A function is a named piece of code you can call whenever you want."
     },
     {
-      "title": "Your first function",
-      "content": "<p>This program <strong>defines</strong> a function called <code>say_hi</code> and then <strong>calls</strong> it. Look at the two parts:</p><ul><li><code>def say_hi():</code> creates the function</li><li><code>say_hi()</code> calls the function</li></ul><p>The code under <code>def</code> only runs when you <em>call</em> the function with <code>say_hi()</code>.</p>",
-      "task": "Run the code and watch <code>say_hi()</code> get called.",
-      "starterCode": "def say_hi():\n  print(\"Hi there!\")\n\nsay_hi()",
-      "hint": "Just press 'Run Code'. The function prints once because it's called once.",
-      "codeHeight": 5,
-      "difficulty": "easy",
-      "validation": {
-        "rules": [
-          {"type": "code_contains", "pattern": "def say_hi", "description": "Keep the def say_hi() line"},
-          {"type": "code_contains", "pattern": "say_hi()", "description": "Call the function with say_hi()"},
-          {"type": "output_not_empty"}
-        ]
-      }
+      "type": "trace",
+      "title": "Watch a function being called",
+      "code": "def say_hi():\n  print(\"Hi there!\")\n\nsay_hi()",
+      "steps": [
+        {"line": 1, "locals": {}, "for_ctx": null, "phase": "before", "ann": null, "output": ""},
+        {"line": 1, "locals": {"say_hi": "<function>"}, "for_ctx": null, "phase": "after", "ann": null, "output": ""},
+        {"line": 4, "locals": {"say_hi": "<function>"}, "for_ctx": null, "phase": "before", "ann": null, "output": ""},
+        {"line": 2, "locals": {"say_hi": "<function>"}, "for_ctx": null, "phase": "before", "ann": {"type": "print", "preview": "Hi there!"}, "output": ""},
+        {"line": 2, "locals": {"say_hi": "<function>"}, "for_ctx": null, "phase": "after", "ann": null, "output": "Hi there!\n"},
+        {"line": 4, "locals": {"say_hi": "<function>"}, "for_ctx": null, "phase": "after", "ann": null, "output": "Hi there!\n"}
+      ]
     },
     {
       "title": "Call it more than once",
@@ -85,16 +82,16 @@
     {
       "title": "Edit farewell",
       "content": "<p>Here's a function called <code>farewell</code>. It only says goodbye to Ali, and the message is a bit boring.</p>",
-      "task": "Change the body of <code>farewell</code> so it prints <code>See you tomorrow,</code> followed by the name. Then add another call so it also says goodbye to <code>'Sam'</code>.",
+      "task": "Change the body of <code>farewell</code> so it prints <code>See you tomorrow</code> followed by the name. Then add another call so it also says goodbye to <code>'Sam'</code>.",
       "starterCode": "def farewell(name):\n  print('Bye')\n\nfarewell('Ali')",
-      "hint": "Inside the <code>print</code>, write <code>'See you tomorrow,'</code> then <code>, name</code> so Python adds the name after the message. Then on a new line below, write <code>farewell('Sam')</code>.",
+      "hint": "Inside the <code>print</code>, write <code>'See you tomorrow'</code> then <code>, name</code> so Python prints the name after the message (with a space between). Then on a new line below, write <code>farewell('Sam')</code>.",
       "codeHeight": 6,
       "difficulty": "easy",
       "validation": {
         "rules": [
           {"type": "code_contains", "pattern": "def farewell(name):", "description": "Keep the def farewell(name): line"},
           {"type": "ast_has_function_call", "function": "farewell", "minCount": 2, "description": "Call farewell() twice (once for Ali, once for Sam)"},
-          {"type": "solution_code", "solutionCode": "def farewell(name):\n  print('See you tomorrow,', name)\n\nfarewell('Ali')\nfarewell('Sam')"}
+          {"type": "solution_code", "solutionCode": "def farewell(name):\n  print('See you tomorrow', name)\n\nfarewell('Ali')\nfarewell('Sam')"}
         ]
       }
     },
