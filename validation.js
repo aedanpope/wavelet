@@ -72,6 +72,20 @@ async function validateAnswer(code, output, problem, problemIndex, codeExecutor,
         }
     }
 
+    // If the student's code raised a Python error, surface it as a generic
+    // requirement failure when no rule-specific requirement message fired.
+    // We still let correctness rules attach their own message in parallel,
+    // so the student sees both 'your code errored' AND 'expected output: ...'.
+    const PYTHON_ERROR_PATTERNS = ['NameError', 'SyntaxError', 'TypeError', 'AttributeError', 'IndentationError', 'ZeroDivisionError'];
+    const hasPythonError = PYTHON_ERROR_PATTERNS.some(p => output.includes(p));
+    if (hasPythonError && !requirementFailure) {
+        requirementFailure = {
+            isValid: false,
+            errorType: 'python_error',
+            message: 'There was an error running your code.'
+        };
+    }
+
     if (!requirementFailure && !correctnessFailure) {
         const successText = '✅ Correct! Well done!';
         return {
@@ -90,7 +104,9 @@ async function validateAnswer(code, output, problem, problemIndex, codeExecutor,
         messages.push({ kind: 'correctness', text: '❌ ' + correctnessFailure.message });
     }
 
-    console.log(`Validation failed for rule: ${firstFailedRule.type} - ${firstFailedRule.pattern}`);
+    if (firstFailedRule) {
+        console.log(`Validation failed for rule: ${firstFailedRule.type} - ${firstFailedRule.pattern}`);
+    }
     const primary = requirementFailure || correctnessFailure;
     return {
         isValid: false,
