@@ -62,7 +62,7 @@ Capture this in the project page UI: a small "best on a laptop" notice for any s
 
 Every project produces a single `.py` file. The file:
 
-- **Runs anywhere.** A parent should be able to paste it into IDLE / Thonny / `python3` and get the same scene. Don't put Wavelet-only magic at the top level; keep harness shims inside `use_canvas(...)` style calls that have well-defined fallbacks.
+- **Runs inside Wavelet.** It is not a standalone Python program; it depends on the project harness (canvas shims, locked preamble, event wiring). To demo at home, a parent uploads the file to the same project page on `wavelet.zone` and clicks Run. We don't try to make the file paste-able into IDLE / Thonny / `python3`, because doing so would force harness shims into the file at the cost of clarity and student-readable structure.
 - **Has a marker comment** (`# Wavelet ... Project`) so Open can re-hydrate it, but is *loose* about it: a file without the marker still opens with a warning, so students who tweak the header don't get locked out.
 - **Round-trips through the editing UI.** Save assembles the file from the editors; Open parses it back via Python `ast`. If we can't round-trip a file faithfully, we can't expect students to take work between sessions.
 
