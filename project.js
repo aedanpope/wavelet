@@ -76,8 +76,14 @@ function renderProject() {
 
     const tasksEl = document.getElementById('project-tasks');
     tasksEl.innerHTML = '';
-    projectDef.tasks.forEach((task, idx) => {
-        tasksEl.appendChild(renderTaskCard(task, idx));
+    let taskNumber = 0;
+    (projectDef.tasks || []).forEach(block => {
+        if (block.type === 'concept') {
+            tasksEl.appendChild(window.ProblemRenderer.createConceptElement(block));
+        } else {
+            tasksEl.appendChild(renderTaskCard(block, taskNumber));
+            taskNumber += 1;
+        }
     });
 
     document.getElementById('run-project-btn').addEventListener('click', runProject);
@@ -310,6 +316,13 @@ function seedLockedLines() {
     return seed.replace(/\n$/, '').split('\n').filter(l => l.trim() !== '');
 }
 
+// Real task entries (function editors) only — concept cards and any other
+// non-task block types live alongside in projectDef.tasks for layout but
+// are skipped wherever we iterate "the functions in this project".
+function getTasks() {
+    return (projectDef.tasks || []).filter(t => t.type !== 'concept');
+}
+
 // ─── Run flow ────────────────────────────────────────────────────────────
 
 async function runProject() {
@@ -422,7 +435,7 @@ function extractPythonError(err) {
 
 async function installAttributionHelper() {
     const py = executor.getPyodide();
-    const knownNames = projectDef.tasks.map(t => t.function);
+    const knownNames = getTasks().map(t => t.function);
     py.globals.set('_wavelet_known_names', py.toPy(knownNames));
     py.runPython(`
 def _wavelet_call_safely(fn_name):
@@ -471,7 +484,7 @@ async function callWithAttribution(fnName) {
 }
 
 function taskIdForFunction(fnName) {
-    for (const t of projectDef.tasks) {
+    for (const t of getTasks()) {
         if (t.function === fnName) return t.id;
     }
     return null;
@@ -621,7 +634,7 @@ function assembleProgramSegmented() {
     const preambleSrc = editablePreamble.trim() ? editablePreamble.replace(/\s+$/g, '') : '';
 
     const fnDefs = [];
-    for (const task of projectDef.tasks) {
+    for (const task of getTasks()) {
         const entry = taskEditors.get(task.id);
         const src = entry && entry.cm ? entry.cm.getValue() : buildEditorSource(task.function, task.starterBody);
         const syntaxError = checkSyntax(src);
@@ -810,7 +823,7 @@ function assembleFileForDisk() {
     }
     lines.push('');
 
-    projectDef.tasks.forEach((task, idx) => {
+    getTasks().forEach((task, idx) => {
         const entry = taskEditors.get(task.id);
         const src = entry && entry.cm
             ? entry.cm.getValue()
@@ -939,7 +952,7 @@ function loadFileIntoEditors(text, filename) {
         return false;
     }
 
-    const knownNames = projectDef.tasks.map(t => t.function);
+    const knownNames = getTasks().map(t => t.function);
     const lockedSet = new Set([
         ...(projectDef.lockedPreamble || []).map(s => s.trim()),
         ...seedLockedLines().map(s => s.trim()),
@@ -947,7 +960,7 @@ function loadFileIntoEditors(text, filename) {
     const parsed = parseProjectFile(text, knownNames, lockedSet);
 
     const missing = [];
-    for (const task of projectDef.tasks) {
+    for (const task of getTasks()) {
         const entry = taskEditors.get(task.id);
         if (!entry || !entry.cm) continue;
         if (parsed.bodies.has(task.function)) {

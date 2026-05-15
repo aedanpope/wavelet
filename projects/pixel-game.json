@@ -2,7 +2,7 @@
   "id": "pixel-game",
   "title": "Pixel Game",
   "description": "Build a tiny scene that comes alive when you press the arrow buttons.",
-  "intro": "<p>Build your own pixel-game scene that <strong>animates when you press the arrow buttons</strong>. You'll fill in a few small functions, then click <em>Run Project</em> to see them all run together.</p><p>The canvas is a 20&times;20 grid. Coordinates are <code>(x, y)</code> from <code>(0, 0)</code> in the bottom-left to <code>(19, 19)</code> in the top-right.</p><p>The <strong>State</strong> section below holds the variables your functions can read and change. The player's position lives there as <code>state.player_x</code> and <code>state.player_y</code>. You can add your own variables below the locked line.</p>",
+  "intro": "<p>Build your own pixel-game scene that <strong>animates when you press the arrow buttons</strong>. You'll fill in a few small functions, then click <em>Run Project</em> to see them all run together.</p><p>The canvas is a 20&times;20 grid. The <strong>State</strong> section below holds the variables your functions can read and change. The player's position lives there as <code>state.player_x</code> and <code>state.player_y</code>. You can add your own variables below the locked line.</p>",
   "canvas": "GRID20",
   "lockedPreamble": [
     "use_canvas(GRID20)",
@@ -11,6 +11,13 @@
   "setupSeed": "state = SimpleNamespace()\n",
   "editablePreamble": "state.player_x = 10\nstate.player_y = 10\n# Add your own state variables below, e.g.\n# state.score = 0\n# state.colour = 'red'\n",
   "tasks": [
+    {
+      "type": "concept",
+      "icon": "📍",
+      "title": "Pixel coordinates",
+      "content": "<p>Every cell on the canvas has an address written as <code>(x, y)</code>. <strong>x</strong> goes <em>across</em> (0 on the left, 19 on the right). <strong>y</strong> goes <em>up</em> (0 at the bottom, 19 at the top).</p><p>So <code>draw(0, 0, 'red')</code> paints the bottom-left cell, and <code>draw(19, 19, 'red')</code> paints the top-right.</p>",
+      "footer": "x across, y up. (0, 0) is bottom-left."
+    },
     {
       "id": "corners",
       "title": "Colour the corners",
