@@ -66,7 +66,7 @@ Every project produces a single `.py` file. The file:
 - **Has a marker comment** (`# Wavelet ... Project`) so Open can re-hydrate it, but is *loose* about it: a file without the marker still opens with a warning, so students who tweak the header don't get locked out.
 - **Round-trips through the editing UI.** Save assembles the file from the editors; Open parses it back via Python `ast`. If we can't round-trip a file faithfully, we can't expect students to take work between sessions.
 
-> **TODO (sharing):** investigate encoding the assembled `.py` into a QR code / share link (gzip + base64url in a URL hash fragment) so a parent can scan a printed sheet and Wavelet hydrates the project. Falls back to file upload if the code overflows QR capacity.
+> **TODO (sharing):** investigate encoding the assembled `.py` into a share link (gzip + base64url in a URL hash fragment) that hydrates the project when opened. One payload, two surfaces: render as a QR for a printed take-home sheet, and as a plain `https://` link for email / messaging. Falls back to file upload if the code overflows URL/QR capacity.
 
 ---
 
