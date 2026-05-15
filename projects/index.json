@@ -1,10 +1,10 @@
 {
   "projects": [
     {
-      "id": "pixel-art",
-      "title": "Pixel Art Animation",
+      "id": "pixel-game",
+      "title": "Pixel Game",
       "description": "Build a tiny scene that comes alive when you press the arrow buttons.",
-      "file": "pixel-art.json"
+      "file": "pixel-game.json"
     }
   ],
   "metadata": {

@@ -1,4 +1,4 @@
-# Pixel Art Project — Design
+# Pixel Game Project — Design
 
 > Status: **draft v2** — iterating on the per-function-editor model.
 > Scope: convert the existing WS7 "Drawing with Code" worksheet into the first project deliverable for the 10-week course. Project runs across weeks 8–10; students save a single `.py` file they can take home.
@@ -32,8 +32,8 @@ A plain `.py` file. Header comment marks it as a Wavelet project; the rest is ju
 The file is the **on-disk** representation; the editing UI is a structured view of it. On Save, JS assembles the file from the editors. On Open, JS parses the file back into editors (see §10).
 
 ```python
-# Wavelet Pixel Art Project
-# https://wavelet.zone/projects/pixel-art
+# Wavelet Pixel Game Project
+# https://wavelet.zone/projects/pixel-game
 # Student: ____
 # Saved:   2026-04-29
 
@@ -138,8 +138,8 @@ A project JSON now describes only **the harness frame** plus **per-task editor m
 
 ```jsonc
 {
-  "id": "project-pixel-art",
-  "title": "Pixel Art Animation",
+  "id": "project-pixel-game",
+  "title": "Pixel Game",
   "intro": "<p>Build a tiny scene that comes alive when you press arrow keys…</p>",
   "canvas": "GRID20",
 

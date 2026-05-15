@@ -6,7 +6,7 @@
 // numbers map 1:1 onto what the student sees in that editor's gutter.
 
 const PARAM_PROJECT = 'project';
-const DEFAULT_PROJECT = 'pixel-art';
+const DEFAULT_PROJECT = 'pixel-game';
 const BODY_INDENT = '  ';
 const SUPPORTS_FSA = typeof window !== 'undefined' && 'showOpenFilePicker' in window;
 const PY_FILE_TYPE = {
@@ -76,8 +76,14 @@ function renderProject() {
 
     const tasksEl = document.getElementById('project-tasks');
     tasksEl.innerHTML = '';
-    projectDef.tasks.forEach((task, idx) => {
-        tasksEl.appendChild(renderTaskCard(task, idx));
+    let taskNumber = 0;
+    (projectDef.tasks || []).forEach(block => {
+        if (block.type === 'concept') {
+            tasksEl.appendChild(window.ProblemRenderer.createConceptElement(block));
+        } else {
+            tasksEl.appendChild(renderTaskCard(block, taskNumber));
+            taskNumber += 1;
+        }
     });
 
     document.getElementById('run-project-btn').addEventListener('click', runProject);
@@ -115,7 +121,7 @@ function renderSetupCard() {
     header.innerHTML = `
         <div class="project-task-titles">
             <span class="task-number setup-number">⚙</span>
-            <h3 class="task-title">Setup</h3>
+            <h3 class="task-title">State</h3>
         </div>
         <span class="task-status task-status-pending" data-status>○ ready</span>
     `;
@@ -123,7 +129,7 @@ function renderSetupCard() {
 
     const guidance = document.createElement('div');
     guidance.className = 'task-guidance';
-    guidance.innerHTML = '<p>Variables here exist before any function runs &mdash; you can read or change them in any task below. Add more if you want to remember more things between key presses (a score, a colour, a high-water mark&hellip;).</p>';
+    guidance.innerHTML = '<p>The locked top line creates the <code>state</code> object. Below it are the player\'s position variables, read or change them in any task. Add your own if you want to remember other things between key presses (a score, a colour, a high-water mark&hellip;).</p>';
     card.appendChild(guidance);
 
     const editorFrame = document.createElement('div');
@@ -207,7 +213,7 @@ function initTaskEditors() {
     const setupHost = document.getElementById('project-setup-host');
     if (setupHost && setupHost._editorEl) {
         setupEditor = CodeMirror(setupHost._editorEl, {
-            value: projectDef.editablePreamble || '',
+            value: buildSetupSource(projectDef.editablePreamble),
             mode: 'python',
             theme: 'monokai',
             lineNumbers: true,
@@ -218,7 +224,21 @@ function initTaskEditors() {
             lineWrapping: true,
             viewportMargin: Infinity,
         });
-        setupEditor.setSize('100%', '7em');
+        const seedLines = countSeedLines();
+        setupEditor.setSize('100%', '11em');
+        // Lock the leading seed lines — same pattern as the `def fn():` line on
+        // task editors. Any edit whose `from.line` is inside the seed is cancelled,
+        // which also blocks backspace at the start of the first editable line.
+        if (seedLines > 0) {
+            setupEditor.on('beforeChange', (_cm, change) => {
+                if (change.origin === 'setValue') return;
+                if (change.from.line < seedLines) change.cancel();
+            });
+            for (let i = 0; i < seedLines; i++) {
+                setupEditor.addLineClass(i, 'background', 'cm-def-line');
+                setupEditor.addLineClass(i, 'wrap', 'cm-def-line-wrap');
+            }
+        }
         setupEditor.on('change', (_cm, change) => {
             if (change.origin !== 'setValue') markDirty();
         });
@@ -272,6 +292,35 @@ function buildEditorSource(fnName, body) {
     const bodyLines = trimmed === '' ? ['pass'] : trimmed.split('\n');
     const indented = bodyLines.map(l => l === '' ? '' : BODY_INDENT + l).join('\n');
     return `def ${fnName}():\n${indented}\n`;
+}
+
+// Setup editor source = locked seed lines + student-editable preamble. The seed
+// (e.g. `state = SimpleNamespace(...)`) is part of the editor's source so its
+// line numbers sit in the same gutter as the editable part below, and a
+// beforeChange handler prevents edits to those leading lines.
+function buildSetupSource(editablePart) {
+    const seed = projectDef.setupSeed || '';
+    return seed + (editablePart || '');
+}
+
+function countSeedLines() {
+    const seed = projectDef.setupSeed || '';
+    if (!seed) return 0;
+    // Trailing newline produces an empty trailing element from split; strip it
+    // so a one-line seed "state = ...\n" counts as 1, not 2.
+    return seed.replace(/\n$/, '').split('\n').length;
+}
+
+function seedLockedLines() {
+    const seed = projectDef.setupSeed || '';
+    return seed.replace(/\n$/, '').split('\n').filter(l => l.trim() !== '');
+}
+
+// Real task entries (function editors) only — concept cards and any other
+// non-task block types live alongside in projectDef.tasks for layout but
+// are skipped wherever we iterate "the functions in this project".
+function getTasks() {
+    return (projectDef.tasks || []).filter(t => t.type !== 'concept');
 }
 
 // ─── Run flow ────────────────────────────────────────────────────────────
@@ -386,7 +435,7 @@ function extractPythonError(err) {
 
 async function installAttributionHelper() {
     const py = executor.getPyodide();
-    const knownNames = projectDef.tasks.map(t => t.function);
+    const knownNames = getTasks().map(t => t.function);
     py.globals.set('_wavelet_known_names', py.toPy(knownNames));
     py.runPython(`
 def _wavelet_call_safely(fn_name):
@@ -435,7 +484,7 @@ async function callWithAttribution(fnName) {
 }
 
 function taskIdForFunction(fnName) {
-    for (const t of projectDef.tasks) {
+    for (const t of getTasks()) {
         if (t.function === fnName) return t.id;
     }
     return null;
@@ -585,7 +634,7 @@ function assembleProgramSegmented() {
     const preambleSrc = editablePreamble.trim() ? editablePreamble.replace(/\s+$/g, '') : '';
 
     const fnDefs = [];
-    for (const task of projectDef.tasks) {
+    for (const task of getTasks()) {
         const entry = taskEditors.get(task.id);
         const src = entry && entry.cm ? entry.cm.getValue() : buildEditorSource(task.function, task.starterBody);
         const syntaxError = checkSyntax(src);
@@ -774,7 +823,7 @@ function assembleFileForDisk() {
     }
     lines.push('');
 
-    projectDef.tasks.forEach((task, idx) => {
+    getTasks().forEach((task, idx) => {
         const entry = taskEditors.get(task.id);
         const src = entry && entry.cm
             ? entry.cm.getValue()
@@ -903,12 +952,15 @@ function loadFileIntoEditors(text, filename) {
         return false;
     }
 
-    const knownNames = projectDef.tasks.map(t => t.function);
-    const lockedSet = new Set((projectDef.lockedPreamble || []).map(s => s.trim()));
+    const knownNames = getTasks().map(t => t.function);
+    const lockedSet = new Set([
+        ...(projectDef.lockedPreamble || []).map(s => s.trim()),
+        ...seedLockedLines().map(s => s.trim()),
+    ]);
     const parsed = parseProjectFile(text, knownNames, lockedSet);
 
     const missing = [];
-    for (const task of projectDef.tasks) {
+    for (const task of getTasks()) {
         const entry = taskEditors.get(task.id);
         if (!entry || !entry.cm) continue;
         if (parsed.bodies.has(task.function)) {
@@ -923,7 +975,7 @@ function loadFileIntoEditors(text, filename) {
     }
 
     if (setupEditor) {
-        setupEditor.setValue(parsed.editablePreamble || projectDef.editablePreamble || '');
+        setupEditor.setValue(buildSetupSource(parsed.editablePreamble || projectDef.editablePreamble || ''));
     }
 
     currentExtras = parsed.extras;
@@ -1024,7 +1076,7 @@ def _wavelet_parse_project():
 }
 
 function anyEditorDifferentFromStarter() {
-    if (setupEditor && setupEditor.getValue() !== (projectDef.editablePreamble || '')) return true;
+    if (setupEditor && setupEditor.getValue() !== buildSetupSource(projectDef.editablePreamble)) return true;
     for (const [, entry] of taskEditors) {
         if (!entry.cm) continue;
         const starter = buildEditorSource(entry.task.function, entry.task.starterBody);
