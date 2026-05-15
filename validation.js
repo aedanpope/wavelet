@@ -24,17 +24,6 @@ async function validateAnswer(code, output, problem, problemIndex, codeExecutor,
     const outputTrimmed = output.trim();
     const codeWithoutComments = codeTrimmed.replace(/#.*$/gm, '').trim();
 
-    // Check for common errors that should fail validation
-    if (output.includes('NameError') || output.includes('SyntaxError') || 
-        output.includes('TypeError') || output.includes('AttributeError') ||
-        output.includes('IndentationError') || output.includes('ZeroDivisionError')) {
-        return {
-            isValid: false,
-            errorType: 'python_error',
-            message: '❌ There was an error running your code.'
-        };
-    }
-    
     // If no validation rules are defined, use basic validation
     if (!problem.validation || !problem.validation.rules) {
         const isValid = codeWithoutComments.length > 10 && outputTrimmed.length > 0;
