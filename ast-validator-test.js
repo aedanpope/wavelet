@@ -96,6 +96,18 @@ const unitTests = [
         rule: { type: 'ast_has_function_call', function: 'range', withArg: 'len' },
         expected: false
     },
+    {
+        name: 'ast_has_function_call: minCount=3 passes with three calls',
+        code: 'def say_hi():\n  print("Hi")\nsay_hi()\nsay_hi()\nsay_hi()',
+        rule: { type: 'ast_has_function_call', function: 'say_hi', minCount: 3 },
+        expected: true
+    },
+    {
+        name: 'ast_has_function_call: minCount=3 fails when print is faked',
+        code: 'def say_hi():\n  print("Hi")\nsay_hi()\nprint("Hi")\nprint("Hi")',
+        rule: { type: 'ast_has_function_call', function: 'say_hi', minCount: 3 },
+        expected: false
+    },
 
     // ast_has_list_literal
     {

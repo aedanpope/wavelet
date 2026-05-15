@@ -224,7 +224,9 @@ def _wavelet_analyze(code):
  * if the code has a SyntaxError.
  */
 async function parseStudentAST(code, pyodide) {
-    if (!pyodide) return { error: true, msg: 'Pyodide not available' };
+    if (!pyodide) {
+        return { error: true, msg: 'Pyodide not available' };
+    }
 
     try {
         // Ensure the analyze function is defined
@@ -338,6 +340,7 @@ function validateASTRule(astData, rule) {
             const func = rule.function;
             const withArg = rule.withArg || null;
             const minArgs = typeof rule.minArgs === 'number' ? rule.minArgs : null;
+            const minCount = typeof rule.minCount === 'number' ? rule.minCount : 1;
             let candidates = astData.function_calls.filter(c => c.name === func);
             if (withArg) {
                 candidates = candidates.filter(c => c.arg_calls.includes(withArg));
@@ -345,9 +348,11 @@ function validateASTRule(astData, rule) {
             if (minArgs !== null) {
                 candidates = candidates.filter(c => (c.arg_count || 0) >= minArgs);
             }
-            if (candidates.length === 0) {
+            if (candidates.length < minCount) {
                 let detail;
-                if (minArgs !== null && withArg) {
+                if (minCount > 1) {
+                    detail = `Your code needs to call ${func}() at least ${minCount} times.`;
+                } else if (minArgs !== null && withArg) {
                     detail = `Your code needs to call ${func}(${withArg}(...)) with at least ${minArgs} arguments.`;
                 } else if (minArgs !== null) {
                     detail = `Your code needs to call ${func}() with at least ${minArgs} arguments.`;

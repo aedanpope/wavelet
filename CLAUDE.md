@@ -188,6 +188,16 @@ try {
 - Modern CSS (Grid, Flexbox)
 
 
+## Writing Style
+
+**Never use em-dashes (—) or the HTML entity `&mdash;`.** This applies to everything: worksheet JSON content, code comments, commit messages, PR descriptions, markdown docs, and chat replies. Always rewrite with commas, parentheses, colons, or two separate sentences. This rule is permanent.
+
+Examples:
+- ❌ "Run the code — watch what happens."
+- ✅ "Run the code, then watch what happens."
+- ❌ "The body must be indented &mdash; that's how Python knows."
+- ✅ "The body must be indented, so Python knows."
+
 ## Important Notes
 
 - User is on Windows (native, no WSL2) - use bash-compatible commands via Git Bash

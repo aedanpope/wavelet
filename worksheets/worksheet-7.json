@@ -6,14 +6,14 @@
     {
       "type": "concept",
       "icon": "🔧",
-      "title": "Python comes with tools. Today you make new ones",
-      "content": "<p>Python comes with built-in tools you've seen before, like these:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>print(\"hello\")\nlen([1, 2, 3])\nrange(5)</pre><p>Today you learn how to make <strong>your own tools</strong>. Once you've made one, you can use it as many times as you like, just like <code>print</code>.</p><p>The keyword that makes a new tool is <code>def</code>. It stands for <em>define</em>.</p>",
-      "footer": "A function is a named piece of code you can run whenever you want."
+      "title": "Python comes with <em>functions</em>. Today you make your own",
+      "content": "<p>You've already used Python's built-in <strong>functions</strong>, tools like <code>print()</code>, <code>len()</code>, and <code>range()</code> that come with Python.<br>The keyword <b>def</b> (short for <em>define</em>) lets you build your own:</p><pre style='background:#272822;color:#f8f8f2;padding:10px 14px;border-radius:6px;margin:8px 0;'><span style='color:#f92672'>def</span> <span style='color:#fd971f'>say_hi</span>():           <span style='color:#cccccc'>&larr; define</span>\n  <span style='color:#66d9ef'>print</span>(<span style='color:#e6db74'>\"Hi there!\"</span>)    <span style='color:#cccccc'>&larr; specify</span>\n\nsay_hi()                <span style='color:#cccccc'>&larr; call, now \"Hi there!\" gets printed</span></pre><p>The function specification must be <strong>indented</strong>, so Python knows which lines belong to the function. Nothing happens until you <em>call</em> it.</p>",
+      "footer": "A function is a named piece of code you can call whenever you want."
     },
     {
       "title": "Your first function",
-      "content": "<p>This program <strong>defines</strong> a function called <code>say_hi</code> and then <strong>calls</strong> it. Look at the two parts:</p><ul><li><code>def say_hi():</code> creates the function</li><li><code>say_hi()</code> uses the function</li></ul><p>The code under <code>def</code> only runs when you <em>call</em> the function with <code>say_hi()</code>.</p>",
-      "task": "Run the code and watch what happens.",
+      "content": "<p>This program <strong>defines</strong> a function called <code>say_hi</code> and then <strong>calls</strong> it. Look at the two parts:</p><ul><li><code>def say_hi():</code> creates the function</li><li><code>say_hi()</code> calls the function</li></ul><p>The code under <code>def</code> only runs when you <em>call</em> the function with <code>say_hi()</code>.</p>",
+      "task": "Run the code and watch <code>say_hi()</code> get called.",
       "starterCode": "def say_hi():\n  print(\"Hi there!\")\n\nsay_hi()",
       "hint": "Just press 'Run Code'. The function prints once because it's called once.",
       "codeHeight": 5,
@@ -36,10 +36,9 @@
       "difficulty": "easy",
       "validation": {
         "rules": [
-          {
-            "type": "solution_code",
-            "solutionCode": "def say_hi():\n  print(\"Hi there!\")\n\nsay_hi()\nsay_hi()\nsay_hi()"
-          }
+          {"type": "code_contains", "pattern": "def say_hi", "description": "Keep the def say_hi() line"},
+          {"type": "ast_has_function_call", "function": "say_hi", "minCount": 3, "description": "Call say_hi() three times"},
+          {"type": "solution_code", "solutionCode": "def say_hi():\n  print(\"Hi there!\")\n\nsay_hi()\nsay_hi()\nsay_hi()"}
         ]
       }
     },
@@ -55,7 +54,7 @@
         "rules": [
           {"type": "code_contains", "pattern": "def cheer", "description": "Define a function called cheer"},
           {"type": "ast_has_function_call", "function": "cheer", "description": "Call your function by writing cheer() on its own line"},
-          {"type": "output_contains", "pattern": "Hooray", "description": "The function should print Hooray"}
+          {"type": "solution_code", "solutionCode": "def cheer():\n  print(\"Hooray!\")\n\ncheer()"}
         ]
       }
     },
@@ -63,7 +62,7 @@
       "type": "concept",
       "icon": "📥",
       "title": "Parameters: your tool takes an input",
-      "content": "<p>Just like <code>print</code> needs to know <em>what</em> to print, your function can take an input too. The input goes in the brackets after the function name:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>def greet(name):\n  print('Hi,', name)\n\ngreet('Ali')    # Hi, Ali\ngreet('Sam')    # Hi, Sam</pre><p>The word inside the brackets (here, <code>name</code>) is called a <strong>parameter</strong>. When you call the function, the value you pass becomes that parameter inside the body.</p>",
+      "content": "<p>Your functions can take inputs too, the input goes in the brackets after the function name:</p><pre style='background:#272822;color:#f8f8f2;padding:10px 14px;border-radius:6px;margin:8px 0;'><span style='color:#f92672'>def</span> <span style='color:#fd971f'>greet</span>(name):    <span style='color:#cccccc'>&larr; add a parameter called 'name' to the function definition</span>\n  <span style='color:#66d9ef'>print</span>(<span style='color:#e6db74'>'Hi,'</span>, name)\n\ngreet(<span style='color:#e6db74'>'Ali'</span>)    <span style='color:#cccccc'># Hi, Ali</span>\ngreet(<span style='color:#e6db74'>'Sam'</span>)    <span style='color:#cccccc'># Hi, Sam</span></pre><p>When you call the function, the value you pass becomes that parameter inside the function.</p>",
       "footer": "Same function. Different inputs. Different output."
     },
     {
@@ -85,17 +84,17 @@
     },
     {
       "title": "Edit farewell",
-      "content": "<p>Here's a function called <code>farewell</code>. The body says goodbye, but it's a bit boring.</p>",
-      "task": "Change the body of <code>farewell</code> so it prints <code>See you tomorrow,</code> followed by the name. Don't change the def line or the calls.",
-      "starterCode": "def farewell(name):\n  print('Bye', name)\n\nfarewell('Ali')\nfarewell('Sam')",
-      "hint": "Change the first thing inside the <code>print</code>. Python will add a space between the comma-separated values automatically.",
+      "content": "<p>Here's a function called <code>farewell</code>. It only says goodbye to Ali, and the message is a bit boring.</p>",
+      "task": "Change the body of <code>farewell</code> so it prints <code>See you tomorrow,</code> followed by the name. Then add another call so it also says goodbye to <code>'Sam'</code>.",
+      "starterCode": "def farewell(name):\n  print('Bye')\n\nfarewell('Ali')",
+      "hint": "Inside the <code>print</code>, write <code>'See you tomorrow,'</code> then <code>, name</code> so Python adds the name after the message. Then on a new line below, write <code>farewell('Sam')</code>.",
       "codeHeight": 6,
       "difficulty": "easy",
       "validation": {
         "rules": [
           {"type": "code_contains", "pattern": "def farewell(name):", "description": "Keep the def farewell(name): line"},
-          {"type": "output_contains", "pattern": "See you tomorrow, Ali", "description": "Output should contain 'See you tomorrow, Ali'"},
-          {"type": "output_contains", "pattern": "See you tomorrow, Sam", "description": "Output should contain 'See you tomorrow, Sam'"}
+          {"type": "ast_has_function_call", "function": "farewell", "minCount": 2, "description": "Call farewell() twice (once for Ali, once for Sam)"},
+          {"type": "solution_code", "solutionCode": "def farewell(name):\n  print('See you tomorrow,', name)\n\nfarewell('Ali')\nfarewell('Sam')"}
         ]
       }
     },
@@ -103,37 +102,32 @@
       "type": "concept",
       "icon": "↩️",
       "title": "Print vs return: give back an answer",
-      "content": "<p>Some Python tools <strong>do things</strong>. Others <strong>give back an answer</strong>:</p><ul><li><code>print(\"hi\")</code> shows <code>hi</code> on the screen. It doesn't give anything back.</li><li><code>len([1, 2, 3])</code> gives back <code>3</code>. You can save it: <code>n = len([1, 2, 3])</code>.</li></ul><p>Your functions can do the same. Use <code>return</code> instead of <code>print</code> to give an answer back:</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>def shout(text):\n  return text + \"!\"\n\nx = shout(\"hi\")    # x is now \"hi!\"\nprint(x)           # shows hi!</pre><p>The next few problems use a <strong>spec table</strong>. It calls your function with different inputs and shows what it gave back. Your job is to make every row pass.</p>",
-      "footer": "print SHOWS the answer. return GIVES IT BACK so you can use it later."
+      "content": "<p>Some Python tools <strong>do things</strong>. Others <strong>give back an answer</strong>:</p><ul><li><code>print(\"hi\")</code> shows <code>hi</code> on the screen. It doesn't give anything back.</li><li><code>len([1, 2, 3])</code> gives back <code>3</code>.</li></ul><p>Use <code><strong>return</strong></code> instead of <code><strong>print</strong></code> to give an answer back:</p><pre style='background:#272822;color:#f8f8f2;padding:10px 14px;border-radius:6px;margin:8px 0;'><span style='color:#f92672'>def</span> <span style='color:#fd971f'>shout</span>(text):\n  <span style='color:#f92672'>return</span> text + <span style='color:#e6db74'>\"!\"</span>    <span style='color:#cccccc'>&larr; gives back the answer</span>\n\nx = shout(<span style='color:#e6db74'>\"hi\"</span>)\n<span style='color:#66d9ef'>print</span>(x)    <span style='color:#cccccc'># shows hi!</span></pre>",
+      "footer": "<code><strong>print</strong></code> shows the answer. <code><strong>return</strong></code> gives it back so you can use it later."
     },
     {
-      "title": "Meet the spec table",
-      "content": "<p>Here's a function <code>loud</code> that takes some text and gives back a louder version. Look at the spec table below the editor: it shows three calls and what each one should give back.</p>",
-      "task": "Run the code. The spec table should fill in green ticks for every row.",
-      "starterCode": "def loud(text):\n  return text + \"!!!\"",
-      "hint": "Just press Run. The spec table calls <code>loud(\"hi\")</code>, <code>loud(\"yay\")</code>, and <code>loud(\"oh\")</code> and checks each return value.",
-      "codeHeight": 4,
+      "title": "Double it",
+      "content": "<p>Time to write your first <code>return</code>. The <code>double</code> function takes a number and gives back twice that number.</p>",
+      "task": "Finish the <code>double</code> function by writing its <code>return</code> line. Then call it twice to print the double of 5 and then of 12, using two lines of <code>print(double(...))</code>.",
+      "starterCode": "def double(n):\n  # Write a return statement here\n  \n\n# Now call double() twice to print double of 5 and double of 12\n",
+      "hint": "After <code>return</code>, write <code>n * 2</code>. Then below, use <code>print(double(5))</code> and <code>print(double(12))</code> on two new lines.",
+      "codeHeight": 8,
       "difficulty": "easy",
       "validation": {
         "rules": [
-          {
-            "type": "function_spec",
-            "functionName": "loud",
-            "cases": [
-              {"args": ["hi"], "expected": "hi!!!"},
-              {"args": ["yay"], "expected": "yay!!!"},
-              {"args": ["oh"], "expected": "oh!!!"}
-            ]
-          }
+          {"type": "code_contains", "pattern": "def double(n):", "description": "Keep the def double(n): line"},
+          {"type": "code_contains", "pattern": "return", "description": "Use return to give back the answer"},
+          {"type": "ast_has_function_call", "function": "double", "minCount": 2, "description": "Call double() twice (once for 5, once for 12)"},
+          {"type": "solution_code", "solutionCode": "def double(n):\n  return n * 2\n\nprint(double(5))\nprint(double(12))"}
         ]
       }
     },
     {
-      "title": "Returning a number",
-      "content": "<p>Functions can return numbers too, not just strings. Here's <code>double</code>: it gives back twice the number you pass in.</p>",
-      "task": "Run the code and watch the spec table fill in.",
-      "starterCode": "def double(n):\n  return n * 2",
-      "hint": "Press Run. The spec table calls <code>double(2)</code>, <code>double(3)</code>, <code>double(7)</code> and checks each return value.",
+      "title": "Meet the spec table",
+      "content": "<p>You just wrote <code>double</code> by hand. The <strong>spec table</strong> below the editor calls your function with different inputs and checks what it gave back. Your job is to make every row pass.</p>",
+      "task": "The spec table below is failing every row, because the function is returning the number unchanged instead of doubling it. Fix the body of <code>double</code> so all three rows turn green.",
+      "starterCode": "def double(n):\n  return n * 1",
+      "hint": "Look at the first row: <code>double(2)</code> should give back <code>4</code>, but it's giving back <code>2</code>. Change <code>n * 1</code> to <code>n * 2</code>.",
       "codeHeight": 4,
       "difficulty": "easy",
       "validation": {
@@ -143,8 +137,8 @@
             "functionName": "double",
             "cases": [
               {"args": [2], "expected": 4},
-              {"args": [3], "expected": 6},
-              {"args": [7], "expected": 14}
+              {"args": [7], "expected": 14},
+              {"args": [50], "expected": 100}
             ]
           }
         ]
@@ -269,7 +263,7 @@
       "type": "concept",
       "icon": "🧩",
       "title": "Tools using other tools",
-      "content": "<p>Once a function is defined, your <em>other</em> functions can use it too. That's how big programs get built: small tools combine into bigger ones.</p><pre style='background:#f1f5f9;padding:8px 12px;border-radius:4px;margin:8px 0;'>def shout(text):\n  return text + \"!!!\"\n\ndef double_shout(text):\n  return shout(text) + \" \" + shout(text)\n\nprint(double_shout(\"yay\"))   # yay!!! yay!!!</pre><p>The next few problems give you a row of <strong>buttons</strong> next to your code. Each button calls your function with different inputs, so you don't have to type the calls yourself. Just write the function, click Run, then click the buttons to try it out.</p>",
+      "content": "<p>Once a function is defined, your <em>other</em> functions can use it too. That's how big programs get built: small tools combine into bigger ones.</p><pre style='background:#272822;color:#f8f8f2;padding:10px 14px;border-radius:6px;margin:8px 0;'><span style='color:#f92672'>def</span> <span style='color:#fd971f'>shout</span>(text):\n  <span style='color:#f92672'>return</span> text + <span style='color:#e6db74'>\"!!!\"</span>\n\n<span style='color:#f92672'>def</span> <span style='color:#fd971f'>double_shout</span>(text):\n  <span style='color:#f92672'>return</span> shout(text) + <span style='color:#e6db74'>\" \"</span> + shout(text)\n\n<span style='color:#66d9ef'>print</span>(double_shout(<span style='color:#e6db74'>\"yay\"</span>))   <span style='color:#cccccc'># yay!!! yay!!!</span></pre><p>The next few problems give you a row of <strong>buttons</strong> next to your code. Each button calls your function with different inputs, so you don't have to type the calls yourself. Just write the function, click Run, then click the buttons to try it out.</p>",
       "footer": "Combine small tools to build big ones."
     },
     {

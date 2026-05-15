@@ -22,17 +22,8 @@ function normalizeNumericalComparison(output, pattern) {
 async function validateAnswer(code, output, problem, problemIndex, codeExecutor, userInputValues = {}) {
     const codeTrimmed = code.trim();
     const outputTrimmed = output.trim();
-    
-    // Basic validation checks that apply to all problems
     const codeWithoutComments = codeTrimmed.replace(/#.*$/gm, '').trim();
-    if (codeWithoutComments.length < 3) {
-        return {
-            isValid: false,
-            errorType: 'insufficient_code',
-            message: 'Please enter more code to run.'
-        };
-    }
-    
+
     // Check for common errors that should fail validation
     if (output.includes('NameError') || output.includes('SyntaxError') || 
         output.includes('TypeError') || output.includes('AttributeError') ||
@@ -69,10 +60,10 @@ async function validateAnswer(code, output, problem, problemIndex, codeExecutor,
         }
     }
 
-    // Split rules into "requirement" (structural/constraint checks) and
-    // "correctness" (output/spec comparisons against a reference solution).
+    // Split rule failures into "requirement" (structural/constraint checks)
+    // and "correctness" (rules that compare the student's output to expected).
     // Collect the first failure of each kind so we can show both messages.
-    const CORRECTNESS_RULE_TYPES = new Set(['solution_code', 'function_spec', 'function_buttons']);
+    const CORRECTNESS_RULE_TYPES = new Set(['solution_code', 'function_spec', 'function_buttons', 'output_contains']);
     let requirementFailure = null;
     let correctnessFailure = null;
     let firstFailedRule = null;
@@ -263,7 +254,7 @@ async function validateRule(code, output, rule, problem, problemIndex, codeExecu
                 };
             }
             return { isValid: true };
-            
+
         case 'output_contains_regex':
             const outputRegexPattern = new RegExp(rule.pattern, 'i'); // case insensitive
             const outputRegexResult = outputRegexPattern.test(output);

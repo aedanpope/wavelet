@@ -7,7 +7,7 @@
       "type": "concept",
       "icon": "🐍",
       "title": "Welcome to Python",
-      "content": "<p><strong>Python</strong> is a programming language — a way of giving instructions to a computer. In this worksheet, you'll use Python as a <strong>calculator</strong>.</p><p>The instruction <code>print(...)</code> means <em>'work out what's inside the brackets and show me the answer'</em>. Python does the calculation, then the answer appears below your code.</p><p>For example:</p><p><code>print(5 + 3)</code> &nbsp;→ shows <strong>8</strong><br><code>print(10 + 7)</code> &nbsp;→ shows <strong>17</strong></p>",
+      "content": "<p><strong>Python</strong> is a programming language, a way of giving instructions to a computer. In this worksheet, you'll use Python as a <strong>calculator</strong>.</p><p>The instruction <code>print(...)</code> means <em>'work out what's inside the brackets and show me the answer'</em>. Python does the calculation, then the answer appears below your code.</p><p>For example:</p><p><code>print(5 + 3)</code> &nbsp;→ shows <strong>8</strong><br><code>print(10 + 7)</code> &nbsp;→ shows <strong>17</strong></p>",
       "footer": "Type code into the box, press Run, and the answer appears below."
     },
     {
@@ -107,7 +107,7 @@
     },
     {
       "title": "Fix the brackets",
-      "content": "This program has a mistake — the brackets are missing from <code>print</code>. Run it to see the error, then fix it.",
+      "content": "This program has a mistake: the brackets are missing from <code>print</code>. Run it to see the error, then fix it.",
       "task": "Add the missing brackets to make the program work.",
       "starterCode": "print 30 + 20",
       "hint": "The <code>print</code> function needs brackets around what you want to print: <code>print(30 + 20)</code>.",
@@ -127,7 +127,7 @@
     },
     {
       "title": "Add the print",
-      "content": "This program calculates an answer but doesn't print it — so nothing appears when you run it. Try running it to see what happens, then fix it.",
+      "content": "This program calculates an answer but doesn't print it, so nothing appears when you run it. Try running it to see what happens, then fix it.",
       "task": "Wrap the expression in a <code>print()</code> call so the answer is displayed.",
       "starterCode": "40 + 15",
       "hint": "Put <code>print(</code> before the expression and <code>)</code> at the end.",
@@ -526,7 +526,7 @@
       "type": "concept",
       "icon": "✖️",
       "title": "Order of Operations: × and ÷ go first",
-      "content": "<p>When a calculation has more than one operator, Python follows the same rules as maths — the <strong>order of operations</strong> (you might know it as <strong>PEMDAS</strong> or <strong>BODMAS</strong>): <strong>multiplication and division happen before addition and subtraction</strong>.</p><p>For example, in <code>print(20 - 5 * 2)</code>:</p><ul><li>Python does <code>5 * 2</code> first &nbsp;→ &nbsp;<strong>10</strong></li><li>Then it does <code>20 - 10</code> &nbsp;→ &nbsp;<strong>10</strong></li></ul><p>So <code>print(20 - 5 * 2)</code> shows <strong>10</strong>, not 30. (If Python went left-to-right, it would give 30 — but it doesn't.)</p>",
+      "content": "<p>When a calculation has more than one operator, Python follows the same rules as maths: the <strong>order of operations</strong> (you might know it as <strong>PEMDAS</strong> or <strong>BODMAS</strong>): <strong>multiplication and division happen before addition and subtraction</strong>.</p><p>For example, in <code>print(20 - 5 * 2)</code>:</p><ul><li>Python does <code>5 * 2</code> first &nbsp;→ &nbsp;<strong>10</strong></li><li>Then it does <code>20 - 10</code> &nbsp;→ &nbsp;<strong>10</strong></li></ul><p>So <code>print(20 - 5 * 2)</code> shows <strong>10</strong>, not 30. (If Python went left-to-right, it would give 30, but it doesn't.)</p>",
       "footer": "× and ÷ go first, then + and −."
     },
     {
@@ -552,7 +552,7 @@
       "type": "concept",
       "icon": "🔄",
       "title": "Brackets change the order",
-      "content": "<p>You can add <strong>extra brackets inside</strong> <code>print(...)</code> to force a different order — anything in brackets happens <em>first</em>.</p><p>Compare these two:</p><ul><li><code>print(20 - 5 * 2)</code> &nbsp;→ Python does <code>5 * 2</code> first &nbsp;→ shows <strong>10</strong></li><li><code>print(<span class='bracket-math'>(</span>20 - 5<span class='bracket-math'>)</span> * 2)</code> &nbsp;→ Python does <code>20 - 5</code> first &nbsp;→ shows <strong>30</strong></li></ul><p>Same numbers, same operators — different brackets, different answer.</p><p>⚠️ <strong>Watch out — there are two kinds of brackets!</strong></p><ul><li><span class='bracket-print'>Blue</span> brackets belong to <code>print</code> — they tell Python <em>what to print</em>.</li><li><span class='bracket-math'>Red</span> brackets belong to the maths — they tell Python <em>what to calculate first</em>.</li></ul><p>Look at this carefully:</p><p style='font-size:1.15rem;text-align:center;margin:8px 0;'><code><span class='bracket-print'>print(</span><span class='bracket-math'>(</span>20 - 5<span class='bracket-math'>)</span> * 2<span class='bracket-print'>)</span></code></p><p>Two opening brackets <code><span class='bracket-print'>(</span><span class='bracket-math'>(</span></code> at the start, and two closing brackets — but they're in different places! The <span class='bracket-math'>red</span> <code><span class='bracket-math'>)</span></code> closes after <code>20 - 5</code>, then the <span class='bracket-print'>blue</span> <code><span class='bracket-print'>)</span></code> closes <code>print</code> right at the end. Every opening bracket needs a matching closing bracket of the same colour.</p>",
+      "content": "<p>You can add <strong>extra brackets inside</strong> <code>print(...)</code> to force a different order, because anything in brackets happens <em>first</em>.</p><p>Compare these two:</p><ul><li><code>print(20 - 5 * 2)</code> &nbsp;→ Python does <code>5 * 2</code> first &nbsp;→ shows <strong>10</strong></li><li><code>print(<span class='bracket-math'>(</span>20 - 5<span class='bracket-math'>)</span> * 2)</code> &nbsp;→ Python does <code>20 - 5</code> first &nbsp;→ shows <strong>30</strong></li></ul><p>Same numbers, same operators, but different brackets give a different answer.</p><p>⚠️ <strong>Watch out, there are two kinds of brackets!</strong></p><ul><li><span class='bracket-print'>Blue</span> brackets belong to <code>print</code>, and tell Python <em>what to print</em>.</li><li><span class='bracket-math'>Red</span> brackets belong to the maths, and tell Python <em>what to calculate first</em>.</li></ul><p>Look at this carefully:</p><p style='font-size:1.15rem;text-align:center;margin:8px 0;'><code><span class='bracket-print'>print(</span><span class='bracket-math'>(</span>20 - 5<span class='bracket-math'>)</span> * 2<span class='bracket-print'>)</span></code></p><p>Two opening brackets <code><span class='bracket-print'>(</span><span class='bracket-math'>(</span></code> at the start, and two closing brackets, but they're in different places! The <span class='bracket-math'>red</span> <code><span class='bracket-math'>)</span></code> closes after <code>20 - 5</code>, then the <span class='bracket-print'>blue</span> <code><span class='bracket-print'>)</span></code> closes <code>print</code> right at the end. Every opening bracket needs a matching closing bracket of the same colour.</p>",
       "footer": "Blue brackets = for print. Red brackets = for the maths."
     },
     {
@@ -576,7 +576,7 @@
     },
     {
       "title": "Add brackets to change the answer",
-      "content": "Now it's your turn. The program below calculates <code>4 + 6 / 2</code> — but division happens first, so it doesn't give the answer you might expect.",
+      "content": "Now it's your turn. The program below calculates <code>4 + 6 / 2</code>, but division happens first, so it doesn't give the answer you might expect.",
       "task": "Add brackets around <code>4 + 6</code> so the addition happens first, giving the answer to $(4 + 6) / 2$.",
       "starterCode": "print(4 + 6 / 2)",
       "hint": "Wrap the addition part in brackets: <code>print((4 + 6) / 2)</code>.",
