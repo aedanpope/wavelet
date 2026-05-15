@@ -2,18 +2,20 @@
   "id": "pixel-game",
   "title": "Pixel Game",
   "description": "Build a tiny scene that comes alive when you press the arrow buttons.",
-  "intro": "<p>Build your own pixel-art scene that <strong>animates when you press the arrow buttons</strong>. You'll fill in a few small functions, then click <em>Run Project</em> to see them all run together.</p><p>The canvas is a 20&times;20 grid. Coordinates are <code>(x, y)</code> from <code>(0, 0)</code> in the bottom-left to <code>(19, 19)</code> in the top-right.</p><p>The <strong>Setup</strong> section below holds variables that any of your functions can read and change &mdash; the player's position lives there as <code>player_x</code> and <code>player_y</code>. Add more variables there if you want.</p>",
+  "intro": "<p>Build your own pixel-game scene that <strong>animates when you press the arrow buttons</strong>. You'll fill in a few small functions, then click <em>Run Project</em> to see them all run together.</p><p>The canvas is a 20&times;20 grid. Coordinates are <code>(x, y)</code> from <code>(0, 0)</code> in the bottom-left to <code>(19, 19)</code> in the top-right.</p><p>The <strong>State</strong> section below holds the variables your functions can read and change. The player's position lives there as <code>state.player_x</code> and <code>state.player_y</code>. You can add your own variables below the locked line.</p>",
   "canvas": "GRID20",
   "lockedPreamble": [
-    "use_canvas(GRID20)"
+    "use_canvas(GRID20)",
+    "from types import SimpleNamespace"
   ],
-  "editablePreamble": "player_x = 10\nplayer_y = 10\n# you can add more variables here\n",
+  "setupSeed": "state = SimpleNamespace(player_x=10, player_y=10)\n",
+  "editablePreamble": "# Add your own state variables here, e.g.\n# state.score = 0\n# state.colour = 'red'\n",
   "tasks": [
     {
       "id": "corners",
       "title": "Colour the corners",
       "function": "draw_corners",
-      "guidance": "<p>Warm-up: draw a coloured cell in each of the four corners of the canvas.</p><p>The corners are at <code>(0, 0)</code>, <code>(19, 0)</code>, <code>(0, 19)</code>, and <code>(19, 19)</code>. Use <code>draw(x, y, 'colour')</code> &mdash; pick whatever colours you like.</p>",
+      "guidance": "<p>Warm-up: draw a coloured cell in each of the four corners of the canvas.</p><p>The corners are at <code>(0, 0)</code>, <code>(19, 0)</code>, <code>(0, 19)</code>, and <code>(19, 19)</code>. Use <code>draw(x, y, 'colour')</code>, pick whatever colours you like.</p>",
       "starterBody": "draw(0, 0, 'red')\n# add the other three corners\n\n",
       "editorHeight": 6,
       "validation": {
@@ -31,7 +33,7 @@
       "id": "border",
       "title": "Draw a border",
       "function": "draw_border",
-      "guidance": "<p>A border goes all the way around the edge of the canvas. There are 76 cells in the border &mdash; way too many to type one by one. Use <code>for</code> loops instead.</p><p>Tip: you'll need <em>four</em> loops &mdash; bottom row, top row, left column, right column. Or one loop with some clever maths!</p>",
+      "guidance": "<p>A border goes all the way around the edge of the canvas. There are 76 cells in the border, way too many to type one by one. Use <code>for</code> loops instead.</p><p>Tip: you'll need <em>four</em> loops: bottom row, top row, left column, right column. Or one loop with some clever maths!</p>",
       "starterBody": "for x in range(20):\n  draw(x, 0, 'blue')\n# now do the top row, left column, and right column\n\n",
       "editorHeight": 10,
       "validation": {
@@ -49,7 +51,7 @@
       "id": "background",
       "title": "Draw the background",
       "function": "draw_background",
-      "guidance": "<p>Time to make the canvas your own. <code>draw_background()</code> is your blank slate &mdash; whatever you draw here sits behind the player.</p><p>Start by calling the two functions you've already written (<code>draw_corners()</code> and <code>draw_border()</code>), then add anything else you can think of. A few ideas to get you started:</p><ul><li>A row of coloured rectangles along the bottom for grass or sand</li><li>Rainbow stripes across the middle</li><li>A pattern of dots</li><li>A shape using nested loops &mdash; a triangle, diamond, or letter</li><li>Anything else you can imagine</li></ul><p>There's no automatic check on this one &mdash; it's your space to be creative.</p>",
+      "guidance": "<p>Time to make the canvas your own. <code>draw_background()</code> is your blank slate: whatever you draw here sits behind the player.</p><p>Start by calling the two functions you've already written (<code>draw_border()</code> and <code>draw_corners()</code>), then add anything else you can think of. A few ideas to get you started:</p><ul><li>A row of coloured rectangles along the bottom for grass or sand</li><li>Rainbow stripes across the middle</li><li>A pattern of dots</li><li>A shape using nested loops, like a triangle, diamond, or letter</li><li>Anything else you can imagine</li></ul><p>There's no automatic check on this one, it's your space to be creative.</p>",
       "starterBody": "draw_border()\ndraw_corners()\n# add your own stuff! rectangles, stripes, shapes, anything.\n\n",
       "editorHeight": 10,
       "validation": {
@@ -62,8 +64,8 @@
       "id": "player",
       "title": "Draw the player",
       "function": "draw_player",
-      "guidance": "<p>The player lives at <code>player_x, player_y</code> &mdash; the Setup section starts these at <code>(10, 10)</code>.</p><p>Draw something to represent the player at that position. The simplest version is a single <code>draw(player_x, player_y, 'yellow')</code>. Want a bigger character? Draw multiple cells around the centre.</p>",
-      "starterBody": "draw(player_x, player_y, 'yellow')\n",
+      "guidance": "<p>The player lives at <code>state.player_x</code>, <code>state.player_y</code>. The State section starts these at <code>(10, 10)</code>.</p><p>Draw something to represent the player at that position. The simplest version is a single <code>draw(state.player_x, state.player_y, 'yellow')</code>. Want a bigger character? Draw multiple cells around the centre.</p>",
+      "starterBody": "draw(state.player_x, state.player_y, 'yellow')\n",
       "editorHeight": 6,
       "validation": {
         "rules": [
@@ -75,7 +77,7 @@
       "id": "scene",
       "title": "Build the scene",
       "function": "draw_scene",
-      "guidance": "<p>This function runs every time you press a button. Its job is to put the whole picture together by calling your other functions.</p><p>Order matters &mdash; later draws appear on top of earlier ones. Background first, player last.</p>",
+      "guidance": "<p>This function runs every time you press a button. Its job is to put the whole picture together by calling your other functions.</p><p>Order matters: later draws appear on top of earlier ones. Background first, player last.</p>",
       "starterBody": "draw_background()\ndraw_player()\n",
       "editorHeight": 6,
       "validation": {
@@ -88,8 +90,8 @@
       "id": "left-key",
       "title": "Left button: do something cool",
       "function": "on_left_key",
-      "guidance": "<p>Runs when the player clicks the <strong>&larr;</strong> button. The simplest thing: move the player one cell to the left.</p><p><code>player_x -= 1</code> subtracts one from <code>player_x</code>. <code>draw_scene()</code> will run again automatically afterwards, so the player visibly moves.</p><p><strong>Why the <code>global</code> line?</strong> Without it, Python thinks <code>player_x</code> is a brand-new variable inside this function. <code>global player_x</code> tells Python &ldquo;the <code>player_x</code> I mean is the one from Setup &mdash; change <em>that</em> one&rdquo;. You'll need a <code>global</code> line at the top of any function that <em>changes</em> a Setup variable (just reading is fine without it).</p><p>Want to do something else cool instead? Paint a streak across the canvas, change a colour somewhere &mdash; up to you.</p>",
-      "starterBody": "global player_x\nplayer_x -= 1\n",
+      "guidance": "<p>Runs when the player clicks the <strong>&larr;</strong> button. The simplest thing: move the player one cell to the left.</p><p><code>state.player_x -= 1</code> subtracts one from <code>state.player_x</code>. <code>draw_scene()</code> will run again automatically afterwards, so the player visibly moves.</p><p>Want to do something else cool instead? Paint a streak across the canvas, change a colour somewhere, up to you.</p>",
+      "starterBody": "state.player_x -= 1\n",
       "editorHeight": 6,
       "validation": {
         "rules": [
@@ -101,8 +103,8 @@
       "id": "right-key",
       "title": "Right button: do something cool",
       "function": "on_right_key",
-      "guidance": "<p>Runs when the player clicks the <strong>&rarr;</strong> button. Mirror of left &mdash; or do something completely different.</p>",
-      "starterBody": "global player_x\nplayer_x += 1\n",
+      "guidance": "<p>Runs when the player clicks the <strong>&rarr;</strong> button. Mirror of left, or do something completely different.</p>",
+      "starterBody": "state.player_x += 1\n",
       "editorHeight": 6,
       "validation": {
         "rules": [
@@ -114,8 +116,8 @@
       "id": "up-key",
       "title": "Up button: do something cool",
       "function": "on_up_key",
-      "guidance": "<p>Runs when the player clicks the <strong>&uarr;</strong> button. Remember: in our coordinate system, <em>up</em> means a bigger <code>player_y</code>.</p>",
-      "starterBody": "global player_y\nplayer_y += 1\n",
+      "guidance": "<p>Runs when the player clicks the <strong>&uarr;</strong> button. Remember: in our coordinate system, <em>up</em> means a bigger <code>state.player_y</code>.</p>",
+      "starterBody": "state.player_y += 1\n",
       "editorHeight": 6,
       "validation": {
         "rules": [
@@ -127,8 +129,8 @@
       "id": "down-key",
       "title": "Down button: do something cool",
       "function": "on_down_key",
-      "guidance": "<p>Runs when the player clicks the <strong>&darr;</strong> button. Down means a smaller <code>player_y</code>.</p>",
-      "starterBody": "global player_y\nplayer_y -= 1\n",
+      "guidance": "<p>Runs when the player clicks the <strong>&darr;</strong> button. Down means a smaller <code>state.player_y</code>.</p>",
+      "starterBody": "state.player_y -= 1\n",
       "editorHeight": 6,
       "validation": {
         "rules": [
