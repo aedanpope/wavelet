@@ -455,7 +455,26 @@ async function runCode(problemIndex) {
         
     } catch (error) {
         const errorInfo = ErrorHandler.extractErrorInfo(error.message);
-        displayOutput(output, errorInfo.fullMessage, 'error', '❌ There was an error running your code.');
+        // Still run validation so correctness rules (solution_code etc.)
+        // can show the expected output alongside the visible Python error.
+        let validationMessages = '❌ There was an error running your code.';
+        try {
+            const userInputValues = {};
+            if (problem.inputs && problem.inputs.length > 0) {
+                problem.inputs.forEach(input => {
+                    const el = document.getElementById(`input-${problemIndex}-${input.name}`);
+                    if (el) {
+                        let value = el.value;
+                        if (input.type === 'number') value = parseFloat(value) || 0;
+                        else if (input.type === 'boolean') value = value === 'true';
+                        userInputValues[input.name] = value;
+                    }
+                });
+            }
+            const vr = await Validation.validateAnswer(code, errorInfo.fullMessage, problem, problemIndex, codeExecutor, userInputValues);
+            validationMessages = vr.messages || vr.message;
+        } catch (_) { /* fall back to the generic error message */ }
+        displayOutput(output, errorInfo.fullMessage, 'error', validationMessages);
     }
 }
 

@@ -857,6 +857,62 @@ const testCases = [
         code: 'answer = 10 + 5\nprint(answer)',
         output: '15\n',
         expected: true
+    },
+    // ── Python errors should not short-circuit validation ───────────────────
+    {
+        name: "Python error - solution_code still surfaces expected output",
+        problem: {
+            id: "test-python-error-with-solution-code",
+            validation: {
+                rules: [
+                    { type: "code_contains", pattern: "def box", description: "Define a function called box" },
+                    { type: "solution_code", solutionCode: "def box(n):\n  for i in range(n):\n    print(\"*\" * n)\n\nbox(3)" }
+                ]
+            }
+        },
+        code: 'def box(n):\n  # empty body\n\nbox(3)',
+        output: 'IndentationError: expected an indented block after function definition on line 1\n',
+        expected: false,
+        // structural code_contains 'def box' passes, but solution_code mismatches
+        // because student output is the error text, not the expected ***s.
+        expectedMessage: 'Expected output'
+    },
+    {
+        name: "Python error - no rule-specific failure, generic 'error running your code' message fires",
+        problem: {
+            id: "test-python-error-no-correctness-rule",
+            validation: {
+                rules: [
+                    { type: "code_contains", pattern: "def box", description: "Define a function called box" }
+                ]
+            }
+        },
+        code: 'def box(n):\n  # empty body\n\nbox(3)',
+        output: 'IndentationError: expected an indented block after function definition on line 1\n',
+        expected: false,
+        // code_contains passes; the Python-error fallback adds the requirement-style
+        // 'There was an error running your code.' message so we don't falsely pass.
+        expectedErrorType: 'python_error',
+        expectedMessage: 'error running your code'
+    },
+    {
+        name: "Python error - both structural and correctness rules also fail, all surface",
+        problem: {
+            id: "test-python-error-double-fail",
+            validation: {
+                rules: [
+                    { type: "code_contains", pattern: "def stars(n):", description: "Keep the def stars(n): line" },
+                    { type: "solution_code", solutionCode: "def stars(n):\n  print(\"*\" * n)\n\nstars(3)" }
+                ]
+            }
+        },
+        code: 'def broken(n):\n  print("x")\n\nbroken(3) + undefined_name',
+        output: 'NameError: name \'undefined_name\' is not defined\n',
+        expected: false,
+        // code_contains 'def stars(n):' fails (requirement), solution_code fails (correctness).
+        // Both messages should be present; the Python error fallback should NOT replace
+        // the more specific requirement message.
+        expectedMessage: 'Keep the def stars(n): line'
     }
 ];
 

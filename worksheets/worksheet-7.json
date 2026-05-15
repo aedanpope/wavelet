@@ -6,25 +6,22 @@
     {
       "type": "concept",
       "icon": "🔧",
-      "title": "Python comes with <em>functions</em>. Today you make your own",
+      "title": "Writing your own functions",
       "content": "<p>You've already used Python's built-in <strong>functions</strong>, tools like <code>print()</code>, <code>len()</code>, and <code>range()</code> that come with Python.<br>The keyword <b>def</b> (short for <em>define</em>) lets you build your own:</p><pre style='background:#272822;color:#f8f8f2;padding:10px 14px;border-radius:6px;margin:8px 0;'><span style='color:#f92672'>def</span> <span style='color:#fd971f'>say_hi</span>():           <span style='color:#cccccc'>&larr; define</span>\n  <span style='color:#66d9ef'>print</span>(<span style='color:#e6db74'>\"Hi there!\"</span>)    <span style='color:#cccccc'>&larr; specify</span>\n\nsay_hi()                <span style='color:#cccccc'>&larr; call, now \"Hi there!\" gets printed</span></pre><p>The function specification must be <strong>indented</strong>, so Python knows which lines belong to the function. Nothing happens until you <em>call</em> it.</p>",
       "footer": "A function is a named piece of code you can call whenever you want."
     },
     {
-      "title": "Your first function",
-      "content": "<p>This program <strong>defines</strong> a function called <code>say_hi</code> and then <strong>calls</strong> it. Look at the two parts:</p><ul><li><code>def say_hi():</code> creates the function</li><li><code>say_hi()</code> calls the function</li></ul><p>The code under <code>def</code> only runs when you <em>call</em> the function with <code>say_hi()</code>.</p>",
-      "task": "Run the code and watch <code>say_hi()</code> get called.",
-      "starterCode": "def say_hi():\n  print(\"Hi there!\")\n\nsay_hi()",
-      "hint": "Just press 'Run Code'. The function prints once because it's called once.",
-      "codeHeight": 5,
-      "difficulty": "easy",
-      "validation": {
-        "rules": [
-          {"type": "code_contains", "pattern": "def say_hi", "description": "Keep the def say_hi() line"},
-          {"type": "code_contains", "pattern": "say_hi()", "description": "Call the function with say_hi()"},
-          {"type": "output_not_empty"}
-        ]
-      }
+      "type": "trace",
+      "title": "Watch a function being called",
+      "code": "def say_hi():\n  print(\"Hi there!\")\n\nsay_hi()",
+      "steps": [
+        {"line": 1, "locals": {}, "for_ctx": null, "phase": "before", "ann": null, "output": ""},
+        {"line": 1, "locals": {"say_hi": "<function>"}, "for_ctx": null, "phase": "after", "ann": null, "output": ""},
+        {"line": 4, "locals": {"say_hi": "<function>"}, "for_ctx": null, "phase": "before", "ann": null, "output": ""},
+        {"line": 2, "locals": {"say_hi": "<function>"}, "for_ctx": null, "phase": "before", "ann": {"type": "print", "preview": "Hi there!"}, "output": ""},
+        {"line": 2, "locals": {"say_hi": "<function>"}, "for_ctx": null, "phase": "after", "ann": null, "output": "Hi there!\n"},
+        {"line": 4, "locals": {"say_hi": "<function>"}, "for_ctx": null, "phase": "after", "ann": null, "output": "Hi there!\n"}
+      ]
     },
     {
       "title": "Call it more than once",
@@ -85,16 +82,16 @@
     {
       "title": "Edit farewell",
       "content": "<p>Here's a function called <code>farewell</code>. It only says goodbye to Ali, and the message is a bit boring.</p>",
-      "task": "Change the body of <code>farewell</code> so it prints <code>See you tomorrow,</code> followed by the name. Then add another call so it also says goodbye to <code>'Sam'</code>.",
+      "task": "Change the body of <code>farewell</code> so it prints <code>See you tomorrow</code> followed by the name. Then add another call so it also says goodbye to <code>'Sam'</code>.",
       "starterCode": "def farewell(name):\n  print('Bye')\n\nfarewell('Ali')",
-      "hint": "Inside the <code>print</code>, write <code>'See you tomorrow,'</code> then <code>, name</code> so Python adds the name after the message. Then on a new line below, write <code>farewell('Sam')</code>.",
+      "hint": "Inside the <code>print</code>, write <code>'See you tomorrow'</code> then <code>, name</code> so Python prints the name after the message (with a space between). Then on a new line below, write <code>farewell('Sam')</code>.",
       "codeHeight": 6,
       "difficulty": "easy",
       "validation": {
         "rules": [
           {"type": "code_contains", "pattern": "def farewell(name):", "description": "Keep the def farewell(name): line"},
           {"type": "ast_has_function_call", "function": "farewell", "minCount": 2, "description": "Call farewell() twice (once for Ali, once for Sam)"},
-          {"type": "solution_code", "solutionCode": "def farewell(name):\n  print('See you tomorrow,', name)\n\nfarewell('Ali')\nfarewell('Sam')"}
+          {"type": "solution_code", "solutionCode": "def farewell(name):\n  print('See you tomorrow', name)\n\nfarewell('Ali')\nfarewell('Sam')"}
         ]
       }
     },
@@ -190,45 +187,22 @@
       }
     },
     {
-      "title": "Roll-call format",
-      "content": "<p>School roll-calls usually go <em>last name, first name</em>, like <code>\"Lee, Sam\"</code>.</p>",
-      "task": "Change the body of <code>combine</code> so it returns the last name first, then a comma and a space, then the first name.",
-      "starterCode": "def combine(first, last):\n  return first + \" \" + last",
-      "hint": "Put <code>last</code> before <code>first</code> in the return. The separator in the middle is a comma followed by a space, instead of just a space.",
+      "title": "Song by artist",
+      "content": "<p>When we talk about songs, we usually say the title first and then the artist, like <code>\"Anti-Hero by Taylor\"</code>.</p>",
+      "task": "Change the body of <code>song</code> so it returns the title first, then <code>\" by \"</code>, then the artist.",
+      "starterCode": "def song(artist, title):\n  return artist + \" \" + title",
+      "hint": "Put <code>title</code> before <code>artist</code> in the return. The separator in the middle is <code>\" by \"</code> (with a space on each side), instead of just <code>\" \"</code>.",
       "codeHeight": 4,
       "difficulty": "medium",
       "validation": {
         "rules": [
           {
             "type": "function_spec",
-            "functionName": "combine",
+            "functionName": "song",
             "cases": [
-              {"args": ["Sam", "Lee"], "expected": "Lee, Sam"},
-              {"args": ["Pat", "Kim"], "expected": "Kim, Pat"},
-              {"args": ["Ali", "Smith"], "expected": "Smith, Ali"}
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "title": "Don't forget to return",
-      "content": "<p>This function <em>computes</em> the right answer but it never gives it back. The spec table shows <code>None</code> for every row. That's what Python uses when a function returns nothing.</p>",
-      "task": "Add a <code>return</code> so the spec passes.",
-      "starterCode": "def triple(n):\n  result = n * 3\n  # this function forgot to return",
-      "hint": "Add one more line at the same indent as <code>result = ...</code>. Use <code>return</code> to give <code>result</code> back to whoever called the function.",
-      "codeHeight": 5,
-      "difficulty": "medium",
-      "validation": {
-        "rules": [
-          {"type": "code_contains", "pattern": "return", "description": "Add a return statement"},
-          {
-            "type": "function_spec",
-            "functionName": "triple",
-            "cases": [
-              {"args": [2], "expected": 6},
-              {"args": [4], "expected": 12},
-              {"args": [10], "expected": 30}
+              {"args": ["Taylor", "Anti-Hero"], "expected": "Anti-Hero by Taylor"},
+              {"args": ["Adele", "Hello"], "expected": "Hello by Adele"},
+              {"args": ["Beyonce", "Halo"], "expected": "Halo by Beyonce"}
             ]
           }
         ]
@@ -263,92 +237,62 @@
       "type": "concept",
       "icon": "🧩",
       "title": "Tools using other tools",
-      "content": "<p>Once a function is defined, your <em>other</em> functions can use it too. That's how big programs get built: small tools combine into bigger ones.</p><pre style='background:#272822;color:#f8f8f2;padding:10px 14px;border-radius:6px;margin:8px 0;'><span style='color:#f92672'>def</span> <span style='color:#fd971f'>shout</span>(text):\n  <span style='color:#f92672'>return</span> text + <span style='color:#e6db74'>\"!!!\"</span>\n\n<span style='color:#f92672'>def</span> <span style='color:#fd971f'>double_shout</span>(text):\n  <span style='color:#f92672'>return</span> shout(text) + <span style='color:#e6db74'>\" \"</span> + shout(text)\n\n<span style='color:#66d9ef'>print</span>(double_shout(<span style='color:#e6db74'>\"yay\"</span>))   <span style='color:#cccccc'># yay!!! yay!!!</span></pre><p>The next few problems give you a row of <strong>buttons</strong> next to your code. Each button calls your function with different inputs, so you don't have to type the calls yourself. Just write the function, click Run, then click the buttons to try it out.</p>",
+      "content": "<p>Once a function is defined, your <em>other</em> functions can use it too. That's how big programs get built: small tools combine into bigger ones.</p><pre style='background:#272822;color:#f8f8f2;padding:10px 14px;border-radius:6px;margin:8px 0;'><span style='color:#f92672'>def</span> <span style='color:#fd971f'>shout</span>(text):\n  <span style='color:#f92672'>return</span> text + <span style='color:#e6db74'>\"!!!\"</span>\n\n<span style='color:#f92672'>def</span> <span style='color:#fd971f'>double_shout</span>(text):\n  <span style='color:#f92672'>return</span> shout(text) + <span style='color:#e6db74'>\" \"</span> + shout(text)\n\n<span style='color:#66d9ef'>print</span>(double_shout(<span style='color:#e6db74'>\"yay\"</span>))   <span style='color:#cccccc'># yay!!! yay!!!</span></pre>",
       "footer": "Combine small tools to build big ones."
     },
     {
       "title": "Watch stars run",
-      "content": "<p>This function prints <code>n</code> stars on a line. The trick is that <code>\"*\" * n</code> repeats the star <code>n</code> times. Python's <code>*</code> operator can repeat strings, not just multiply numbers.</p>",
-      "task": "Click Run, then click each button below to see <code>stars</code> called with different values.",
-      "starterCode": "def stars(n):\n  print(\"*\" * n)",
-      "hint": "Press Run first to define the function. Then try the buttons: each one calls <code>stars</code> with a different number.",
-      "codeHeight": 4,
+      "content": "<p>This function prints <code>n</code> stars on a line. The trick is that <code>\"*\" * n</code> repeats the star <code>n</code> times. Python's <code>*</code> operator can repeat strings, not just multiply numbers.</p><p>The starter calls <code>stars</code> three times with different numbers, so you can see the output for each.</p>",
+      "task": "Run the code and watch <code>stars</code> get called with three different values.",
+      "starterCode": "def stars(n):\n  print(\"*\" * n)\n\nstars(3)\nstars(5)\nstars(8)",
+      "hint": "Just press Run. The function prints once for each call, so you should see three lines of stars.",
+      "codeHeight": 7,
       "difficulty": "easy",
       "validation": {
         "rules": [
-          {
-            "type": "function_buttons",
-            "calls": ["stars(3)", "stars(7)", "stars(12)"],
-            "solutionCode": "def stars(n):\n  print(\"*\" * n)"
-          }
-        ]
-      }
-    },
-    {
-      "title": "Make a row",
-      "content": "<p><code>stars</code> only prints stars. Let's generalise it: a <code>row</code> function takes a <em>character</em> and a <em>number</em>, and prints that character repeated.</p>",
-      "task": "Write <code>row(char, n)</code> so it prints <code>char</code> repeated <code>n</code> times. Then click the buttons to try it.",
-      "starterCode": "# Write row(char, n) below\n",
-      "hint": "Two parameters in the brackets. Inside, <code>print</code> the character multiplied by the number (the <code>*</code> operator repeats strings).",
-      "codeHeight": 4,
-      "difficulty": "medium",
-      "validation": {
-        "rules": [
-          {"type": "code_contains", "pattern": "def row", "description": "Define a function called row"},
-          {
-            "type": "function_buttons",
-            "calls": ["row('*', 5)", "row('#', 8)", "row('@', 3)"],
-            "solutionCode": "def row(char, n):\n  print(char * n)"
-          }
+          {"type": "code_contains", "pattern": "def stars(n):", "description": "Keep the def stars(n): line"},
+          {"type": "solution_code", "solutionCode": "def stars(n):\n  print(\"*\" * n)\n\nstars(3)\nstars(5)\nstars(8)"}
         ]
       }
     },
     {
       "title": "Build a box",
-      "content": "<p>A box is just a row, repeated. The <code>box</code> function should print an <code>n</code>-by-<code>n</code> square of stars by calling <code>row</code> in a loop.</p><p><code>row</code> is already defined for you. Your <code>box</code> function should <em>use</em> it.</p>",
-      "task": "Write <code>box(n)</code> that calls <code>row(\"*\", n)</code> a total of <code>n</code> times. Click Run, then try the buttons.",
-      "starterCode": "def row(char, n):\n  print(char * n)\n\ndef box(n):\n  # call row n times\n",
-      "hint": "Inside <code>box</code>, use a <code>for</code> loop that runs <code>n</code> times. Each time through, call <code>row</code> to print one line of <code>n</code> stars.",
-      "codeHeight": 8,
+      "content": "<p>A box is just a row of stars, repeated. The <code>box</code> function should print an <code>n</code>-by-<code>n</code> square by calling <code>stars(n)</code> a total of <code>n</code> times.</p><p><code>stars</code> is already defined for you. Your <code>box</code> function should <em>use</em> it.</p>",
+      "task": "Write <code>box(n)</code> so it calls <code>stars(n)</code> a total of <code>n</code> times. The starter already calls <code>box(3)</code> and <code>box(5)</code> at the bottom.",
+      "starterCode": "def stars(n):\n  print(\"*\" * n)\n\ndef box(n):\n  # call stars(n) n times\n  \n\nbox(3)\nbox(5)",
+      "hint": "Inside <code>box</code>, use a <code>for</code> loop that runs <code>n</code> times. Each time through, call <code>stars(n)</code> to print one line.",
+      "codeHeight": 10,
       "difficulty": "hard",
       "validation": {
         "rules": [
           {"type": "code_contains", "pattern": "def box", "description": "Define a function called box"},
-          {"type": "code_contains", "pattern": "row(", "description": "Your box function should call row()"},
-          {
-            "type": "function_buttons",
-            "calls": ["box(3)", "box(5)", "box(7)"],
-            "solutionCode": "def row(char, n):\n  print(char * n)\n\ndef box(n):\n  for i in range(n):\n    row(\"*\", n)"
-          }
+          {"type": "ast_has_function_call", "function": "stars", "description": "Your box function should call stars()"},
+          {"type": "solution_code", "solutionCode": "def stars(n):\n  print(\"*\" * n)\n\ndef box(n):\n  for i in range(n):\n    stars(n)\n\nbox(3)\nbox(5)"}
         ]
       }
     },
     {
       "title": "Triangle",
-      "content": "<p>A triangle starts with a row of 1 star, then 2 stars, then 3, all the way up to <code>n</code>. You can build it by calling <code>row</code> with different lengths inside a loop.</p>",
-      "task": "Write <code>triangle(n)</code> that prints rows of stars, growing from 1 up to <code>n</code>.",
-      "starterCode": "def row(char, n):\n  print(char * n)\n\ndef triangle(n):\n  # print rows of length 1, 2, 3, ... up to n\n",
-      "hint": "Use <code>range</code> with a start and end so <code>i</code> goes 1, 2, 3, ..., up to <code>n</code>. Inside the loop, call <code>row</code> with <code>i</code> stars.",
-      "codeHeight": 8,
+      "content": "<p>A triangle starts with a row of 1 star, then 2 stars, then 3, all the way up to <code>n</code>. You can build it by calling <code>stars</code> with different lengths inside a loop.</p>",
+      "task": "Write <code>triangle(n)</code> so it prints rows of stars, growing from 1 up to <code>n</code>. The starter already calls <code>triangle(4)</code> and <code>triangle(7)</code> at the bottom.",
+      "starterCode": "def stars(n):\n  print(\"*\" * n)\n\ndef triangle(n):\n  # print rows of length 1, 2, 3, ... up to n\n  \n\ntriangle(4)\ntriangle(7)",
+      "hint": "Use <code>range</code> with a start and end so <code>i</code> goes 1, 2, 3, ..., up to <code>n</code>. Inside the loop, call <code>stars(i)</code>.",
+      "codeHeight": 10,
       "difficulty": "hard",
       "validation": {
         "rules": [
           {"type": "code_contains", "pattern": "def triangle", "description": "Define a function called triangle"},
-          {"type": "code_contains", "pattern": "row(", "description": "Your triangle function should call row()"},
-          {
-            "type": "function_buttons",
-            "calls": ["triangle(4)", "triangle(7)"],
-            "solutionCode": "def row(char, n):\n  print(char * n)\n\ndef triangle(n):\n  for i in range(1, n+1):\n    row(\"*\", i)"
-          }
+          {"type": "ast_has_function_call", "function": "stars", "description": "Your triangle function should call stars()"},
+          {"type": "solution_code", "solutionCode": "def stars(n):\n  print(\"*\" * n)\n\ndef triangle(n):\n  for i in range(1, n+1):\n    stars(i)\n\ntriangle(4)\ntriangle(7)"}
         ]
       }
     },
     {
       "title": "Design your own shape",
-      "content": "<p>Time to invent your own. Write a function that prints any shape you like: a tall pillar, a diamond, your initial, anything.</p><p>You can use <code>row</code> inside it, or just <code>print</code> directly. Whatever you make, give it a name and call it at the bottom so it shows in the output.</p>",
+      "content": "<p>Time to invent your own. Write a function that prints any shape you like: a tall pillar, a diamond, your initial, anything.</p><p>You can use <code>stars</code> inside it, or just <code>print</code> directly. Whatever you make, give it a name and call it at the bottom so it shows in the output.</p>",
       "task": "Write your own function that prints a shape, then call it.",
-      "starterCode": "def row(char, n):\n  print(char * n)\n\n# Define your own function below, then call it\n",
-      "hint": "Try something like a <code>pillar</code> function with a loop that calls <code>row</code> with a single character. Or get creative.",
+      "starterCode": "def stars(n):\n  print(\"*\" * n)\n\n# Define your own function below, then call it\n",
+      "hint": "Try something like a <code>pillar</code> function with a loop that calls <code>stars(1)</code>. Or get creative.",
       "codeHeight": 10,
       "difficulty": "medium",
       "validation": {

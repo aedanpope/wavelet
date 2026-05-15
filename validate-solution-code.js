@@ -399,7 +399,7 @@ function generateEducationalFeedback(failedResults, passingResults, problem) {
     return {
         type: failedResults.length === 1 ? 'specific_failure' : 'multiple_failures',
         message: failureMsg,
-        hint: generateHint(firstFailure.seed, firstFailure.studentResult.output, firstFailure.solutionResult.output, problem)
+        hint: generateHint(firstFailure.seed, firstFailure.studentResult.output || '', firstFailure.solutionResult.output || '', problem)
     };
 }
 
