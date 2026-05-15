@@ -50,7 +50,7 @@
       "title": "Draw the background",
       "function": "draw_background",
       "guidance": "<p>Time to make the canvas your own. <code>draw_background()</code> is your blank slate &mdash; whatever you draw here sits behind the player.</p><p>Start by calling the two functions you've already written (<code>draw_corners()</code> and <code>draw_border()</code>), then add anything else you can think of. A few ideas to get you started:</p><ul><li>A row of coloured rectangles along the bottom for grass or sand</li><li>Rainbow stripes across the middle</li><li>A pattern of dots</li><li>A shape using nested loops &mdash; a triangle, diamond, or letter</li><li>Anything else you can imagine</li></ul><p>There's no automatic check on this one &mdash; it's your space to be creative.</p>",
-      "starterBody": "draw_corners()\ndraw_border()\n# add your own stuff! rectangles, stripes, shapes, anything.\n\n",
+      "starterBody": "draw_border()\ndraw_corners()\n# add your own stuff! rectangles, stripes, shapes, anything.\n\n",
       "editorHeight": 10,
       "validation": {
         "rules": [
