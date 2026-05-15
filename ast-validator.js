@@ -224,7 +224,9 @@ def _wavelet_analyze(code):
  * if the code has a SyntaxError.
  */
 async function parseStudentAST(code, pyodide) {
-    if (!pyodide) return { error: true, msg: 'Pyodide not available' };
+    if (!pyodide) {
+        return { error: true, msg: 'Pyodide not available' };
+    }
 
     try {
         // Ensure the analyze function is defined
