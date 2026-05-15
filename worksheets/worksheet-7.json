@@ -187,22 +187,22 @@
       }
     },
     {
-      "title": "Roll-call format",
-      "content": "<p>School roll-calls usually go <em>last name, first name</em>, like <code>\"Lee, Sam\"</code>.</p>",
-      "task": "Change the body of <code>combine</code> so it returns the last name first, then a comma and a space, then the first name.",
-      "starterCode": "def combine(first, last):\n  return first + \" \" + last",
-      "hint": "Put <code>last</code> before <code>first</code> in the return. The separator in the middle is a comma followed by a space, instead of just a space.",
+      "title": "Song by artist",
+      "content": "<p>When we talk about songs, we usually say the title first and then the artist, like <code>\"Anti-Hero by Taylor\"</code>.</p>",
+      "task": "Change the body of <code>song</code> so it returns the title first, then <code>\" by \"</code>, then the artist.",
+      "starterCode": "def song(artist, title):\n  return artist + \" \" + title",
+      "hint": "Put <code>title</code> before <code>artist</code> in the return. The separator in the middle is <code>\" by \"</code> (with a space on each side), instead of just <code>\" \"</code>.",
       "codeHeight": 4,
       "difficulty": "medium",
       "validation": {
         "rules": [
           {
             "type": "function_spec",
-            "functionName": "combine",
+            "functionName": "song",
             "cases": [
-              {"args": ["Sam", "Lee"], "expected": "Lee, Sam"},
-              {"args": ["Pat", "Kim"], "expected": "Kim, Pat"},
-              {"args": ["Ali", "Smith"], "expected": "Smith, Ali"}
+              {"args": ["Taylor", "Anti-Hero"], "expected": "Anti-Hero by Taylor"},
+              {"args": ["Adele", "Hello"], "expected": "Hello by Adele"},
+              {"args": ["Beyonce", "Halo"], "expected": "Halo by Beyonce"}
             ]
           }
         ]
