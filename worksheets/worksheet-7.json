@@ -209,29 +209,6 @@
       }
     },
     {
-      "title": "Don't forget to return",
-      "content": "<p>This function <em>computes</em> the right answer but it never gives it back. The spec table shows <code>None</code> for every row. That's what Python uses when a function returns nothing.</p>",
-      "task": "Add a <code>return</code> so the spec passes.",
-      "starterCode": "def triple(n):\n  result = n * 3\n  # this function forgot to return",
-      "hint": "Add one more line at the same indent as <code>result = ...</code>. Use <code>return</code> to give <code>result</code> back to whoever called the function.",
-      "codeHeight": 5,
-      "difficulty": "medium",
-      "validation": {
-        "rules": [
-          {"type": "code_contains", "pattern": "return", "description": "Add a return statement"},
-          {
-            "type": "function_spec",
-            "functionName": "triple",
-            "cases": [
-              {"args": [2], "expected": 6},
-              {"args": [4], "expected": 12},
-              {"args": [10], "expected": 30}
-            ]
-          }
-        ]
-      }
-    },
-    {
       "title": "Write area from scratch",
       "content": "<p>Time to write your own. The <code>area</code> function takes a width and a height and gives back the area of the rectangle (width times height).</p>",
       "task": "Write a function called <code>area</code> with two parameters: <code>w</code> and <code>h</code>. Return <code>w * h</code>.",
@@ -260,12 +237,12 @@
       "type": "concept",
       "icon": "🧩",
       "title": "Tools using other tools",
-      "content": "<p>Once a function is defined, your <em>other</em> functions can use it too. That's how big programs get built: small tools combine into bigger ones.</p><pre style='background:#272822;color:#f8f8f2;padding:10px 14px;border-radius:6px;margin:8px 0;'><span style='color:#f92672'>def</span> <span style='color:#fd971f'>shout</span>(text):\n  <span style='color:#f92672'>return</span> text + <span style='color:#e6db74'>\"!!!\"</span>\n\n<span style='color:#f92672'>def</span> <span style='color:#fd971f'>double_shout</span>(text):\n  <span style='color:#f92672'>return</span> shout(text) + <span style='color:#e6db74'>\" \"</span> + shout(text)\n\n<span style='color:#66d9ef'>print</span>(double_shout(<span style='color:#e6db74'>\"yay\"</span>))   <span style='color:#cccccc'># yay!!! yay!!!</span></pre><p>The next few problems give you a row of <strong>buttons</strong> next to your code. Each button calls your function with different inputs, so you don't have to type the calls yourself. Just write the function, click Run, then click the buttons to try it out.</p>",
+      "content": "<p>Once a function is defined, your <em>other</em> functions can use it too. That's how big programs get built: small tools combine into bigger ones.</p><pre style='background:#272822;color:#f8f8f2;padding:10px 14px;border-radius:6px;margin:8px 0;'><span style='color:#f92672'>def</span> <span style='color:#fd971f'>shout</span>(text):\n  <span style='color:#f92672'>return</span> text + <span style='color:#e6db74'>\"!!!\"</span>\n\n<span style='color:#f92672'>def</span> <span style='color:#fd971f'>double_shout</span>(text):\n  <span style='color:#f92672'>return</span> shout(text) + <span style='color:#e6db74'>\" \"</span> + shout(text)\n\n<span style='color:#66d9ef'>print</span>(double_shout(<span style='color:#e6db74'>\"yay\"</span>))   <span style='color:#cccccc'># yay!!! yay!!!</span></pre>",
       "footer": "Combine small tools to build big ones."
     },
     {
       "title": "Watch stars run",
-      "content": "<p>This function prints <code>n</code> stars on a line. The trick is that <code>\"*\" * n</code> repeats the star <code>n</code> times. Python's <code>*</code> operator can repeat strings, not just multiply numbers.</p>",
+      "content": "<p>This function prints <code>n</code> stars on a line. The trick is that <code>\"*\" * n</code> repeats the star <code>n</code> times. Python's <code>*</code> operator can repeat strings, not just multiply numbers.</p><p>Notice the row of <strong>buttons</strong> below the editor: each one calls your function with a different number, so you don't have to type the calls yourself. Click Run to define the function, then click each button to try it.</p>",
       "task": "Click Run, then click each button below to see <code>stars</code> called with different values.",
       "starterCode": "def stars(n):\n  print(\"*\" * n)",
       "hint": "Press Run first to define the function. Then try the buttons: each one calls <code>stars</code> with a different number.",

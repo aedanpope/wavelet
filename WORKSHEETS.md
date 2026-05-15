@@ -105,7 +105,9 @@ Every worksheet follows this shape:
 ### Concept Cards (`"type": "concept"`)
 
 - Place **before** the first problem that uses a concept, not after.
-- Keep them short — one key idea per card.
+- **Treat cards as teaching notes for the teacher, not reading material for the student.** Classroom experience: students rush past long cards and don't read them, but teachers pull them up on the projector and present from them. Optimise for "easy to read aloud in 20-30 seconds", not "comprehensive reference".
+- **Aim for ~1-2 sentences of body, one short code example, and a one-line footer that's the takeaway.** If you find yourself wanting to teach two ideas, split into two cards. Multiple small cards are better than one large one.
+- **One job per card.** Don't mix concept teaching with UI walkthroughs (e.g. "here's a spec table" or "here's a row of buttons"). Move UI explainers into the `content` of the first problem that uses the UI, where the widget is right there next to the prose.
 - Use the `examples` array for "You type X -> Python sees Y -> prints Z" when showing substitution.
 - WS3 has 1 concept card, WS4 has 4. Use more when the concept is abstract (conditionals), fewer when it's concrete (arithmetic).
 
