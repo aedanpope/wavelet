@@ -91,6 +91,11 @@ function renderProject() {
         btn.addEventListener('click', () => onKeyPress(btn.dataset.key));
     });
 
+    // Stage fullscreen toggle: lets students blow up the canvas + d-pad
+    // to play mode once their project is running.
+    const fsBtn = document.getElementById('stage-fullscreen-btn');
+    if (fsBtn) fsBtn.addEventListener('click', toggleStageFullscreen);
+
     // Save / Open
     document.getElementById('save-file-btn').addEventListener('click', saveProject);
     document.getElementById('open-file-btn').addEventListener('click', openProject);
@@ -100,6 +105,14 @@ function renderProject() {
         if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 's') {
             e.preventDefault();
             saveProject();
+            return;
+        }
+        if (e.key === 'Escape') {
+            const stage = document.getElementById('project-stage');
+            if (stage && stage.classList.contains('project-stage--fullscreen')) {
+                e.preventDefault();
+                toggleStageFullscreen();
+            }
         }
     });
 
@@ -1354,6 +1367,20 @@ function flashSaved() {
         label.classList.remove('saved-flash');
         updateFileLabel();
     }, 1500);
+}
+
+// ─── Stage fullscreen toggle ─────────────────────────────────────────────
+
+function toggleStageFullscreen() {
+    const stage = document.getElementById('project-stage');
+    const btn = document.getElementById('stage-fullscreen-btn');
+    if (!stage || !btn) return;
+    const entering = !stage.classList.contains('project-stage--fullscreen');
+    stage.classList.toggle('project-stage--fullscreen', entering);
+    document.body.classList.toggle('stage-fullscreen-active', entering);
+    btn.textContent = entering ? '✕' : '⛶';
+    btn.title = entering ? 'Exit full screen (Esc)' : 'Play in full screen (Esc to exit)';
+    btn.setAttribute('aria-label', entering ? 'Exit full screen' : 'Full screen');
 }
 
 // ─── Utilities ───────────────────────────────────────────────────────────
