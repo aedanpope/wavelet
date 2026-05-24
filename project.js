@@ -1,9 +1,14 @@
-// Project page: per-function editor model.
-// Loads a project JSON and renders one CodeMirror editor per task. Each
-// editor's source is the whole `def fn():\n  body` — line 0 is locked via a
-// beforeChange handler so students can only edit the body. At run time each
-// def is exec'd as its own runPythonAsync, so Pyodide's traceback line
-// numbers map 1:1 onto what the student sees in that editor's gutter.
+// Project page: two-column band-based layout.
+//
+// Tasks are grouped into three bands:
+//   Band 1 — 1:1 task/area pairs (task card left, function editor right).
+//   Band 2 — cross-area tasks (full-width informational card, no editor).
+//   Band 3 — freestyle (task card left, blank-slate editor right, runs at
+//            module scope rather than wrapped in a def).
+//
+// Each task carries a tier (D / C / A-B). D-tier tasks are machine-validated;
+// A-B tier tasks use self-check pills the student ticks; C tasks default to
+// machine-validated but can self-check when the spec is genuinely subjective.
 
 const PARAM_PROJECT = 'project';
 const DEFAULT_PROJECT = 'pixel-game';
@@ -14,10 +19,13 @@ const PY_FILE_TYPE = {
     accept: { 'text/x-python': ['.py'] }
 };
 const FILE_HEADER_MARKER = '# Wavelet';
+const FREESTYLE_SECTION_MARKER = '# ── Freestyle ──';
+const SELFCHECK_STORAGE_PREFIX = 'wavelet-project-selfcheck';
 
 let executor = null;
 let projectDef = null;
-const taskEditors = new Map(); // taskId -> { cm, editorEl, statusEl, errorEl, task }
+const taskEditors = new Map(); // taskId -> { cm, editorEl, statusEl, errorEl, task, isFreestyle }
+const selfCheckPills = new Map(); // taskId -> pill element
 let setupEditor = null; // CodeMirror for the editable preamble
 let currentFileHandle = null;
 let dirty = false;
@@ -46,6 +54,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // can measure itself. Initialise the per-task editors only after reveal,
         // otherwise they render blank until first focus.
         initTaskEditors();
+        restoreSelfCheckPills();
     } catch (err) {
         console.error('Project failed to load:', err);
         document.getElementById('loading-overlay').innerHTML = `
@@ -67,24 +76,15 @@ function revealInterface() {
     document.getElementById('project-interface').style.display = 'block';
 }
 
+// ─── Top-level rendering ────────────────────────────────────────────────
+
 function renderProject() {
     document.title = `${projectDef.title} - Python Learning Platform`;
     document.getElementById('project-title').textContent = projectDef.title;
     document.getElementById('project-description').textContent = projectDef.description || '';
     document.getElementById('project-intro').innerHTML = projectDef.intro || '';
     renderSetupCard();
-
-    const tasksEl = document.getElementById('project-tasks');
-    tasksEl.innerHTML = '';
-    let taskNumber = 0;
-    (projectDef.tasks || []).forEach(block => {
-        if (block.type === 'concept') {
-            tasksEl.appendChild(window.ProblemRenderer.createConceptElement(block));
-        } else {
-            tasksEl.appendChild(renderTaskCard(block, taskNumber));
-            taskNumber += 1;
-        }
-    });
+    renderBands();
 
     document.getElementById('run-project-btn').addEventListener('click', runProject);
     document.querySelectorAll('.dpad-btn').forEach(btn => {
@@ -108,6 +108,75 @@ function renderProject() {
         if (dirty) { e.preventDefault(); e.returnValue = ''; }
     });
 }
+
+// Walk the JSON tasks in order, group consecutive entries into bands. Concept
+// cards reset the current band — they render full-width between bands.
+function renderBands() {
+    const host = document.getElementById('project-bands');
+    host.innerHTML = '';
+
+    const entries = projectDef.tasks || [];
+    let currentBandEl = null;
+    let currentBandKind = null;
+
+    const closeBand = () => { currentBandEl = null; currentBandKind = null; };
+
+    for (const block of entries) {
+        if (block.type === 'concept') {
+            closeBand();
+            host.appendChild(window.ProblemRenderer.createConceptElement(block));
+            continue;
+        }
+        const kind = bandFor(block);
+        if (kind !== currentBandKind) {
+            closeBand();
+            currentBandEl = openBand(kind);
+            host.appendChild(currentBandEl);
+            currentBandKind = kind;
+        }
+        appendToBand(currentBandEl, currentBandKind, block);
+    }
+}
+
+function bandFor(task) {
+    if (task.freestyle) return 3;
+    if (task.crossArea) return 2;
+    return 1;
+}
+
+function openBand(kind) {
+    const section = document.createElement('section');
+    section.className = `project-band project-band-${kind}`;
+    section.dataset.band = String(kind);
+
+    const label = document.createElement('div');
+    label.className = 'band-label';
+    label.textContent = {
+        1: 'Step by step',
+        2: 'Combine your code',
+        3: 'Freestyle'
+    }[kind] || '';
+    section.appendChild(label);
+
+    const inner = document.createElement('div');
+    inner.className = `band-grid band-grid-${kind}`;
+    section.appendChild(inner);
+    section._inner = inner;
+    return section;
+}
+
+function appendToBand(bandEl, kind, task) {
+    const inner = bandEl._inner;
+    if (kind === 1 || kind === 3) {
+        const { taskCard, areaCard } = renderPair(task, kind === 3);
+        inner.appendChild(taskCard);
+        inner.appendChild(areaCard);
+    } else if (kind === 2) {
+        inner.appendChild(renderCrossAreaCard(task));
+    }
+}
+
+// ─── Setup card (unchanged shape) ────────────────────────────────────────
 
 function renderSetupCard() {
     const host = document.getElementById('project-setup-host');
@@ -135,11 +204,6 @@ function renderSetupCard() {
     const editorFrame = document.createElement('div');
     editorFrame.className = 'task-editor-frame';
 
-    // Locked preamble lines (use_canvas etc.) still run, but we don't expose
-    // them in the Setup card UI — students don't need to see them, and one
-    // (use_canvas) hardly belongs next to "your variables". The lines are
-    // still emitted at run/save time from projectDef.lockedPreamble.
-
     const editorEl = document.createElement('div');
     editorEl.className = 'task-editor setup-editor';
     editorFrame.appendChild(editorEl);
@@ -153,41 +217,150 @@ function renderSetupCard() {
 
     host.appendChild(card);
 
-    // Defer CM init to initTaskEditors() (parent must be visible first).
     host._editorEl = editorEl;
     host._statusEl = header.querySelector('[data-status]');
     host._errorEl = setupError;
     host._card = card;
 }
 
-function renderTaskCard(task, idx) {
+// ─── Card rendering ──────────────────────────────────────────────────────
+
+// Returns { taskCard, areaCard } for a Band 1 or Band 3 task.
+function renderPair(task, isFreestyle) {
+    const taskCard = makeTaskCard(task);
+    const areaCard = makeAreaCard(task, isFreestyle);
+
+    // Register the area editor so initTaskEditors() can wire CodeMirror.
+    taskEditors.set(task.id, {
+        cm: null,
+        editorEl: areaCard._editorEl,
+        statusEl: taskCard._statusEl,
+        errorEl: areaCard._errorEl,
+        task,
+        isFreestyle,
+    });
+
+    return { taskCard, areaCard };
+}
+
+function makeTaskCard(task) {
     const card = document.createElement('article');
-    card.className = 'project-task';
+    card.className = `project-task project-task-card tier-${tierClass(task.tier)}`;
     card.dataset.taskId = task.id;
 
-    const header = document.createElement('header');
-    header.className = 'project-task-header';
-    header.innerHTML = `
-        <div class="project-task-titles">
-            <span class="task-number">${idx + 1}</span>
-            <h3 class="task-title">${escapeHtml(task.title)}</h3>
-        </div>
-        <span class="task-status task-status-pending" data-status>○ not run yet</span>
-    `;
+    const { header, statusEl } = makeTaskHeader(task);
     card.appendChild(header);
+    card._statusEl = statusEl;
 
     const guidance = document.createElement('div');
     guidance.className = 'task-guidance';
     guidance.innerHTML = task.guidance || '';
     card.appendChild(guidance);
 
+    return card;
+}
+
+function makeTaskHeader(task) {
+    const header = document.createElement('header');
+    header.className = 'project-task-header';
+
+    const titles = document.createElement('div');
+    titles.className = 'project-task-titles';
+    titles.innerHTML = `
+        <span class="tier-badge tier-${tierClass(task.tier)}">${escapeHtml(task.tier || '?')}</span>
+        <h3 class="task-title">${escapeHtml(task.title)}</h3>
+    `;
+    header.appendChild(titles);
+
+    const statusEl = task.selfCheck
+        ? makeSelfCheckPill(task)
+        : makeDefaultStatusPill();
+    header.appendChild(statusEl);
+
+    return { header, statusEl };
+}
+
+function makeDefaultStatusPill() {
+    const s = document.createElement('span');
+    s.className = 'task-status task-status-pending';
+    s.textContent = '○ not run';
+    return s;
+}
+
+function makeSelfCheckPill(task) {
+    const pill = document.createElement('button');
+    pill.type = 'button';
+    pill.className = 'task-status task-status-selfcheck';
+    pill.dataset.taskId = task.id;
+    pill.innerHTML = '☐ <span class="pill-label">tick when done</span>';
+    pill.addEventListener('click', () => toggleSelfCheck(task.id));
+    selfCheckPills.set(task.id, pill);
+    return pill;
+}
+
+function toggleSelfCheck(taskId) {
+    const pill = selfCheckPills.get(taskId);
+    if (!pill) return;
+    const isChecked = pill.classList.contains('checked');
+    setSelfCheckPill(taskId, !isChecked);
+    saveSelfCheckState(taskId, !isChecked);
+}
+
+function setSelfCheckPill(taskId, checked) {
+    const pill = selfCheckPills.get(taskId);
+    if (!pill) return;
+    pill.classList.toggle('checked', checked);
+    pill.innerHTML = checked
+        ? '☑ <span class="pill-label">done · self</span>'
+        : '☐ <span class="pill-label">tick when done</span>';
+}
+
+function selfCheckKey(taskId) {
+    return `${SELFCHECK_STORAGE_PREFIX}:${projectDef.id}:${taskId}`;
+}
+
+function saveSelfCheckState(taskId, checked) {
+    try {
+        if (checked) localStorage.setItem(selfCheckKey(taskId), '1');
+        else localStorage.removeItem(selfCheckKey(taskId));
+    } catch (_e) { /* localStorage may be unavailable; tick state is in-memory only */ }
+}
+
+function restoreSelfCheckPills() {
+    for (const [taskId] of selfCheckPills) {
+        try {
+            if (localStorage.getItem(selfCheckKey(taskId)) === '1') {
+                setSelfCheckPill(taskId, true);
+            }
+        } catch (_e) { /* ignore */ }
+    }
+}
+
+function makeAreaCard(task, isFreestyle) {
+    const card = document.createElement('article');
+    card.className = `project-area-card${isFreestyle ? ' project-area-freestyle' : ''}`;
+    card.dataset.taskId = task.id;
+
+    const header = document.createElement('header');
+    header.className = 'area-card-header';
+    header.innerHTML = `
+        <code class="area-signature">${escapeHtml(isFreestyle ? '# ' + task.function : 'def ' + task.function + '():')}</code>
+        <span class="area-syntax-badge" data-syntax style="display:none;">⚠ syntax error</span>
+    `;
+    card.appendChild(header);
+
+    if (task.areaDescription) {
+        const desc = document.createElement('div');
+        desc.className = 'area-description';
+        desc.textContent = task.areaDescription;
+        card.appendChild(desc);
+    }
+
     const editorFrame = document.createElement('div');
     editorFrame.className = 'task-editor-frame';
-
     const editorEl = document.createElement('div');
     editorEl.className = 'task-editor';
     editorFrame.appendChild(editorEl);
-
     card.appendChild(editorFrame);
 
     const taskError = document.createElement('div');
@@ -195,18 +368,57 @@ function renderTaskCard(task, idx) {
     taskError.style.display = 'none';
     card.appendChild(taskError);
 
-    // CodeMirror itself is initialised later (see initTaskEditors), once the
-    // parent is visible and can be measured.
-    taskEditors.set(task.id, {
-        cm: null,
-        editorEl,
-        statusEl: header.querySelector('[data-status]'),
-        errorEl: taskError,
-        task,
-    });
+    card._editorEl = editorEl;
+    card._errorEl = taskError;
+    card._syntaxBadge = header.querySelector('[data-syntax]');
 
     return card;
 }
+
+// Band 2 cross-area task: full-width card, no editor. Lists area chips so the
+// student knows which editors to open.
+function renderCrossAreaCard(task) {
+    const card = document.createElement('article');
+    card.className = `project-task project-task-card project-cross-area tier-${tierClass(task.tier)}`;
+    card.dataset.taskId = task.id;
+
+    const header = document.createElement('header');
+    header.className = 'project-task-header';
+
+    const titles = document.createElement('div');
+    titles.className = 'project-task-titles';
+    const chipHtml = (task.areaChips || [])
+        .map(c => `<span class="area-chip">${escapeHtml(c)}</span>`)
+        .join('');
+    titles.innerHTML = `
+        <span class="tier-badge tier-${tierClass(task.tier)}">${escapeHtml(task.tier || '?')}</span>
+        <h3 class="task-title">${escapeHtml(task.title)}</h3>
+        <div class="area-chips">${chipHtml}</div>
+    `;
+    header.appendChild(titles);
+
+    const statusEl = task.selfCheck ? makeSelfCheckPill(task) : makeDefaultStatusPill();
+    header.appendChild(statusEl);
+
+    card.appendChild(header);
+    card._statusEl = statusEl;
+
+    const guidance = document.createElement('div');
+    guidance.className = 'task-guidance';
+    guidance.innerHTML = task.guidance || '';
+    card.appendChild(guidance);
+
+    return card;
+}
+
+function tierClass(tier) {
+    if (tier === 'D') return 'd';
+    if (tier === 'C') return 'c';
+    if (tier === 'A-B' || tier === 'AB' || tier === 'A/B') return 'ab';
+    return 'unknown';
+}
+
+// ─── Editor init ─────────────────────────────────────────────────────────
 
 function initTaskEditors() {
     // Setup editor first so it's positioned above the task editors.
@@ -226,9 +438,6 @@ function initTaskEditors() {
         });
         const seedLines = countSeedLines();
         setupEditor.setSize('100%', '11em');
-        // Lock the leading seed lines — same pattern as the `def fn():` line on
-        // task editors. Any edit whose `from.line` is inside the seed is cancelled,
-        // which also blocks backspace at the start of the first editable line.
         if (seedLines > 0) {
             setupEditor.on('beforeChange', (_cm, change) => {
                 if (change.origin === 'setValue') return;
@@ -245,9 +454,11 @@ function initTaskEditors() {
     }
 
     for (const entry of taskEditors.values()) {
-        const { editorEl, task } = entry;
+        const { editorEl, task, isFreestyle } = entry;
         const cm = CodeMirror(editorEl, {
-            value: buildEditorSource(task.function, task.starterBody),
+            value: isFreestyle
+                ? (task.starterBody || '')
+                : buildEditorSource(task.function, task.starterBody),
             mode: 'python',
             theme: 'monokai',
             lineNumbers: true,
@@ -256,19 +467,19 @@ function initTaskEditors() {
             extraKeys: { 'Tab': cm => cm.replaceSelection('  ', 'end') },
             indentWithTabs: false,
             lineWrapping: true,
-            viewportMargin: Infinity, // grow to fit content
+            viewportMargin: Infinity,
         });
-        // Lock line 0 (the `def fn():` line) — students never edit it, but
-        // it's part of the editor's source so its line number sits in the
-        // same gutter as the body and Pyodide tracebacks line up.
-        cm.on('beforeChange', (_cm, change) => {
-            if (change.origin === 'setValue') return;
-            if (change.from.line === 0) change.cancel();
-        });
-        cm.addLineClass(0, 'background', 'cm-def-line');
-        cm.addLineClass(0, 'wrap', 'cm-def-line-wrap');
+        if (!isFreestyle) {
+            // Lock line 0 (the `def fn():` line) for non-freestyle tasks.
+            cm.on('beforeChange', (_cm, change) => {
+                if (change.origin === 'setValue') return;
+                if (change.from.line === 0) change.cancel();
+            });
+            cm.addLineClass(0, 'background', 'cm-def-line');
+            cm.addLineClass(0, 'wrap', 'cm-def-line-wrap');
+        }
 
-        const heightLines = (task.editorHeight || 6) + 1; // +1 for the def line
+        const heightLines = (task.editorHeight || 6) + (isFreestyle ? 0 : 1);
         cm.setSize('100%', `${heightLines * 1.5}em`);
         cm.on('change', (_cm, change) => {
             if (change.origin !== 'setValue') markDirty();
@@ -277,16 +488,12 @@ function initTaskEditors() {
         entry.cm = cm;
     }
 
-    // Force a layout pass so editor widths settle now that the parent is visible.
     if (setupEditor) setupEditor.refresh();
     for (const entry of taskEditors.values()) {
         if (entry.cm) entry.cm.refresh();
     }
 }
 
-// Build the full editor source for a task: `def fn():` line + indented body.
-// Called only at editor init and when loading a file — once the editor exists,
-// the student's keystrokes are the source of truth.
 function buildEditorSource(fnName, body) {
     const trimmed = (body || '').replace(/\s+$/g, '');
     const bodyLines = trimmed === '' ? ['pass'] : trimmed.split('\n');
@@ -294,10 +501,6 @@ function buildEditorSource(fnName, body) {
     return `def ${fnName}():\n${indented}\n`;
 }
 
-// Setup editor source = locked seed lines + student-editable preamble. The seed
-// (e.g. `state = SimpleNamespace(...)`) is part of the editor's source so its
-// line numbers sit in the same gutter as the editable part below, and a
-// beforeChange handler prevents edits to those leading lines.
 function buildSetupSource(editablePart) {
     const seed = projectDef.setupSeed || '';
     return seed + (editablePart || '');
@@ -306,8 +509,6 @@ function buildSetupSource(editablePart) {
 function countSeedLines() {
     const seed = projectDef.setupSeed || '';
     if (!seed) return 0;
-    // Trailing newline produces an empty trailing element from split; strip it
-    // so a one-line seed "state = ...\n" counts as 1, not 2.
     return seed.replace(/\n$/, '').split('\n').length;
 }
 
@@ -316,11 +517,22 @@ function seedLockedLines() {
     return seed.replace(/\n$/, '').split('\n').filter(l => l.trim() !== '');
 }
 
-// Real task entries (function editors) only — concept cards and any other
-// non-task block types live alongside in projectDef.tasks for layout but
-// are skipped wherever we iterate "the functions in this project".
-function getTasks() {
-    return (projectDef.tasks || []).filter(t => t.type !== 'concept');
+// Real coding tasks: have an editor (Band 1 or Band 3). Excludes concept
+// cards and Band 2 cross-area tasks.
+function getCodingTasks() {
+    return (projectDef.tasks || []).filter(t =>
+        t.type !== 'concept' && !t.crossArea
+    );
+}
+
+// Function-defined tasks only (Band 1). Excludes freestyle (which runs at
+// module scope) and cross-area (no function at all).
+function getFunctionTasks() {
+    return getCodingTasks().filter(t => !t.freestyle);
+}
+
+function getFreestyleTask() {
+    return (projectDef.tasks || []).find(t => t.freestyle);
 }
 
 // ─── Run flow ────────────────────────────────────────────────────────────
@@ -328,22 +540,21 @@ function getTasks() {
 async function runProject() {
     resetAllStatus();
 
-    // Build the program in three pieces so we can attribute exec failures
-    // to whichever section caused them (Setup vs. function defs vs. Extras).
     const seg = assembleProgramSegmented();
 
-    // Setup syntax-check upfront so a broken preamble doesn't masquerade as a
-    // runtime error in some unrelated task.
     const preambleSyntaxErr = seg.preambleSrc.trim() ? checkSyntax(seg.preambleSrc) : null;
     if (preambleSyntaxErr) setSetupError(preambleSyntaxErr);
+
+    const freestyleSyntaxErr = seg.freestyleSrc.trim() ? checkSyntax(seg.freestyleSrc) : null;
+    if (freestyleSyntaxErr && seg.freestyleTaskId) {
+        markTaskError(seg.freestyleTaskId, freestyleSyntaxErr);
+    }
 
     await executor.resetPythonEnvironment(0);
     setupCanvasFunctions(executor.getPyodide(), 0);
     const py = executor.getPyodide();
 
-    // 0. Locked preamble — kept off the line-numbered surface students see, so
-    //    line numbers in the editors match the running program. Failures here
-    //    are project config bugs, not student errors.
+    // 0. Locked preamble.
     for (const line of (projectDef.lockedPreamble || [])) {
         try {
             await py.runPythonAsync(line);
@@ -353,7 +564,7 @@ async function runProject() {
         }
     }
 
-    // 1. Setup preamble. A failure here is the student's variables.
+    // 1. Setup preamble.
     if (!preambleSyntaxErr && seg.preambleSrc.trim()) {
         try {
             await py.runPythonAsync(seg.preambleSrc);
@@ -363,10 +574,17 @@ async function runProject() {
         }
     }
 
-    // 2. Per-task function definitions. Each def is its own runPythonAsync so
-    //    Pyodide's tb_lineno (and SyntaxError line numbers) are local to that
-    //    task editor's source — what the student sees in the gutter matches
-    //    what the error message reports.
+    // 2. Freestyle code at module scope (after setup, before function defs).
+    if (!freestyleSyntaxErr && seg.freestyleSrc.trim() && seg.freestyleTaskId) {
+        try {
+            await py.runPythonAsync(seg.freestyleSrc);
+        } catch (err) {
+            markTaskError(seg.freestyleTaskId, extractPythonError(err));
+            // Don't abort; the rest of the project may still work without freestyle.
+        }
+    }
+
+    // 3. Per-task function definitions.
     for (const def of seg.fnDefs) {
         if (def.syntaxError) {
             markTaskError(def.taskId, def.syntaxError);
@@ -379,21 +597,19 @@ async function runProject() {
         }
     }
 
-    // 3. Extras (preserved from a saved file). If they fail, attribute to Extras.
+    // 4. Extras preserved from open file.
     if (seg.extrasSrc.trim()) {
         try {
             await py.runPythonAsync(seg.extrasSrc);
         } catch (err) {
             setExtrasError(extractPythonError(err));
-            // Don't return — student tasks may still work without extras.
         }
     }
 
-    // 4. Install the Python attribution helper so subsequent calls (draw_scene,
-    // dpad presses) can attribute errors to whichever task function ran deepest.
+    // 5. Attribution helper.
     await installAttributionHelper();
 
-    // 5. Initial scene render via the attributed call helper.
+    // 6. Initial scene render.
     const sceneResult = await callWithAttribution('draw_scene');
     if (!sceneResult.ok) {
         const taskId = taskIdForFunction(sceneResult.in_function);
@@ -401,9 +617,10 @@ async function runProject() {
         else displayGlobalError(sceneResult.error_msg);
     }
 
-    // 6. Per-task validation for anything not already in error.
+    // 7. Per-task validation. Self-check tasks skip programmatic validation.
     for (const [taskId, entry] of taskEditors.entries()) {
         if (entry.statusEl.classList.contains('task-status-fail')) continue;
+        if (entry.task.selfCheck) continue;
         const result = await validateTask(entry.task);
         applyValidationResult(taskId, result);
     }
@@ -411,10 +628,6 @@ async function runProject() {
     finalizeRunStatus();
 }
 
-// Pyodide's err.message is a multi-line traceback. Pull out the last
-// "ErrorType: message" line as the student-facing payload, and prefix it with
-// the deepest "line N" reference from the traceback if there is one — so a
-// SyntaxError on line 4 reads as "Line 4: SyntaxError: invalid syntax".
 function extractPythonError(err) {
     const msg = (err && err.message) ? err.message : String(err);
     const lines = msg.split('\n').map(s => s.trim()).filter(Boolean);
@@ -435,13 +648,10 @@ function extractPythonError(err) {
 
 async function installAttributionHelper() {
     const py = executor.getPyodide();
-    const knownNames = getTasks().map(t => t.function);
+    const knownNames = getFunctionTasks().map(t => t.function);
     py.globals.set('_wavelet_known_names', py.toPy(knownNames));
     py.runPython(`
 def _wavelet_call_safely(fn_name):
-    # Walks the exception traceback to find the deepest frame whose function
-    # is one of the project's tasks. That's where the bug lives. Captures the
-    # line number too so the message can point students at the exact line.
     known = set(_wavelet_known_names)
     fn = globals().get(fn_name)
     if not callable(fn):
@@ -484,20 +694,17 @@ async function callWithAttribution(fnName) {
 }
 
 function taskIdForFunction(fnName) {
-    for (const t of getTasks()) {
+    for (const t of getFunctionTasks()) {
         if (t.function === fnName) return t.id;
     }
     return null;
 }
 
-// Wipes the visible canvas via Python's clear(), then calls draw_scene
-// through the attribution helper so any failure inside a task function ends
-// up routed to the right card.
 async function runDrawScene() {
     const py = executor.getPyodide();
     try {
         await py.runPythonAsync('clear()');
-    } catch (_e) { /* canvas may not yet be initialised — fine */ }
+    } catch (_e) { /* canvas may not yet be initialised */ }
     return callWithAttribution('draw_scene');
 }
 
@@ -505,8 +712,6 @@ async function onKeyPress(direction) {
     if (!executor || !executor.isReady()) return;
     const fnName = `on_${direction}_key`;
 
-    // The attribution helper isn't installed until after a successful Run.
-    // If the student presses an arrow before running, prompt them to Run.
     const py = executor.getPyodide();
     if (!py.globals.get('_wavelet_call_safely')) {
         document.getElementById('project-status').innerHTML =
@@ -514,8 +719,6 @@ async function onKeyPress(direction) {
         return;
     }
 
-    // Run the handler, then re-render the scene. Both go through attribution
-    // so any error lands on the right task card.
     const handlerResult = await callWithAttribution(fnName);
     if (!handlerResult.ok) {
         const taskId = taskIdForFunction(handlerResult.in_function);
@@ -525,7 +728,6 @@ async function onKeyPress(direction) {
         return;
     }
 
-    // Clear + redraw scene with attribution.
     try { await py.runPythonAsync('clear()'); } catch (_e) { /* clear is best-effort */ }
     const sceneResult = await callWithAttribution('draw_scene');
     if (!sceneResult.ok) {
@@ -538,9 +740,6 @@ async function onKeyPress(direction) {
 
 // ─── Status / error UI ──────────────────────────────────────────────────
 
-// Reset every card to a neutral "ready" state. We never leave a "… running"
-// pill behind because exec failures abort before validation runs and the
-// yellow state misleads.
 function resetAllStatus() {
     const host = document.getElementById('project-setup-host');
     if (host && host._statusEl) {
@@ -550,9 +749,19 @@ function resetAllStatus() {
     if (host && host._errorEl) host._errorEl.style.display = 'none';
 
     for (const entry of taskEditors.values()) {
+        // Self-check pills stay as the student left them — they're not reset
+        // by a project run.
+        if (entry.task.selfCheck) {
+            entry.errorEl.style.display = 'none';
+            const card = entry.editorEl.closest('.project-area-card');
+            if (card && card._syntaxBadge) card._syntaxBadge.style.display = 'none';
+            continue;
+        }
         entry.statusEl.className = 'task-status task-status-pending';
         entry.statusEl.textContent = '○ ready';
         entry.errorEl.style.display = 'none';
+        const card = entry.editorEl.closest('.project-area-card');
+        if (card && card._syntaxBadge) card._syntaxBadge.style.display = 'none';
     }
 
     const status = document.getElementById('project-status');
@@ -569,18 +778,7 @@ function setSetupError(msg) {
 }
 
 function setExtrasError(msg) {
-    const codeEl = document.getElementById('extras-code');
-    if (!codeEl) return;
-    let banner = document.getElementById('extras-error');
-    if (!banner) {
-        banner = document.createElement('div');
-        banner.id = 'extras-error';
-        banner.className = 'task-error';
-        banner.style.margin = '8px 12px';
-        codeEl.parentElement.insertBefore(banner, codeEl);
-    }
-    banner.style.display = 'block';
-    banner.textContent = `Error in Extras: ${msg}`;
+    console.warn('Extras error:', msg);
 }
 
 function displayGlobalError(msg) {
@@ -588,9 +786,6 @@ function displayGlobalError(msg) {
     if (status) status.innerHTML = `<strong>Error:</strong> ${escapeHtml(msg)}`;
 }
 
-// Count failed cards and render the summary in the sticky stage. The "Jump
-// to first" button is opt-in — we don't auto-scroll, so the canvas stays
-// visible after a run.
 function finalizeRunStatus() {
     const failingCards = document.querySelectorAll('.project-task .task-status-fail');
     const status = document.getElementById('project-status');
@@ -607,7 +802,6 @@ function finalizeRunStatus() {
     document.getElementById('status-jump-btn').addEventListener('click', scrollToFirstError);
 }
 
-// Smooth-scroll to the first failing card, leaving the sticky stage clear.
 function scrollToFirstError() {
     const failingPill = document.querySelector('.project-task .task-status-fail');
     if (!failingPill) return;
@@ -621,20 +815,23 @@ function scrollToFirstError() {
 
 // ─── Code assembly ───────────────────────────────────────────────────────
 
-// Build the runnable program in three pieces — preamble, per-task function
-// defs, extras — so the run loop can exec each separately and attribute
-// failures to the right card. Each fnDef is its own runPythonAsync call so
-// Pyodide's tb_lineno matches that editor's native line numbering 1:1.
 function assembleProgramSegmented() {
-    // Preamble: only the editable section. The locked preamble (use_canvas)
-    // is invoked separately from JS during runProject so it doesn't take a
-    // line number that students can't see — the visible editor line numbers
-    // match the running program's line numbers.
     const editablePreamble = setupEditor ? setupEditor.getValue() : (projectDef.editablePreamble || '');
     const preambleSrc = editablePreamble.trim() ? editablePreamble.replace(/\s+$/g, '') : '';
 
+    let freestyleSrc = '';
+    let freestyleTaskId = null;
+    const freestyleTask = getFreestyleTask();
+    if (freestyleTask) {
+        const entry = taskEditors.get(freestyleTask.id);
+        if (entry && entry.cm) {
+            freestyleSrc = entry.cm.getValue().replace(/\s+$/g, '');
+            freestyleTaskId = freestyleTask.id;
+        }
+    }
+
     const fnDefs = [];
-    for (const task of getTasks()) {
+    for (const task of getFunctionTasks()) {
         const entry = taskEditors.get(task.id);
         const src = entry && entry.cm ? entry.cm.getValue() : buildEditorSource(task.function, task.starterBody);
         const syntaxError = checkSyntax(src);
@@ -643,13 +840,12 @@ function assembleProgramSegmented() {
 
     const extrasSrc = (currentExtras && currentExtras.trim()) ? currentExtras : '';
 
-    return { preambleSrc, fnDefs, extrasSrc };
+    return { preambleSrc, freestyleSrc, freestyleTaskId, fnDefs, extrasSrc };
 }
 
 function checkSyntax(src) {
     try {
         const py = executor.getPyodide();
-        // Python's compile() raises SyntaxError on bad code; surface its message.
         py.runPython(`
 import builtins as _b
 def _wavelet_check_syntax(src):
@@ -670,8 +866,17 @@ def _wavelet_check_syntax(src):
 function markTaskError(taskId, msg) {
     const entry = taskEditors.get(taskId);
     if (!entry) return;
+    // For self-check tasks, surface the error on the area card without
+    // overwriting the student's self-check pill.
+    if (entry.task.selfCheck) {
+        entry.errorEl.style.display = 'block';
+        entry.errorEl.textContent = msg;
+        const card = entry.editorEl.closest('.project-area-card');
+        if (card && card._syntaxBadge) card._syntaxBadge.style.display = '';
+        return;
+    }
     entry.statusEl.className = 'task-status task-status-fail';
-    entry.statusEl.textContent = '✗ syntax error';
+    entry.statusEl.textContent = '✗ error';
     entry.errorEl.style.display = 'block';
     entry.errorEl.textContent = msg;
 }
@@ -718,7 +923,6 @@ async function ruleFunctionFillsCells(task, rule) {
     const py = executor.getPyodide();
     const expected = expandCells(rule.cells);
     try {
-        // Run the function in isolation on a fresh canvas-state.
         await py.runPythonAsync(`
 _canvas_state['grid'] = {}
 _canvas_state['commands'] = []
@@ -734,7 +938,6 @@ except Exception as _e:
         }
 
         const grid = py.runPython(`list(_canvas_state['grid'].items())`).toJs();
-        // grid is [[ [x, y], color ], ...]
         const filledSet = new Set();
         const filledMap = new Map();
         for (const [coords, color] of grid) {
@@ -768,7 +971,6 @@ except Exception as _e:
     } catch (err) {
         return { pass: false, message: err.message };
     } finally {
-        // Restore the live scene so the visible canvas matches what the user sees.
         await runDrawScene();
     }
 }
@@ -787,7 +989,7 @@ function expandCells(spec) {
 
 function applyValidationResult(taskId, result) {
     const entry = taskEditors.get(taskId);
-    if (!entry) return;
+    if (!entry || entry.task.selfCheck) return;
     if (result.pass) {
         entry.statusEl.className = 'task-status task-status-pass';
         entry.statusEl.textContent = '✓ working';
@@ -800,9 +1002,6 @@ function applyValidationResult(taskId, result) {
 }
 
 // ─── Save / Open ─────────────────────────────────────────────────────────
-// On disk the project is one .py file: header comment + preamble + one def
-// per task + any "Extras" preserved verbatim from a previously-opened file.
-// The file is fully runnable Python — students can paste it into IDLE.
 
 function assembleFileForDisk() {
     const today = new Date().toISOString().slice(0, 10);
@@ -813,17 +1012,27 @@ function assembleFileForDisk() {
         '',
     ];
 
-    // Locked preamble we own
     for (const line of (projectDef.lockedPreamble || [])) lines.push(line);
 
-    // Editable preamble (student globals)
     const editablePreamble = setupEditor ? setupEditor.getValue() : (projectDef.editablePreamble || '');
     if (editablePreamble.trim()) {
         lines.push(editablePreamble.replace(/\s+$/g, ''));
     }
     lines.push('');
 
-    getTasks().forEach((task, idx) => {
+    // Freestyle section between Setup and the function defs, matching run order.
+    const freestyleTask = getFreestyleTask();
+    if (freestyleTask) {
+        const entry = taskEditors.get(freestyleTask.id);
+        const src = entry && entry.cm
+            ? entry.cm.getValue().replace(/\s+$/g, '')
+            : (freestyleTask.starterBody || '').replace(/\s+$/g, '');
+        lines.push(FREESTYLE_SECTION_MARKER);
+        lines.push(src);
+        lines.push('');
+    }
+
+    getFunctionTasks().forEach((task, idx) => {
         const entry = taskEditors.get(task.id);
         const src = entry && entry.cm
             ? entry.cm.getValue()
@@ -913,7 +1122,7 @@ async function openProjectViaFSA() {
     try {
         const file = await handle.getFile();
         const text = await file.text();
-        if (!loadFileIntoEditors(text, file.name)) return; // user cancelled banner
+        if (!loadFileIntoEditors(text, file.name)) return;
         currentFileHandle = handle;
         markClean();
     } catch (err) {
@@ -928,7 +1137,6 @@ function handleFallbackFileInput(e) {
     const reader = new FileReader();
     reader.onload = ev => {
         if (!loadFileIntoEditors(ev.target.result || '', file.name)) return;
-        // Fallback path can't write back — track only the name for the next download prompt.
         currentFileHandle = { name: file.name };
         markClean();
     };
@@ -936,7 +1144,6 @@ function handleFallbackFileInput(e) {
     reader.readAsText(file);
 }
 
-// Returns true if the file was applied, false if the user cancelled.
 function loadFileIntoEditors(text, filename) {
     const looksLikeProject = text.trimStart().startsWith(FILE_HEADER_MARKER);
     if (!looksLikeProject) {
@@ -952,15 +1159,18 @@ function loadFileIntoEditors(text, filename) {
         return false;
     }
 
-    const knownNames = getTasks().map(t => t.function);
+    // Split freestyle section out before parsing the rest.
+    const { mainText, freestyleSource } = splitFreestyleSection(text);
+
+    const knownNames = getFunctionTasks().map(t => t.function);
     const lockedSet = new Set([
         ...(projectDef.lockedPreamble || []).map(s => s.trim()),
         ...seedLockedLines().map(s => s.trim()),
     ]);
-    const parsed = parseProjectFile(text, knownNames, lockedSet);
+    const parsed = parseProjectFile(mainText, knownNames, lockedSet);
 
     const missing = [];
-    for (const task of getTasks()) {
+    for (const task of getFunctionTasks()) {
         const entry = taskEditors.get(task.id);
         if (!entry || !entry.cm) continue;
         if (parsed.bodies.has(task.function)) {
@@ -970,8 +1180,19 @@ function loadFileIntoEditors(text, filename) {
             missing.push(task.title);
         }
         entry.errorEl.style.display = 'none';
-        entry.statusEl.className = 'task-status task-status-pending';
-        entry.statusEl.textContent = '○ not run yet';
+        if (!entry.task.selfCheck) {
+            entry.statusEl.className = 'task-status task-status-pending';
+            entry.statusEl.textContent = '○ not run';
+        }
+    }
+
+    const freestyleTask = getFreestyleTask();
+    if (freestyleTask) {
+        const entry = taskEditors.get(freestyleTask.id);
+        if (entry && entry.cm) {
+            entry.cm.setValue(freestyleSource || freestyleTask.starterBody || '');
+            entry.errorEl.style.display = 'none';
+        }
     }
 
     if (setupEditor) {
@@ -979,38 +1200,37 @@ function loadFileIntoEditors(text, filename) {
     }
 
     currentExtras = parsed.extras;
-    renderExtras();
 
     const status = document.getElementById('project-status');
     const bits = [];
     bits.push(`Opened <strong>${escapeHtml(filename)}</strong>.`);
     if (missing.length) bits.push(`Reset to starter: ${escapeHtml(missing.join(', '))}.`);
-    if (parsed.extras.trim()) bits.push(`${parsed.extras.trim().split('\n').length} line(s) preserved as Extras.`);
     bits.push('Click <strong>Run Project</strong> to try it.');
     status.innerHTML = bits.join(' ');
 
     return true;
 }
 
-function renderExtras() {
-    const panel = document.getElementById('project-extras');
-    const codeEl = document.getElementById('extras-code');
-    if (currentExtras && currentExtras.trim()) {
-        codeEl.textContent = currentExtras;
-        panel.style.display = '';
+// Pull out the freestyle section delimited by FREESTYLE_SECTION_MARKER. The
+// section runs until the next "# Task" comment header or end-of-file.
+function splitFreestyleSection(text) {
+    const idx = text.indexOf(FREESTYLE_SECTION_MARKER);
+    if (idx === -1) return { mainText: text, freestyleSource: '' };
+    const before = text.slice(0, idx);
+    const after = text.slice(idx + FREESTYLE_SECTION_MARKER.length);
+    const taskMarkerRegex = /^# Task \d+:/m;
+    const taskIdx = after.search(taskMarkerRegex);
+    let freestyleSource = '';
+    let rest = '';
+    if (taskIdx === -1) {
+        freestyleSource = after.replace(/^\s*\n/, '');
     } else {
-        codeEl.textContent = '';
-        panel.style.display = 'none';
+        freestyleSource = after.slice(0, taskIdx).replace(/^\s*\n/, '');
+        rest = after.slice(taskIdx);
     }
+    return { mainText: before + rest, freestyleSource: freestyleSource.replace(/\s+$/g, '') };
 }
 
-// Parse a project .py file via Python's ast module (in Pyodide).
-// Categorisation of top-level nodes:
-//   - FunctionDef with known name        -> task editor body (with auto-
-//                                           injected `global ...` stripped)
-//   - Statement matching a locked line   -> dropped (we own & regenerate)
-//   - Imports / assignments              -> editable preamble editor
-//   - Anything else (incl. unknown defs) -> Extras
 function parseProjectFile(src, knownNames, lockedSet) {
     const py = executor.getPyodide();
     py.globals.set('_wavelet_src', src);
@@ -1046,7 +1266,7 @@ def _wavelet_parse_project():
             body = textwrap.dedent('\\n'.join(lines[1:]))
             bodies[node.name] = body.rstrip() + '\\n' if body.strip() else ''
         elif stripped in locked:
-            continue  # we own this line, regenerated on save
+            continue
         elif isinstance(node, PREAMBLE_TYPES):
             editable_segments.append(seg)
         else:
@@ -1079,7 +1299,9 @@ function anyEditorDifferentFromStarter() {
     if (setupEditor && setupEditor.getValue() !== buildSetupSource(projectDef.editablePreamble)) return true;
     for (const [, entry] of taskEditors) {
         if (!entry.cm) continue;
-        const starter = buildEditorSource(entry.task.function, entry.task.starterBody);
+        const starter = entry.isFreestyle
+            ? (entry.task.starterBody || '')
+            : buildEditorSource(entry.task.function, entry.task.starterBody);
         if (entry.cm.getValue() !== starter) return true;
     }
     return false;

@@ -2242,6 +2242,7 @@ code {
         align-items: center;
     }
     .project-tasks,
+    .project-bands,
     .project-intro,
     .project-setup-host,
     .project-extras {
@@ -2250,7 +2251,201 @@ code {
         padding-left: 16px;
         padding-right: 16px;
     }
+    .band-grid-1, .band-grid-3 {
+        grid-template-columns: 1fr;
+    }
+    .project-area-card {
+        margin-top: -8px;
+    }
 }
+
+/* ─── Two-column project layout (bands) ─────────────────────────────────
+   Tasks live in the left column (intent), code areas in the right column
+   (mechanics). Bands group consecutive tasks of the same kind:
+     Band 1 — 1:1 task/area pairs.
+     Band 2 — cross-area tasks (one column, no editor).
+     Band 3 — freestyle task/area pair.
+*/
+
+.project-bands {
+    padding: 20px 28px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+.project-band {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.band-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 2px 0;
+    border-bottom: 1px dashed #cbd5e1;
+}
+.project-band-2 .band-label { color: #5b21b6; border-color: #c4b5fd; }
+.project-band-3 .band-label { color: #92400e; border-color: #fcd34d; }
+
+.band-grid {
+    display: grid;
+    gap: 16px;
+    align-items: start;
+}
+.band-grid-1, .band-grid-3 {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+}
+.band-grid-2 {
+    grid-template-columns: 1fr;
+}
+
+/* Task card (left column). Keep the .project-task base but drop the
+   connecting left rail — the two-column grid is signal enough. */
+.project-task-card {
+    border-left-width: 4px;
+}
+.project-task.project-task-card::before { display: none; }
+
+/* Tier-coloured left border. Provides at-a-glance "what tier is this?". */
+.project-task-card.tier-d  { border-left-color: #3b82f6; }
+.project-task-card.tier-c  { border-left-color: #8b5cf6; }
+.project-task-card.tier-ab { border-left-color: #f59e0b; }
+
+/* Tier badge — small chip next to the task title. */
+.tier-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    letter-spacing: 0.04em;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+.tier-badge.tier-d  { background: #dbeafe; color: #1e40af; }
+.tier-badge.tier-c  { background: #ede9fe; color: #5b21b6; }
+.tier-badge.tier-ab { background: #fef3c7; color: #92400e; }
+.tier-badge.tier-unknown { background: #f1f5f9; color: #64748b; }
+
+/* Area card (right column). Holds the editor + a "what this is" header. */
+.project-area-card {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-left: 4px solid #14b8a6;
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.project-area-freestyle {
+    border-left-color: #f59e0b;
+    background: #fffbeb;
+}
+.area-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+.area-signature {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.92rem;
+    color: #1e293b;
+    background: #f1f5f9;
+    padding: 4px 8px;
+    border-radius: 4px;
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+.project-area-freestyle .area-signature {
+    background: #fef3c7;
+    color: #92400e;
+}
+.area-description {
+    font-size: 0.82rem;
+    color: #64748b;
+    font-style: italic;
+    line-height: 1.4;
+}
+.area-syntax-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fcd34d;
+    white-space: nowrap;
+}
+
+/* Self-check pill: a clickable button that toggles between unchecked and
+   checked. Outlined dashed border to read as "student-confirmed" rather
+   than a solid validated tick. */
+.task-status-selfcheck {
+    background: transparent;
+    color: #16a34a;
+    border: 1.5px dashed #16a34a;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.12s, color 0.12s;
+}
+.task-status-selfcheck:hover {
+    background: #f0fdf4;
+}
+.task-status-selfcheck.checked {
+    background: #16a34a;
+    color: white;
+    border-style: solid;
+}
+.task-status-selfcheck .pill-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    opacity: 0.85;
+    margin-left: 2px;
+}
+
+/* Cross-area task card (Band 2). Full-width, no editor partner. */
+.project-cross-area {
+    border-left-color: #8b5cf6;
+    background: #faf5ff;
+}
+.project-cross-area .project-task-titles {
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.area-chips {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-left: auto;
+}
+.area-chip {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.7rem;
+    background: #ede9fe;
+    color: #5b21b6;
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: 1px solid #c4b5fd;
+}
+
+/* Laptop-only notice inside the project intro. */
+.project-intro .laptop-only-note {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #eef2ff;
+    border-left: 3px solid #6366f1;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #312e81;
+}
+
 /* ─── Spec table panel ─── */
 .spec-panel {
     background: #f8fafc;

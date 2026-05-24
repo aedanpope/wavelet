@@ -2,7 +2,7 @@
   "id": "pixel-game",
   "title": "Pixel Game",
   "description": "Build a tiny scene that comes alive when you press the arrow buttons.",
-  "intro": "<p>Build your own pixel-game scene that <strong>animates when you press the arrow buttons</strong>. You'll fill in a few small functions, then click <em>Run Project</em> to see them all run together.</p><p>The canvas is a 20&times;20 grid. The <strong>State</strong> section below holds the variables your functions can read and change. The player's position lives there as <code>state.player_x</code> and <code>state.player_y</code>. You can add your own variables below the locked line.</p>",
+  "intro": "<p>Build your own pixel-game scene that <strong>animates when you press the arrow buttons</strong>. You'll fill in a few small functions, then click <em>Run Project</em> to see them all run together.</p><p>The canvas is a 20&times;20 grid. The <strong>State</strong> section below holds the variables your functions can read and change. The player's position lives there as <code>state.player_x</code> and <code>state.player_y</code>. You can add your own variables below the locked line.</p><p class=\"laptop-only-note\">💻 <strong>This project works best on a laptop.</strong> You'll be using the keyboard a lot.</p>",
   "canvas": "GRID20",
   "lockedPreamble": [
     "use_canvas(GRID20)",
@@ -15,13 +15,15 @@
       "type": "concept",
       "icon": "📍",
       "title": "Pixel coordinates",
-      "content": "<p>Use the <code>draw(x, y, colour)</code> function to colour in cells on the canvas.</p><p>Every cell has an address written as <code>(x, y)</code>:</p><ul><li><strong>x</strong> goes across (0 on the left, 19 on the right).</li><li><strong>y</strong> goes up (0 at the bottom, 19 at the top).</li></ul><div style='display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;margin:14px 0;'><code style='font-size:1rem;'>draw(1, 0, 'red')</code><span style='font-size:1.6rem;color:#92400e;'>&rarr;</span><table style='border-collapse:collapse;font-family:Consolas,Monaco,monospace;font-size:0.95rem;'><tr><th rowspan='3' style='padding:0 8px 0 0;color:#92400e;font-style:italic;font-weight:700;font-size:1.1rem;text-align:center;vertical-align:middle;'>y</th><th style='padding:0 10px;color:#6b7280;font-weight:400;text-align:right;'>2</th><td style='border:1px solid #d1d5db;padding:10px 14px;background:#f9fafb;text-align:center;'>(0, 2)</td><td style='border:1px solid #d1d5db;padding:10px 14px;background:#f9fafb;text-align:center;'>(1, 2)</td><td style='border:1px solid #d1d5db;padding:10px 14px;background:#f9fafb;text-align:center;'>(2, 2)</td></tr><tr><th style='padding:0 10px;color:#6b7280;font-weight:400;text-align:right;'>1</th><td style='border:1px solid #d1d5db;padding:10px 14px;background:#f9fafb;text-align:center;'>(0, 1)</td><td style='border:1px solid #d1d5db;padding:10px 14px;background:#f9fafb;text-align:center;'>(1, 1)</td><td style='border:1px solid #d1d5db;padding:10px 14px;background:#f9fafb;text-align:center;'>(2, 1)</td></tr><tr><th style='padding:0 10px;color:#6b7280;font-weight:400;text-align:right;'>0</th><td style='border:1px solid #d1d5db;padding:10px 14px;background:#f9fafb;text-align:center;'>(0, 0)</td><td style='border:1px solid #d1d5db;padding:10px 14px;background:#dc2626;color:white;text-align:center;font-weight:600;'>(1, 0)</td><td style='border:1px solid #d1d5db;padding:10px 14px;background:#f9fafb;text-align:center;'>(2, 0)</td></tr><tr><th></th><th></th><th style='padding:6px 0 0;color:#6b7280;font-weight:400;text-align:center;'>0</th><th style='padding:6px 0 0;color:#6b7280;font-weight:400;text-align:center;'>1</th><th style='padding:6px 0 0;color:#6b7280;font-weight:400;text-align:center;'>2</th></tr><tr><th></th><th></th><th colspan='3' style='padding:2px 0 0;color:#92400e;font-style:italic;font-weight:700;text-align:center;'>x</th></tr></table></div><p><strong>Colour</strong> is a string (in quotes). Try <code>'red'</code>, <code>'blue'</code>, <code>'gold'</code>, <code>'hotpink'</code>, <code>'tomato'</code>, or <code>'aquamarine'</code>. <a href='https://www.w3schools.com/colors/colors_names.asp' target='_blank' rel='noopener'>See the full list of colour names</a>.</p>",
+      "content": "<p>Use the <code>draw(x, y, colour)</code> function to colour in cells on the canvas.</p><p>Every cell has an address written as <code>(x, y)</code>:</p><ul><li><strong>x</strong> goes across (0 on the left, 19 on the right).</li><li><strong>y</strong> goes up (0 at the bottom, 19 at the top).</li></ul><div style='display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;margin:14px 0;'><code style='font-size:1rem;'>draw(1, 0, 'red')</code><span style='font-size:1.6rem;color:#92400e;'>&rarr;</span><table style='border-collapse:collapse;font-family:Consolas,Monaco,monospace;font-size:0.95rem;'><tr><td style='border:1px solid #d1d5db;padding:10px 14px;background:#f9fafb;text-align:center;'>(0, 2)</td><td style='border:1px solid #d1d5db;padding:10px 14px;background:#f9fafb;text-align:center;'>(1, 2)</td><td style='border:1px solid #d1d5db;padding:10px 14px;background:#f9fafb;text-align:center;'>(2, 2)</td></tr><tr><td style='border:1px solid #d1d5db;padding:10px 14px;background:#f9fafb;text-align:center;'>(0, 1)</td><td style='border:1px solid #d1d5db;padding:10px 14px;background:#f9fafb;text-align:center;'>(1, 1)</td><td style='border:1px solid #d1d5db;padding:10px 14px;background:#f9fafb;text-align:center;'>(2, 1)</td></tr><tr><td style='border:1px solid #d1d5db;padding:10px 14px;background:#f9fafb;text-align:center;'>(0, 0)</td><td style='border:1px solid #d1d5db;padding:10px 14px;background:#dc2626;color:white;text-align:center;font-weight:600;'>(1, 0)</td><td style='border:1px solid #d1d5db;padding:10px 14px;background:#f9fafb;text-align:center;'>(2, 0)</td></tr></table></div><p><strong>Colour</strong> is a string (in quotes). Try <code>'red'</code>, <code>'blue'</code>, <code>'gold'</code>, <code>'hotpink'</code>, <code>'tomato'</code>, or <code>'aquamarine'</code>. <a href='https://www.w3schools.com/colors/colors_names.asp' target='_blank' rel='noopener'>See the full list of colour names</a>.</p>",
       "footer": "x across, y up. (0, 0) is bottom-left."
     },
     {
       "id": "corners",
+      "tier": "D",
       "title": "Colour the corners",
       "function": "draw_corners",
+      "areaDescription": "Called from draw_scene. Paint the four corner cells of the canvas.",
       "guidance": "<p>Warm-up: draw a coloured cell in each of the four corners of the canvas.</p><p>The corners are at <code>(0, 0)</code>, <code>(19, 0)</code>, <code>(0, 19)</code>, and <code>(19, 19)</code>. Use <code>draw(x, y, 'colour')</code>, pick whatever colours you like.</p>",
       "starterBody": "draw(0, 0, 'red')\n# add the other three corners\n\n",
       "editorHeight": 6,
@@ -38,8 +40,10 @@
     },
     {
       "id": "border",
+      "tier": "D",
       "title": "Draw a border",
       "function": "draw_border",
+      "areaDescription": "Called from draw_scene. Paint the 76 edge cells of the canvas.",
       "guidance": "<p>A border goes all the way around the edge of the canvas. There are 76 cells in the border, way too many to type one by one. Use <code>for</code> loops instead.</p><p>Tip: you'll need <em>four</em> loops: bottom row, top row, left column, right column. Or one loop with some clever maths!</p>",
       "starterBody": "for x in range(20):\n  draw(x, 0, 'blue')\n# now do the top row, left column, and right column\n\n",
       "editorHeight": 10,
@@ -56,9 +60,12 @@
     },
     {
       "id": "background",
+      "tier": "A-B",
+      "selfCheck": true,
       "title": "Draw the background",
       "function": "draw_background",
-      "guidance": "<p>Time to make the canvas your own. <code>draw_background()</code> is your blank slate: whatever you draw here sits behind the player.</p><p>Start by calling the two functions you've already written (<code>draw_border()</code> and <code>draw_corners()</code>), then add anything else you can think of. A few ideas to get you started:</p><ul><li>A row of coloured rectangles along the bottom for grass or sand</li><li>Rainbow stripes across the middle</li><li>A pattern of dots</li><li>A shape using nested loops, like a triangle, diamond, or letter</li><li>Anything else you can imagine</li></ul><p>There's no automatic check on this one, it's your space to be creative.</p>",
+      "areaDescription": "Called from draw_scene first, so the player sits on top. Free creative space.",
+      "guidance": "<p>Time to make the canvas your own. <code>draw_background()</code> is your blank slate: whatever you draw here sits behind the player.</p><p>Start by calling the two functions you've already written (<code>draw_border()</code> and <code>draw_corners()</code>), then add anything else you can think of. A few ideas to get you started:</p><ul><li>A row of coloured rectangles along the bottom for grass or sand</li><li>Rainbow stripes across the middle</li><li>A pattern of dots</li><li>A shape using nested loops, like a triangle, diamond, or letter</li><li>Anything else you can imagine</li></ul><p>Tick the box on this card when you're happy with your background.</p>",
       "starterBody": "draw_border()\ndraw_corners()\n# add your own stuff! rectangles, stripes, shapes, anything.\n\n",
       "editorHeight": 10,
       "validation": {
@@ -69,8 +76,10 @@
     },
     {
       "id": "player",
+      "tier": "C",
       "title": "Draw the player",
       "function": "draw_player",
+      "areaDescription": "Called from draw_scene after draw_background, so the player sits on top.",
       "guidance": "<p>The player lives at <code>state.player_x</code>, <code>state.player_y</code>. The State section starts these at <code>(10, 10)</code>.</p><p>The starter copies those into local <code>x</code> and <code>y</code> so you can tweak them, then draws a single yellow cell. Want a bigger character? Add more <code>draw</code> calls for cells around the centre, like <code>draw(x + 1, y, 'yellow')</code> or <code>draw(x, y + 1, 'red')</code>.</p>",
       "starterBody": "x = state.player_x\ny = state.player_y\ndraw(x, y, 'yellow')\n",
       "editorHeight": 8,
@@ -82,8 +91,10 @@
     },
     {
       "id": "scene",
+      "tier": "C",
       "title": "Build the scene",
       "function": "draw_scene",
+      "areaDescription": "Runs once on Run, and again after every arrow press. Call your other functions in order.",
       "guidance": "<p>This function runs every time you press a button. Its job is to put the whole picture together by calling your other functions.</p><p>Order matters: later draws appear on top of earlier ones. Background first, player last.</p>",
       "starterBody": "draw_background()\ndraw_player()\n",
       "editorHeight": 6,
@@ -95,9 +106,11 @@
     },
     {
       "id": "left-key",
-      "title": "Left button: do something cool",
+      "tier": "D",
+      "title": "Left button",
       "function": "on_left_key",
-      "guidance": "<p>Runs when the player clicks the <strong>&larr;</strong> button. The simplest thing: move the player one cell to the left.</p><p><code>state.player_x -= 1</code> subtracts one from <code>state.player_x</code>. <code>draw_scene()</code> will run again automatically afterwards, so the player visibly moves.</p><p>Want to do something else cool instead? Paint a streak across the canvas, change a colour somewhere, up to you.</p>",
+      "areaDescription": "Runs when the player clicks ←. draw_scene runs again afterwards.",
+      "guidance": "<p>Runs when the player clicks the <strong>&larr;</strong> button. The simplest thing: move the player one cell to the left.</p><p><code>state.player_x -= 1</code> subtracts one from <code>state.player_x</code>. <code>draw_scene()</code> will run again automatically afterwards, so the player visibly moves.</p>",
       "starterBody": "state.player_x -= 1\n",
       "editorHeight": 6,
       "validation": {
@@ -108,9 +121,11 @@
     },
     {
       "id": "right-key",
-      "title": "Right button: do something cool",
+      "tier": "D",
+      "title": "Right button",
       "function": "on_right_key",
-      "guidance": "<p>Runs when the player clicks the <strong>&rarr;</strong> button. Mirror of left, or do something completely different.</p>",
+      "areaDescription": "Runs when the player clicks →. draw_scene runs again afterwards.",
+      "guidance": "<p>Runs when the player clicks the <strong>&rarr;</strong> button. Mirror of left.</p>",
       "starterBody": "state.player_x += 1\n",
       "editorHeight": 6,
       "validation": {
@@ -121,8 +136,10 @@
     },
     {
       "id": "up-key",
-      "title": "Up button: do something cool",
+      "tier": "D",
+      "title": "Up button",
       "function": "on_up_key",
+      "areaDescription": "Runs when the player clicks ↑. draw_scene runs again afterwards.",
       "guidance": "<p>Runs when the player clicks the <strong>&uarr;</strong> button. Remember: in our coordinate system, <em>up</em> means a bigger <code>state.player_y</code>.</p>",
       "starterBody": "state.player_y += 1\n",
       "editorHeight": 6,
@@ -134,8 +151,10 @@
     },
     {
       "id": "down-key",
-      "title": "Down button: do something cool",
+      "tier": "D",
+      "title": "Down button",
       "function": "on_down_key",
+      "areaDescription": "Runs when the player clicks ↓. draw_scene runs again afterwards.",
       "guidance": "<p>Runs when the player clicks the <strong>&darr;</strong> button. Down means a smaller <code>state.player_y</code>.</p>",
       "starterBody": "state.player_y -= 1\n",
       "editorHeight": 6,
@@ -144,6 +163,36 @@
           { "type": "function_runs_clean" }
         ]
       }
+    },
+    {
+      "id": "walls",
+      "tier": "C",
+      "selfCheck": true,
+      "title": "Stop the player at the walls",
+      "crossArea": true,
+      "areaChips": ["on_left_key", "on_right_key", "on_up_key", "on_down_key"],
+      "guidance": "<p>Right now the player can walk off the edge of the canvas. Fix that.</p><p>In each of the four key handlers, check the player's position before moving. If they're already at the edge, don't move them. For example, in <code>on_left_key</code>, only do <code>state.player_x -= 1</code> if <code>state.player_x &gt; 0</code>.</p><p>The canvas runs from <code>0</code> to <code>19</code> in both <code>x</code> and <code>y</code>.</p><p>Tick this card when the player can't walk off any edge.</p>"
+    },
+    {
+      "id": "score",
+      "tier": "A-B",
+      "selfCheck": true,
+      "title": "Add a score",
+      "crossArea": true,
+      "areaChips": ["State", "draw_scene", "on_*_key"],
+      "guidance": "<p>Add a <code>state.score = 0</code> line to the <strong>State</strong> section. In one or more of your key handlers, bump the score (<code>state.score += 1</code>). In <code>draw_scene</code>, draw a row or column of cells that grows with the score.</p><p>Lots of variations possible: score on every press, score only when you hit a target cell, score that resets when you press a particular key. Up to you.</p><p>Tick this card when your score does something visible on the canvas.</p>"
+    },
+    {
+      "id": "freestyle",
+      "tier": "A-B",
+      "selfCheck": true,
+      "title": "Invent something",
+      "freestyle": true,
+      "function": "your_additions",
+      "areaDescription": "Free coding space. Code here runs at the top level after Setup. Add helpers, extra state, new functions, anything.",
+      "guidance": "<p>Your turn. The editor on the right is a blank slate at the top level of your project. You can:</p><ul><li>Define a new helper function (e.g. <code>def draw_creature(x, y):</code>) and call it from <code>draw_scene</code></li><li>Add a new state variable and use it in your handlers</li><li>Compute something fancy using imports (<code>import random</code>, <code>import math</code>)</li><li>Anything else you want to try</li></ul><p>Tick this card when you've built something you're proud of.</p>",
+      "starterBody": "# Your code here. Whatever you write runs at the top level\n# after Setup, before the function definitions.\n",
+      "editorHeight": 8
     }
   ]
 }

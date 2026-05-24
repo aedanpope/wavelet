@@ -73,9 +73,12 @@
                  students can add to. Rendered before the task cards by JS. -->
             <div class="project-setup-host" id="project-setup-host"></div>
 
-            <!-- Task cards stack -->
-            <div class="project-tasks" id="project-tasks">
-                <!-- Task cards rendered dynamically -->
+            <!-- Task content: three bands rendered dynamically.
+                 Band 1: 1:1 task/area pairs (two-column grid).
+                 Band 2: cross-area tasks (full-width cards, no area editor).
+                 Band 3: freestyle task/area pair. -->
+            <div class="project-bands" id="project-bands">
+                <!-- Bands rendered dynamically -->
             </div>
 
             <!-- Extras: any top-level code in an opened file that isn't a known
