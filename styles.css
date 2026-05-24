@@ -2376,6 +2376,16 @@ body.stage-fullscreen-active {
     font-size: 0.95rem;
 }
 
+/* Freestyle editor uses CodeMirror's auto-grow mode (setSize('100%',
+   'auto') in JS). Without this override the inner .CodeMirror-scroll
+   element stamps in a stray scrollbar even when content fits. Hiding
+   overflow is safe because lineWrapping is on (long lines wrap) and
+   the wrapper's height is auto (no fixed vertical clip to scroll
+   inside of). */
+.project-area-freestyle .task-editor .CodeMirror-scroll {
+    overflow: hidden;
+}
+
 /* Line 0 of each task editor is the locked `def fn():` line. Tint it so it
    reads as scaffolding rather than student code. The class is applied via
    CodeMirror.addLineClass(0, 'background', ...) and (..., 'wrap', ...). */
