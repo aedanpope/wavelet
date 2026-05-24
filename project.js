@@ -36,6 +36,11 @@ let currentExtras = ''; // raw source of any unrecognised top-level code from an
 // Other failing tasks get a quieter neutral pill so students aren't drowned
 // in red. Set on every editor change, cleared only when reset.
 let lastEditedTaskId = null;
+// Interval handle for the on_tick() extension hook (1Hz "real-time" loop).
+// Set after each Run, cleared at the start of the next Run so a fresh
+// run replaces the old loop instead of stacking ticks.
+let tickInterval = null;
+const TICK_MS = 1000;
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -800,7 +805,57 @@ async function runProject() {
         applyValidationResult(taskId, result);
     }
 
+    // 8. Start (or restart) the on_tick loop. If the student has defined
+    //    on_tick(), the project calls it once per second so they can build
+    //    real-time things (a wandering creature, a countdown timer).
+    startTickLoop();
+
     finalizeRunStatus();
+}
+
+// Tick loop: drives on_tick() at TICK_MS intervals. Started after every
+// successful Run and torn down at the start of the next one so the loop
+// always reflects the most-recently-loaded code. If the student hasn't
+// defined on_tick the interval just checks-and-skips, cheap.
+function startTickLoop() {
+    stopTickLoop();
+    tickInterval = setInterval(handleTick, TICK_MS);
+}
+
+function stopTickLoop() {
+    if (tickInterval) {
+        clearInterval(tickInterval);
+        tickInterval = null;
+    }
+}
+
+async function handleTick() {
+    if (!executor || !executor.isReady()) return;
+    if (!functionDefinedInPython('on_tick')) return;
+    const py = executor.getPyodide();
+    if (!py.globals.get('_wavelet_call_safely')) return;
+
+    const handlerResult = await callWithAttribution('on_tick');
+    if (!handlerResult.ok) {
+        const taskId = taskIdForFunction(handlerResult.in_function);
+        if (taskId) markTaskError(taskId, handlerResult.error_msg);
+        else displayGlobalError(handlerResult.error_msg);
+        setPlayInfo(handlerResult.output);
+        // Stop the loop on error so we don't spam the same error every second.
+        stopTickLoop();
+        finalizeRunStatus();
+        return;
+    }
+    try { await py.runPythonAsync('clear()'); } catch (_e) { /* clear is best-effort */ }
+    const sceneResult = await callWithAttribution('draw_scene');
+    setPlayInfoFromFrame(handlerResult.output, sceneResult.output);
+    if (!sceneResult.ok) {
+        const taskId = taskIdForFunction(sceneResult.in_function);
+        if (taskId) markTaskError(taskId, sceneResult.error_msg);
+        else displayGlobalError(sceneResult.error_msg);
+        stopTickLoop();
+        finalizeRunStatus();
+    }
 }
 
 function extractPythonError(err) {
@@ -1002,6 +1057,7 @@ async function onKeyPress(direction) {
 // ─── Status / error UI ──────────────────────────────────────────────────
 
 function resetAllStatus() {
+    stopTickLoop();
     setPlayInfo('');
     const host = getSetupHost();
     if (host && host._statusEl) {
