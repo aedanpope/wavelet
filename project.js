@@ -113,6 +113,17 @@ function renderProject() {
                 e.preventDefault();
                 toggleStageFullscreen();
             }
+            return;
+        }
+        // Arrow keys drive the player when the game area has focus, ie. no
+        // editor or form field is currently focused. Lets students play with
+        // the keyboard rather than reaching for the on-screen d-pad once the
+        // project is running.
+        const dirMap = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down' };
+        const dir = dirMap[e.key];
+        if (dir && !e.ctrlKey && !e.metaKey && !e.altKey && !isEditingFocus(document.activeElement)) {
+            e.preventDefault();
+            onKeyPress(dir);
         }
     });
 
@@ -1539,6 +1550,19 @@ function flashSaved() {
         label.classList.remove('saved-flash');
         updateFileLabel();
     }, 1500);
+}
+
+// True when the user's focus is somewhere we shouldn't hijack arrow keys:
+// inside a CodeMirror editor, an input/textarea, or a contenteditable
+// element. The d-pad keyboard binding skips in those cases so cursor
+// navigation in editors still works.
+function isEditingFocus(el) {
+    if (!el || el === document.body) return false;
+    if (el.closest && el.closest('.CodeMirror')) return true;
+    const tag = el.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true;
+    if (el.isContentEditable) return true;
+    return false;
 }
 
 // ─── Stage fullscreen toggle ─────────────────────────────────────────────
