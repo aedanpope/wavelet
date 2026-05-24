@@ -120,7 +120,10 @@
       "editorHeight": 12,
       "validation": {
         "rules": [
-          { "type": "function_runs_clean" }
+          { "type": "state_change", "function": "on_left_key",  "var": "state.player_x", "delta": -1 },
+          { "type": "state_change", "function": "on_right_key", "var": "state.player_x", "delta": 1  },
+          { "type": "state_change", "function": "on_up_key",    "var": "state.player_y", "delta": 1  },
+          { "type": "state_change", "function": "on_down_key",  "var": "state.player_y", "delta": -1 }
         ]
       }
     },

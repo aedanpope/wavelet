@@ -1067,6 +1067,9 @@ async function validateTask(task) {
         } else if (rule.type === 'function_fills_cells') {
             const r = await ruleFunctionFillsCells(task, rule);
             if (!r.pass) return r;
+        } else if (rule.type === 'state_change') {
+            const r = await ruleStateChange(rule);
+            if (!r.pass) return r;
         }
     }
     return { pass: true, kind: 'pass' };
@@ -1159,6 +1162,51 @@ finally:
         return { pass: false, message: err.message };
     } finally {
         await runDrawScene();
+    }
+}
+
+// Behavioural validation: call a function, check that a named state
+// variable changed by the expected delta. Used for the buttons task so
+// an empty on_right_key body fails instead of getting a free ✓.
+//   { type: "state_change", function: "on_left_key",
+//     var: "state.player_x", delta: -1 }
+async function ruleStateChange(rule) {
+    const py = executor.getPyodide();
+    const fnName = rule.function;
+    const varExpr = rule.var;
+    const expected = rule.delta;
+    try {
+        await py.runPythonAsync(`
+_wavelet_state_snapshot = dict(state.__dict__) if 'state' in globals() and hasattr(state, '__dict__') else None
+_wavelet_err = None
+_wavelet_pass = False
+_wavelet_msg = None
+try:
+    _wavelet_before = ${varExpr}
+    ${fnName}()
+    _wavelet_after = ${varExpr}
+    _wavelet_delta = _wavelet_after - _wavelet_before
+    if _wavelet_delta == ${expected}:
+        _wavelet_pass = True
+    else:
+        _wavelet_msg = f"${fnName}() should change ${varExpr} by ${expected}, but it changed by {_wavelet_delta}"
+except Exception as _e:
+    _wavelet_err = repr(_e)
+finally:
+    if _wavelet_state_snapshot is not None:
+        state.__dict__.clear()
+        state.__dict__.update(_wavelet_state_snapshot)
+`);
+        const err = py.globals.get('_wavelet_err');
+        if (err && err !== null) return { pass: false, message: `Crashed: ${err}` };
+        const passed = py.globals.get('_wavelet_pass');
+        if (!passed) {
+            const msg = py.globals.get('_wavelet_msg');
+            return { pass: false, message: msg || `${fnName}() did not change ${varExpr} as expected` };
+        }
+        return { pass: true };
+    } catch (err) {
+        return { pass: false, message: err.message };
     }
 }
 
