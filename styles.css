@@ -1929,14 +1929,18 @@ code {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 400px;
     gap: 0;
-    align-items: start;
+    /* Default align-items: stretch is critical here. With `start`, the
+       sidebar grid cell would only be as tall as its content (~580px),
+       leaving the sticky stage no room to scroll within. With stretch,
+       the sidebar cell matches the row height (the tall left pane), so
+       the sticky stage can stay pinned while the body scrolls. */
 }
 .project-shell-left {
     min-width: 0;     /* keeps grid item from forcing horizontal scroll */
 }
 .project-shell-sidebar {
-    /* The sidebar is the sticky anchor. Its child .project-stage is what
-       actually sticks; the aside just reserves the column. */
+    /* Stretched to the row height by the grid; the sticky .project-stage
+       inside scrolls within that range. */
     padding: 16px 16px 16px 0;
 }
 
