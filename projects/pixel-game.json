@@ -106,13 +106,20 @@
       }
     },
     {
+      "type": "concept",
+      "icon": "🔄",
+      "title": "Updating variables and state",
+      "content": "<p>A variable can be <em>updated</em> by reading its current value, doing some maths, and storing the new value back. The pattern is <code>x = x + 1</code> (read <code>x</code>, add 1, store the new <code>x</code>).</p><p>It works the same way with <code>state</code> attributes:</p><table style='border-collapse:collapse;font-family:Consolas,Monaco,monospace;font-size:0.92rem;margin:8px 0;'><tr><th style='text-align:left;padding:4px 12px 4px 0;color:#475569;font-weight:600;'>Before</th><th style='text-align:left;padding:4px 12px;color:#475569;font-weight:600;'>Run</th><th style='text-align:left;padding:4px 0 4px 12px;color:#475569;font-weight:600;'>After</th></tr><tr><td style='padding:4px 12px 4px 0;'>state.player_x = 10</td><td style='padding:4px 12px;'>state.player_x = state.player_x - 1</td><td style='padding:4px 0 4px 12px;'>state.player_x = 9</td></tr><tr><td style='padding:4px 12px 4px 0;'>state.score = 0</td><td style='padding:4px 12px;'>state.score = state.score + 1</td><td style='padding:4px 0 4px 12px;'>state.score = 1</td></tr></table><p>This is how your key handlers will move the player: read where they are, change it, store the new position back.</p><p style='color:#64748b;font-size:0.92rem;'>Python has a shorthand for this pattern: <code>state.player_x -= 1</code> means the same thing as <code>state.player_x = state.player_x - 1</code>. Either works.</p>",
+      "footer": "Read it, change it, store it back."
+    },
+    {
       "id": "buttons",
       "tier": "D",
       "title": "Make the buttons move the player",
       "areaDescription": "Each handler runs when its arrow button is clicked. draw_scene re-runs automatically afterwards, so the player visibly moves.",
-      "guidance": "<p>The four arrow buttons each call one of these handler functions. <code>on_left_key</code> is already filled in for you, with <code>state.player_x -= 1</code> (subtract one from the player's <code>x</code> position).</p><p>Fill in the other three so each button moves the player one cell:</p><ul><li><code>on_right_key</code>: <em>add</em> one to <code>state.player_x</code></li><li><code>on_up_key</code>: <em>add</em> one to <code>state.player_y</code> (up means a bigger <code>y</code>)</li><li><code>on_down_key</code>: <em>subtract</em> one from <code>state.player_y</code></li></ul><p>The <code>def</code> lines are locked, so you can't accidentally rename them. <strong>Delete the <code>pass</code> line</strong> in each empty function before adding your code, otherwise it will stay there as a leftover (it still works, but it's tidier without it).</p>",
+      "guidance": "<p>The four arrow buttons each call one of these handler functions. <code>on_left_key</code> is already filled in for you, with <code>state.player_x = state.player_x - 1</code> (subtract one from the player's <code>x</code> position).</p><p>Fill in the other three so each button moves the player one cell:</p><ul><li><code>on_right_key</code>: <em>add</em> one to <code>state.player_x</code></li><li><code>on_up_key</code>: <em>add</em> one to <code>state.player_y</code> (up means a bigger <code>y</code>)</li><li><code>on_down_key</code>: <em>subtract</em> one from <code>state.player_y</code></li></ul><p>The <code>def</code> lines are locked, so you can't accidentally rename them. <strong>Delete the <code>pass</code> line</strong> in each empty function before adding your code, otherwise it will stay there as a leftover (it still works, but it's tidier without it).</p>",
       "functions": [
-        {"name": "on_left_key", "starterBody": "state.player_x -= 1"},
+        {"name": "on_left_key", "starterBody": "state.player_x = state.player_x - 1"},
         {"name": "on_right_key", "starterBody": ""},
         {"name": "on_up_key", "starterBody": ""},
         {"name": "on_down_key", "starterBody": ""}
