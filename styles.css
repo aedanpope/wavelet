@@ -1089,11 +1089,14 @@ body {
    Canvas System Styles
    =========================== */
 
-/* Canvas container - responsive sizing */
+/* Wrapper around the canvas element created by canvas-system.js. The
+   wrapper sizes itself to the canvas (which sets its own inline pixel
+   width and height). Layout / centering is left to the parent (project
+   sidebar, scratchpad output panel). The legacy 550px max-width was
+   from when worksheets used canvas; worksheets don't anymore. */
 .canvas-container {
-    width: 100%;
-    max-width: 550px;
-    margin: 0 auto 20px auto;
+    width: fit-content;
+    max-width: 100%;
 }
 
 /* Grid wrapper for canvas + labels */
@@ -1197,10 +1200,6 @@ canvas.grid100 {
 
 /* Responsive canvas */
 @media (max-width: 768px) {
-    .canvas-container {
-        max-width: 90vw;
-    }
-
     canvas.grid3 {
         max-width: 270px;  /* 90px per cell x 3 */
     }
@@ -1997,7 +1996,7 @@ code {
     overflow-y: auto;
     box-sizing: border-box;
 }
-.project-stage--fullscreen .play-info {
+body.stage-fullscreen-active .project-stage--fullscreen .play-info {
     max-width: min(calc(100vh - 280px), 80vw);
     font-size: 1rem;
 }
@@ -2032,7 +2031,7 @@ code {
    When toggled on, the stage breaks out of the sidebar and takes over
    the viewport. Canvas scales up via CSS !important to override the
    inline width/height that canvas-system sets. Esc closes. */
-.project-stage--fullscreen {
+body.stage-fullscreen-active .project-stage--fullscreen {
     position: fixed;
     inset: 0;
     z-index: 1000;
@@ -2053,16 +2052,16 @@ code {
 body.stage-fullscreen-active {
     overflow: hidden;
 }
-.project-stage--fullscreen .project-canvas-wrapper {
+body.stage-fullscreen-active .project-stage--fullscreen .project-canvas-wrapper {
     flex: 0 0 auto;
 }
-.project-stage--fullscreen .project-canvas-wrapper .output {
+body.stage-fullscreen-active .project-stage--fullscreen .project-canvas-wrapper .output {
     background: transparent;
     border: none;
     width: auto;
     height: auto;
 }
-.project-stage--fullscreen .project-canvas-wrapper canvas {
+body.stage-fullscreen-active .project-stage--fullscreen .project-canvas-wrapper canvas {
     /* Largest square that leaves room for the floating controls below
        and the play-info panel above. !important overrides the inline
        width/height set by canvas-system.js. */
@@ -2073,7 +2072,7 @@ body.stage-fullscreen-active {
     border-radius: 6px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
-.project-stage--fullscreen .play-info {
+body.stage-fullscreen-active .project-stage--fullscreen .play-info {
     position: absolute;
     top: 16px;
     left: 50%;
@@ -2081,7 +2080,7 @@ body.stage-fullscreen-active {
     max-width: min(60vw, 540px);
     font-size: 1rem;
 }
-.project-stage--fullscreen .project-controls {
+body.stage-fullscreen-active .project-stage--fullscreen .project-controls {
     position: absolute;
     bottom: 24px;
     left: 0;
@@ -2092,7 +2091,7 @@ body.stage-fullscreen-active {
     gap: 24px;
     width: auto;
 }
-.project-stage--fullscreen .run-project-btn {
+body.stage-fullscreen-active .project-stage--fullscreen .run-project-btn {
     /* Keep Run available (acts as "reset" once project is running) but
        de-emphasised, the dpad is the primary play surface. */
     padding: 8px 18px;
@@ -2102,27 +2101,27 @@ body.stage-fullscreen-active {
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: none;
 }
-.project-stage--fullscreen .run-project-btn:hover {
+body.stage-fullscreen-active .project-stage--fullscreen .run-project-btn:hover {
     background: rgba(255, 255, 255, 0.25);
     transform: none;
     box-shadow: none;
 }
-.project-stage--fullscreen .dpad {
+body.stage-fullscreen-active .project-stage--fullscreen .dpad {
     /* Bigger d-pad for play mode. */
     grid-template-columns: repeat(3, 64px);
     grid-template-rows: repeat(2, 64px);
     gap: 6px;
 }
-.project-stage--fullscreen .dpad-btn {
+body.stage-fullscreen-active .project-stage--fullscreen .dpad-btn {
     font-size: 1.6rem;
 }
 /* Hide chatty status text in play mode, ie. the "Run", "1 task needs
    fixing", "Project running" messages. Score / print() output is still
    shown via the .play-info panel at the top. */
-.project-stage--fullscreen .project-status {
+body.stage-fullscreen-active .project-stage--fullscreen .project-status {
     display: none;
 }
-.project-stage--fullscreen .stage-fullscreen-btn {
+body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn {
     top: 16px;
     right: 16px;
     width: 36px;
@@ -2132,7 +2131,7 @@ body.stage-fullscreen-active {
     color: white;
     border-color: rgba(255, 255, 255, 0.3);
 }
-.project-stage--fullscreen .stage-fullscreen-btn:hover {
+body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:hover {
     background: rgba(255, 255, 255, 0.3);
     color: white;
 }
@@ -2443,6 +2442,12 @@ body.stage-fullscreen-active {
     color: #991b1b;
     font-family: 'Consolas', 'Monaco', monospace;
     font-size: 0.85rem;
+}
+/* Validation messages on the task card are human-readable text, not
+   syntax errors; use the card's font and a slightly softer treatment. */
+.task-card-error {
+    font-family: inherit;
+    line-height: 1.4;
 }
 
 /* Extras panel - read-only stash of unrecognised top-level code from an

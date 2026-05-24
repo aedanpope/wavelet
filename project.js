@@ -286,7 +286,12 @@ function renderPair(task, isFreestyle) {
         cm: null,
         editorEl: areaCard._editorEl,
         statusEl: taskCard._statusEl,
+        // areaErrorEl: syntax/runtime errors that are about the code itself
+        // (shown on the area card next to the editor).
+        // cardErrorEl: validation rule messages (shown at the bottom of the
+        // task card on the left, so the pill in the header stays a tiny ✗).
         errorEl: areaCard._errorEl,
+        cardErrorEl: taskCard._cardErrorEl,
         task,
         isFreestyle,
     });
@@ -307,6 +312,15 @@ function makeTaskCard(task) {
     guidance.className = 'task-guidance';
     guidance.innerHTML = task.guidance || '';
     card.appendChild(guidance);
+
+    // Full error message lives here, at the bottom of the task card, so the
+    // status pill in the header can stay as a tiny ✗ icon. Hidden when the
+    // task is passing or not yet run.
+    const taskCardError = document.createElement('div');
+    taskCardError.className = 'task-error task-card-error';
+    taskCardError.style.display = 'none';
+    card.appendChild(taskCardError);
+    card._cardErrorEl = taskCardError;
 
     return card;
 }
@@ -459,6 +473,12 @@ function renderCrossAreaCard(task) {
     guidance.className = 'task-guidance';
     guidance.innerHTML = task.guidance || '';
     card.appendChild(guidance);
+
+    const taskCardError = document.createElement('div');
+    taskCardError.className = 'task-error task-card-error';
+    taskCardError.style.display = 'none';
+    card.appendChild(taskCardError);
+    card._cardErrorEl = taskCardError;
 
     return card;
 }
@@ -910,6 +930,7 @@ function resetAllStatus() {
     if (host && host._errorEl) host._errorEl.style.display = 'none';
 
     for (const entry of taskEditors.values()) {
+        if (entry.cardErrorEl) entry.cardErrorEl.style.display = 'none';
         // Self-check pills stay as the student left them - they're not reset
         // by a project run.
         if (entry.task.selfCheck) {
@@ -1228,11 +1249,16 @@ function applyValidationResult(taskId, result) {
     if (result.pass) {
         entry.statusEl.className = 'task-status task-status-pass';
         entry.statusEl.textContent = '✓ working';
-        entry.errorEl.style.display = 'none';
+        if (entry.cardErrorEl) entry.cardErrorEl.style.display = 'none';
     } else {
+        // Pill stays a short ✗ marker in the header; full message goes
+        // into the task-card error block at the bottom of the card.
         entry.statusEl.className = 'task-status task-status-fail';
-        entry.statusEl.textContent = '✗ ' + (result.message || 'not yet');
-        entry.errorEl.style.display = 'none';
+        entry.statusEl.textContent = '✗ not yet';
+        if (entry.cardErrorEl) {
+            entry.cardErrorEl.textContent = result.message || 'Not passing yet.';
+            entry.cardErrorEl.style.display = 'block';
+        }
     }
 }
 
