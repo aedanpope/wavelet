@@ -2520,32 +2520,32 @@ body.stage-fullscreen-active {
 }
 
 /* Task card (left column). Keep the .project-task base but drop the
-   connecting left rail - the two-column grid is signal enough. */
+   connecting left rail - the two-column grid is signal enough.
+   The .tier-d / .tier-c / .tier-ab classes are still applied to each
+   card so future teacher views can target them, but no visible styling
+   hangs off them; students don't see tier labels. */
 .project-task-card {
     border-left-width: 4px;
 }
 .project-task.project-task-card::before { display: none; }
 
-/* Tier-coloured left border. Provides at-a-glance "what tier is this?". */
-.project-task-card.tier-d  { border-left-color: #3b82f6; }
-.project-task-card.tier-c  { border-left-color: #8b5cf6; }
-.project-task-card.tier-ab { border-left-color: #f59e0b; }
-
-/* Tier badge - small chip next to the task title. */
-.tier-badge {
+/* "optional" badge: shown on C and A-B task cards in place of the
+   previous tier label, so students know they can skip without feeling
+   they're failing the required core. Tier data itself stays in the
+   JSON for grading-guide use later. */
+.optional-badge {
     display: inline-block;
     font-size: 0.7rem;
-    font-weight: 700;
+    font-weight: 600;
     padding: 2px 8px;
     border-radius: 10px;
-    letter-spacing: 0.04em;
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px dashed #cbd5e1;
+    letter-spacing: 0.02em;
     vertical-align: middle;
-    margin-right: 6px;
+    margin-left: 8px;
 }
-.tier-badge.tier-d  { background: #dbeafe; color: #1e40af; }
-.tier-badge.tier-c  { background: #ede9fe; color: #5b21b6; }
-.tier-badge.tier-ab { background: #fef3c7; color: #92400e; }
-.tier-badge.tier-unknown { background: #f1f5f9; color: #64748b; }
 
 /* Area card (right column). Holds the editor + a "what this is" header. */
 .project-area-card {

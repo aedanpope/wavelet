@@ -280,8 +280,8 @@ function makeTaskHeader(task) {
     const titles = document.createElement('div');
     titles.className = 'project-task-titles';
     titles.innerHTML = `
-        <span class="tier-badge tier-${tierClass(task.tier)}">${escapeHtml(task.tier || '?')}</span>
         <h3 class="task-title">${escapeHtml(task.title)}</h3>
+        ${optionalBadgeHtml(task)}
     `;
     header.appendChild(titles);
 
@@ -404,8 +404,8 @@ function renderCrossAreaCard(task) {
         .map(c => `<span class="area-chip">${escapeHtml(c)}</span>`)
         .join('');
     titles.innerHTML = `
-        <span class="tier-badge tier-${tierClass(task.tier)}">${escapeHtml(task.tier || '?')}</span>
         <h3 class="task-title">${escapeHtml(task.title)}</h3>
+        ${optionalBadgeHtml(task)}
         <div class="area-chips">${chipHtml}</div>
     `;
     header.appendChild(titles);
@@ -429,6 +429,17 @@ function tierClass(tier) {
     if (tier === 'C') return 'c';
     if (tier === 'A-B' || tier === 'AB' || tier === 'A/B') return 'ab';
     return 'unknown';
+}
+
+// Visible badge on task cards. D-tier is the "required core" of the
+// project, so it gets no badge. C and A-B are stretch tasks and show
+// "optional" so students don't feel they have to finish everything.
+// The underlying tier field is still tracked in projectDef for future
+// teacher views (grading guide, completion sweep, etc.).
+function optionalBadgeHtml(task) {
+    const t = task.tier;
+    if (!t || t === 'D') return '';
+    return '<span class="optional-badge" title="Optional — finish the required tasks first if you want">optional</span>';
 }
 
 // ─── Editor init ─────────────────────────────────────────────────────────
