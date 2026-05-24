@@ -1979,6 +1979,29 @@ code {
     overflow-y: auto;
 }
 
+/* Play-info panel: surfaces anything print()ed during the last frame
+   (draw_scene + handler). Cleared on Reset, hidden when empty so it
+   doesn't take space on projects that never print. */
+.play-info {
+    width: 100%;
+    margin: 0;
+    padding: 8px 10px;
+    background: #1e293b;
+    color: #e2e8f0;
+    border-radius: 6px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    max-height: 160px;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+.project-stage--fullscreen .play-info {
+    max-width: min(calc(100vh - 280px), 80vw);
+    font-size: 1rem;
+}
+
 /* Fullscreen toggle: small icon button in the top-right corner of the
    stage. Click expands the stage to fill the viewport in play mode. */
 .stage-fullscreen-btn {

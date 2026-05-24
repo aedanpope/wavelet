@@ -83,7 +83,7 @@ function renderProject() {
     document.getElementById('project-title').textContent = projectDef.title;
     document.getElementById('project-description').textContent = projectDef.description || '';
     document.getElementById('project-intro').innerHTML = projectDef.intro || '';
-    renderSetupCard();
+    buildSetupCard();
     renderBands();
 
     document.getElementById('run-project-btn').addEventListener('click', runProject);
@@ -122,22 +122,35 @@ function renderProject() {
     });
 }
 
-// Walk the JSON tasks in order, group consecutive entries into bands. Concept
-// cards reset the current band - they render full-width between bands.
+// Walk the JSON tasks in order, group consecutive entries into bands.
+// Concept cards reset the current band - they render full-width between
+// bands. A {type:"setup-anchor"} block injects the State card at that
+// position. If no anchor is present, the State card sits at the top of
+// the bands (legacy default).
 function renderBands() {
     const host = document.getElementById('project-bands');
     host.innerHTML = '';
 
     const entries = projectDef.tasks || [];
+    const hasAnchor = entries.some(b => b.type === 'setup-anchor');
+
     let currentBandEl = null;
     let currentBandKind = null;
-
     const closeBand = () => { currentBandEl = null; currentBandKind = null; };
+
+    if (!hasAnchor && setupCardState) {
+        host.appendChild(setupCardState.card);
+    }
 
     for (const block of entries) {
         if (block.type === 'concept') {
             closeBand();
             host.appendChild(window.ProblemRenderer.createConceptElement(block));
+            continue;
+        }
+        if (block.type === 'setup-anchor') {
+            closeBand();
+            if (setupCardState) host.appendChild(setupCardState.card);
             continue;
         }
         const kind = bandFor(block);
@@ -191,9 +204,12 @@ function appendToBand(bandEl, kind, task) {
 
 // ─── Setup card (unchanged shape) ────────────────────────────────────────
 
-function renderSetupCard() {
-    const host = document.getElementById('project-setup-host');
-    host.innerHTML = '';
+// Setup state. The card is built up-front so initTaskEditors can wire
+// CodeMirror; renderBands decides where to insert it (default = at the
+// top, or wherever a setup-anchor block in the JSON places it).
+let setupCardState = null;
+
+function buildSetupCard() {
     const card = document.createElement('article');
     card.className = 'project-task project-setup';
     card.dataset.taskId = '__setup__';
@@ -228,12 +244,23 @@ function renderSetupCard() {
     setupError.style.display = 'none';
     card.appendChild(setupError);
 
-    host.appendChild(card);
+    setupCardState = {
+        card,
+        editorEl,
+        statusEl: header.querySelector('[data-status]'),
+        errorEl: setupError,
+    };
+}
 
-    host._editorEl = editorEl;
-    host._statusEl = header.querySelector('[data-status]');
-    host._errorEl = setupError;
-    host._card = card;
+// Compatibility shim for code that used to read the setup state via
+// document.getElementById('project-setup-host'). Returns an object with
+// the same _editorEl / _statusEl / _errorEl fields the old host had.
+function getSetupHost() {
+    return setupCardState ? {
+        _editorEl: setupCardState.editorEl,
+        _statusEl: setupCardState.statusEl,
+        _errorEl: setupCardState.errorEl,
+    } : null;
 }
 
 // ─── Card rendering ──────────────────────────────────────────────────────
@@ -356,8 +383,9 @@ function makeAreaCard(task, isFreestyle) {
 
     const header = document.createElement('header');
     header.className = 'area-card-header';
+    const sig = areaSignatureFor(task, isFreestyle);
     header.innerHTML = `
-        <code class="area-signature">${escapeHtml(isFreestyle ? '# ' + task.function : 'def ' + task.function + '():')}</code>
+        <code class="area-signature">${escapeHtml(sig)}</code>
         <span class="area-syntax-badge" data-syntax style="display:none;">⚠ syntax error</span>
     `;
     card.appendChild(header);
@@ -424,6 +452,15 @@ function renderCrossAreaCard(task) {
     return card;
 }
 
+function areaSignatureFor(task, isFreestyle) {
+    if (isFreestyle) return '# ' + (task.function || 'your_additions');
+    if (isMultiFunction(task)) {
+        const names = task.functions.map(f => f.name + '()');
+        return '# ' + names.join(', ');
+    }
+    return 'def ' + task.function + '():';
+}
+
 function tierClass(tier) {
     if (tier === 'D') return 'd';
     if (tier === 'C') return 'c';
@@ -439,14 +476,14 @@ function tierClass(tier) {
 function optionalBadgeHtml(task) {
     const t = task.tier;
     if (!t || t === 'D') return '';
-    return '<span class="optional-badge" title="Optional — finish the required tasks first if you want">optional</span>';
+    return '<span class="optional-badge" title="Optional, finish the required tasks first if you want">optional</span>';
 }
 
 // ─── Editor init ─────────────────────────────────────────────────────────
 
 function initTaskEditors() {
     // Setup editor first so it's positioned above the task editors.
-    const setupHost = document.getElementById('project-setup-host');
+    const setupHost = getSetupHost();
     if (setupHost && setupHost._editorEl) {
         setupEditor = CodeMirror(setupHost._editorEl, {
             value: buildSetupSource(projectDef.editablePreamble),
@@ -461,7 +498,7 @@ function initTaskEditors() {
             viewportMargin: Infinity,
         });
         const seedLines = countSeedLines();
-        setupEditor.setSize('100%', '11em');
+        setupEditor.setSize('100%', '12.5em');
         if (seedLines > 0) {
             setupEditor.on('beforeChange', (_cm, change) => {
                 if (change.origin === 'setValue') return;
@@ -479,10 +516,14 @@ function initTaskEditors() {
 
     for (const entry of taskEditors.values()) {
         const { editorEl, task, isFreestyle } = entry;
+        const multi = isMultiFunction(task);
+        const initialValue = isFreestyle
+            ? (task.starterBody || '')
+            : multi
+                ? buildMultiFunctionSource(task.functions)
+                : buildEditorSource(task.function, task.starterBody);
         const cm = CodeMirror(editorEl, {
-            value: isFreestyle
-                ? (task.starterBody || '')
-                : buildEditorSource(task.function, task.starterBody),
+            value: initialValue,
             mode: 'python',
             theme: 'monokai',
             lineNumbers: true,
@@ -493,26 +534,40 @@ function initTaskEditors() {
             lineWrapping: true,
             viewportMargin: Infinity,
         });
+
         if (!isFreestyle) {
-            // Lock line 0 (the `def fn():` line) for non-freestyle tasks.
+            // Lock every line that starts with `def ` (so single-def
+            // tasks lock line 0 and multi-function tasks lock all four
+            // def lines). The check is dynamic, so as the student adds
+            // body lines and pushes the next def down, the right line
+            // stays locked.
             cm.on('beforeChange', (_cm, change) => {
                 if (change.origin === 'setValue') return;
-                if (change.from.line === 0) change.cancel();
+                const ln = cm.getLine(change.from.line) || '';
+                if (ln.startsWith('def ')) change.cancel();
             });
-            cm.addLineClass(0, 'background', 'cm-def-line');
-            cm.addLineClass(0, 'wrap', 'cm-def-line-wrap');
+            const markDefLines = () => {
+                cm.eachLine(line => {
+                    const i = cm.getLineNumber(line);
+                    const isDef = line.text.startsWith('def ');
+                    const op = isDef ? 'addLineClass' : 'removeLineClass';
+                    cm[op](i, 'background', 'cm-def-line');
+                    cm[op](i, 'wrap', 'cm-def-line-wrap');
+                });
+            };
+            markDefLines();
+            cm.on('change', markDefLines);
         }
 
         if (isFreestyle) {
-            // Freestyle editor auto-grows with content rather than overflow-
-            // scrolling. We set a min-height equivalent to the original
-            // editorHeight so a fresh project doesn't start with a tiny box;
-            // after that, every newline extends the editor.
+            // Freestyle editor auto-grows with content rather than
+            // overflow-scrolling. min-height keeps a fresh project from
+            // starting with a tiny box; after that, newlines extend it.
             cm.setSize('100%', 'auto');
             const minLines = task.editorHeight || 6;
             cm.getWrapperElement().style.minHeight = `${minLines * 1.5}em`;
         } else {
-            const heightLines = (task.editorHeight || 6) + 1;
+            const heightLines = (task.editorHeight || 6) + (multi ? task.functions.length : 1);
             cm.setSize('100%', `${heightLines * 1.5}em`);
         }
         cm.on('change', (_cm, change) => {
@@ -535,6 +590,26 @@ function buildEditorSource(fnName, body) {
     return `def ${fnName}():\n${indented}\n`;
 }
 
+// A task with `functions: [...]` hosts multiple function defs in a
+// single editor. Used for things like the four arrow-button handlers,
+// where the student fills in tightly-related bodies side by side.
+function isMultiFunction(task) {
+    return Array.isArray(task.functions) && task.functions.length > 0;
+}
+
+function getTaskFunctionNames(task) {
+    if (task.freestyle) return [];
+    if (isMultiFunction(task)) return task.functions.map(f => f.name);
+    if (task.function) return [task.function];
+    return [];
+}
+
+// Build the editor value for a multi-function area by concatenating each
+// function's def + body, separated by blank lines.
+function buildMultiFunctionSource(funcs) {
+    return funcs.map(f => buildEditorSource(f.name, f.starterBody)).join('\n');
+}
+
 function buildSetupSource(editablePart) {
     const seed = projectDef.setupSeed || '';
     return seed + (editablePart || '');
@@ -552,11 +627,9 @@ function seedLockedLines() {
 }
 
 // Real coding tasks: have an editor (Band 1 or Band 3). Excludes concept
-// cards and Band 2 cross-area tasks.
+// cards, setup-anchor placeholders, and Band 2 cross-area tasks.
 function getCodingTasks() {
-    return (projectDef.tasks || []).filter(t =>
-        t.type !== 'concept' && !t.crossArea
-    );
+    return (projectDef.tasks || []).filter(t => !t.type && !t.crossArea);
 }
 
 // Function-defined tasks only (Band 1). Excludes freestyle (which runs at
@@ -645,6 +718,7 @@ async function runProject() {
 
     // 6. Initial scene render.
     const sceneResult = await callWithAttribution('draw_scene');
+    setPlayInfo(sceneResult.output);
     if (!sceneResult.ok) {
         const taskId = taskIdForFunction(sceneResult.in_function);
         if (taskId) markTaskError(taskId, sceneResult.error_msg);
@@ -682,9 +756,12 @@ function extractPythonError(err) {
 
 async function installAttributionHelper() {
     const py = executor.getPyodide();
-    const knownNames = getFunctionTasks().map(t => t.function);
+    const knownNames = [];
+    for (const t of getFunctionTasks()) knownNames.push(...getTaskFunctionNames(t));
     py.globals.set('_wavelet_known_names', py.toPy(knownNames));
     py.runPython(`
+import sys, io
+
 def _wavelet_call_safely(fn_name):
     known = set(_wavelet_known_names)
     fn = globals().get(fn_name)
@@ -692,10 +769,19 @@ def _wavelet_call_safely(fn_name):
         return {'ok': False,
                 'error_msg': f"'{fn_name}' is not defined yet",
                 'in_function': fn_name,
-                'line': None}
+                'line': None,
+                'output': ''}
+    # Redirect stdout into a buffer so print() calls from inside the
+    # student's function are captured and surfaced in the play-info
+    # panel under the canvas. We restore stdout in the finally so any
+    # unrelated print() (e.g. from validation) goes to the console.
+    old_stdout = sys.stdout
+    buf = io.StringIO()
+    sys.stdout = buf
     try:
         fn()
-        return {'ok': True, 'in_function': None, 'error_msg': None, 'line': None}
+        return {'ok': True, 'in_function': None, 'error_msg': None,
+                'line': None, 'output': buf.getvalue()}
     except Exception as e:
         deepest = fn_name
         deepest_line = None
@@ -710,7 +796,10 @@ def _wavelet_call_safely(fn_name):
         return {'ok': False,
                 'error_msg': f'{prefix}{type(e).__name__}: {e}',
                 'in_function': deepest,
-                'line': deepest_line}
+                'line': deepest_line,
+                'output': buf.getvalue()}
+    finally:
+        sys.stdout = old_stdout
 `);
 }
 
@@ -723,13 +812,34 @@ async function callWithAttribution(fnName) {
         if (typeof autoFlushCanvas !== 'undefined') autoFlushCanvas(py, 0);
         return obj;
     } catch (err) {
-        return { ok: false, error_msg: extractPythonError(err), in_function: fnName };
+        return { ok: false, error_msg: extractPythonError(err), in_function: fnName, output: '' };
     }
+}
+
+// Surface whatever the student's draw_scene (or handlers) print() into
+// the panel below the canvas. Replaces panel content on each call so it
+// always reflects the most recent frame's output. Hidden when empty.
+function setPlayInfo(text) {
+    const panel = document.getElementById('play-info');
+    if (!panel) return;
+    const trimmed = (text || '').replace(/\s+$/, '');
+    if (trimmed) {
+        panel.textContent = trimmed;
+        panel.style.display = '';
+    } else {
+        panel.textContent = '';
+        panel.style.display = 'none';
+    }
+}
+
+// Combines handler output + draw_scene output into a single panel update.
+function setPlayInfoFromFrame(...parts) {
+    setPlayInfo(parts.filter(Boolean).map(s => s.replace(/\s+$/, '')).filter(Boolean).join('\n'));
 }
 
 function taskIdForFunction(fnName) {
     for (const t of getFunctionTasks()) {
-        if (t.function === fnName) return t.id;
+        if (getTaskFunctionNames(t).includes(fnName)) return t.id;
     }
     return null;
 }
@@ -758,12 +868,17 @@ async function onKeyPress(direction) {
         const taskId = taskIdForFunction(handlerResult.in_function);
         if (taskId) markTaskError(taskId, handlerResult.error_msg);
         else displayGlobalError(handlerResult.error_msg);
+        setPlayInfo(handlerResult.output);
         finalizeRunStatus();
         return;
     }
 
     try { await py.runPythonAsync('clear()'); } catch (_e) { /* clear is best-effort */ }
     const sceneResult = await callWithAttribution('draw_scene');
+    // Show both handler and draw_scene output in the panel - handler runs
+    // first (changes state), draw_scene renders that state. Either or both
+    // may have called print().
+    setPlayInfoFromFrame(handlerResult.output, sceneResult.output);
     if (!sceneResult.ok) {
         const taskId = taskIdForFunction(sceneResult.in_function);
         if (taskId) markTaskError(taskId, sceneResult.error_msg);
@@ -775,7 +890,8 @@ async function onKeyPress(direction) {
 // ─── Status / error UI ──────────────────────────────────────────────────
 
 function resetAllStatus() {
-    const host = document.getElementById('project-setup-host');
+    setPlayInfo('');
+    const host = getSetupHost();
     if (host && host._statusEl) {
         host._statusEl.className = 'task-status task-status-pending';
         host._statusEl.textContent = '○ ready';
@@ -803,7 +919,7 @@ function resetAllStatus() {
 }
 
 function setSetupError(msg) {
-    const host = document.getElementById('project-setup-host');
+    const host = getSetupHost();
     if (!host || !host._statusEl) return;
     host._statusEl.className = 'task-status task-status-fail';
     host._statusEl.textContent = '✗ error';
@@ -867,9 +983,16 @@ function assembleProgramSegmented() {
     const fnDefs = [];
     for (const task of getFunctionTasks()) {
         const entry = taskEditors.get(task.id);
-        const src = entry && entry.cm ? entry.cm.getValue() : buildEditorSource(task.function, task.starterBody);
+        let src;
+        if (entry && entry.cm) {
+            src = entry.cm.getValue();
+        } else if (isMultiFunction(task)) {
+            src = buildMultiFunctionSource(task.functions);
+        } else {
+            src = buildEditorSource(task.function, task.starterBody);
+        }
         const syntaxError = checkSyntax(src);
-        fnDefs.push({ taskId: task.id, fn: task.function, src, syntaxError });
+        fnDefs.push({ taskId: task.id, src, syntaxError });
     }
 
     const extrasSrc = (currentExtras && currentExtras.trim()) ? currentExtras : '';
@@ -923,8 +1046,13 @@ async function validateTask(task) {
 
     for (const rule of rules) {
         if (rule.type === 'function_runs_clean') {
-            const r = await ruleFunctionRunsClean(task);
-            if (!r.pass) return r;
+            // Multi-function tasks check every named function so empty
+            // bodies (pass) still register as runnable.
+            const names = getTaskFunctionNames(task);
+            for (const name of names) {
+                const r = await ruleFunctionRunsClean(name);
+                if (!r.pass) return r;
+            }
         } else if (rule.type === 'function_fills_cells') {
             const r = await ruleFunctionFillsCells(task, rule);
             if (!r.pass) return r;
@@ -933,13 +1061,13 @@ async function validateTask(task) {
     return { pass: true, kind: 'pass' };
 }
 
-async function ruleFunctionRunsClean(task) {
+async function ruleFunctionRunsClean(fnName) {
     const py = executor.getPyodide();
     try {
         await py.runPythonAsync(`
 _wavelet_err = None
 try:
-    ${task.function}()
+    ${fnName}()
 except Exception as _e:
     _wavelet_err = repr(_e)
 `);
@@ -1068,9 +1196,14 @@ function assembleFileForDisk() {
 
     getFunctionTasks().forEach((task, idx) => {
         const entry = taskEditors.get(task.id);
-        const src = entry && entry.cm
-            ? entry.cm.getValue()
-            : buildEditorSource(task.function, task.starterBody);
+        let src;
+        if (entry && entry.cm) {
+            src = entry.cm.getValue();
+        } else if (isMultiFunction(task)) {
+            src = buildMultiFunctionSource(task.functions);
+        } else {
+            src = buildEditorSource(task.function, task.starterBody);
+        }
         lines.push(`# Task ${idx + 1}: ${task.title}`);
         lines.push(src.replace(/\s+$/g, ''));
         lines.push('');
@@ -1196,7 +1329,8 @@ function loadFileIntoEditors(text, filename) {
     // Split freestyle section out before parsing the rest.
     const { mainText, freestyleSource } = splitFreestyleSection(text);
 
-    const knownNames = getFunctionTasks().map(t => t.function);
+    const knownNames = [];
+    for (const t of getFunctionTasks()) knownNames.push(...getTaskFunctionNames(t));
     const lockedSet = new Set([
         ...(projectDef.lockedPreamble || []).map(s => s.trim()),
         ...seedLockedLines().map(s => s.trim()),
@@ -1207,7 +1341,19 @@ function loadFileIntoEditors(text, filename) {
     for (const task of getFunctionTasks()) {
         const entry = taskEditors.get(task.id);
         if (!entry || !entry.cm) continue;
-        if (parsed.bodies.has(task.function)) {
+        if (isMultiFunction(task)) {
+            // Rebuild multi-function source from parsed bodies, falling
+            // back to each function's starterBody if it's not in the file.
+            const funcsWithBodies = task.functions.map(f => ({
+                name: f.name,
+                starterBody: parsed.bodies.has(f.name)
+                    ? parsed.bodies.get(f.name)
+                    : f.starterBody,
+            }));
+            const allFound = task.functions.every(f => parsed.bodies.has(f.name));
+            entry.cm.setValue(buildMultiFunctionSource(funcsWithBodies));
+            if (!allFound) missing.push(task.title);
+        } else if (parsed.bodies.has(task.function)) {
             entry.cm.setValue(buildEditorSource(task.function, parsed.bodies.get(task.function)));
         } else {
             entry.cm.setValue(buildEditorSource(task.function, task.starterBody));
@@ -1333,9 +1479,14 @@ function anyEditorDifferentFromStarter() {
     if (setupEditor && setupEditor.getValue() !== buildSetupSource(projectDef.editablePreamble)) return true;
     for (const [, entry] of taskEditors) {
         if (!entry.cm) continue;
-        const starter = entry.isFreestyle
-            ? (entry.task.starterBody || '')
-            : buildEditorSource(entry.task.function, entry.task.starterBody);
+        let starter;
+        if (entry.isFreestyle) {
+            starter = entry.task.starterBody || '';
+        } else if (isMultiFunction(entry.task)) {
+            starter = buildMultiFunctionSource(entry.task.functions);
+        } else {
+            starter = buildEditorSource(entry.task.function, entry.task.starterBody);
+        }
         if (entry.cm.getValue() !== starter) return true;
     }
     return false;

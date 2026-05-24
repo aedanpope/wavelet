@@ -2,7 +2,7 @@
   "id": "pixel-game",
   "title": "Pixel Game",
   "description": "Build a tiny scene that comes alive when you press the arrow buttons.",
-  "intro": "<p>Build your own pixel-game scene that <strong>animates when you press the arrow buttons</strong>. You'll fill in a few small functions, then click <em>Run Project</em> to see them all run together.</p><p>The canvas is a 20&times;20 grid. The <strong>State</strong> section below holds the variables your functions can read and change. The player's position lives there as <code>state.player_x</code> and <code>state.player_y</code>. You can add your own variables below the locked line.</p><p class=\"laptop-only-note\">💻 <strong>This project works best on a laptop.</strong> You'll be using the keyboard a lot.</p>",
+  "intro": "<p>Build your own pixel-game scene that <strong>animates when you press the arrow buttons</strong>. You'll fill in a few small functions, then click <em>Run Project</em> to see them all run together.</p><p class=\"laptop-only-note\">💻 <strong>This project works best on a laptop.</strong> You'll be using the keyboard a lot.</p>",
   "canvas": "GRID20",
   "lockedPreamble": [
     "use_canvas(GRID20)",
@@ -74,6 +74,7 @@
         ]
       }
     },
+    { "type": "setup-anchor" },
     {
       "id": "player",
       "tier": "C",
@@ -105,59 +106,18 @@
       }
     },
     {
-      "id": "left-key",
+      "id": "buttons",
       "tier": "D",
-      "title": "Left button",
-      "function": "on_left_key",
-      "areaDescription": "Runs when the player clicks ←. draw_scene runs again afterwards.",
-      "guidance": "<p>Runs when the player clicks the <strong>&larr;</strong> button. The simplest thing: move the player one cell to the left.</p><p><code>state.player_x -= 1</code> subtracts one from <code>state.player_x</code>. <code>draw_scene()</code> will run again automatically afterwards, so the player visibly moves.</p>",
-      "starterBody": "state.player_x -= 1\n",
-      "editorHeight": 6,
-      "validation": {
-        "rules": [
-          { "type": "function_runs_clean" }
-        ]
-      }
-    },
-    {
-      "id": "right-key",
-      "tier": "D",
-      "title": "Right button",
-      "function": "on_right_key",
-      "areaDescription": "Runs when the player clicks →. draw_scene runs again afterwards.",
-      "guidance": "<p>Runs when the player clicks the <strong>&rarr;</strong> button. Mirror of left.</p>",
-      "starterBody": "state.player_x += 1\n",
-      "editorHeight": 6,
-      "validation": {
-        "rules": [
-          { "type": "function_runs_clean" }
-        ]
-      }
-    },
-    {
-      "id": "up-key",
-      "tier": "D",
-      "title": "Up button",
-      "function": "on_up_key",
-      "areaDescription": "Runs when the player clicks ↑. draw_scene runs again afterwards.",
-      "guidance": "<p>Runs when the player clicks the <strong>&uarr;</strong> button. Remember: in our coordinate system, <em>up</em> means a bigger <code>state.player_y</code>.</p>",
-      "starterBody": "state.player_y += 1\n",
-      "editorHeight": 6,
-      "validation": {
-        "rules": [
-          { "type": "function_runs_clean" }
-        ]
-      }
-    },
-    {
-      "id": "down-key",
-      "tier": "D",
-      "title": "Down button",
-      "function": "on_down_key",
-      "areaDescription": "Runs when the player clicks ↓. draw_scene runs again afterwards.",
-      "guidance": "<p>Runs when the player clicks the <strong>&darr;</strong> button. Down means a smaller <code>state.player_y</code>.</p>",
-      "starterBody": "state.player_y -= 1\n",
-      "editorHeight": 6,
+      "title": "Make the buttons move the player",
+      "areaDescription": "Each handler runs when its arrow button is clicked. draw_scene re-runs automatically afterwards, so the player visibly moves.",
+      "guidance": "<p>The four arrow buttons each call one of these handler functions. <code>on_left_key</code> is already filled in for you, with <code>state.player_x -= 1</code> (subtract one from the player's <code>x</code> position).</p><p>Fill in the other three so each button moves the player one cell:</p><ul><li><code>on_right_key</code>: <em>add</em> one to <code>state.player_x</code></li><li><code>on_up_key</code>: <em>add</em> one to <code>state.player_y</code> (up means a bigger <code>y</code>)</li><li><code>on_down_key</code>: <em>subtract</em> one from <code>state.player_y</code></li></ul><p>The <code>def</code> lines are locked, so you can't accidentally rename them. Type your body line inside each function.</p>",
+      "functions": [
+        {"name": "on_left_key", "starterBody": "state.player_x -= 1"},
+        {"name": "on_right_key", "starterBody": ""},
+        {"name": "on_up_key", "starterBody": ""},
+        {"name": "on_down_key", "starterBody": ""}
+      ],
+      "editorHeight": 12,
       "validation": {
         "rules": [
           { "type": "function_runs_clean" }
@@ -171,7 +131,7 @@
       "title": "Stop the player at the walls",
       "crossArea": true,
       "areaChips": ["on_left_key", "on_right_key", "on_up_key", "on_down_key"],
-      "guidance": "<p>Right now the player can walk off the edge of the canvas. Fix that.</p><p>In each of the four key handlers, check the player's position before moving. If they're already at the edge, don't move them. For example, in <code>on_left_key</code>, only do <code>state.player_x -= 1</code> if <code>state.player_x &gt; 0</code>.</p><p>The canvas runs from <code>0</code> to <code>19</code> in both <code>x</code> and <code>y</code>.</p><p>Tick this card when the player can't walk off any edge.</p>"
+      "guidance": "<p>Right now the player can walk off the edge of the canvas. Fix that.</p><p>In each of the four key handlers (above), check the player's position before moving. If they're already at the edge, don't move them. For example, in <code>on_left_key</code>, only do <code>state.player_x -= 1</code> if <code>state.player_x &gt; 0</code>.</p><p>The canvas runs from <code>0</code> to <code>19</code> in both <code>x</code> and <code>y</code>.</p><p>Tick this card when the player can't walk off any edge.</p>"
     },
     {
       "id": "score",
@@ -180,7 +140,7 @@
       "title": "Add a score",
       "crossArea": true,
       "areaChips": ["State", "draw_scene", "on_*_key"],
-      "guidance": "<p>Add a <code>state.score = 0</code> line to the <strong>State</strong> section. In one or more of your key handlers, bump the score (<code>state.score += 1</code>). In <code>draw_scene</code>, draw a row or column of cells that grows with the score.</p><p>Lots of variations possible: score on every press, score only when you hit a target cell, score that resets when you press a particular key. Up to you.</p><p>Tick this card when your score does something visible on the canvas.</p>"
+      "guidance": "<p>Add a <code>state.score = 0</code> line to the <strong>State</strong> section. In one or more of your key handlers, bump the score (<code>state.score += 1</code>). In <code>draw_scene</code>, <code>print('Score:', state.score)</code> to show it under the canvas.</p><p>Variations: score only when you hit a target cell, score that resets when you press a particular key, score that grows a bar of cells. Up to you.</p><p>Tick this card when your score does something visible.</p>"
     },
     {
       "id": "freestyle",

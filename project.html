@@ -54,11 +54,12 @@
                     <!-- Project intro -->
                     <div class="project-intro" id="project-intro"></div>
 
-                    <!-- Setup card: locked lines (use_canvas, etc.) + editable
-                         globals students can add to. Rendered by JS. -->
-                    <div class="project-setup-host" id="project-setup-host"></div>
-
-                    <!-- Three bands rendered dynamically by project.js -->
+                    <!-- Three bands rendered dynamically by project.js. The
+                         Setup (State) card is also inserted into the band
+                         flow at the position marked by `setup-anchor` in
+                         projects/<id>.json, so it appears where it makes
+                         pedagogical sense (after the first creative task)
+                         even though state stays at the top of the saved file. -->
                     <div class="project-bands" id="project-bands"></div>
 
                     <!-- Extras: any top-level code in an opened file that isn't
@@ -82,6 +83,9 @@
                             <!-- id="output-0" so canvas-system.js can find it -->
                             <div class="output" id="output-0"></div>
                         </div>
+                        <!-- Play-info panel: captures anything print()ed during
+                             the most recent draw_scene call. Hidden when empty. -->
+                        <pre class="play-info" id="play-info" aria-live="polite" style="display: none;"></pre>
                         <div class="project-controls">
                             <button class="run-project-btn" id="run-project-btn">▶ Run Project</button>
                             <div class="dpad" id="dpad" aria-label="Direction pad">
