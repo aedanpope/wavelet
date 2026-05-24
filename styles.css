@@ -2250,6 +2250,25 @@ body.stage-fullscreen-active {
 }
 .project-intro p { margin: 0 0 8px; }
 .project-intro p:last-child { margin-bottom: 0; }
+.project-intro ol,
+.project-intro ul {
+    margin: 6px 0 10px;
+    padding-left: 22px;
+}
+.project-intro li {
+    margin-bottom: 4px;
+    line-height: 1.45;
+}
+.project-intro kbd {
+    background: white;
+    border: 1px solid #c7d2fe;
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.82em;
+    color: #1e293b;
+}
 
 /* Setup card - host wraps it so it gets the same outer padding as the
    tasks stack but stays a single card rather than a list. */
