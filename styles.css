@@ -1913,6 +1913,15 @@ code {
    on its descendants. The shell rounds its top corners on the header
    itself, achieving the same visual without the clipping side-effect.
 */
+
+/* Project pages get a wider container than the default 1200px so the
+   sidebar layout has room to breathe on big monitors. :has() targets
+   only the project page; worksheets, scratchpad, and the home page
+   keep the original 1200px cap. */
+.container:has(.project-shell) {
+    max-width: 1700px;
+}
+
 .project-shell {
     background: white;
     border-radius: 15px;
@@ -1937,6 +1946,13 @@ code {
 }
 .project-shell-left {
     min-width: 0;     /* keeps grid item from forcing horizontal scroll */
+    /* Set up an inline-size container so descendants can adapt to the
+       actual left-pane width rather than guessing from viewport width.
+       The pane is much narrower than the viewport once the sidebar
+       takes its 400px, and viewport-based breakpoints kept firing at
+       thresholds the layout couldn't actually use. */
+    container-type: inline-size;
+    container-name: left-pane;
 }
 .project-shell-sidebar {
     /* Stretched to the row height by the grid; the sticky .project-stage
@@ -2351,10 +2367,10 @@ code {
     gap: 14px;
     align-items: start;
 }
-/* Default: stack each task/area pair vertically. In the sidebar layout
-   the left pane is ~700px wide on a typical laptop, which is enough for
-   a comfortable single column of task prose + editor below it. This is
-   also the worksheet rhythm students already know. */
+
+/* Default: stack each task/area pair vertically. Single column gives
+   each card the full pane width and matches the worksheet rhythm
+   (read prose, then type into the editor below). */
 .band-grid-1, .band-grid-3 {
     grid-template-columns: 1fr;
 }
@@ -2362,35 +2378,25 @@ code {
     grid-template-columns: 1fr;
 }
 
-/* Dynamic stacking decision: switch to side-by-side (task left, area
-   right) when there's both enough horizontal room AND vertical space is
-   scarce enough that stacking would cost too much scroll. */
-@media (min-width: 1400px) and (max-height: 880px) {
-    .band-grid-1, .band-grid-3 {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
-    }
-}
-/* Generous-width viewports: side-by-side regardless of height, because
-   the left pane is wide enough that each card still has comfortable
-   reading width. */
-@media (min-width: 1700px) {
-    .band-grid-1, .band-grid-3 {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+/* Switch to side-by-side when the left pane has room (>=720px) AND
+   vertical scroll cost dominates (viewport <=900px tall). On taller
+   monitors we leave stacking as-is because there's plenty of v-space
+   and stacking is more readable. The container query targets the
+   actual pane width, so the breakpoint fires exactly when the pane
+   can fit two columns, not when the viewport happens to be wide. */
+@media (max-height: 900px) {
+    @container left-pane (min-width: 720px) {
+        .band-grid-1, .band-grid-3 {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+        }
     }
 }
 
-/* When the layout is single-column (sidebar collapsed to top), prefer
-   side-by-side again since the bands now have the full width to work
-   with - same rationale as the wide-viewport branch above. */
-@media (max-width: 1099px) and (min-width: 720px) {
+/* Generous panes (>=1000px): side-by-side regardless of viewport height,
+   because each card still has comfortable reading width (~450px). */
+@container left-pane (min-width: 1000px) {
     .band-grid-1, .band-grid-3 {
         grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
-    }
-}
-/* Very narrow (phones, vertical tablets): always stack. */
-@media (max-width: 719px) {
-    .band-grid-1, .band-grid-3 {
-        grid-template-columns: 1fr;
     }
 }
 
