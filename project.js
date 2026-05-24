@@ -1077,10 +1077,18 @@ async function ruleFunctionRunsClean(fnName) {
     try {
         await py.runPythonAsync(`
 _wavelet_err = None
+# Snapshot the project's state object so a validation call that mutates
+# state (e.g. on_left_key doing state.player_x -= 1) doesn't leave the
+# player in a different position than the student expects.
+_wavelet_state_snapshot = dict(state.__dict__) if 'state' in globals() and hasattr(state, '__dict__') else None
 try:
     ${fnName}()
 except Exception as _e:
     _wavelet_err = repr(_e)
+finally:
+    if _wavelet_state_snapshot is not None:
+        state.__dict__.clear()
+        state.__dict__.update(_wavelet_state_snapshot)
 `);
         const err = py.globals.get('_wavelet_err');
         if (err && err !== null) {
@@ -1100,10 +1108,16 @@ async function ruleFunctionFillsCells(task, rule) {
 _canvas_state['grid'] = {}
 _canvas_state['commands'] = []
 _wavelet_err = None
+# See ruleFunctionRunsClean for why we snapshot state here.
+_wavelet_state_snapshot = dict(state.__dict__) if 'state' in globals() and hasattr(state, '__dict__') else None
 try:
     ${task.function}()
 except Exception as _e:
     _wavelet_err = repr(_e)
+finally:
+    if _wavelet_state_snapshot is not None:
+        state.__dict__.clear()
+        state.__dict__.update(_wavelet_state_snapshot)
 `);
         const err = py.globals.get('_wavelet_err');
         if (err && err !== null) {
