@@ -41,6 +41,10 @@ let lastEditedTaskId = null;
 // run replaces the old loop instead of stacking ticks.
 let tickInterval = null;
 const TICK_MS = 1000;
+// Setup state. The card is built up-front so initTaskEditors can wire
+// CodeMirror; renderBands decides where to insert it (default = at the
+// top, or wherever a setup-anchor block in the JSON places it).
+let setupCardState = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -243,11 +247,6 @@ function appendToBand(bandEl, kind, task) {
 }
 
 // ─── Setup card (unchanged shape) ────────────────────────────────────────
-
-// Setup state. The card is built up-front so initTaskEditors can wire
-// CodeMirror; renderBands decides where to insert it (default = at the
-// top, or wherever a setup-anchor block in the JSON places it).
-let setupCardState = null;
 
 function buildSetupCard() {
     const card = document.createElement('article');
