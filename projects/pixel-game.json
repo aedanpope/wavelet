@@ -2,7 +2,7 @@
   "id": "pixel-game",
   "title": "Pixel Game",
   "description": "Build a tiny scene that comes alive when you press the arrow buttons.",
-  "intro": "<p>Build your own pixel-game scene that <strong>animates when you press the arrow buttons</strong>. You'll fill in a few small functions, then click <em>Run Project</em> to see them all run together.</p><p>The canvas is a 20&times;20 grid. The <strong>State</strong> section below holds the variables your functions can read and change. The player's position lives there as <code>state.player_x</code> and <code>state.player_y</code>. You can add your own variables below the locked line.</p>",
+  "intro": "<p>Build your own pixel-game scene that <strong>animates when you press the arrow keys</strong>. You'll fill in a few small Python functions, run them together, and end up with a tiny game you can save and take home.</p><p><strong>How to work through it:</strong></p><ol><li><strong>Read the first <em>Pixel coordinates</em> card below</strong> so you know how the canvas grid works.</li><li><strong>Pick a task card on the left</strong>, then type your code into the editor on its right.</li><li>Click <strong>▶ Run Project</strong> (in the sidebar) to see your scene on the canvas.</li><li>Watch for the green <strong>✓</strong> tick on each task as you finish it.</li><li>Once the player can move, click <strong>⛶</strong> on the canvas to play in <strong>full screen</strong> (press <kbd>Esc</kbd> to exit).</li><li>Use the <strong>💾 Save</strong> button (or <kbd>Ctrl</kbd>+<kbd>S</kbd>) to save your file so you can keep working on it next class.</li><li>Next class, click <strong>📂 Open</strong> at the top to load your saved file and pick up where you left off.</li></ol><p><strong>A few useful things to know:</strong></p><ul><li>Tasks marked <em>optional</em> are stretch goals, finish the others first.</li><li>The arrow keys on your keyboard work too (when you're not editing code).</li><li>Anything you <code>print()</code> shows up under the canvas, great for showing a score.</li></ul><p class=\"laptop-only-note\">💻 <strong>This project works best on a laptop.</strong> You'll be using the keyboard a lot.</p>",
   "canvas": "GRID20",
   "lockedPreamble": [
     "use_canvas(GRID20)",
@@ -20,8 +20,10 @@
     },
     {
       "id": "corners",
+      "tier": "D",
       "title": "Colour the corners",
       "function": "draw_corners",
+      "areaDescription": "Called from draw_scene. Paint the four corner cells of the canvas.",
       "guidance": "<p>Warm-up: draw a coloured cell in each of the four corners of the canvas.</p><p>The corners are at <code>(0, 0)</code>, <code>(19, 0)</code>, <code>(0, 19)</code>, and <code>(19, 19)</code>. Use <code>draw(x, y, 'colour')</code>, pick whatever colours you like.</p>",
       "starterBody": "draw(0, 0, 'red')\n# add the other three corners\n\n",
       "editorHeight": 6,
@@ -38,8 +40,10 @@
     },
     {
       "id": "border",
+      "tier": "D",
       "title": "Draw a border",
       "function": "draw_border",
+      "areaDescription": "Called from draw_scene. Paint the 76 edge cells of the canvas.",
       "guidance": "<p>A border goes all the way around the edge of the canvas. There are 76 cells in the border, way too many to type one by one. Use <code>for</code> loops instead.</p><p>Tip: you'll need <em>four</em> loops: bottom row, top row, left column, right column. Or one loop with some clever maths!</p>",
       "starterBody": "for x in range(20):\n  draw(x, 0, 'blue')\n# now do the top row, left column, and right column\n\n",
       "editorHeight": 10,
@@ -56,9 +60,12 @@
     },
     {
       "id": "background",
+      "tier": "A-B",
+      "selfCheck": true,
       "title": "Draw the background",
       "function": "draw_background",
-      "guidance": "<p>Time to make the canvas your own. <code>draw_background()</code> is your blank slate: whatever you draw here sits behind the player.</p><p>Start by calling the two functions you've already written (<code>draw_border()</code> and <code>draw_corners()</code>), then add anything else you can think of. A few ideas to get you started:</p><ul><li>A row of coloured rectangles along the bottom for grass or sand</li><li>Rainbow stripes across the middle</li><li>A pattern of dots</li><li>A shape using nested loops, like a triangle, diamond, or letter</li><li>Anything else you can imagine</li></ul><p>There's no automatic check on this one, it's your space to be creative.</p>",
+      "areaDescription": "Called from draw_scene first, so the player sits on top. Free creative space.",
+      "guidance": "<p>Time to make the canvas your own. <code>draw_background()</code> is your blank slate: whatever you draw here sits behind the player.</p><p>Start by calling the two functions you've already written (<code>draw_border()</code> and <code>draw_corners()</code>), then add anything else you can think of. A few ideas to get you started:</p><ul><li>A row of coloured rectangles along the bottom for grass or sand</li><li>Rainbow stripes across the middle</li><li>A pattern of dots</li><li>A shape using nested loops, like a triangle, diamond, or letter</li><li>Anything else you can imagine</li></ul><p>Tick the box on this card when you're happy with your background.</p>",
       "starterBody": "draw_border()\ndraw_corners()\n# add your own stuff! rectangles, stripes, shapes, anything.\n\n",
       "editorHeight": 10,
       "validation": {
@@ -67,12 +74,15 @@
         ]
       }
     },
+    { "type": "setup-anchor" },
     {
       "id": "player",
+      "tier": "C",
       "title": "Draw the player",
       "function": "draw_player",
-      "guidance": "<p>The player lives at <code>state.player_x</code>, <code>state.player_y</code>. The State section starts these at <code>(10, 10)</code>.</p><p>The starter copies those into local <code>x</code> and <code>y</code> so you can tweak them, then draws a single yellow cell. Want a bigger character? Add more <code>draw</code> calls for cells around the centre, like <code>draw(x + 1, y, 'yellow')</code> or <code>draw(x, y + 1, 'red')</code>.</p>",
-      "starterBody": "x = state.player_x\ny = state.player_y\ndraw(x, y, 'yellow')\n",
+      "areaDescription": "Called from draw_scene after draw_background, so the player sits on top.",
+      "guidance": "<p>The player lives at <code>state.player_x</code>, <code>state.player_y</code>. The State section starts these at <code>(10, 10)</code>.</p><p>The starter copies those into local <code>x</code> and <code>y</code> so you can tweak them, then draws a single lime cell. Want a bigger character? Add more <code>draw</code> calls for cells around the centre, like <code>draw(x + 1, y, 'lime')</code> or <code>draw(x, y + 1, 'red')</code>.</p>",
+      "starterBody": "x = state.player_x\ny = state.player_y\ndraw(x, y, 'lime')\n",
       "editorHeight": 8,
       "validation": {
         "rules": [
@@ -82,8 +92,10 @@
     },
     {
       "id": "scene",
+      "tier": "C",
       "title": "Build the scene",
       "function": "draw_scene",
+      "areaDescription": "Runs once on Run, and again after every arrow press. Call your other functions in order.",
       "guidance": "<p>This function runs every time you press a button. Its job is to put the whole picture together by calling your other functions.</p><p>Order matters: later draws appear on top of earlier ones. Background first, player last.</p>",
       "starterBody": "draw_background()\ndraw_player()\n",
       "editorHeight": 6,
@@ -94,56 +106,77 @@
       }
     },
     {
-      "id": "left-key",
-      "title": "Left button: do something cool",
-      "function": "on_left_key",
-      "guidance": "<p>Runs when the player clicks the <strong>&larr;</strong> button. The simplest thing: move the player one cell to the left.</p><p><code>state.player_x -= 1</code> subtracts one from <code>state.player_x</code>. <code>draw_scene()</code> will run again automatically afterwards, so the player visibly moves.</p><p>Want to do something else cool instead? Paint a streak across the canvas, change a colour somewhere, up to you.</p>",
-      "starterBody": "state.player_x -= 1\n",
-      "editorHeight": 6,
+      "type": "concept",
+      "icon": "🔄",
+      "title": "Updating variables and state",
+      "content": "<p>A variable can be <em>updated</em> by reading its current value, doing some maths, and storing the new value back. The pattern is <code>x = x + 1</code> (read <code>x</code>, add 1, store the new <code>x</code>). It works the same way with <code>state</code> attributes.</p><div style='display:flex;flex-direction:column;align-items:center;gap:6px;margin:14px 0;font-family:Consolas,Monaco,monospace;font-size:0.92rem;'><div style='font-family:system-ui,sans-serif;font-size:0.78rem;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;'>Before</div><div style='background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;padding:8px 14px;color:#1e293b;'>state.player_x &nbsp;is&nbsp; <strong>10</strong></div><div style='font-family:system-ui,sans-serif;font-size:0.78rem;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;'>Run this code</div><div style='background:#1e293b;color:#e2e8f0;border-radius:6px;padding:8px 14px;'>state.player_x = state.player_x - 1</div><div style='font-family:system-ui,sans-serif;font-size:0.78rem;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;'>After</div><div style='background:#dcfce7;border:1px solid #86efac;border-radius:6px;padding:8px 14px;color:#14532d;'>state.player_x &nbsp;is&nbsp; <strong>9</strong></div></div><p>This is how your key handlers will move the player: read where they are, change it, store the new position back.</p><p style='color:#64748b;font-size:0.92rem;'>Python has a shorthand for this pattern: <code>state.player_x -= 1</code> means the same thing as <code>state.player_x = state.player_x - 1</code>. Either works.</p>",
+      "footer": "Read it, change it, store it back."
+    },
+    {
+      "id": "buttons",
+      "tier": "D",
+      "title": "Make the buttons move the player",
+      "areaDescription": "Each handler runs when its arrow button is clicked. draw_scene re-runs automatically afterwards, so the player visibly moves.",
+      "guidance": "<p>The four arrow buttons each call one of these handler functions. <code>on_left_key</code> is already filled in for you, with <code>state.player_x = state.player_x - 1</code> (subtract one from the player's <code>x</code> position).</p><p>Fill in the other three so each button moves the player one cell:</p><ul><li><code>on_right_key</code>: <em>add</em> one to <code>state.player_x</code></li><li><code>on_up_key</code>: <em>add</em> one to <code>state.player_y</code> (up means a bigger <code>y</code>)</li><li><code>on_down_key</code>: <em>subtract</em> one from <code>state.player_y</code></li></ul><p>The <code>def</code> lines are locked, so you can't accidentally rename them. <strong>Delete the <code>pass</code> line</strong> in each empty function before adding your code, otherwise it will stay there as a leftover (it still works, but it's tidier without it).</p>",
+      "functions": [
+        {"name": "on_left_key", "starterBody": "state.player_x = state.player_x - 1"},
+        {"name": "on_right_key", "starterBody": ""},
+        {"name": "on_up_key", "starterBody": ""},
+        {"name": "on_down_key", "starterBody": ""}
+      ],
+      "editorHeight": 12,
       "validation": {
         "rules": [
-          { "type": "function_runs_clean" }
+          { "type": "state_change", "function": "on_left_key",  "var": "state.player_x", "delta": -1 },
+          { "type": "state_change", "function": "on_right_key", "var": "state.player_x", "delta": 1  },
+          { "type": "state_change", "function": "on_up_key",    "var": "state.player_y", "delta": 1  },
+          { "type": "state_change", "function": "on_down_key",  "var": "state.player_y", "delta": -1 }
         ]
       }
     },
     {
-      "id": "right-key",
-      "title": "Right button: do something cool",
-      "function": "on_right_key",
-      "guidance": "<p>Runs when the player clicks the <strong>&rarr;</strong> button. Mirror of left, or do something completely different.</p>",
-      "starterBody": "state.player_x += 1\n",
-      "editorHeight": 6,
-      "validation": {
-        "rules": [
-          { "type": "function_runs_clean" }
-        ]
-      }
+      "id": "walls",
+      "tier": "C",
+      "selfCheck": true,
+      "title": "Stop the player at the walls",
+      "crossArea": true,
+      "areaChips": ["on_left_key", "on_right_key", "on_up_key", "on_down_key"],
+      "guidance": "<p>Right now the player can walk off the edge of the canvas. Fix that.</p><p>In each of the four key handlers (above), check the player's position before moving. If they're already at the edge, don't move them. For example, in <code>on_left_key</code>, only do <code>state.player_x -= 1</code> if <code>state.player_x &gt; 0</code>.</p><p>The canvas runs from <code>0</code> to <code>19</code> in both <code>x</code> and <code>y</code>.</p><p>Tick this card when the player can't walk off any edge.</p>"
     },
     {
-      "id": "up-key",
-      "title": "Up button: do something cool",
-      "function": "on_up_key",
-      "guidance": "<p>Runs when the player clicks the <strong>&uarr;</strong> button. Remember: in our coordinate system, <em>up</em> means a bigger <code>state.player_y</code>.</p>",
-      "starterBody": "state.player_y += 1\n",
-      "editorHeight": 6,
-      "validation": {
-        "rules": [
-          { "type": "function_runs_clean" }
-        ]
-      }
+      "id": "score",
+      "tier": "A-B",
+      "selfCheck": true,
+      "title": "Add a score",
+      "crossArea": true,
+      "areaChips": ["State", "draw_scene", "on_*_key"],
+      "guidance": "<p>Add a <code>state.score = 0</code> line to the <strong>State</strong> section. In one or more of your key handlers, bump the score (<code>state.score += 1</code>). In <code>draw_scene</code>, <code>print('Score:', state.score)</code> to show it under the canvas.</p><p>Variations: score only when you hit a target cell, score that resets when you press a particular key, score that grows a bar of cells. Up to you.</p><p>Tick this card when your score does something visible.</p>"
     },
     {
-      "id": "down-key",
-      "title": "Down button: do something cool",
-      "function": "on_down_key",
-      "guidance": "<p>Runs when the player clicks the <strong>&darr;</strong> button. Down means a smaller <code>state.player_y</code>.</p>",
-      "starterBody": "state.player_y -= 1\n",
-      "editorHeight": 6,
-      "validation": {
-        "rules": [
-          { "type": "function_runs_clean" }
-        ]
-      }
+      "type": "concept",
+      "icon": "🔁",
+      "title": "How a key press works",
+      "content": "<p>You might be wondering: I only wrote <code>state.player_x = state.player_x - 1</code> in <code>on_left_key</code>, so how does the player actually <em>move on the canvas</em>? Here's the loop the project runs whenever you press an arrow:</p><div style='display:flex;align-items:stretch;justify-content:center;gap:6px;flex-wrap:wrap;margin:14px 0;font-family:system-ui,sans-serif;'><div style='flex:1;min-width:130px;background:#eef2ff;border:1px solid #c7d2fe;border-radius:8px;padding:10px;text-align:center;font-size:0.85rem;color:#312e81;'><strong>1.</strong> You press <strong>←</strong><br>(or click the arrow button)</div><div style='display:flex;align-items:center;color:#94a3b8;font-size:1.4rem;font-weight:700;'>→</div><div style='flex:1;min-width:130px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px;text-align:center;font-size:0.85rem;color:#14532d;'><strong>2.</strong> The project runs <code>on_left_key()</code><br><em style='color:#15803d;'>your code changes state</em></div><div style='display:flex;align-items:center;color:#94a3b8;font-size:1.4rem;font-weight:700;'>→</div><div style='flex:1;min-width:130px;background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:10px;text-align:center;font-size:0.85rem;color:#713f12;'><strong>3.</strong> The project runs <code>draw_scene()</code> again<br><em style='color:#92400e;'>the project's job, automatic</em></div><div style='display:flex;align-items:center;color:#94a3b8;font-size:1.4rem;font-weight:700;'>→</div><div style='flex:1;min-width:130px;background:#fce7f3;border:1px solid #f9a8d4;border-radius:8px;padding:10px;text-align:center;font-size:0.85rem;color:#831843;'><strong>4.</strong> The canvas redraws<br>You see the player moved</div></div><p>The trick is step 3: <strong>the project runs <code>draw_scene</code> again all by itself after every key press</strong>. Your handler only had to change <code>state.player_x</code>. <code>draw_player</code> then reads the new value and draws the player at its new spot.</p><p>This is why each of your handlers can be just one line: you don't have to draw anything yourself, you just update where the player is. The project takes care of showing the change.</p>",
+      "footer": "You change state. The project redraws."
+    },
+    {
+      "id": "freestyle",
+      "tier": "A-B",
+      "selfCheck": true,
+      "title": "Invent something",
+      "freestyle": true,
+      "function": "your_additions",
+      "areaDescription": "Free coding space. Code here runs at the top level after Setup. Add helpers, extra state, new functions, anything.",
+      "guidance": "<p>Your turn. The editor on the right is a blank slate at the top level of your project. You can:</p><ul><li>Define a new helper function (e.g. <code>def draw_creature(x, y):</code>) and call it from <code>draw_scene</code></li><li>Add a new state variable and use it in your handlers</li><li>Compute something fancy using imports (<code>import random</code>, <code>import math</code>)</li><li>Anything else you want to try</li></ul><p>Tick this card when you've built something you're proud of.</p>",
+      "starterBody": "# Your code here. Whatever you write runs at the top level\n# after Setup, before the function definitions.\n",
+      "editorHeight": 8
+    },
+    {
+      "type": "concept",
+      "icon": "🚀",
+      "title": "Extension ideas",
+      "content": "<p>Done with the core tasks? Here are some ways to take the project further. All of these go in the <strong>Invent something</strong> editor above.</p><h4 style='margin:14px 0 4px;font-size:1rem;color:#1f2937;'>📜 How the project knows when to run your code</h4><p>The project understands a small set of <strong>special function names</strong>. If you define a function with one of these names, the project will call it for you at the right time. Other names (like <code>draw_player</code> or <code>bunny_jump</code>) won't run automatically; you have to call them yourself, usually from inside <code>draw_scene</code>.</p><table style='border-collapse:collapse;font-family:Consolas,Monaco,monospace;font-size:0.85rem;margin:8px 0;width:100%;'><tr><th style='text-align:left;padding:6px 12px 6px 0;color:#475569;font-weight:600;border-bottom:1px solid #e2e8f0;'>Name</th><th style='text-align:left;padding:6px 0 6px 12px;color:#475569;font-weight:600;border-bottom:1px solid #e2e8f0;font-family:system-ui,sans-serif;'>When the project calls it</th></tr><tr><td style='padding:4px 12px 4px 0;color:#1e293b;'>draw_scene()</td><td style='padding:4px 0 4px 12px;font-family:system-ui,sans-serif;color:#475569;'>once at start, and again after every key press</td></tr><tr><td style='padding:4px 12px 4px 0;color:#1e293b;'>on_left_key()</td><td style='padding:4px 0 4px 12px;font-family:system-ui,sans-serif;color:#475569;'>when ← is pressed</td></tr><tr><td style='padding:4px 12px 4px 0;color:#1e293b;'>on_right_key()</td><td style='padding:4px 0 4px 12px;font-family:system-ui,sans-serif;color:#475569;'>when → is pressed</td></tr><tr><td style='padding:4px 12px 4px 0;color:#1e293b;'>on_up_key()</td><td style='padding:4px 0 4px 12px;font-family:system-ui,sans-serif;color:#475569;'>when ↑ is pressed</td></tr><tr><td style='padding:4px 12px 4px 0;color:#1e293b;'>on_down_key()</td><td style='padding:4px 0 4px 12px;font-family:system-ui,sans-serif;color:#475569;'>when ↓ is pressed</td></tr><tr><td style='padding:4px 12px 4px 0;color:#1e293b;'>on_key(key)</td><td style='padding:4px 0 4px 12px;font-family:system-ui,sans-serif;color:#475569;'>when any letter or number key is pressed (the key is passed in)</td></tr><tr><td style='padding:4px 12px 4px 0;color:#1e293b;'>on_tick()</td><td style='padding:4px 0 4px 12px;font-family:system-ui,sans-serif;color:#475569;'>once a second, automatically (good for real-time things)</td></tr></table><p>The last two, <code>on_key</code> and <code>on_tick</code>, unlock the extensions below.</p><h4 style='margin:18px 0 4px;font-size:1rem;color:#1f2937;'>🎮 Multiplayer with WASD</h4><p>Define <code>on_key(key)</code> and use <code>if</code> / <code>elif</code> to decide what each key does. Each press passes in the key as a string, so you can read <code>'w'</code>, <code>'a'</code>, <code>'s'</code>, or <code>'d'</code>:</p><pre style='background:#1e293b;color:#e2e8f0;padding:10px;border-radius:6px;font-size:0.85rem;line-height:1.4;overflow-x:auto;margin:6px 0;'>state.p2_x = 5\nstate.p2_y = 5\n\ndef draw_player2():\n    draw(state.p2_x, state.p2_y, 'magenta')\n\ndef on_key(key):\n    if key == 'w':\n        state.p2_y = state.p2_y + 1\n    elif key == 's':\n        state.p2_y = state.p2_y - 1\n    elif key == 'a':\n        state.p2_x = state.p2_x - 1\n    elif key == 'd':\n        state.p2_x = state.p2_x + 1</pre><p>Then call <code>draw_player2()</code> from <code>draw_scene</code>. Two players, two sets of keys, one screen.</p><h4 style='margin:18px 0 4px;font-size:1rem;color:#1f2937;'>🕐 Real-time things with on_tick</h4><p>Define <code>on_tick()</code>. The project runs it once a second, all on its own (no key press required). Use it for things that should happen continuously:</p><pre style='background:#1e293b;color:#e2e8f0;padding:10px;border-radius:6px;font-size:0.85rem;line-height:1.4;overflow-x:auto;margin:6px 0;'>state.creature_x = 0\n\ndef draw_creature():\n    draw(state.creature_x, 5, 'orange')\n\ndef on_tick():\n    state.creature_x = state.creature_x + 1\n    if state.creature_x &gt; 19:\n        state.creature_x = 0</pre><p>Add <code>draw_creature()</code> to <code>draw_scene</code>. The creature now wanders across the bottom of the canvas all by itself. Great for timers, animations, or enemies that move on their own.</p><h4 style='margin:18px 0 4px;font-size:1rem;color:#1f2937;'>🎲 Random colours and positions</h4><p>Python's <code>random</code> module picks random things for you. It isn't one of the special names above, so you call it yourself from inside your own code:</p><pre style='background:#1e293b;color:#e2e8f0;padding:10px;border-radius:6px;font-size:0.85rem;line-height:1.4;overflow-x:auto;margin:6px 0;'>import random\n\n# A random colour from a list\ncolour = random.choice(['red', 'blue', 'gold', 'hotpink', 'lime'])\n\n# A random cell on the canvas\nx = random.randint(0, 19)\ny = random.randint(0, 19)\ndraw(x, y, colour)</pre><p>Use it to scatter dots in your background, spawn random targets, or pick a random colour for the player every time they move.</p><h4 style='margin:18px 0 4px;font-size:1rem;color:#1f2937;'>💡 Other ideas</h4><ul><li><strong>A target:</strong> draw a target cell at a random position. When the player lands on it, bump the score and move the target.</li><li><strong>A trail:</strong> save every cell the player has visited in a list, draw them all in <code>draw_background</code>.</li><li><strong>Levels:</strong> count moves in <code>state.moves</code>. Every 20 moves, change the background colour.</li><li><strong>Enemies:</strong> draw a second character at a fixed spot. End the game (<code>print('Game over')</code>) if the player lands on it.</li></ul>",
+      "footer": "Pick one, or invent your own."
     }
   ]
 }

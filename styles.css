@@ -1089,11 +1089,14 @@ body {
    Canvas System Styles
    =========================== */
 
-/* Canvas container - responsive sizing */
+/* Wrapper around the canvas element created by canvas-system.js. The
+   wrapper sizes itself to the canvas (which sets its own inline pixel
+   width and height). Layout / centering is left to the parent (project
+   sidebar, scratchpad output panel). The legacy 550px max-width was
+   from when worksheets used canvas; worksheets don't anymore. */
 .canvas-container {
-    width: 100%;
-    max-width: 550px;
-    margin: 0 auto 20px auto;
+    width: fit-content;
+    max-width: 100%;
 }
 
 /* Grid wrapper for canvas + labels */
@@ -1197,10 +1200,6 @@ canvas.grid100 {
 
 /* Responsive canvas */
 @media (max-width: 768px) {
-    .canvas-container {
-        max-width: 90vw;
-    }
-
     canvas.grid3 {
         max-width: 270px;  /* 90px per cell x 3 */
     }
@@ -1868,7 +1867,7 @@ code {
     width: 100%;
 }
 
-/* Column 1: code editor — width set by JS to fit content, never grows beyond that */
+/* Column 1: code editor - width set by JS to fit content, never grows beyond that */
 .trace-card-editor-wrap {
     flex: 0 0 auto;
     min-width: 215px;
@@ -1877,7 +1876,7 @@ code {
     border: 1px solid #c7d2fe;
 }
 
-/* Column 2: variables — fills remaining space; height grows via JS ratchet, never shrinks */
+/* Column 2: variables - fills remaining space; height grows via JS ratchet, never shrinks */
 .trace-card-vars-col {
     flex: 3 0 130px;
     min-width: 130px;
@@ -1892,7 +1891,7 @@ code {
     gap: 5px;
 }
 
-/* Column 3: output — fills remaining space; height grows via JS ratchet, never shrinks */
+/* Column 3: output - fills remaining space; height grows via JS ratchet, never shrinks */
 .trace-card-output-col {
     flex: 2 0 100px;
     min-width: 100px;
@@ -1906,32 +1905,257 @@ code {
 /* ── Project page ────────────────────────────────────────────── */
 
 /* Sticky stage at the top of the page: canvas + run + dpad + status */
+/* ─── Project shell: sidebar layout (variation C) ───────────────────────
+   The project page uses a custom shell rather than the standard
+   .worksheet-interface card, because it needs a sticky sidebar and the
+   .worksheet-interface { overflow: hidden } rule cancels position:sticky
+   on its descendants. The shell rounds its top corners on the header
+   itself, achieving the same visual without the clipping side-effect.
+*/
+
+/* Project pages get a wider container than the default 1200px so the
+   sidebar layout has room to breathe on big monitors. :has() targets
+   only the project page; worksheets, scratchpad, and the home page
+   keep the original 1200px cap. */
+.container:has(.project-shell) {
+    max-width: 1700px;
+}
+
+.project-shell {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+.project-shell-header {
+    border-radius: 15px 15px 0 0;
+}
+
+/* Two-column shell: scrollable main on the left, sticky sidebar on the
+   right with canvas + Run + d-pad. Collapses to single column with
+   the sidebar moved on top below a width threshold (see media query). */
+.project-shell-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 400px;
+    gap: 0;
+    /* Default align-items: stretch is critical here. With `start`, the
+       sidebar grid cell would only be as tall as its content (~580px),
+       leaving the sticky stage no room to scroll within. With stretch,
+       the sidebar cell matches the row height (the tall left pane), so
+       the sticky stage can stay pinned while the body scrolls. */
+}
+.project-shell-left {
+    min-width: 0;     /* keeps grid item from forcing horizontal scroll */
+    /* Set up an inline-size container so descendants can adapt to the
+       actual left-pane width rather than guessing from viewport width.
+       The pane is much narrower than the viewport once the sidebar
+       takes its 400px, and viewport-based breakpoints kept firing at
+       thresholds the layout couldn't actually use. */
+    container-type: inline-size;
+    container-name: left-pane;
+}
+.project-shell-sidebar {
+    /* Stretched to the row height by the grid; the sticky .project-stage
+       inside scrolls within that range. */
+    padding: 16px 16px 16px 0;
+}
+
 .project-stage {
     position: sticky;
-    top: 0;
-    z-index: 10;
+    top: 16px;
     background: #f1f3f5;
-    border-bottom: 1px solid #dee2e6;
-    padding: 16px 24px;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 24px;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    gap: 12px;
+    /* Constrain vertical so the sidebar fits within the viewport on small
+       laptops; canvas + controls scroll internally if they overflow.
+       The sticky position also acts as the positioning context for the
+       absolute fullscreen toggle button in the corner. */
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+}
+
+/* Play-info panel: surfaces anything print()ed during the last frame
+   (draw_scene + handler). Cleared on Reset, hidden when empty so it
+   doesn't take space on projects that never print. */
+.play-info {
+    width: 100%;
+    margin: 0;
+    padding: 8px 10px;
+    background: #1e293b;
+    color: #e2e8f0;
+    border-radius: 6px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    max-height: 160px;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+body.stage-fullscreen-active .project-stage--fullscreen .play-info {
+    max-width: min(calc(100vh - 280px), 80vw);
+    font-size: 1rem;
+}
+
+/* Fullscreen toggle: small icon button in the top-right corner of the
+   stage. Click expands the stage to fill the viewport in play mode. */
+.stage-fullscreen-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    color: #475569;
+    font-size: 0.95rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transition: background 0.15s, color 0.15s;
+}
+.stage-fullscreen-btn:hover {
+    background: white;
+    color: #1e293b;
+}
+
+/* ── Fullscreen play mode ────────────────────────────────────────────
+   When toggled on, the stage breaks out of the sidebar and takes over
+   the viewport. Canvas scales up via CSS !important to override the
+   inline width/height that canvas-system sets. Esc closes. */
+body.stage-fullscreen-active .project-stage--fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    margin: 0;
+    border-radius: 0;
+    border: none;
+    background: #0f172a;
+    padding: 0;
+    max-height: none;
+    overflow: hidden;
+    /* Center the canvas in the viewport; controls and play-info float to
+       fixed positions so they don't push the canvas off-center. */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+}
+body.stage-fullscreen-active {
+    overflow: hidden;
+}
+body.stage-fullscreen-active .project-stage--fullscreen .project-canvas-wrapper {
+    flex: 0 0 auto;
+}
+body.stage-fullscreen-active .project-stage--fullscreen .project-canvas-wrapper .output {
+    background: transparent;
+    border: none;
+    width: auto;
+    height: auto;
+}
+body.stage-fullscreen-active .project-stage--fullscreen .project-canvas-wrapper canvas {
+    /* Largest square that leaves room for:
+       - the floating d-pad below (134px tall + 24px padding + ~50px
+         drop-shadow extending past the canvas bottom)
+       - the play-info panel above (~80px)
+       Canvas is vertically centered, so we subtract twice the larger
+       margin from viewport height to avoid the shadow / dpad collision.
+       !important overrides the inline width/height set by canvas-system.js. */
+    width: min(calc(100vh - 420px), calc(100vw - 80px)) !important;
+    height: min(calc(100vh - 420px), calc(100vw - 80px)) !important;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    border-radius: 6px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+body.stage-fullscreen-active .project-stage--fullscreen .play-info {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: min(60vw, 540px);
+    font-size: 1rem;
+}
+body.stage-fullscreen-active .project-stage--fullscreen .project-controls {
+    position: absolute;
+    bottom: 24px;
+    left: 0;
+    right: 0;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 24px;
+    width: auto;
+}
+body.stage-fullscreen-active .project-stage--fullscreen .run-project-btn {
+    /* Keep Run available (acts as "reset" once project is running) but
+       de-emphasised, the dpad is the primary play surface. */
+    padding: 8px 18px;
+    font-size: 0.9rem;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: none;
+}
+body.stage-fullscreen-active .project-stage--fullscreen .run-project-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: none;
+    box-shadow: none;
+}
+body.stage-fullscreen-active .project-stage--fullscreen .dpad {
+    /* Bigger d-pad for play mode. */
+    grid-template-columns: repeat(3, 64px);
+    grid-template-rows: repeat(2, 64px);
+    gap: 6px;
+}
+body.stage-fullscreen-active .project-stage--fullscreen .dpad-btn {
+    font-size: 1.6rem;
+}
+/* Hide chatty status text in play mode, ie. the "Run", "1 task needs
+   fixing", "Project running" messages. Score / print() output is still
+   shown via the .play-info panel at the top. */
+body.stage-fullscreen-active .project-stage--fullscreen .project-status {
+    display: none;
+}
+body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn {
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
 }
 
 .project-canvas-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
 }
 
-/* When the project canvas isn't initialised yet, show a placeholder block. */
+/* When the project canvas isn't initialised yet, show a placeholder block
+   matching the canvas size so there's no jump when it loads. GRID20 at
+   15px/cell = 300px square. */
 .project-canvas-wrapper .output {
     background: white;
     border: 2px dashed #ced4da;
     border-radius: 8px;
-    min-width: 480px;
-    min-height: 480px;
+    width: 300px;
+    height: 300px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1944,13 +2168,16 @@ code {
     border: none;
     min-width: 0;
     min-height: 0;
+    width: auto;
+    height: auto;
 }
 
 .project-controls {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
+    width: 100%;
 }
 
 .run-project-btn {
@@ -2034,19 +2261,40 @@ code {
 
 /* Intro prose */
 .project-intro {
-    padding: 20px 28px;
+    padding: 20px;
+    margin: 16px 16px 0;
     background: linear-gradient(135deg, #eef2ff, #e0e7ff);
-    border-bottom: 1px solid #c7d2fe;
+    border: 1px solid #c7d2fe;
+    border-radius: 10px;
     color: #1e293b;
     line-height: 1.5;
 }
 .project-intro p { margin: 0 0 8px; }
 .project-intro p:last-child { margin-bottom: 0; }
+.project-intro ol,
+.project-intro ul {
+    margin: 6px 0 10px;
+    padding-left: 22px;
+}
+.project-intro li {
+    margin-bottom: 4px;
+    line-height: 1.45;
+}
+.project-intro kbd {
+    background: white;
+    border: 1px solid #c7d2fe;
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.82em;
+    color: #1e293b;
+}
 
-/* Setup card — host wraps it so it gets the same outer padding as the
+/* Setup card - host wraps it so it gets the same outer padding as the
    tasks stack but stays a single card rather than a list. */
 .project-setup-host {
-    padding: 20px 28px 0;
+    padding: 20px 20px 0;
 }
 .project-setup .setup-number {
     background: #6b7280;     /* greyer than the task circles to read as "config" */
@@ -2154,7 +2402,7 @@ code {
 
 /* Editor frame visually unifies the locked def line with the body editor.
    Uses the monokai background so the def line and editor read as one
-   continuous code surface — only the inability to click in cues that the
+   continuous code surface - only the inability to click in cues that the
    def line is fixed. */
 .task-editor-frame {
     background: #272822;          /* monokai bg, matches the editor below */
@@ -2166,6 +2414,16 @@ code {
 .task-editor .CodeMirror {
     height: auto;
     font-size: 0.95rem;
+}
+
+/* Freestyle editor uses CodeMirror's auto-grow mode (setSize('100%',
+   'auto') in JS). Without this override the inner .CodeMirror-scroll
+   element stamps in a stray scrollbar even when content fits. Hiding
+   overflow is safe because lineWrapping is on (long lines wrap) and
+   the wrapper's height is auto (no fixed vertical clip to scroll
+   inside of). */
+.project-area-freestyle .task-editor .CodeMirror-scroll {
+    overflow: hidden;
 }
 
 /* Line 0 of each task editor is the locked `def fn():` line. Tint it so it
@@ -2189,12 +2447,18 @@ code {
     font-family: 'Consolas', 'Monaco', monospace;
     font-size: 0.85rem;
 }
+/* Validation messages on the task card are human-readable text, not
+   syntax errors; use the card's font and a slightly softer treatment. */
+.task-card-error {
+    font-family: inherit;
+    line-height: 1.4;
+}
 
-/* Extras panel — read-only stash of unrecognised top-level code from an
+/* Extras panel - read-only stash of unrecognised top-level code from an
    opened file. Shown only when extras exist; they still run as part of the
    project and are written back unchanged on save. */
 .project-extras {
-    margin: 0 28px 30px;
+    margin: 0 20px 30px;
     background: #f8f9fa;
     border: 1px solid #dee2e6;
     border-radius: 8px;
@@ -2229,28 +2493,268 @@ code {
 }
 
 /* Narrow viewports: stack canvas above controls */
-@media (max-width: 768px) {
-    .project-stage {
+/* Narrow viewport: collapse the sidebar above the main content. The
+   stage stops being sticky, since stacking-then-sticky would just eat
+   the whole viewport. */
+@media (max-width: 1099px) {
+    .project-shell-main {
         grid-template-columns: 1fr;
+    }
+    .project-shell-sidebar {
+        padding: 16px;
+        order: -1;
+    }
+    .project-stage {
         position: static;
+        max-height: none;
     }
     .project-canvas-wrapper .output {
+        width: auto;
+        height: auto;
         min-width: 0;
         min-height: 360px;
     }
-    .project-controls {
-        align-items: center;
-    }
-    .project-tasks,
+}
+
+/* Phone-sized: shrink padding on the inner content blocks. */
+@media (max-width: 768px) {
+    .project-bands,
     .project-intro,
     .project-setup-host,
     .project-extras {
-        margin-left: 16px;
-        margin-right: 16px;
-        padding-left: 16px;
-        padding-right: 16px;
+        margin-left: 8px;
+        margin-right: 8px;
+        padding-left: 8px;
+        padding-right: 8px;
     }
 }
+
+/* ─── Two-column project layout (bands) ─────────────────────────────────
+   Tasks live in the left column (intent), code areas in the right column
+   (mechanics). Bands group consecutive tasks of the same kind:
+     Band 1 - 1:1 task/area pairs.
+     Band 2 - cross-area tasks (one column, no editor).
+     Band 3 - freestyle task/area pair.
+*/
+
+.project-bands {
+    padding: 20px 20px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+.project-band {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.band-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 2px 0;
+    border-bottom: 1px dashed #cbd5e1;
+}
+.project-band-2 .band-label { color: #5b21b6; border-color: #c4b5fd; }
+.project-band-3 .band-label { color: #92400e; border-color: #fcd34d; }
+
+.band-grid {
+    display: grid;
+    gap: 14px;
+    align-items: start;
+}
+
+/* Default: stack each task/area pair vertically. Single column gives
+   each card the full pane width and matches the worksheet rhythm
+   (read prose, then type into the editor below). */
+.band-grid-1, .band-grid-3 {
+    grid-template-columns: 1fr;
+}
+.band-grid-2 {
+    grid-template-columns: 1fr;
+}
+
+/* Switch to side-by-side when the left pane has room (>=720px) AND
+   vertical scroll cost dominates (viewport <=900px tall). On taller
+   monitors we leave stacking as-is because there's plenty of v-space
+   and stacking is more readable. The container query targets the
+   actual pane width, so the breakpoint fires exactly when the pane
+   can fit two columns, not when the viewport happens to be wide. */
+@media (max-height: 900px) {
+    @container left-pane (min-width: 720px) {
+        .band-grid-1, .band-grid-3 {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+        }
+    }
+}
+
+/* Generous panes (>=1000px): side-by-side regardless of viewport height,
+   because each card still has comfortable reading width (~450px). */
+@container left-pane (min-width: 1000px) {
+    .band-grid-1, .band-grid-3 {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+    }
+}
+
+/* Task card (left column). Keep the .project-task base but drop the
+   connecting left rail - the two-column grid is signal enough.
+   The .tier-d / .tier-c / .tier-ab classes are still applied to each
+   card so future teacher views can target them, but no visible styling
+   hangs off them; students don't see tier labels. */
+.project-task-card {
+    border-left-width: 4px;
+}
+.project-task.project-task-card::before { display: none; }
+
+/* "optional" badge: shown on C and A-B task cards in place of the
+   previous tier label, so students know they can skip without feeling
+   they're failing the required core. Tier data itself stays in the
+   JSON for grading-guide use later. */
+/* Task number prefix on titles ("1. Colour the corners"). Numbered by
+   the renderer so status messages can reference tasks ("task 3"). */
+.task-number-prefix {
+    color: #94a3b8;
+    font-weight: 500;
+    margin-right: 4px;
+}
+/* Status bar message when there's an "active" failing task; quieter
+   than the old "✗ N tasks need fixing" red wall. */
+.status-keep-going {
+    color: #475569;
+}
+
+.optional-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px dashed #cbd5e1;
+    letter-spacing: 0.02em;
+    vertical-align: middle;
+    margin-left: 8px;
+}
+
+/* Area card (right column). Holds the editor + a "what this is" header. */
+.project-area-card {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-left: 4px solid #14b8a6;
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.project-area-freestyle {
+    border-left-color: #f59e0b;
+    background: #fffbeb;
+}
+.area-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+.area-signature {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.92rem;
+    color: #1e293b;
+    background: #f1f5f9;
+    padding: 4px 8px;
+    border-radius: 4px;
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+.project-area-freestyle .area-signature {
+    background: #fef3c7;
+    color: #92400e;
+}
+.area-description {
+    font-size: 0.82rem;
+    color: #64748b;
+    font-style: italic;
+    line-height: 1.4;
+}
+.area-syntax-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fcd34d;
+    white-space: nowrap;
+}
+
+/* Self-check pill: a clickable button that toggles between unchecked and
+   checked. Outlined dashed border to read as "student-confirmed" rather
+   than a solid validated tick. */
+.task-status-selfcheck {
+    background: transparent;
+    color: #16a34a;
+    border: 1.5px dashed #16a34a;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.12s, color 0.12s;
+}
+.task-status-selfcheck:hover {
+    background: #f0fdf4;
+}
+.task-status-selfcheck.checked {
+    background: #16a34a;
+    color: white;
+    border-style: solid;
+}
+.task-status-selfcheck .pill-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    opacity: 0.85;
+    margin-left: 2px;
+}
+
+/* Cross-area task card (Band 2). Full-width, no editor partner. */
+.project-cross-area {
+    border-left-color: #8b5cf6;
+    background: #faf5ff;
+}
+.project-cross-area .project-task-titles {
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.area-chips {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-left: auto;
+}
+.area-chip {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.7rem;
+    background: #ede9fe;
+    color: #5b21b6;
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: 1px solid #c4b5fd;
+}
+
+/* Laptop-only notice inside the project intro. */
+.project-intro .laptop-only-note {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #eef2ff;
+    border-left: 3px solid #6366f1;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #312e81;
+}
+
 /* ─── Spec table panel ─── */
 .spec-panel {
     background: #f8fafc;
