@@ -1125,7 +1125,7 @@ function finalizeRunStatus() {
         document.getElementById('status-jump-btn').addEventListener('click', scrollToActiveTask);
         return;
     }
-    status.innerHTML = '✓ Project running. Try the arrow buttons below the canvas!';
+    status.innerHTML = '✓ Project running. Try the arrow buttons (or your keyboard arrow keys).';
 }
 
 function scrollToActiveTask() {
