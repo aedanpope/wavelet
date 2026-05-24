@@ -503,8 +503,18 @@ function initTaskEditors() {
             cm.addLineClass(0, 'wrap', 'cm-def-line-wrap');
         }
 
-        const heightLines = (task.editorHeight || 6) + (isFreestyle ? 0 : 1);
-        cm.setSize('100%', `${heightLines * 1.5}em`);
+        if (isFreestyle) {
+            // Freestyle editor auto-grows with content rather than overflow-
+            // scrolling. We set a min-height equivalent to the original
+            // editorHeight so a fresh project doesn't start with a tiny box;
+            // after that, every newline extends the editor.
+            cm.setSize('100%', 'auto');
+            const minLines = task.editorHeight || 6;
+            cm.getWrapperElement().style.minHeight = `${minLines * 1.5}em`;
+        } else {
+            const heightLines = (task.editorHeight || 6) + 1;
+            cm.setSize('100%', `${heightLines * 1.5}em`);
+        }
         cm.on('change', (_cm, change) => {
             if (change.origin !== 'setValue') markDirty();
         });
