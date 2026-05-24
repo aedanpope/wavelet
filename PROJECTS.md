@@ -89,10 +89,24 @@ In a worksheet, each problem is a self-contained editor with a single right answ
 
 ### How tasks reference coding areas
 
-- A task always **names the function or editor it's about** (`function: "draw_corners"` in the JSON).
-- A task's `guidance` should explain *what to put in that area* (and optionally why, and what success looks like).
-- A task can declare validation rules that run against that area only (e.g. `function_fills_cells` runs `draw_corners` in isolation on a hidden canvas).
-- Open-ended tasks ("decorate the background", "make the up button do something cool") still reference a specific editor; they just relax the validation to `function_runs_clean` (does it execute without an error).
+- A task always **names the function(s) or editor(s) it's about** (`function: "draw_corners"` in the JSON, or `functions: ["on_left_key", "on_right_key", "on_up_key", "on_down_key"]` for a cross-area task).
+- A task's `guidance` should explain *what to put in those areas* (and optionally why, and what success looks like).
+- A task can declare validation rules that run against the named area(s), or behavioural rules that check whole-project state after simulated events.
+- Open-ended tasks ("decorate the background", "make the up button do something cool") still reference at least one specific editor; they just relax the validation to `function_runs_clean` (does it execute without an error) or rely on a self-check tick (see "Status pills" below).
+
+### Task : area cardinality
+
+The 1:1 case (one task -> one area) is the default and the right shape for almost all D-tier work. The model deliberately allows other cardinalities for higher-tier tasks:
+
+| Cardinality | Example | Tier fit |
+|---|---|---|
+| **1 task -> 1 area** | "Colour the corners" edits only `draw_corners` | D (always), most C |
+| **Many tasks -> 1 area** | Same `draw_background` editor with three tasks pointing at it: (D) "draw a row at the bottom", (C) "use a `for` loop to fill a stripe", (A-B) "make it your own" | Lets a single area carry a progressive ladder |
+| **1 task -> many areas** | "Stop the player at the walls" edits all four `on_*_key` bodies | C+ and A-B only |
+| **1 task -> 0 areas** | "Read the coordinate card, then tick when ready" | Pacing checkpoints for D students |
+| **0 tasks -> 1 area** | The freestyle "your additions" editor with no task pointing at it | Pure A-B surface |
+
+**Rule of thumb:** D-tier tasks stay strictly 1:1. Cross-area or many-to-one is reserved for C-tier and above, and the task card must list every area it touches as chips so the student knows where to type.
 
 ---
 
@@ -143,11 +157,13 @@ A-B examples in Pixel Game: "Draw the background" (blank-slate creative decorati
 
 | Tier | Typical validation rules | Failure UX |
 |---|---|---|
-| D | `function_fills_cells` with `exact: true`, `solution_code`, `function_spec` | Green tick on completion, red box with diff if wrong |
-| C | `function_fills_cells` with `exact: false`, `output_contains`, `function_runs_clean` + a structural requirement (`code_contains "for"`) | Green tick or "your code ran, here's what it drew" |
-| A-B | `function_runs_clean` only | Green tick on any runnable body, including `pass` |
+| D | `function_fills_cells` with `exact: true`, `solution_code`, `function_spec` | Green validated tick on completion, red box with diff if wrong |
+| C | `function_fills_cells` with `exact: false`, `output_contains`, `function_runs_clean` + a structural requirement (`code_contains "for"`); **behavioural rules** for cross-area tasks (e.g. "after `on_left_key`, `state.player_x` decreased") | Green tick or "your code ran, here's what it drew" |
+| A-B | `function_runs_clean` paired with a self-check tick | Self-checked tick on student confirmation; runtime errors surfaced on the area card |
 
-The `function_runs_clean` rule passes on an empty body so that an in-progress creative slot is not flagged red. This matches the worksheet rule of pairing a requirement with a correctness check, *except* that for creative tasks there is no correctness check, by design.
+The `function_runs_clean` rule passes on an empty body so that an in-progress creative slot is not flagged red. This matches the worksheet rule of pairing a requirement with a correctness check, *except* that for creative tasks there is no automatic correctness check, by design.
+
+**Cross-area tasks** validate against whole-project behaviour, not a single function's output. Rules like `after_keypress` (simulate pressing left, assert `state.player_x` decreased) or `state_changes` (run the project, assert a named variable updated) live on the task itself rather than on any one area, because the student is free to implement the behaviour wherever they like.
 
 ---
 
@@ -155,35 +171,83 @@ The `function_runs_clean` rule passes on an empty body so that an in-progress cr
 
 The Pixel Game is the reference layout. Future projects can deviate but should justify why.
 
+The page is **two-column** on the task surface: tasks on the left, coding areas on the right. This matches the worksheet eye-path students already know (read on the left, type on the right) and lets the two card types specialise: task cards talk about *intent*, area cards talk about *mechanics*.
+
 ```
-┌────────────────────────────────────────────────┐
-│  Header: title, Save / Open buttons            │
-├────────────────────────────────────────────────┤
-│  Intro prose (1-3 short paragraphs)            │
-├────────────────────────────────────────────────┤
-│  Canvas (centred, big)                         │
-│  Run Project button                            │
-│  Direction-pad (or other input widget)         │
-├────────────────────────────────────────────────┤
-│  Setup section (state variables, editable)     │
-│  Locked preamble shown as a read-only chip     │
-├────────────────────────────────────────────────┤
-│  Task 1 card                                   │
-│    title, guidance, function signature,        │
-│    editor (body only), status pill             │
-│  Task 2 card                                   │
-│  ...                                           │
-│  Task N card                                   │
-└────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│  Header: title, Save / Open buttons                          │
+├──────────────────────────────────────────────────────────────┤
+│  Intro prose (1-3 short paragraphs)                          │
+├──────────────────────────────────────────────────────────────┤
+│  Canvas (centred, big)                                       │
+│  Run Project button                                          │
+│  Direction-pad (or other input widget)                       │
+├──────────────────────────────────────────────────────────────┤
+│  Setup section (state variables, editable)                   │
+│  Locked preamble shown as a read-only chip                   │
+├──────────────────────── BAND 1: 1:1 pairs ───────────────────┤
+│  TASKS (left)                  │  AREAS (right)              │
+│  [D] Corners                   │  draw_corners() editor      │
+│  [D] Border                    │  draw_border() editor       │
+│  [D] Add a stripe   ┐          │                             │
+│  [C] Use a for loop ┤          │  draw_background() editor   │  ← many tasks -> 1 area
+│  [A-B] Make it yours┘          │                             │
+│  [C] Build the scene           │  draw_scene() editor        │
+│  [D] Draw the player           │  draw_player() editor       │
+│  [D] Left button               │  on_left_key() editor       │
+│  [D] Right button              │  on_right_key() editor      │
+│  [D] Up button                 │  on_up_key() editor         │
+│  [D] Down button               │  on_down_key() editor       │
+├──────────────────── BAND 2: cross-area tasks ────────────────┤
+│  Full-width task cards with area chips. No 1:1 partner.      │
+│  [C] Stop at the walls    (touches: on_left, on_right, ...)  │
+│  [A-B] Add a score        (touches: setup, scene, keys)      │
+├──────────────────── BAND 3: freestyle ───────────────────────┤
+│  [A-B] Invent something        │  your_additions editor      │
+└──────────────────────────────────────────────────────────────┘
 ```
+
+The three bands give every student tier a place to focus, and let a teacher tier-grade with one top-to-bottom sweep: required pairs (Band 1) -> behaviour-shaped extensions (Band 2) -> evidence of independent thinking (Band 3).
 
 A few load-bearing details:
 
 - **One "Run Project" button.** Not per-task. The project runs as one program; per-task runs are for hidden validation only.
 - **Locked function signatures.** Students fill in bodies. They cannot delete a `def`, break indentation at the function level, or accidentally nuke the structure. See `PROJECT_PIXEL_GAME.md` §3.
 - **Locked preamble.** Anything structurally critical (`use_canvas(...)`, imports) lives in a read-only chip the student can see but not edit. Editable state lives below it.
-- **Concept cards inline.** Same `"type": "concept"` block worksheets use. Place before the first task that needs the concept. Same "1-2 sentences body, 1 example, 1-line footer" rule applies.
-- **Status pills.** Per task, updated on each Run. The whole project runs together but validation is per-function so a student can see "border ✓, scene ✓, left-key ✗".
+- **Concept cards inline.** Same `"type": "concept"` block worksheets use. Place before the first task that needs the concept. Same "1-2 sentences body, 1 example, 1-line footer" rule applies. Concept cards span the full width (no right-column partner).
+- **Cross-area highlighting.** When a Band 2 task card is focused, the area editors it touches get a subtle highlight border so the student can find them.
+
+### What goes on each card
+
+**Task card (left column):**
+- Tier badge (D / C / A-B), visually distinct per tier
+- Title, guidance prose
+- Hint button (optional)
+- For Band 2 cards: chips listing the areas the task touches
+- **Status pill** (see below)
+- No code
+
+**Area card (right column):**
+- Function signature header (locked, read-only)
+- Editor body
+- A one-line "About this area" descriptor of the *mechanics* ("Called once per render, runs before `draw_player`.")
+- A small **syntax-error badge** if the body fails to compile (distinct from any task's pass/fail state, because syntax errors are area-shaped not task-shaped)
+- No prose about *what to do*: that's the task's job
+
+### Status pills: validated vs self-checked
+
+Every task carries a status pill. There are **two visually distinct kinds** because teachers need to tell them apart at grading time:
+
+- **Validated tick** (solid green check). Earned by a programmatic rule passing: `function_fills_cells`, `function_runs_clean`, behavioural rule, etc. The student didn't tick this; the harness did.
+- **Self-checked tick** (outlined check with a small "self" label). The student ticks a checkbox on the card to mark the task done. Used when the task can't be machine-validated (creative work, "read this concept card", "show your teacher").
+
+Which kind a task uses follows the tier:
+
+| Tier | Pill style |
+|---|---|
+| **D** | Validated only. **Never self-check** — D students will tick reflexively to chase completion, which defeats the validation. |
+| **C** | Validated by default. Self-check allowed when the task's success criterion is genuinely subjective (rare). |
+| **A-B** | Usually self-check (often paired with `function_runs_clean` so the runtime sanity check still happens). Validated only when there's a concrete behavioural test that fits. |
 
 ---
 
@@ -219,13 +283,16 @@ Before finalising a new project, verify:
 - [ ] **Every task is taggable as D, C, or A-B.** No ambiguous-tier tasks
 - [ ] **D-tier tasks have a worked example in the guidance** and tight validation
 - [ ] **C-tier tasks state the goal without prescribing the approach** and have loose-but-real validation
-- [ ] **A-B tier tasks offer multiple example directions** and `function_runs_clean`-style validation
+- [ ] **A-B tier tasks offer multiple example directions** and use self-check pills (with `function_runs_clean` as a runtime safety net)
 - [ ] The required (D + C) tasks alone form **a complete, runnable, take-home program**
+- [ ] **D-tier tasks are strictly 1 task : 1 area.** Cross-area tasks are tier C or above
+- [ ] **The project has a freestyle "your additions" area** with at least one A-B task pointing at it
+- [ ] **Status pills visibly distinguish** validated ticks from self-check ticks
 - [ ] **At most 1-2 new concepts** are introduced inline, each via a concept card before its first use
 - [ ] Every concept used (new or recalled) is **already taught in worksheets the class has finished**, or covered by an inline concept card
 - [ ] **Function signatures are locked** in the UI; the student can't structurally break the file
 - [ ] **The locked preamble** holds everything the harness needs; students don't get blank-line surprises
-- [ ] The on-disk `.py` file **runs anywhere**, not just inside the Wavelet harness
+- [ ] The on-disk `.py` file demos by **upload to the project page**, not standalone interpretation
 - [ ] **Save and Open round-trip** the file faithfully (no lost code, no scrambled order)
 - [ ] The project page has a **"laptop recommended"** notice for iPad users
 - [ ] The intro **sells the artefact** in 1-3 short paragraphs
