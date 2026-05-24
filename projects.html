@@ -355,6 +355,234 @@
             border-radius: 3px;
             font-size: 0.88em;
         }
+
+        /* ── Layout-variation mockups ────────────────────────────────
+           Each variation gets a scaled-down browser frame showing where
+           the canvas, Run button, tasks, and area editors sit. */
+
+        .layout-variations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin: 20px 0 28px;
+        }
+        .variation-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .variation-card h4 {
+            margin: 0;
+            font-size: 1rem;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .variation-card h4 .var-tag {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 4px;
+            letter-spacing: 0.04em;
+        }
+        .variation-card h4 .var-tag.small  { background: #dcfce7; color: #166534; }
+        .variation-card h4 .var-tag.medium { background: #fef3c7; color: #92400e; }
+        .variation-card h4 .var-tag.large  { background: #fee2e2; color: #991b1b; }
+        .variation-card .var-summary {
+            font-size: 0.85rem;
+            color: #475569;
+            line-height: 1.5;
+            margin: 0;
+        }
+        .variation-card .var-pros, .variation-card .var-cons {
+            font-size: 0.8rem;
+            color: #475569;
+            margin: 0;
+            padding-left: 16px;
+        }
+        .variation-card .var-pros li, .variation-card .var-cons li {
+            margin-bottom: 2px;
+        }
+        .variation-card .var-pros li::marker { color: #16a34a; }
+        .variation-card .var-cons li::marker { color: #dc2626; }
+
+        /* Browser-frame mockup */
+        .browser-frame {
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            overflow: hidden;
+            font-family: system-ui, sans-serif;
+            font-size: 0.75rem;
+        }
+        .browser-chrome {
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #94a3b8;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 0.7rem;
+        }
+        .browser-body {
+            padding: 8px;
+            min-height: 280px;
+            background: #fafafa;
+            position: relative;
+        }
+        .mock-canvas {
+            background: repeating-linear-gradient(45deg, #e0e7ff, #e0e7ff 4px, #eef2ff 4px, #eef2ff 8px);
+            border: 1px solid #c7d2fe;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4338ca;
+            font-weight: 600;
+            font-size: 0.7rem;
+        }
+        .mock-run {
+            background: #16a34a;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            display: inline-block;
+        }
+        .mock-run.tiny {
+            padding: 1px 5px;
+            font-size: 0.6rem;
+        }
+        .mock-dpad {
+            display: inline-grid;
+            grid-template-columns: repeat(3, 18px);
+            grid-template-rows: repeat(3, 18px);
+            gap: 1px;
+            vertical-align: middle;
+        }
+        .mock-dpad .b {
+            background: #e2e8f0;
+            border-radius: 2px;
+            font-size: 0.65rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+        }
+        .mock-task-row {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+        .mock-task, .mock-area {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 3px;
+            padding: 5px 7px;
+            font-size: 0.65rem;
+            line-height: 1.3;
+            color: #475569;
+            min-height: 36px;
+        }
+        .mock-task { border-left: 3px solid #6366f1; }
+        .mock-area {
+            border-left: 3px solid #14b8a6;
+            background: #f0fdfa;
+            font-family: Consolas, Monaco, monospace;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+        }
+        .mock-area code {
+            font-size: 0.62rem;
+            color: #115e59;
+            background: transparent;
+            padding: 0;
+        }
+        .mock-tier {
+            display: inline-block;
+            font-size: 0.55rem;
+            font-weight: 700;
+            padding: 1px 4px;
+            border-radius: 3px;
+            margin-right: 3px;
+            vertical-align: middle;
+        }
+        .mock-tier.d  { background: #dbeafe; color: #1e40af; }
+        .mock-tier.c  { background: #ede9fe; color: #5b21b6; }
+        .mock-tier.ab { background: #fef3c7; color: #92400e; }
+
+        /* Variation-specific overlays */
+        .sticky-top {
+            position: sticky;
+            top: 0;
+            background: #fafafa;
+            padding-bottom: 6px;
+            margin-bottom: 6px;
+            border-bottom: 1px dashed #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sticky-top.thin { padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 3px; }
+        .floating-corner {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            z-index: 2;
+        }
+        .floating-corner .mini-canvas {
+            width: 50px;
+            height: 50px;
+            background: repeating-linear-gradient(45deg, #e0e7ff, #e0e7ff 3px, #eef2ff 3px, #eef2ff 6px);
+            border: 1px solid #c7d2fe;
+            border-radius: 2px;
+        }
+        .sidebar-layout {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 6px;
+            min-height: 280px;
+        }
+        .sidebar-layout .left-pane { overflow: hidden; }
+        .sidebar-layout .right-pane {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 3px;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            position: sticky;
+            top: 8px;
+            align-self: start;
+        }
+        .right-pane .mock-canvas { aspect-ratio: 1; }
+
+        .layout-callout {
+            background: #fef3c7;
+            border-left: 3px solid #f59e0b;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin: 14px 0;
+            font-size: 0.85rem;
+            color: #713f12;
+        }
     </style>
 </head>
 <body>
@@ -747,6 +975,182 @@
                     <li><strong>Concept cards inline.</strong> Same <code>"type": "concept"</code> block worksheets use. Place before the first task that needs the concept. Concept cards span the full width (no right-column partner).</li>
                     <li><strong>Cross-area highlighting.</strong> When a Band 2 task card is focused, the area editors it touches get a subtle highlight border.</li>
                 </ul>
+            </section>
+
+            <section class="doc-section">
+                <h2>Edit-and-run rhythm <span style="font-size: 0.7em; background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 10px; vertical-align: middle; font-weight: 600;">iterating</span></h2>
+                <p>The two-column model puts the canvas + Run button at the top and stacks task/area pairs below. On a real laptop screen this means students have to scroll up to Run, and they often can't see the pixel screen and the code they're editing at the same time. Worksheets don't have this problem because each problem has its own Run button right next to its editor, so the edit-test-edit loop stays local.</p>
+
+                <div class="layout-callout">
+                    <strong>TODO:</strong> the sticky top-of-page stage is currently <strong>not actually sticky</strong> in the rendered project page, so the canvas + Run scroll out of view immediately. Likely an <code>overflow: hidden</code> or <code>overflow: auto</code> on an ancestor of <code>.project-stage</code> is breaking <code>position: sticky</code>. Fix needs to land regardless of which layout variation we go with below.
+                </div>
+
+                <p>Four variations under consideration, smallest to largest:</p>
+
+                <div class="layout-variations">
+
+                    <!-- Variation A: per-area Run button -->
+                    <div class="variation-card">
+                        <h4><span class="var-tag small">A · small</span> Per-area Run button</h4>
+                        <div class="browser-frame">
+                            <div class="browser-chrome">project.html</div>
+                            <div class="browser-body">
+                                <div class="sticky-top">
+                                    <div class="mock-canvas" style="width:80px;height:60px;">canvas</div>
+                                    <span class="mock-run">▶ Run</span>
+                                    <div class="mock-dpad"><div></div><div class="b">↑</div><div></div><div class="b">←</div><div></div><div class="b">→</div><div></div><div class="b">↓</div><div></div></div>
+                                </div>
+                                <div class="mock-task-row">
+                                    <div class="mock-task"><span class="mock-tier d">D</span>Corners</div>
+                                    <div class="mock-area"><code>draw_corners()</code><span class="mock-run tiny">▶</span></div>
+                                </div>
+                                <div class="mock-task-row">
+                                    <div class="mock-task"><span class="mock-tier d">D</span>Border</div>
+                                    <div class="mock-area"><code>draw_border()</code><span class="mock-run tiny">▶</span></div>
+                                </div>
+                                <div class="mock-task-row">
+                                    <div class="mock-task"><span class="mock-tier ab">A-B</span>Background</div>
+                                    <div class="mock-area"><code>draw_background()</code><span class="mock-run tiny">▶</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="var-summary">A small <strong>▶</strong> on every area card header. Click = run the whole project (same as the top button), then re-render. Now every editor has Run immediately above the code.</p>
+                        <ul class="var-pros">
+                            <li>Matches worksheet pattern students already know</li>
+                            <li>~10 minutes of work; no layout risk</li>
+                            <li>Top Run stays as the canonical "run my project"</li>
+                        </ul>
+                        <ul class="var-cons">
+                            <li>Doesn't fix "can't see canvas and code at the same time"</li>
+                            <li>Visual hint needed that local Run = full project run</li>
+                        </ul>
+                    </div>
+
+                    <!-- Variation B: collapse to thumbnail on scroll -->
+                    <div class="variation-card">
+                        <h4><span class="var-tag medium">B · medium</span> Collapse to thumbnail on scroll</h4>
+                        <div class="browser-frame">
+                            <div class="browser-chrome">project.html (scrolled)</div>
+                            <div class="browser-body">
+                                <div class="floating-corner">
+                                    <div class="mini-canvas"></div>
+                                    <span class="mock-run">▶</span>
+                                </div>
+                                <div style="font-size:0.65rem; color:#94a3b8; padding:4px;">↑ scrolled past full stage</div>
+                                <div class="mock-task-row">
+                                    <div class="mock-task"><span class="mock-tier d">D</span>Corners</div>
+                                    <div class="mock-area"><code>draw_corners()</code></div>
+                                </div>
+                                <div class="mock-task-row">
+                                    <div class="mock-task"><span class="mock-tier d">D</span>Border</div>
+                                    <div class="mock-area"><code>draw_border()</code></div>
+                                </div>
+                                <div class="mock-task-row">
+                                    <div class="mock-task"><span class="mock-tier ab">A-B</span>Background</div>
+                                    <div class="mock-area"><code>draw_background()</code></div>
+                                </div>
+                                <div class="mock-task-row">
+                                    <div class="mock-task"><span class="mock-tier c">C</span>Player</div>
+                                    <div class="mock-area"><code>draw_player()</code></div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="var-summary">When the student scrolls past the full stage, it collapses to a ~120px canvas thumbnail in the top-right corner with a Run button. Click the thumbnail to expand back to full.</p>
+                        <ul class="var-pros">
+                            <li>Keeps "always-visible output" without eating half the viewport</li>
+                            <li>Single Run button discipline preserved</li>
+                            <li>Reclaimed vertical space gives editors room to breathe</li>
+                        </ul>
+                        <ul class="var-cons">
+                            <li>Where does the d-pad go when collapsed?</li>
+                            <li>Collapse animation needs to feel intentional, not jittery</li>
+                            <li>Thumbnail at 120px may be too small to read the pixel state</li>
+                        </ul>
+                    </div>
+
+                    <!-- Variation C: sidebar layout -->
+                    <div class="variation-card">
+                        <h4><span class="var-tag large">C · large</span> Side-pinned canvas (sidebar)</h4>
+                        <div class="browser-frame">
+                            <div class="browser-chrome">project.html</div>
+                            <div class="browser-body">
+                                <div class="sidebar-layout">
+                                    <div class="left-pane">
+                                        <div class="mock-task" style="margin-bottom:5px;"><span class="mock-tier d">D</span>Corners <span style="float:right; color:#94a3b8;">▼</span></div>
+                                        <div class="mock-area" style="margin-bottom:5px;"><code>draw_corners()</code></div>
+                                        <div class="mock-task" style="margin-bottom:5px;"><span class="mock-tier d">D</span>Border <span style="float:right; color:#94a3b8;">▼</span></div>
+                                        <div class="mock-area" style="margin-bottom:5px;"><code>draw_border()</code></div>
+                                        <div class="mock-task" style="margin-bottom:5px;"><span class="mock-tier ab">A-B</span>Background</div>
+                                        <div class="mock-area"><code>draw_background()</code></div>
+                                    </div>
+                                    <div class="right-pane">
+                                        <div class="mock-canvas">canvas</div>
+                                        <span class="mock-run" style="text-align:center;">▶ Run Project</span>
+                                        <div style="display:flex; justify-content:center;">
+                                            <div class="mock-dpad"><div></div><div class="b">↑</div><div></div><div class="b">←</div><div></div><div class="b">→</div><div></div><div class="b">↓</div><div></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="var-summary">Canvas + Run + d-pad pinned to the right as a sticky sidebar (~35% width). Task/area content scrolls in the left pane (~65%). Both visible at the same time, no vertical fight.</p>
+                        <ul class="var-pros">
+                            <li><strong>Actually fixes</strong> "see code and pixel screen at the same time"</li>
+                            <li>Canvas stays visible no matter how far the student scrolls</li>
+                            <li>Real keyboard handlers (laptop-only) live naturally next to the canvas</li>
+                        </ul>
+                        <ul class="var-cons">
+                            <li>Left pane is narrower, so the inner two-column band grid may collapse to single column inside the pane</li>
+                            <li>~Half-day of layout work and CSS regression risk</li>
+                            <li>Concept cards need to flow inside the left pane, not full-width</li>
+                        </ul>
+                    </div>
+
+                    <!-- Variation D: sidebar + per-area run -->
+                    <div class="variation-card">
+                        <h4><span class="var-tag medium">D · combo</span> Hybrid: sidebar + per-area Run</h4>
+                        <div class="browser-frame">
+                            <div class="browser-chrome">project.html</div>
+                            <div class="browser-body">
+                                <div class="sidebar-layout">
+                                    <div class="left-pane">
+                                        <div class="mock-task" style="margin-bottom:5px;"><span class="mock-tier d">D</span>Corners</div>
+                                        <div class="mock-area" style="margin-bottom:5px;"><code>draw_corners()</code><span class="mock-run tiny">▶</span></div>
+                                        <div class="mock-task" style="margin-bottom:5px;"><span class="mock-tier d">D</span>Border</div>
+                                        <div class="mock-area" style="margin-bottom:5px;"><code>draw_border()</code><span class="mock-run tiny">▶</span></div>
+                                        <div class="mock-task" style="margin-bottom:5px;"><span class="mock-tier ab">A-B</span>Background</div>
+                                        <div class="mock-area"><code>draw_background()</code><span class="mock-run tiny">▶</span></div>
+                                    </div>
+                                    <div class="right-pane">
+                                        <div class="mock-canvas">canvas</div>
+                                        <span class="mock-run" style="text-align:center;">▶ Run Project</span>
+                                        <div style="display:flex; justify-content:center;">
+                                            <div class="mock-dpad"><div></div><div class="b">↑</div><div></div><div class="b">←</div><div></div><div class="b">→</div><div></div><div class="b">↓</div><div></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="var-summary">Variation C plus Variation A. Sticky canvas sidebar <em>and</em> a local <strong>▶</strong> on each area card. Mouse stays near the editor; canvas stays in peripheral vision.</p>
+                        <ul class="var-pros">
+                            <li>Tightest edit-and-run rhythm of any option</li>
+                            <li>Always-visible canvas means the per-area run is satisfying (immediate visual feedback)</li>
+                            <li>Best long-term answer</li>
+                        </ul>
+                        <ul class="var-cons">
+                            <li>Largest total scope (C + A)</li>
+                            <li>Per-area Run may feel redundant once the canvas is always visible</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3>Recommended path</h3>
+                <ol>
+                    <li><strong>Fix sticky first.</strong> Whichever layout we go with, the current "sticky stage" not actually sticking is a separate bug. Hunt down the <code>overflow</code> ancestor and unblock it.</li>
+                    <li><strong>Ship A in the next PR</strong> as a quick quality-of-life win. Cheap, restores the worksheet rhythm.</li>
+                    <li><strong>Prototype C</strong> as a follow-up. This is the real cure for the "can't see canvas and code at the same time" complaint.</li>
+                    <li><strong>Land D if C lands well.</strong> Adding A on top of C is trivial once both exist.</li>
+                </ol>
             </section>
 
             <section class="doc-section">
