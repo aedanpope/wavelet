@@ -120,15 +120,25 @@ function renderProject() {
             }
             return;
         }
-        // Arrow keys drive the player when the game area has focus, ie. no
-        // editor or form field is currently focused. Lets students play with
-        // the keyboard rather than reaching for the on-screen d-pad once the
-        // project is running.
+        if (e.ctrlKey || e.metaKey || e.altKey) return;
+        if (isEditingFocus(document.activeElement)) return;
+        // Arrow keys drive the player via on_*_key handlers (same code
+        // path as the on-screen d-pad). Lets students play with the
+        // keyboard once the project is running.
         const dirMap = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down' };
         const dir = dirMap[e.key];
-        if (dir && !e.ctrlKey && !e.metaKey && !e.altKey && !isEditingFocus(document.activeElement)) {
+        if (dir) {
             e.preventDefault();
             onKeyPress(dir);
+            return;
+        }
+        // Letter / digit keys are routed through on_key(key) if the
+        // student has defined that single function. Used by the
+        // multiplayer extension ("press W to move player 2 up").
+        const ch = e.key.length === 1 ? e.key.toLowerCase() : '';
+        if (/^[a-z0-9]$/.test(ch) && functionDefinedInPython('on_key')) {
+            e.preventDefault();
+            onLetterKey(ch);
         }
     });
 
@@ -819,7 +829,7 @@ async function installAttributionHelper() {
     py.runPython(`
 import sys, io
 
-def _wavelet_call_safely(fn_name):
+def _wavelet_call_safely(fn_name, *args):
     known = set(_wavelet_known_names)
     fn = globals().get(fn_name)
     if not callable(fn):
@@ -836,7 +846,7 @@ def _wavelet_call_safely(fn_name):
     buf = io.StringIO()
     sys.stdout = buf
     try:
-        fn()
+        fn(*args)
         return {'ok': True, 'in_function': None, 'error_msg': None,
                 'line': None, 'output': buf.getvalue()}
     except Exception as e:
@@ -860,11 +870,11 @@ def _wavelet_call_safely(fn_name):
 `);
 }
 
-async function callWithAttribution(fnName) {
+async function callWithAttribution(fnName, ...args) {
     const py = executor.getPyodide();
     try {
         const fn = py.globals.get('_wavelet_call_safely');
-        const result = fn(fnName);
+        const result = fn(fnName, ...args);
         const obj = result.toJs({ dict_converter: Object.fromEntries });
         if (typeof autoFlushCanvas !== 'undefined') autoFlushCanvas(py, 0);
         return obj;
@@ -907,6 +917,51 @@ async function runDrawScene() {
         await py.runPythonAsync('clear()');
     } catch (_e) { /* canvas may not yet be initialised */ }
     return callWithAttribution('draw_scene');
+}
+
+// Letter / digit key path: routes a single key press into the student's
+// on_key(key) function (if defined). After the handler runs, re-render
+// the scene the same way arrow presses do. Used for multiplayer-style
+// extensions ("press W to move player 2").
+async function onLetterKey(key) {
+    if (!executor || !executor.isReady()) return;
+    const py = executor.getPyodide();
+    if (!py.globals.get('_wavelet_call_safely')) return;
+
+    const handlerResult = await callWithAttribution('on_key', key);
+    if (!handlerResult.ok) {
+        const taskId = taskIdForFunction(handlerResult.in_function);
+        if (taskId) markTaskError(taskId, handlerResult.error_msg);
+        else displayGlobalError(handlerResult.error_msg);
+        setPlayInfo(handlerResult.output);
+        finalizeRunStatus();
+        return;
+    }
+    try { await py.runPythonAsync('clear()'); } catch (_e) { /* clear is best-effort */ }
+    const sceneResult = await callWithAttribution('draw_scene');
+    setPlayInfoFromFrame(handlerResult.output, sceneResult.output);
+    if (!sceneResult.ok) {
+        const taskId = taskIdForFunction(sceneResult.in_function);
+        if (taskId) markTaskError(taskId, sceneResult.error_msg);
+        else displayGlobalError(sceneResult.error_msg);
+        finalizeRunStatus();
+    }
+}
+
+// True if `fnName` is currently defined and callable in Pyodide globals.
+// Used by the keyboard listener to skip letter keys when the student
+// hasn't defined an on_key handler, so non-game keys don't spam errors.
+function functionDefinedInPython(fnName) {
+    if (!executor || !executor.isReady()) return false;
+    try {
+        const py = executor.getPyodide();
+        const ok = py.runPython(
+            `'${fnName}' in globals() and callable(globals().get('${fnName}'))`
+        );
+        return Boolean(ok);
+    } catch (_e) {
+        return false;
+    }
 }
 
 async function onKeyPress(direction) {
