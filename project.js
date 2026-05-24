@@ -1,9 +1,9 @@
 // Project page: two-column band-based layout.
 //
 // Tasks are grouped into three bands:
-//   Band 1 — 1:1 task/area pairs (task card left, function editor right).
-//   Band 2 — cross-area tasks (full-width informational card, no editor).
-//   Band 3 — freestyle (task card left, blank-slate editor right, runs at
+//   Band 1 - 1:1 task/area pairs (task card left, function editor right).
+//   Band 2 - cross-area tasks (full-width informational card, no editor).
+//   Band 3 - freestyle (task card left, blank-slate editor right, runs at
 //            module scope rather than wrapped in a def).
 //
 // Each task carries a tier (D / C / A-B). D-tier tasks are machine-validated;
@@ -110,7 +110,7 @@ function renderProject() {
 }
 
 // Walk the JSON tasks in order, group consecutive entries into bands. Concept
-// cards reset the current band — they render full-width between bands.
+// cards reset the current band - they render full-width between bands.
 function renderBands() {
     const host = document.getElementById('project-bands');
     host.innerHTML = '';
@@ -749,7 +749,7 @@ function resetAllStatus() {
     if (host && host._errorEl) host._errorEl.style.display = 'none';
 
     for (const entry of taskEditors.values()) {
-        // Self-check pills stay as the student left them — they're not reset
+        // Self-check pills stay as the student left them - they're not reset
         // by a project run.
         if (entry.task.selfCheck) {
             entry.errorEl.style.display = 'none';

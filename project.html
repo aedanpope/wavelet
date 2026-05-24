@@ -29,10 +29,10 @@
         </div>
 
         <!-- Project Interface -->
-        <div id="project-interface" class="worksheet-interface" style="display: none;">
+        <div id="project-interface" class="project-shell" style="display: none;">
 
             <!-- Header -->
-            <header class="worksheet-header">
+            <header class="worksheet-header project-shell-header">
                 <button class="back-btn" onclick="window.location.href='index.html'">← Back</button>
                 <div class="worksheet-info">
                     <h1 id="project-title">Project</h1>
@@ -46,49 +46,55 @@
                 <input type="file" id="file-input" accept=".py,text/x-python,text/plain" style="display: none;">
             </header>
 
-            <!-- Sticky stage: canvas + controls -->
-            <div class="project-stage">
-                <div class="project-canvas-wrapper">
-                    <!-- id="output-0" so canvas-system.js can find it -->
-                    <div class="output" id="output-0"></div>
-                </div>
-                <div class="project-controls">
-                    <button class="run-project-btn" id="run-project-btn">▶ Run Project</button>
-                    <div class="dpad" id="dpad" aria-label="Direction pad">
-                        <button class="dpad-btn dpad-up"    data-key="up"    aria-label="Up">↑</button>
-                        <button class="dpad-btn dpad-left"  data-key="left"  aria-label="Left">←</button>
-                        <button class="dpad-btn dpad-down"  data-key="down"  aria-label="Down">↓</button>
-                        <button class="dpad-btn dpad-right" data-key="right" aria-label="Right">→</button>
+            <!-- Sidebar layout: main scroll content on the left, sticky
+                 canvas/Run sidebar on the right. Falls back to stacked
+                 (sidebar above content) on narrow viewports. -->
+            <div class="project-shell-main">
+                <div class="project-shell-left">
+                    <!-- Project intro -->
+                    <div class="project-intro" id="project-intro"></div>
+
+                    <!-- Setup card: locked lines (use_canvas, etc.) + editable
+                         globals students can add to. Rendered by JS. -->
+                    <div class="project-setup-host" id="project-setup-host"></div>
+
+                    <!-- Three bands rendered dynamically by project.js -->
+                    <div class="project-bands" id="project-bands"></div>
+
+                    <!-- Extras: any top-level code in an opened file that isn't
+                         a known task or preamble line. Read-only, preserved on
+                         save. Hidden by default. -->
+                    <div class="project-extras" id="project-extras" style="display: none;">
+                        <div class="extras-header">
+                            <h3>Extras (from your file)</h3>
+                            <p>Code we kept from your file but can't edit here. It still runs as part of your project, and will be saved back to the file unchanged.</p>
+                        </div>
+                        <pre class="extras-code" id="extras-code"></pre>
                     </div>
-                    <div class="project-status" id="project-status">
-                        Click <strong>Run Project</strong> to start.
+                </div>
+
+                <aside class="project-shell-sidebar">
+                    <!-- Sticky stage: canvas + controls. Position sticky works
+                         here because no ancestor uses overflow: hidden. -->
+                    <div class="project-stage">
+                        <div class="project-canvas-wrapper">
+                            <!-- id="output-0" so canvas-system.js can find it -->
+                            <div class="output" id="output-0"></div>
+                        </div>
+                        <div class="project-controls">
+                            <button class="run-project-btn" id="run-project-btn">▶ Run Project</button>
+                            <div class="dpad" id="dpad" aria-label="Direction pad">
+                                <button class="dpad-btn dpad-up"    data-key="up"    aria-label="Up">↑</button>
+                                <button class="dpad-btn dpad-left"  data-key="left"  aria-label="Left">←</button>
+                                <button class="dpad-btn dpad-down"  data-key="down"  aria-label="Down">↓</button>
+                                <button class="dpad-btn dpad-right" data-key="right" aria-label="Right">→</button>
+                            </div>
+                            <div class="project-status" id="project-status">
+                                Click <strong>Run Project</strong> to start.
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Project intro -->
-            <div class="project-intro" id="project-intro"></div>
-
-            <!-- Setup card: locked lines (use_canvas, etc.) + editable globals
-                 students can add to. Rendered before the task cards by JS. -->
-            <div class="project-setup-host" id="project-setup-host"></div>
-
-            <!-- Task content: three bands rendered dynamically.
-                 Band 1: 1:1 task/area pairs (two-column grid).
-                 Band 2: cross-area tasks (full-width cards, no area editor).
-                 Band 3: freestyle task/area pair. -->
-            <div class="project-bands" id="project-bands">
-                <!-- Bands rendered dynamically -->
-            </div>
-
-            <!-- Extras: any top-level code in an opened file that isn't a known
-                 task or preamble line. Read-only, preserved on save. -->
-            <div class="project-extras" id="project-extras" style="display: none;">
-                <div class="extras-header">
-                    <h3>Extras (from your file)</h3>
-                    <p>Code we kept from your file but can't edit here. It still runs as part of your project, and will be saved back to the file unchanged.</p>
-                </div>
-                <pre class="extras-code" id="extras-code"></pre>
+                </aside>
             </div>
         </div>
     </div>

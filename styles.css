@@ -1868,7 +1868,7 @@ code {
     width: 100%;
 }
 
-/* Column 1: code editor — width set by JS to fit content, never grows beyond that */
+/* Column 1: code editor - width set by JS to fit content, never grows beyond that */
 .trace-card-editor-wrap {
     flex: 0 0 auto;
     min-width: 215px;
@@ -1877,7 +1877,7 @@ code {
     border: 1px solid #c7d2fe;
 }
 
-/* Column 2: variables — fills remaining space; height grows via JS ratchet, never shrinks */
+/* Column 2: variables - fills remaining space; height grows via JS ratchet, never shrinks */
 .trace-card-vars-col {
     flex: 3 0 130px;
     min-width: 130px;
@@ -1892,7 +1892,7 @@ code {
     gap: 5px;
 }
 
-/* Column 3: output — fills remaining space; height grows via JS ratchet, never shrinks */
+/* Column 3: output - fills remaining space; height grows via JS ratchet, never shrinks */
 .trace-card-output-col {
     flex: 2 0 100px;
     min-width: 100px;
@@ -1906,32 +1906,72 @@ code {
 /* ── Project page ────────────────────────────────────────────── */
 
 /* Sticky stage at the top of the page: canvas + run + dpad + status */
+/* ─── Project shell: sidebar layout (variation C) ───────────────────────
+   The project page uses a custom shell rather than the standard
+   .worksheet-interface card, because it needs a sticky sidebar and the
+   .worksheet-interface { overflow: hidden } rule cancels position:sticky
+   on its descendants. The shell rounds its top corners on the header
+   itself, achieving the same visual without the clipping side-effect.
+*/
+.project-shell {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+.project-shell-header {
+    border-radius: 15px 15px 0 0;
+}
+
+/* Two-column shell: scrollable main on the left, sticky sidebar on the
+   right with canvas + Run + d-pad. Collapses to single column with
+   the sidebar moved on top below a width threshold (see media query). */
+.project-shell-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 400px;
+    gap: 0;
+    align-items: start;
+}
+.project-shell-left {
+    min-width: 0;     /* keeps grid item from forcing horizontal scroll */
+}
+.project-shell-sidebar {
+    /* The sidebar is the sticky anchor. Its child .project-stage is what
+       actually sticks; the aside just reserves the column. */
+    padding: 16px 16px 16px 0;
+}
+
 .project-stage {
     position: sticky;
-    top: 0;
-    z-index: 10;
+    top: 16px;
     background: #f1f3f5;
-    border-bottom: 1px solid #dee2e6;
-    padding: 16px 24px;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 24px;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    gap: 12px;
+    /* Constrain vertical so the sidebar fits within the viewport on small
+       laptops; canvas + controls scroll internally if they overflow. */
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
 }
 
 .project-canvas-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
 }
 
-/* When the project canvas isn't initialised yet, show a placeholder block. */
+/* When the project canvas isn't initialised yet, show a placeholder block.
+   Sidebar layout: ~328px square fits in the 360px column. */
 .project-canvas-wrapper .output {
     background: white;
     border: 2px dashed #ced4da;
     border-radius: 8px;
-    min-width: 480px;
-    min-height: 480px;
+    width: 360px;
+    height: 360px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1944,13 +1984,26 @@ code {
     border: none;
     min-width: 0;
     min-height: 0;
+    width: auto;
+    height: auto;
+}
+
+/* Scale the canvas down to fit the sidebar (GRID20 is natively 480px,
+   sidebar gives it ~360px). Preserves pixel-art crispness via image-
+   rendering rather than antialiasing it during scale-down. */
+.project-canvas-wrapper canvas {
+    max-width: 360px;
+    height: auto;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
 }
 
 .project-controls {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
+    width: 100%;
 }
 
 .run-project-btn {
@@ -2034,19 +2087,21 @@ code {
 
 /* Intro prose */
 .project-intro {
-    padding: 20px 28px;
+    padding: 20px;
+    margin: 16px 16px 0;
     background: linear-gradient(135deg, #eef2ff, #e0e7ff);
-    border-bottom: 1px solid #c7d2fe;
+    border: 1px solid #c7d2fe;
+    border-radius: 10px;
     color: #1e293b;
     line-height: 1.5;
 }
 .project-intro p { margin: 0 0 8px; }
 .project-intro p:last-child { margin-bottom: 0; }
 
-/* Setup card — host wraps it so it gets the same outer padding as the
+/* Setup card - host wraps it so it gets the same outer padding as the
    tasks stack but stays a single card rather than a list. */
 .project-setup-host {
-    padding: 20px 28px 0;
+    padding: 20px 20px 0;
 }
 .project-setup .setup-number {
     background: #6b7280;     /* greyer than the task circles to read as "config" */
@@ -2154,7 +2209,7 @@ code {
 
 /* Editor frame visually unifies the locked def line with the body editor.
    Uses the monokai background so the def line and editor read as one
-   continuous code surface — only the inability to click in cues that the
+   continuous code surface - only the inability to click in cues that the
    def line is fixed. */
 .task-editor-frame {
     background: #272822;          /* monokai bg, matches the editor below */
@@ -2190,11 +2245,11 @@ code {
     font-size: 0.85rem;
 }
 
-/* Extras panel — read-only stash of unrecognised top-level code from an
+/* Extras panel - read-only stash of unrecognised top-level code from an
    opened file. Shown only when extras exist; they still run as part of the
    project and are written back unchanged on save. */
 .project-extras {
-    margin: 0 28px 30px;
+    margin: 0 20px 30px;
     background: #f8f9fa;
     border: 1px solid #dee2e6;
     border-radius: 8px;
@@ -2229,46 +2284,52 @@ code {
 }
 
 /* Narrow viewports: stack canvas above controls */
-@media (max-width: 768px) {
-    .project-stage {
+/* Narrow viewport: collapse the sidebar above the main content. The
+   stage stops being sticky, since stacking-then-sticky would just eat
+   the whole viewport. */
+@media (max-width: 1099px) {
+    .project-shell-main {
         grid-template-columns: 1fr;
+    }
+    .project-shell-sidebar {
+        padding: 16px;
+        order: -1;
+    }
+    .project-stage {
         position: static;
+        max-height: none;
     }
     .project-canvas-wrapper .output {
+        width: auto;
+        height: auto;
         min-width: 0;
         min-height: 360px;
     }
-    .project-controls {
-        align-items: center;
-    }
-    .project-tasks,
+}
+
+/* Phone-sized: shrink padding on the inner content blocks. */
+@media (max-width: 768px) {
     .project-bands,
     .project-intro,
     .project-setup-host,
     .project-extras {
-        margin-left: 16px;
-        margin-right: 16px;
-        padding-left: 16px;
-        padding-right: 16px;
-    }
-    .band-grid-1, .band-grid-3 {
-        grid-template-columns: 1fr;
-    }
-    .project-area-card {
-        margin-top: -8px;
+        margin-left: 8px;
+        margin-right: 8px;
+        padding-left: 8px;
+        padding-right: 8px;
     }
 }
 
 /* ─── Two-column project layout (bands) ─────────────────────────────────
    Tasks live in the left column (intent), code areas in the right column
    (mechanics). Bands group consecutive tasks of the same kind:
-     Band 1 — 1:1 task/area pairs.
-     Band 2 — cross-area tasks (one column, no editor).
-     Band 3 — freestyle task/area pair.
+     Band 1 - 1:1 task/area pairs.
+     Band 2 - cross-area tasks (one column, no editor).
+     Band 3 - freestyle task/area pair.
 */
 
 .project-bands {
-    padding: 20px 28px 40px;
+    padding: 20px 20px 40px;
     display: flex;
     flex-direction: column;
     gap: 28px;
@@ -2292,18 +2353,54 @@ code {
 
 .band-grid {
     display: grid;
-    gap: 16px;
+    gap: 14px;
     align-items: start;
 }
+/* Default: stack each task/area pair vertically. In the sidebar layout
+   the left pane is ~700px wide on a typical laptop, which is enough for
+   a comfortable single column of task prose + editor below it. This is
+   also the worksheet rhythm students already know. */
 .band-grid-1, .band-grid-3 {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+    grid-template-columns: 1fr;
 }
 .band-grid-2 {
     grid-template-columns: 1fr;
 }
 
+/* Dynamic stacking decision: switch to side-by-side (task left, area
+   right) when there's both enough horizontal room AND vertical space is
+   scarce enough that stacking would cost too much scroll. */
+@media (min-width: 1400px) and (max-height: 880px) {
+    .band-grid-1, .band-grid-3 {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+    }
+}
+/* Generous-width viewports: side-by-side regardless of height, because
+   the left pane is wide enough that each card still has comfortable
+   reading width. */
+@media (min-width: 1700px) {
+    .band-grid-1, .band-grid-3 {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+    }
+}
+
+/* When the layout is single-column (sidebar collapsed to top), prefer
+   side-by-side again since the bands now have the full width to work
+   with - same rationale as the wide-viewport branch above. */
+@media (max-width: 1099px) and (min-width: 720px) {
+    .band-grid-1, .band-grid-3 {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+    }
+}
+/* Very narrow (phones, vertical tablets): always stack. */
+@media (max-width: 719px) {
+    .band-grid-1, .band-grid-3 {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Task card (left column). Keep the .project-task base but drop the
-   connecting left rail — the two-column grid is signal enough. */
+   connecting left rail - the two-column grid is signal enough. */
 .project-task-card {
     border-left-width: 4px;
 }
@@ -2314,7 +2411,7 @@ code {
 .project-task-card.tier-c  { border-left-color: #8b5cf6; }
 .project-task-card.tier-ab { border-left-color: #f59e0b; }
 
-/* Tier badge — small chip next to the task title. */
+/* Tier badge - small chip next to the task title. */
 .tier-badge {
     display: inline-block;
     font-size: 0.7rem;
