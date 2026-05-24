@@ -2062,11 +2062,15 @@ body.stage-fullscreen-active .project-stage--fullscreen .project-canvas-wrapper 
     height: auto;
 }
 body.stage-fullscreen-active .project-stage--fullscreen .project-canvas-wrapper canvas {
-    /* Largest square that leaves room for the floating controls below
-       and the play-info panel above. !important overrides the inline
-       width/height set by canvas-system.js. */
-    width: min(calc(100vh - 220px), calc(100vw - 80px)) !important;
-    height: min(calc(100vh - 220px), calc(100vw - 80px)) !important;
+    /* Largest square that leaves room for:
+       - the floating d-pad below (134px tall + 24px padding + ~50px
+         drop-shadow extending past the canvas bottom)
+       - the play-info panel above (~80px)
+       Canvas is vertically centered, so we subtract twice the larger
+       margin from viewport height to avoid the shadow / dpad collision.
+       !important overrides the inline width/height set by canvas-system.js. */
+    width: min(calc(100vh - 420px), calc(100vw - 80px)) !important;
+    height: min(calc(100vh - 420px), calc(100vw - 80px)) !important;
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     border-radius: 6px;
@@ -2608,6 +2612,19 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
    previous tier label, so students know they can skip without feeling
    they're failing the required core. Tier data itself stays in the
    JSON for grading-guide use later. */
+/* Task number prefix on titles ("1. Colour the corners"). Numbered by
+   the renderer so status messages can reference tasks ("task 3"). */
+.task-number-prefix {
+    color: #94a3b8;
+    font-weight: 500;
+    margin-right: 4px;
+}
+/* Status bar message when there's an "active" failing task; quieter
+   than the old "✗ N tasks need fixing" red wall. */
+.status-keep-going {
+    color: #475569;
+}
+
 .optional-badge {
     display: inline-block;
     font-size: 0.7rem;

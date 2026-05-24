@@ -31,6 +31,11 @@ let currentFileHandle = null;
 let dirty = false;
 let savedFlashTimer = null;
 let currentExtras = ''; // raw source of any unrecognised top-level code from an opened file
+// Tracks which task the student is currently working on, so the validation
+// UI can highlight only that task with the full red treatment after a Run.
+// Other failing tasks get a quieter neutral pill so students aren't drowned
+// in red. Set on every editor change, cleared only when reset.
+let lastEditedTaskId = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -137,13 +142,22 @@ function renderProject() {
 // Concept cards reset the current band - they render full-width between
 // bands. A {type:"setup-anchor"} block injects the State card at that
 // position. If no anchor is present, the State card sits at the top of
-// the bands (legacy default).
+// the bands (legacy default). Numbers each real task in order so the
+// renderer and status messages can reference them by number ("task 3").
 function renderBands() {
     const host = document.getElementById('project-bands');
     host.innerHTML = '';
 
     const entries = projectDef.tasks || [];
     const hasAnchor = entries.some(b => b.type === 'setup-anchor');
+
+    // Assign sequential numbers to every real task block (skipping
+    // concept cards and the setup-anchor marker).
+    let nextNum = 1;
+    for (const block of entries) {
+        if (block.type === 'concept' || block.type === 'setup-anchor') continue;
+        block._taskNumber = nextNum++;
+    }
 
     let currentBandEl = null;
     let currentBandKind = null;
@@ -332,7 +346,7 @@ function makeTaskHeader(task) {
     const titles = document.createElement('div');
     titles.className = 'project-task-titles';
     titles.innerHTML = `
-        <h3 class="task-title">${escapeHtml(task.title)}</h3>
+        <h3 class="task-title">${taskNumberHtml(task)}${escapeHtml(task.title)}</h3>
         ${optionalBadgeHtml(task)}
     `;
     header.appendChild(titles);
@@ -457,7 +471,7 @@ function renderCrossAreaCard(task) {
         .map(c => `<span class="area-chip">${escapeHtml(c)}</span>`)
         .join('');
     titles.innerHTML = `
-        <h3 class="task-title">${escapeHtml(task.title)}</h3>
+        <h3 class="task-title">${taskNumberHtml(task)}${escapeHtml(task.title)}</h3>
         ${optionalBadgeHtml(task)}
         <div class="area-chips">${chipHtml}</div>
     `;
@@ -508,6 +522,15 @@ function optionalBadgeHtml(task) {
     const t = task.tier;
     if (!t || t === 'D') return '';
     return '<span class="optional-badge" title="Optional, finish the required tasks first if you want">optional</span>';
+}
+
+// Small numeric prefix on task titles. Numbers come from renderBands,
+// which walks the JSON in order and assigns 1, 2, 3, ... to each real
+// task. Numbers let status messages reference tasks ("task 3") and
+// help students orient.
+function taskNumberHtml(task) {
+    if (!task._taskNumber) return '';
+    return `<span class="task-number-prefix">${task._taskNumber}.</span> `;
 }
 
 // ─── Editor init ─────────────────────────────────────────────────────────
@@ -602,7 +625,10 @@ function initTaskEditors() {
             cm.setSize('100%', `${heightLines * 1.5}em`);
         }
         cm.on('change', (_cm, change) => {
-            if (change.origin !== 'setValue') markDirty();
+            if (change.origin !== 'setValue') {
+                markDirty();
+                lastEditedTaskId = task.id;
+            }
         });
 
         entry.cm = cm;
@@ -969,25 +995,33 @@ function displayGlobalError(msg) {
 }
 
 function finalizeRunStatus() {
-    const failingCards = document.querySelectorAll('.project-task .task-status-fail');
     const status = document.getElementById('project-status');
     if (!status) return;
-    if (failingCards.length === 0) {
-        status.innerHTML = '✓ Project running. Try the arrow buttons below the canvas!';
+    // The active task (the one whose pill is red after the A+G logic in
+    // applyValidationResult) is the most recently edited task that's
+    // still failing. If there's one, the status message points at it
+    // by number; otherwise we just celebrate.
+    const activeEntry = lastEditedTaskId ? taskEditors.get(lastEditedTaskId) : null;
+    const activeIsFailing = activeEntry
+        && activeEntry.statusEl.classList.contains('task-status-fail');
+    if (activeIsFailing) {
+        const num = activeEntry.task._taskNumber || '?';
+        const title = escapeHtml(activeEntry.task.title);
+        status.innerHTML = `
+            <span class="status-keep-going">Keep going on task ${num}: <strong>${title}</strong></span>
+            <button type="button" class="status-jump-btn" id="status-jump-btn">Jump to it ↓</button>
+        `;
+        document.getElementById('status-jump-btn').addEventListener('click', scrollToActiveTask);
         return;
     }
-    const noun = failingCards.length === 1 ? 'task needs' : 'tasks need';
-    status.innerHTML = `
-        <span class="status-fail-text">✗ ${failingCards.length} ${noun} fixing</span>
-        <button type="button" class="status-jump-btn" id="status-jump-btn">Jump to first ↓</button>
-    `;
-    document.getElementById('status-jump-btn').addEventListener('click', scrollToFirstError);
+    status.innerHTML = '✓ Project running. Try the arrow buttons below the canvas!';
 }
 
-function scrollToFirstError() {
-    const failingPill = document.querySelector('.project-task .task-status-fail');
-    if (!failingPill) return;
-    const card = failingPill.closest('.project-task');
+function scrollToActiveTask() {
+    if (!lastEditedTaskId) return;
+    const card = document.querySelector(
+        `.project-task[data-task-id="${lastEditedTaskId}"]`
+    );
     if (!card) return;
     const stage = document.querySelector('.project-stage');
     const stageHeight = stage ? stage.offsetHeight : 0;
@@ -1250,15 +1284,23 @@ function applyValidationResult(taskId, result) {
         entry.statusEl.className = 'task-status task-status-pass';
         entry.statusEl.textContent = '✓ working';
         if (entry.cardErrorEl) entry.cardErrorEl.style.display = 'none';
-    } else {
-        // Pill stays a short ✗ marker in the header; full message goes
-        // into the task-card error block at the bottom of the card.
+        return;
+    }
+    // Failing. Only the "active" task (most recently edited) gets the
+    // full red treatment with an error message; other failing tasks
+    // show a quieter neutral pill so the student isn't drowned in red.
+    const isActive = (taskId === lastEditedTaskId);
+    if (isActive) {
         entry.statusEl.className = 'task-status task-status-fail';
-        entry.statusEl.textContent = '✗ not yet';
+        entry.statusEl.textContent = '✗ keep going';
         if (entry.cardErrorEl) {
             entry.cardErrorEl.textContent = result.message || 'Not passing yet.';
             entry.cardErrorEl.style.display = 'block';
         }
+    } else {
+        entry.statusEl.className = 'task-status task-status-pending';
+        entry.statusEl.textContent = '○ not yet';
+        if (entry.cardErrorEl) entry.cardErrorEl.style.display = 'none';
     }
 }
 
