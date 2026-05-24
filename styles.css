@@ -1968,14 +1968,15 @@ code {
     width: 100%;
 }
 
-/* When the project canvas isn't initialised yet, show a placeholder block.
-   Sidebar layout: ~328px square fits in the 360px column. */
+/* When the project canvas isn't initialised yet, show a placeholder block
+   matching the canvas size so there's no jump when it loads. GRID20 at
+   15px/cell = 300px square. */
 .project-canvas-wrapper .output {
     background: white;
     border: 2px dashed #ced4da;
     border-radius: 8px;
-    width: 360px;
-    height: 360px;
+    width: 300px;
+    height: 300px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1990,16 +1991,6 @@ code {
     min-height: 0;
     width: auto;
     height: auto;
-}
-
-/* Scale the canvas down to fit the sidebar (GRID20 is natively 480px,
-   sidebar gives it ~360px). Preserves pixel-art crispness via image-
-   rendering rather than antialiasing it during scale-down. */
-.project-canvas-wrapper canvas {
-    max-width: 360px;
-    height: auto;
-    image-rendering: pixelated;
-    image-rendering: -moz-crisp-edges;
 }
 
 .project-controls {

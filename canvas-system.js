@@ -16,8 +16,8 @@ const CanvasConfig = {
     GRID20: {
         name: 'GRID20',
         dimensions: [20, 20],
-        cellSize: 24,  // Desktop: 24px per cell = 480px total
-        mobileCellSize: 18,  // Mobile: 18px per cell = 360px total
+        cellSize: 15,  // Desktop: 15px per cell = 300px total (fits sidebar)
+        mobileCellSize: 12,  // Mobile: 12px per cell = 240px total
         showGridLines: true,
         showCoordinates: false
     },
