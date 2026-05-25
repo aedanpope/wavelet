@@ -42,6 +42,8 @@ npm run test:validation         # validation system tests
 npm run test:input-system       # input system tests
 ```
 
+**Remote sessions (no local Node):** Claude Code on the web has no `node` / `npm` in the container, so the test suite can't run locally. To verify a change runs the tests, open a PR and `subscribe_pr_activity` to it: GitHub Actions runs lint + tests on every push to the PR branch and the results come back as webhook events. Use this instead of claiming "tests should pass" without evidence.
+
 ### Deployment
 ```bash
 # Build for deployment (static files)
