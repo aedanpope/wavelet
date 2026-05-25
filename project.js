@@ -904,15 +904,29 @@ def _wavelet_call_safely(fn_name, *args):
         return {'ok': True, 'in_function': None, 'error_msg': None,
                 'line': None, 'output': buf.getvalue()}
     except Exception as e:
+        # Walk the traceback to attribute the error. We prefer the deepest
+        # frame whose function name belongs to a known task editor (so the
+        # error lands on the right card). When no known frame exists, e.g.
+        # the student defined on_tick / on_key / a helper inside the
+        # freestyle editor, fall back to the deepest user frame so we still
+        # produce a line number and a meaningful in_function name.
         deepest = fn_name
         deepest_line = None
+        user_name = fn_name
+        user_line = None
         tb = e.__traceback__
         while tb is not None:
             frame_name = tb.tb_frame.f_code.co_name
+            if frame_name != '_wavelet_call_safely':
+                user_name = frame_name
+                user_line = tb.tb_lineno
             if frame_name in known:
                 deepest = frame_name
                 deepest_line = tb.tb_lineno
             tb = tb.tb_next
+        if deepest_line is None:
+            deepest = user_name
+            deepest_line = user_line
         prefix = f'Line {deepest_line}: ' if deepest_line else ''
         return {'ok': False,
                 'error_msg': f'{prefix}{type(e).__name__}: {e}',
@@ -962,7 +976,12 @@ function taskIdForFunction(fnName) {
     for (const t of getFunctionTasks()) {
         if (getTaskFunctionNames(t).includes(fnName)) return t.id;
     }
-    return null;
+    // Anything the harness calls that isn't tied to a Band 1 task must have
+    // been defined in the freestyle editor (on_tick, on_key, a helper the
+    // student wrote). Surface those errors on the freestyle area card so
+    // they're never silently dropped.
+    const freestyleTask = getFreestyleTask();
+    return freestyleTask ? freestyleTask.id : null;
 }
 
 async function runDrawScene() {
@@ -1107,30 +1126,49 @@ function displayGlobalError(msg) {
 function finalizeRunStatus() {
     const status = document.getElementById('project-status');
     if (!status) return;
-    // The active task (the one whose pill is red after the A+G logic in
-    // applyValidationResult) is the most recently edited task that's
-    // still failing. If there's one, the status message points at it
-    // by number; otherwise we just celebrate.
-    const activeEntry = lastEditedTaskId ? taskEditors.get(lastEditedTaskId) : null;
-    const activeIsFailing = activeEntry
-        && activeEntry.statusEl.classList.contains('task-status-fail');
-    if (activeIsFailing) {
-        const num = activeEntry.task._taskNumber || '?';
-        const title = escapeHtml(activeEntry.task.title);
+    // Prefer pointing at the most recently edited task if it's failing,
+    // otherwise surface any other task that's currently showing an error.
+    // We check both the fail pill (Band 1 tasks) and a visible area-card
+    // error (selfCheck tasks like freestyle, which keep their pill state
+    // for the student to tick).
+    const failingEntry = findFailingTaskEntry();
+    if (failingEntry) {
+        const num = failingEntry.task._taskNumber || '?';
+        const title = escapeHtml(failingEntry.task.title);
+        const failingId = failingEntry.task.id;
         status.innerHTML = `
             <span class="status-keep-going">Keep going on task ${num}: <strong>${title}</strong></span>
             <button type="button" class="status-jump-btn" id="status-jump-btn">Jump to it ↓</button>
         `;
-        document.getElementById('status-jump-btn').addEventListener('click', scrollToActiveTask);
+        document.getElementById('status-jump-btn').addEventListener('click', () => scrollToTask(failingId));
         return;
     }
     status.innerHTML = '✓ Project running. Try the arrow buttons (or your keyboard arrow keys).';
 }
 
-function scrollToActiveTask() {
-    if (!lastEditedTaskId) return;
+function entryHasError(entry) {
+    if (!entry) return false;
+    if (entry.statusEl && entry.statusEl.classList.contains('task-status-fail')) return true;
+    const errEl = entry.errorEl;
+    if (errEl && errEl.style.display !== 'none' && errEl.textContent.trim()) return true;
+    return false;
+}
+
+function findFailingTaskEntry() {
+    if (lastEditedTaskId) {
+        const e = taskEditors.get(lastEditedTaskId);
+        if (entryHasError(e)) return e;
+    }
+    for (const entry of taskEditors.values()) {
+        if (entryHasError(entry)) return entry;
+    }
+    return null;
+}
+
+function scrollToTask(taskId) {
+    if (!taskId) return;
     const card = document.querySelector(
-        `.project-task[data-task-id="${lastEditedTaskId}"]`
+        `.project-task[data-task-id="${taskId}"]`
     );
     if (!card) return;
     const stage = document.querySelector('.project-stage');
