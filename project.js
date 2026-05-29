@@ -112,13 +112,15 @@ function renderProject() {
 
     // Save / Open
     document.getElementById('save-file-btn').addEventListener('click', saveProject);
+    document.getElementById('save-as-file-btn').addEventListener('click', saveProjectAs);
     document.getElementById('open-file-btn').addEventListener('click', openProject);
     document.getElementById('file-input').addEventListener('change', handleFallbackFileInput);
 
     document.addEventListener('keydown', e => {
-        if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 's') {
+        if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 's') {
             e.preventDefault();
-            saveProject();
+            if (e.shiftKey) saveProjectAs();
+            else saveProject();
             return;
         }
         if (e.key === 'Escape') {
@@ -604,20 +606,30 @@ function initTaskEditors() {
         });
 
         if (!isFreestyle) {
-            // Lock every line that starts with `def ` (so single-def
-            // tasks lock line 0 and multi-function tasks lock all four
-            // def lines). The check is dynamic, so as the student adds
-            // body lines and pushes the next def down, the right line
-            // stays locked.
+            // Lock the generated `def name():` header line(s) so students
+            // can't rename them. We match the exact header text (one per
+            // task function), NOT any line that merely starts with `def `:
+            // a student who types `def ` inside a body must stay free to
+            // edit and delete it. Matching by text means the lock follows
+            // each header as body lines push it down the editor.
+            const defHeaders = new Set(
+                (multi ? task.functions.map(f => f.name) : [task.function])
+                    .map(name => `def ${name}():`)
+            );
+            const isDefHeader = text => defHeaders.has(text);
             cm.on('beforeChange', (_cm, change) => {
                 if (change.origin === 'setValue') return;
-                const ln = cm.getLine(change.from.line) || '';
-                if (ln.startsWith('def ')) change.cancel();
+                for (let l = change.from.line; l <= change.to.line; l++) {
+                    if (isDefHeader(cm.getLine(l) || '')) {
+                        change.cancel();
+                        return;
+                    }
+                }
             });
             const markDefLines = () => {
                 cm.eachLine(line => {
                     const i = cm.getLineNumber(line);
-                    const isDef = line.text.startsWith('def ');
+                    const isDef = isDefHeader(line.text);
                     const op = isDef ? 'addLineClass' : 'removeLineClass';
                     cm[op](i, 'background', 'cm-def-line');
                     cm[op](i, 'wrap', 'cm-def-line-wrap');
@@ -1508,7 +1520,14 @@ function assembleFileForDisk() {
 }
 
 async function saveProject() {
-    if (SUPPORTS_FSA) await saveProjectViaFSA();
+    if (SUPPORTS_FSA) await saveProjectViaFSA(false);
+    else saveProjectViaDownload();
+}
+
+// Save As always asks for a fresh destination, even when a file is already
+// open, so students can branch their work to a new file.
+async function saveProjectAs() {
+    if (SUPPORTS_FSA) await saveProjectViaFSA(true);
     else saveProjectViaDownload();
 }
 
@@ -1517,8 +1536,8 @@ async function openProject() {
     else document.getElementById('file-input').click();
 }
 
-async function saveProjectViaFSA() {
-    let handle = currentFileHandle && currentFileHandle.createWritable ? currentFileHandle : null;
+async function saveProjectViaFSA(forceNew) {
+    let handle = (!forceNew && currentFileHandle && currentFileHandle.createWritable) ? currentFileHandle : null;
     if (!handle) {
         try {
             handle = await window.showSaveFilePicker({
@@ -1673,7 +1692,13 @@ function loadFileIntoEditors(text, filename) {
     const status = document.getElementById('project-status');
     const bits = [];
     bits.push(`Opened <strong>${escapeHtml(filename)}</strong>.`);
-    if (missing.length) bits.push(`Reset to starter: ${escapeHtml(missing.join(', '))}.`);
+    if (parsed.error) {
+        // Syntax error: bodies were recovered line-by-line so the student
+        // can fix the mistake in the editor instead of losing their work.
+        bits.push(`⚠️ There's a syntax error to fix (${escapeHtml(parsed.error)}). Your code is loaded so you can repair it.`);
+    } else if (missing.length) {
+        bits.push(`Reset to starter: ${escapeHtml(missing.join(', '))}.`);
+    }
     bits.push('Click <strong>Run Project</strong> to try it.');
     status.innerHTML = bits.join(' ');
 
@@ -1709,6 +1734,56 @@ function parseProjectFile(src, knownNames, lockedSet) {
         py.runPython(`
 import ast, textwrap
 
+def _wavelet_parse_fallback(src, known, locked, error):
+    # The file has a syntax error so ast can't parse it. Recover the
+    # student's work line-by-line instead of dumping the whole file into
+    # the read-only Extras panel: split out the top-level function bodies
+    # (where the error usually is) so they load back into their editors and
+    # the student can fix the mistake in place.
+    lines = src.split('\\n')
+    bodies = {}
+    editable = []
+    extras = []
+    i = 0
+    n = len(lines)
+    while i < n:
+        line = lines[i]
+        stripped = line.strip()
+        # A top-level "def name(...):" header (no leading indentation).
+        if line[:4] == 'def ' and stripped.endswith(':'):
+            name = stripped[4:].split('(')[0].strip()
+            j = i + 1
+            body_lines = []
+            while j < n and (lines[j].strip() == '' or lines[j][:1] in (' ', '\\t')):
+                body_lines.append(lines[j])
+                j += 1
+            while body_lines and body_lines[-1].strip() == '':
+                body_lines.pop()
+            if name in known:
+                body = textwrap.dedent('\\n'.join(body_lines)) if body_lines else ''
+                bodies[name] = body.rstrip() + '\\n' if body.strip() else ''
+            else:
+                extras.append('\\n'.join(lines[i:j]))
+            i = j
+            continue
+        if stripped == '' or stripped in locked or stripped.startswith('#'):
+            i += 1
+            continue
+        # Top-level assignment / import lines are treated as editable
+        # preamble (e.g. state.player_x = 10); anything else is Extras.
+        if (line[:7] == 'import ' or line[:5] == 'from '
+                or (line[:1] not in (' ', '\\t') and ('=' in line or ':' in stripped))):
+            editable.append(line)
+        else:
+            extras.append(line)
+        i += 1
+    return {
+        'bodies': bodies,
+        'editablePreamble': ('\\n'.join(editable) + '\\n') if editable else '',
+        'extras': '\\n'.join(extras).strip(),
+        'error': error,
+    }
+
 def _wavelet_parse_project():
     src = _wavelet_src
     known = set(_wavelet_known)
@@ -1716,8 +1791,7 @@ def _wavelet_parse_project():
     try:
         tree = ast.parse(src)
     except SyntaxError as e:
-        return {'bodies': {}, 'editablePreamble': '', 'extras': src,
-                'error': f'line {e.lineno}: {e.msg}'}
+        return _wavelet_parse_fallback(src, known, locked, f'line {e.lineno}: {e.msg}')
 
     bodies = {}
     editable_segments = []
