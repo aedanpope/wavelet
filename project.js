@@ -1200,9 +1200,13 @@ function finalizeRunStatus() {
         const num = failingEntry.task._taskNumber || '?';
         const title = escapeHtml(failingEntry.task.title);
         const failingId = failingEntry.task.id;
+        // When the card is showing an actual code error (a red error box),
+        // point the student straight at it. A plain validation failure has
+        // no error box, so the generic "Jump to it" reads better there.
+        const label = entryHasCodeError(failingEntry) ? 'Jump to error ↓' : 'Jump to it ↓';
         status.innerHTML = `
             <span class="status-keep-going">Keep going on task ${num}: <strong>${title}</strong></span>
-            <button type="button" class="status-jump-btn" id="status-jump-btn">Jump to it ↓</button>
+            <button type="button" class="status-jump-btn" id="status-jump-btn">${label}</button>
         `;
         document.getElementById('status-jump-btn').addEventListener('click', () => scrollToTask(failingId));
         return;
@@ -1213,9 +1217,15 @@ function finalizeRunStatus() {
 function entryHasError(entry) {
     if (!entry) return false;
     if (entry.statusEl && entry.statusEl.classList.contains('task-status-fail')) return true;
+    return entryHasCodeError(entry);
+}
+
+// True only when the area card is showing a real syntax/runtime error box,
+// as opposed to a validation failure that just flips the status pill.
+function entryHasCodeError(entry) {
+    if (!entry) return false;
     const errEl = entry.errorEl;
-    if (errEl && errEl.style.display !== 'none' && errEl.textContent.trim()) return true;
-    return false;
+    return Boolean(errEl && errEl.style.display !== 'none' && errEl.textContent.trim());
 }
 
 function findFailingTaskEntry() {
