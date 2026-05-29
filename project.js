@@ -785,6 +785,13 @@ async function runProject() {
             markTaskError(def.taskId, def.syntaxError);
             continue;
         }
+        if (def.duplicateDef) {
+            markTaskError(def.taskId,
+                `You have two functions called ${def.duplicateDef}(). Python only keeps the ` +
+                `last one, so your earlier code won't run. Delete the extra ` +
+                `def ${def.duplicateDef}(): line and keep your code in one function.`);
+            continue;
+        }
         try {
             await py.runPythonAsync(def.src);
         } catch (err) {
@@ -1252,7 +1259,8 @@ function assembleProgramSegmented() {
             src = buildEditorSource(task.function, task.starterBody);
         }
         const syntaxError = checkSyntax(src);
-        fnDefs.push({ taskId: task.id, src, syntaxError });
+        const duplicateDef = syntaxError ? null : findDuplicateDef(src);
+        fnDefs.push({ taskId: task.id, src, syntaxError, duplicateDef });
     }
 
     const extrasSrc = (currentExtras && currentExtras.trim()) ? currentExtras : '';
@@ -1277,6 +1285,37 @@ def _wavelet_check_syntax(src):
         return result || null;
     } catch (err) {
         return err.message;
+    }
+}
+
+// Find a top-level function defined more than once in a task editor. This is
+// VALID Python (it parses fine), but Python silently keeps only the last
+// definition, so a student who pastes a second `def draw_corners():` above
+// their real code wipes it out with no error. compile()/ast.parse don't
+// raise on this, so we inspect the parsed tree and count the names instead.
+// Returns the duplicated name (string) or null.
+function findDuplicateDef(src) {
+    try {
+        const py = executor.getPyodide();
+        py.runPython(`
+import ast as _ast
+def _wavelet_find_duplicate_def(src):
+    try:
+        tree = _ast.parse(src)
+    except SyntaxError:
+        return None  # syntax errors are reported separately
+    seen = set()
+    for node in tree.body:
+        if isinstance(node, _ast.FunctionDef):
+            if node.name in seen:
+                return node.name
+            seen.add(node.name)
+    return None
+`);
+        const finder = py.globals.get('_wavelet_find_duplicate_def');
+        return finder(src) || null;
+    } catch (_err) {
+        return null;  // best-effort: never block a run on the check itself
     }
 }
 
@@ -1574,8 +1613,12 @@ async function saveProjectViaFSA(forceNew) {
     let handle = (!forceNew && currentFileHandle && currentFileHandle.createWritable) ? currentFileHandle : null;
     if (!handle) {
         try {
+            // Seed Save As with the currently-open file's name (e.g.
+            // pixel-game-rain.py) rather than the generic project default,
+            // so students branch from their own file instead of resetting.
+            const suggestedName = (currentFileHandle && currentFileHandle.name) || suggestedFilename();
             handle = await window.showSaveFilePicker({
-                suggestedName: suggestedFilename(),
+                suggestedName,
                 types: [PY_FILE_TYPE]
             });
         } catch (err) {
