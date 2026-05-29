@@ -1992,16 +1992,13 @@ code {
     font-size: 0.85rem;
     line-height: 1.4;
     white-space: pre-wrap;
-    /* Grow with content so print() output and run/error messages are
-       readable without an inner scrollbar. Only very long output (more
-       than ~40% of the viewport) starts scrolling inside the panel. */
+    /* Always show at least two lines, even when the sticky sidebar is tight
+       on height (a flex scroll container otherwise collapses to ~1 line).
+       Grow with content up to ~40% of the viewport, then scroll inside. */
+    min-height: calc(2.8em + 16px);
     max-height: 40vh;
     overflow-y: auto;
     box-sizing: border-box;
-}
-body.stage-fullscreen-active .project-stage--fullscreen .play-info {
-    max-width: min(calc(100vh - 280px), 80vw);
-    font-size: 1rem;
 }
 
 /* Fullscreen toggle: small icon button in the top-right corner of the
@@ -2105,6 +2102,14 @@ body.stage-fullscreen-active .project-stage--fullscreen .project-controls {
     gap: 20px;
     width: auto;
 }
+/* In fullscreen the controls live in the right-hand column with plenty of
+   vertical room, so keep Run / Stop stacked there. An inline row would be
+   wider than the d-pad and could overlap the canvas on wide viewports. */
+body.stage-fullscreen-active .project-stage--fullscreen .run-stop-row {
+    flex-direction: column;
+    width: auto;
+    gap: 12px;
+}
 body.stage-fullscreen-active .project-stage--fullscreen .run-project-btn {
     /* Keep Run available (acts as "reset" once project is running) but
        de-emphasised, the dpad is the primary play surface. */
@@ -2201,14 +2206,26 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
     width: 100%;
 }
 
+/* Run + Stop sit side by side so they take one row of vertical space
+   instead of two. When Stop is hidden, Run keeps the row to itself. */
+.run-stop-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
 .run-project-btn {
     background: linear-gradient(135deg, #10b981, #059669);
     color: white;
     border: none;
-    padding: 14px 28px;
+    padding: 12px 22px;
     border-radius: 10px;
     font-size: 1.1rem;
     font-weight: 700;
+    white-space: nowrap;
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
     transition: all 0.2s ease;
@@ -2223,10 +2240,11 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
     background: linear-gradient(135deg, #ef4444, #dc2626);
     color: white;
     border: none;
-    padding: 14px 28px;
+    padding: 12px 22px;
     border-radius: 10px;
     font-size: 1.1rem;
     font-weight: 700;
+    white-space: nowrap;
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
     transition: all 0.2s ease;
