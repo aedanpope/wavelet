@@ -760,7 +760,12 @@ function buildEditorSource(fnName, body) {
     const trimmed = (body || '').replace(/\s+$/g, '');
     const bodyLines = trimmed === '' ? ['pass'] : trimmed.split('\n');
     const indented = bodyLines.map(l => l === '' ? '' : BODY_INDENT + l).join('\n');
-    return `def ${fnName}():\n${indented}\n`;
+    // End on an already-indented blank line so the cursor lands inside the
+    // function body when the student starts typing. Without the indent that
+    // trailing line sat at column 0, inviting code outside the function and an
+    // IndentationError. Trailing whitespace is stripped on save and is a
+    // harmless blank line at run time, so this only affects the typing affordance.
+    return `def ${fnName}():\n${indented}\n${BODY_INDENT}`;
 }
 
 // A task with `functions: [...]` hosts multiple function defs in a
