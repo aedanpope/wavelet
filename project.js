@@ -41,6 +41,10 @@ let lastEditedTaskId = null;
 // run replaces the old loop instead of stacking ticks.
 let tickInterval = null;
 const TICK_MS = 1000;
+// True once Run has loaded the code and the project is interactive (d-pad,
+// arrow keys, and the on_tick loop are live). Stop flips it back to false so
+// the project freezes on its last frame until the next Run.
+let projectRunning = false;
 // Setup state. The card is built up-front so initTaskEditors can wire
 // CodeMirror; renderBands decides where to insert it (default = at the
 // top, or wherever a setup-anchor block in the JSON places it).
@@ -101,6 +105,7 @@ function renderProject() {
     renderBands();
 
     document.getElementById('run-project-btn').addEventListener('click', runProject);
+    document.getElementById('stop-project-btn').addEventListener('click', stopProject);
     document.querySelectorAll('.dpad-btn').forEach(btn => {
         btn.addEventListener('click', () => onKeyPress(btn.dataset.key));
     });
@@ -112,13 +117,15 @@ function renderProject() {
 
     // Save / Open
     document.getElementById('save-file-btn').addEventListener('click', saveProject);
+    document.getElementById('save-as-file-btn').addEventListener('click', saveProjectAs);
     document.getElementById('open-file-btn').addEventListener('click', openProject);
     document.getElementById('file-input').addEventListener('change', handleFallbackFileInput);
 
     document.addEventListener('keydown', e => {
-        if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 's') {
+        if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 's') {
             e.preventDefault();
-            saveProject();
+            if (e.shiftKey) saveProjectAs();
+            else saveProject();
             return;
         }
         if (e.key === 'Escape') {
@@ -604,27 +611,48 @@ function initTaskEditors() {
         });
 
         if (!isFreestyle) {
-            // Lock every line that starts with `def ` (so single-def
-            // tasks lock line 0 and multi-function tasks lock all four
-            // def lines). The check is dynamic, so as the student adds
-            // body lines and pushes the next def down, the right line
-            // stays locked.
-            cm.on('beforeChange', (_cm, change) => {
-                if (change.origin === 'setValue') return;
-                const ln = cm.getLine(change.from.line) || '';
-                if (ln.startsWith('def ')) change.cancel();
-            });
-            const markDefLines = () => {
-                cm.eachLine(line => {
-                    const i = cm.getLineNumber(line);
-                    const isDef = line.text.startsWith('def ');
-                    const op = isDef ? 'addLineClass' : 'removeLineClass';
-                    cm[op](i, 'background', 'cm-def-line');
-                    cm[op](i, 'wrap', 'cm-def-line-wrap');
+            // Lock the generated `def name():` header line(s) by LINE IDENTITY
+            // (CodeMirror line handles), not by matching the header text. We
+            // capture the handle of the first line matching each header and
+            // freeze those specific lines. This matters for two reasons:
+            //   - the lock follows each header as body lines push it down, and
+            //   - a SECOND identical `def name():` line the student later types
+            //     (e.g. from a bad paste) gets a fresh handle that is NOT in the
+            //     locked set, so they can still select and delete it. Matching
+            //     by text alone froze the duplicate too, which locked students
+            //     out of fixing their own code.
+            const defHeaders = new Set(
+                (multi ? task.functions.map(f => f.name) : [task.function])
+                    .map(name => `def ${name}():`)
+            );
+            const lockedHandles = new Set();
+            const captureHeaders = () => {
+                lockedHandles.clear();
+                const remaining = new Set(defHeaders);
+                cm.eachLine(lineHandle => {
+                    if (remaining.has(lineHandle.text)) {
+                        remaining.delete(lineHandle.text);
+                        lockedHandles.add(lineHandle);
+                        cm.addLineClass(lineHandle, 'background', 'cm-def-line');
+                        cm.addLineClass(lineHandle, 'wrap', 'cm-def-line-wrap');
+                    }
                 });
             };
-            markDefLines();
-            cm.on('change', markDefLines);
+            captureHeaders();
+            cm.on('beforeChange', (_cm, change) => {
+                if (change.origin === 'setValue') return;
+                for (let l = change.from.line; l <= change.to.line; l++) {
+                    if (lockedHandles.has(cm.getLineHandle(l))) {
+                        change.cancel();
+                        return;
+                    }
+                }
+            });
+            // After a file load (setValue) the old line handles are discarded,
+            // so re-capture the headers on the freshly-set content.
+            cm.on('change', (_cm, change) => {
+                if (change.origin === 'setValue') captureHeaders();
+            });
         }
 
         if (isFreestyle) {
@@ -768,6 +796,13 @@ async function runProject() {
             markTaskError(def.taskId, def.syntaxError);
             continue;
         }
+        if (def.duplicateDef) {
+            markTaskError(def.taskId,
+                `You have two functions called ${def.duplicateDef}(). Python only keeps the ` +
+                `last one, so your earlier code won't run. Delete the extra ` +
+                `def ${def.duplicateDef}(): line and keep your code in one function.`);
+            continue;
+        }
         try {
             await py.runPythonAsync(def.src);
         } catch (err) {
@@ -807,9 +842,32 @@ async function runProject() {
     // 8. Start (or restart) the on_tick loop. If the student has defined
     //    on_tick(), the project calls it once per second so they can build
     //    real-time things (a wandering creature, a countdown timer).
+    projectRunning = true;
+    setRunningUI(true);
     startTickLoop();
 
     finalizeRunStatus();
+}
+
+// Stop the running project: halt the on_tick loop and stop responding to the
+// d-pad / arrow keys. The canvas keeps its last frame so the scene doesn't
+// vanish; clicking Run Project starts it again. Python state is left intact.
+function stopProject() {
+    if (!projectRunning) return;
+    stopTickLoop();
+    projectRunning = false;
+    setRunningUI(false);
+    const status = document.getElementById('project-status');
+    if (status) {
+        status.innerHTML = '⏹ Project stopped. Click <strong>Run Project</strong> to play again.';
+    }
+}
+
+// Toggle the Run / Stop buttons. Run stays visible (it doubles as restart);
+// Stop only appears while the project is live.
+function setRunningUI(running) {
+    const stopBtn = document.getElementById('stop-project-btn');
+    if (stopBtn) stopBtn.style.display = running ? '' : 'none';
 }
 
 // Tick loop: drives on_tick() at TICK_MS intervals. Started after every
@@ -829,6 +887,7 @@ function stopTickLoop() {
 }
 
 async function handleTick() {
+    if (!projectRunning) return;
     if (!executor || !executor.isReady()) return;
     if (!functionDefinedInPython('on_tick')) return;
     const py = executor.getPyodide();
@@ -1042,7 +1101,7 @@ async function onKeyPress(direction) {
     const fnName = `on_${direction}_key`;
 
     const py = executor.getPyodide();
-    if (!py.globals.get('_wavelet_call_safely')) {
+    if (!projectRunning || !py.globals.get('_wavelet_call_safely')) {
         document.getElementById('project-status').innerHTML =
             'Click <strong>Run Project</strong> first to load your code.';
         return;
@@ -1076,6 +1135,11 @@ async function onKeyPress(direction) {
 
 function resetAllStatus() {
     stopTickLoop();
+    // Drop out of the running state until this Run reaches the interactive
+    // stage. If it fails early (e.g. setup error) the Stop button stays
+    // hidden; a successful Run sets it back to true at the end.
+    projectRunning = false;
+    setRunningUI(false);
     setPlayInfo('');
     const host = getSetupHost();
     if (host && host._statusEl) {
@@ -1206,7 +1270,8 @@ function assembleProgramSegmented() {
             src = buildEditorSource(task.function, task.starterBody);
         }
         const syntaxError = checkSyntax(src);
-        fnDefs.push({ taskId: task.id, src, syntaxError });
+        const duplicateDef = syntaxError ? null : findDuplicateDef(src);
+        fnDefs.push({ taskId: task.id, src, syntaxError, duplicateDef });
     }
 
     const extrasSrc = (currentExtras && currentExtras.trim()) ? currentExtras : '';
@@ -1231,6 +1296,37 @@ def _wavelet_check_syntax(src):
         return result || null;
     } catch (err) {
         return err.message;
+    }
+}
+
+// Find a top-level function defined more than once in a task editor. This is
+// VALID Python (it parses fine), but Python silently keeps only the last
+// definition, so a student who pastes a second `def draw_corners():` above
+// their real code wipes it out with no error. compile()/ast.parse don't
+// raise on this, so we inspect the parsed tree and count the names instead.
+// Returns the duplicated name (string) or null.
+function findDuplicateDef(src) {
+    try {
+        const py = executor.getPyodide();
+        py.runPython(`
+import ast as _ast
+def _wavelet_find_duplicate_def(src):
+    try:
+        tree = _ast.parse(src)
+    except SyntaxError:
+        return None  # syntax errors are reported separately
+    seen = set()
+    for node in tree.body:
+        if isinstance(node, _ast.FunctionDef):
+            if node.name in seen:
+                return node.name
+            seen.add(node.name)
+    return None
+`);
+        const finder = py.globals.get('_wavelet_find_duplicate_def');
+        return finder(src) || null;
+    } catch (_err) {
+        return null;  // best-effort: never block a run on the check itself
     }
 }
 
@@ -1508,7 +1604,14 @@ function assembleFileForDisk() {
 }
 
 async function saveProject() {
-    if (SUPPORTS_FSA) await saveProjectViaFSA();
+    if (SUPPORTS_FSA) await saveProjectViaFSA(false);
+    else saveProjectViaDownload();
+}
+
+// Save As always asks for a fresh destination, even when a file is already
+// open, so students can branch their work to a new file.
+async function saveProjectAs() {
+    if (SUPPORTS_FSA) await saveProjectViaFSA(true);
     else saveProjectViaDownload();
 }
 
@@ -1517,12 +1620,16 @@ async function openProject() {
     else document.getElementById('file-input').click();
 }
 
-async function saveProjectViaFSA() {
-    let handle = currentFileHandle && currentFileHandle.createWritable ? currentFileHandle : null;
+async function saveProjectViaFSA(forceNew) {
+    let handle = (!forceNew && currentFileHandle && currentFileHandle.createWritable) ? currentFileHandle : null;
     if (!handle) {
         try {
+            // Seed Save As with the currently-open file's name (e.g.
+            // pixel-game-rain.py) rather than the generic project default,
+            // so students branch from their own file instead of resetting.
+            const suggestedName = (currentFileHandle && currentFileHandle.name) || suggestedFilename();
             handle = await window.showSaveFilePicker({
-                suggestedName: suggestedFilename(),
+                suggestedName,
                 types: [PY_FILE_TYPE]
             });
         } catch (err) {
@@ -1673,7 +1780,13 @@ function loadFileIntoEditors(text, filename) {
     const status = document.getElementById('project-status');
     const bits = [];
     bits.push(`Opened <strong>${escapeHtml(filename)}</strong>.`);
-    if (missing.length) bits.push(`Reset to starter: ${escapeHtml(missing.join(', '))}.`);
+    if (parsed.error) {
+        // Syntax error: bodies were recovered line-by-line so the student
+        // can fix the mistake in the editor instead of losing their work.
+        bits.push(`⚠️ There's a syntax error to fix (${escapeHtml(parsed.error)}). Your code is loaded so you can repair it.`);
+    } else if (missing.length) {
+        bits.push(`Reset to starter: ${escapeHtml(missing.join(', '))}.`);
+    }
     bits.push('Click <strong>Run Project</strong> to try it.');
     status.innerHTML = bits.join(' ');
 
@@ -1709,6 +1822,56 @@ function parseProjectFile(src, knownNames, lockedSet) {
         py.runPython(`
 import ast, textwrap
 
+def _wavelet_parse_fallback(src, known, locked, error):
+    # The file has a syntax error so ast can't parse it. Recover the
+    # student's work line-by-line instead of dumping the whole file into
+    # the read-only Extras panel: split out the top-level function bodies
+    # (where the error usually is) so they load back into their editors and
+    # the student can fix the mistake in place.
+    lines = src.split('\\n')
+    bodies = {}
+    editable = []
+    extras = []
+    i = 0
+    n = len(lines)
+    while i < n:
+        line = lines[i]
+        stripped = line.strip()
+        # A top-level "def name(...):" header (no leading indentation).
+        if line[:4] == 'def ' and stripped.endswith(':'):
+            name = stripped[4:].split('(')[0].strip()
+            j = i + 1
+            body_lines = []
+            while j < n and (lines[j].strip() == '' or lines[j][:1] in (' ', '\\t')):
+                body_lines.append(lines[j])
+                j += 1
+            while body_lines and body_lines[-1].strip() == '':
+                body_lines.pop()
+            if name in known:
+                body = textwrap.dedent('\\n'.join(body_lines)) if body_lines else ''
+                bodies[name] = body.rstrip() + '\\n' if body.strip() else ''
+            else:
+                extras.append('\\n'.join(lines[i:j]))
+            i = j
+            continue
+        if stripped == '' or stripped in locked or stripped.startswith('#'):
+            i += 1
+            continue
+        # Top-level assignment / import lines are treated as editable
+        # preamble (e.g. state.player_x = 10); anything else is Extras.
+        if (line[:7] == 'import ' or line[:5] == 'from '
+                or (line[:1] not in (' ', '\\t') and ('=' in line or ':' in stripped))):
+            editable.append(line)
+        else:
+            extras.append(line)
+        i += 1
+    return {
+        'bodies': bodies,
+        'editablePreamble': ('\\n'.join(editable) + '\\n') if editable else '',
+        'extras': '\\n'.join(extras).strip(),
+        'error': error,
+    }
+
 def _wavelet_parse_project():
     src = _wavelet_src
     known = set(_wavelet_known)
@@ -1716,8 +1879,7 @@ def _wavelet_parse_project():
     try:
         tree = ast.parse(src)
     except SyntaxError as e:
-        return {'bodies': {}, 'editablePreamble': '', 'extras': src,
-                'error': f'line {e.lineno}: {e.msg}'}
+        return _wavelet_parse_fallback(src, known, locked, f'line {e.lineno}: {e.msg}')
 
     bodies = {}
     editable_segments = []

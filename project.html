@@ -42,6 +42,7 @@
                     <span id="current-file" class="current-file" style="display: none;" title="Currently open file"></span>
                     <button class="reset-btn" id="open-file-btn" title="Load a project from a .py file">📂 Open</button>
                     <button class="reset-btn" id="save-file-btn" title="Save your project (Ctrl+S)">💾 Save</button>
+                    <button class="reset-btn" id="save-as-file-btn" title="Save to a new file (Ctrl+Shift+S)">💾 Save As</button>
                 </div>
                 <input type="file" id="file-input" accept=".py,text/x-python,text/plain" style="display: none;">
             </header>
@@ -87,7 +88,10 @@
                              the most recent draw_scene call. Hidden when empty. -->
                         <pre class="play-info" id="play-info" aria-live="polite" style="display: none;"></pre>
                         <div class="project-controls">
-                            <button class="run-project-btn" id="run-project-btn">▶ Run Project</button>
+                            <div class="run-stop-row">
+                                <button class="run-project-btn" id="run-project-btn">▶ Run Project</button>
+                                <button class="stop-project-btn" id="stop-project-btn" style="display: none;">⏹ Stop</button>
+                            </div>
                             <div class="dpad" id="dpad" aria-label="Direction pad">
                                 <button class="dpad-btn dpad-up"    data-key="up"    aria-label="Up">↑</button>
                                 <button class="dpad-btn dpad-left"  data-key="left"  aria-label="Left">←</button>

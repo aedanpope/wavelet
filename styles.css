@@ -1969,7 +1969,7 @@ code {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     /* Constrain vertical so the sidebar fits within the viewport on small
        laptops; canvas + controls scroll internally if they overflow.
        The sticky position also acts as the positioning context for the
@@ -1992,13 +1992,13 @@ code {
     font-size: 0.85rem;
     line-height: 1.4;
     white-space: pre-wrap;
-    max-height: 160px;
+    /* Always show at least two lines, even when the sticky sidebar is tight
+       on height (a flex scroll container otherwise collapses to ~1 line).
+       Grow with content up to ~40% of the viewport, then scroll inside. */
+    min-height: calc(2.8em + 16px);
+    max-height: 40vh;
     overflow-y: auto;
     box-sizing: border-box;
-}
-body.stage-fullscreen-active .project-stage--fullscreen .play-info {
-    max-width: min(calc(100vh - 280px), 80vw);
-    font-size: 1rem;
 }
 
 /* Fullscreen toggle: small icon button in the top-right corner of the
@@ -2042,8 +2042,9 @@ body.stage-fullscreen-active .project-stage--fullscreen {
     padding: 0;
     max-height: none;
     overflow: hidden;
-    /* Center the canvas in the viewport; controls and play-info float to
-       fixed positions so they don't push the canvas off-center. */
+    /* Center the canvas in the viewport. The print-output panel is pinned
+       to the left and the controls (Run / Stop / d-pad) to the right, both
+       absolutely positioned so they never push the canvas off-center. */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2062,38 +2063,52 @@ body.stage-fullscreen-active .project-stage--fullscreen .project-canvas-wrapper 
     height: auto;
 }
 body.stage-fullscreen-active .project-stage--fullscreen .project-canvas-wrapper canvas {
-    /* Largest square that leaves room for:
-       - the floating d-pad below (134px tall + 24px padding + ~50px
-         drop-shadow extending past the canvas bottom)
-       - the play-info panel above (~80px)
-       Canvas is vertically centered, so we subtract twice the larger
-       margin from viewport height to avoid the shadow / dpad collision.
+    /* Always show the FULL grid, scaled down to fit. The canvas is a square
+       sized by whichever is smaller: the viewport height (minus a small
+       margin) or the viewport width minus the two ~240px side columns we
+       reserve for the print-output panel (left) and the controls (right).
+       Because the side panels are absolutely positioned within those
+       reserved margins, the canvas never overlaps them and never crops.
        !important overrides the inline width/height set by canvas-system.js. */
-    width: min(calc(100vh - 420px), calc(100vw - 80px)) !important;
-    height: min(calc(100vh - 420px), calc(100vw - 80px)) !important;
+    width: min(calc(100vh - 32px), calc(100vw - 480px)) !important;
+    height: min(calc(100vh - 32px), calc(100vw - 480px)) !important;
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     border-radius: 6px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 body.stage-fullscreen-active .project-stage--fullscreen .play-info {
+    /* Print output flows down the left side, vertically centered. */
     position: absolute;
-    top: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    max-width: min(60vw, 540px);
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 220px;
+    max-width: 220px;
+    max-height: 80vh;
     font-size: 1rem;
 }
 body.stage-fullscreen-active .project-stage--fullscreen .project-controls {
+    /* Run / Stop / d-pad stack down the right side, vertically centered. */
     position: absolute;
-    bottom: 24px;
-    left: 0;
-    right: 0;
-    flex-direction: row;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    left: auto;
+    bottom: auto;
+    flex-direction: column;
     justify-content: center;
-    align-items: flex-end;
-    gap: 24px;
+    align-items: center;
+    gap: 20px;
     width: auto;
+}
+/* In fullscreen the controls live in the right-hand column with plenty of
+   vertical room, so keep Run / Stop stacked there. An inline row would be
+   wider than the d-pad and could overlap the canvas on wide viewports. */
+body.stage-fullscreen-active .project-stage--fullscreen .run-stop-row {
+    flex-direction: column;
+    width: auto;
+    gap: 12px;
 }
 body.stage-fullscreen-active .project-stage--fullscreen .run-project-btn {
     /* Keep Run available (acts as "reset" once project is running) but
@@ -2110,6 +2125,17 @@ body.stage-fullscreen-active .project-stage--fullscreen .run-project-btn:hover {
     transform: none;
     box-shadow: none;
 }
+/* Stop stays visible (red) in play mode so students can halt the on_tick
+   animation without leaving full screen. */
+body.stage-fullscreen-active .project-stage--fullscreen .stop-project-btn {
+    padding: 8px 18px;
+    font-size: 0.9rem;
+    box-shadow: none;
+}
+body.stage-fullscreen-active .project-stage--fullscreen .stop-project-btn:hover {
+    transform: none;
+    box-shadow: none;
+}
 body.stage-fullscreen-active .project-stage--fullscreen .dpad {
     /* Bigger d-pad for play mode. */
     grid-template-columns: repeat(3, 64px);
@@ -2121,7 +2147,7 @@ body.stage-fullscreen-active .project-stage--fullscreen .dpad-btn {
 }
 /* Hide chatty status text in play mode, ie. the "Run", "1 task needs
    fixing", "Project running" messages. Score / print() output is still
-   shown via the .play-info panel at the top. */
+   shown via the .play-info panel on the left. */
 body.stage-fullscreen-active .project-stage--fullscreen .project-status {
     display: none;
 }
@@ -2166,6 +2192,7 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
 .project-canvas-wrapper .output:has(canvas) {
     background: transparent;
     border: none;
+    padding: 0;
     min-width: 0;
     min-height: 0;
     width: auto;
@@ -2176,7 +2203,18 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
+    width: 100%;
+}
+
+/* Run + Stop sit side by side so they take one row of vertical space
+   instead of two. When Stop is hidden, Run keeps the row to itself. */
+.run-stop-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
     width: 100%;
 }
 
@@ -2184,10 +2222,11 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
     background: linear-gradient(135deg, #10b981, #059669);
     color: white;
     border: none;
-    padding: 14px 28px;
+    padding: 8px 18px;
     border-radius: 10px;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
+    white-space: nowrap;
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
     transition: all 0.2s ease;
@@ -2198,11 +2237,30 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
     box-shadow: 0 6px 14px rgba(16, 185, 129, 0.4);
 }
 
+.stop-project-btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+    transition: all 0.2s ease;
+}
+
+.stop-project-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(239, 68, 68, 0.4);
+}
+
 /* 3x3 grid: ↑ on top, ← ↓ → on bottom row */
 .dpad {
     display: grid;
-    grid-template-columns: 50px 50px 50px;
-    grid-template-rows: 50px 50px;
+    grid-template-columns: 40px 40px 40px;
+    grid-template-rows: 40px 40px;
     gap: 4px;
 }
 
@@ -2210,7 +2268,7 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
     background: white;
     border: 2px solid #adb5bd;
     border-radius: 8px;
-    font-size: 1.4rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: #495057;
     cursor: pointer;
