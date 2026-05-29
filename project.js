@@ -611,37 +611,48 @@ function initTaskEditors() {
         });
 
         if (!isFreestyle) {
-            // Lock the generated `def name():` header line(s) so students
-            // can't rename them. We match the exact header text (one per
-            // task function), NOT any line that merely starts with `def `:
-            // a student who types `def ` inside a body must stay free to
-            // edit and delete it. Matching by text means the lock follows
-            // each header as body lines push it down the editor.
+            // Lock the generated `def name():` header line(s) by LINE IDENTITY
+            // (CodeMirror line handles), not by matching the header text. We
+            // capture the handle of the first line matching each header and
+            // freeze those specific lines. This matters for two reasons:
+            //   - the lock follows each header as body lines push it down, and
+            //   - a SECOND identical `def name():` line the student later types
+            //     (e.g. from a bad paste) gets a fresh handle that is NOT in the
+            //     locked set, so they can still select and delete it. Matching
+            //     by text alone froze the duplicate too, which locked students
+            //     out of fixing their own code.
             const defHeaders = new Set(
                 (multi ? task.functions.map(f => f.name) : [task.function])
                     .map(name => `def ${name}():`)
             );
-            const isDefHeader = text => defHeaders.has(text);
+            const lockedHandles = new Set();
+            const captureHeaders = () => {
+                lockedHandles.clear();
+                const remaining = new Set(defHeaders);
+                cm.eachLine(lineHandle => {
+                    if (remaining.has(lineHandle.text)) {
+                        remaining.delete(lineHandle.text);
+                        lockedHandles.add(lineHandle);
+                        cm.addLineClass(lineHandle, 'background', 'cm-def-line');
+                        cm.addLineClass(lineHandle, 'wrap', 'cm-def-line-wrap');
+                    }
+                });
+            };
+            captureHeaders();
             cm.on('beforeChange', (_cm, change) => {
                 if (change.origin === 'setValue') return;
                 for (let l = change.from.line; l <= change.to.line; l++) {
-                    if (isDefHeader(cm.getLine(l) || '')) {
+                    if (lockedHandles.has(cm.getLineHandle(l))) {
                         change.cancel();
                         return;
                     }
                 }
             });
-            const markDefLines = () => {
-                cm.eachLine(line => {
-                    const i = cm.getLineNumber(line);
-                    const isDef = isDefHeader(line.text);
-                    const op = isDef ? 'addLineClass' : 'removeLineClass';
-                    cm[op](i, 'background', 'cm-def-line');
-                    cm[op](i, 'wrap', 'cm-def-line-wrap');
-                });
-            };
-            markDefLines();
-            cm.on('change', markDefLines);
+            // After a file load (setValue) the old line handles are discarded,
+            // so re-capture the headers on the freshly-set content.
+            cm.on('change', (_cm, change) => {
+                if (change.origin === 'setValue') captureHeaders();
+            });
         }
 
         if (isFreestyle) {
