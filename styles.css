@@ -2474,13 +2474,13 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
     font-size: 0.95rem;
 }
 
-/* Freestyle editor uses CodeMirror's auto-grow mode (setSize('100%',
-   'auto') in JS). Without this override the inner .CodeMirror-scroll
-   element stamps in a stray scrollbar even when content fits. Hiding
-   overflow is safe because lineWrapping is on (long lines wrap) and
-   the wrapper's height is auto (no fixed vertical clip to scroll
-   inside of). */
-.project-area-freestyle .task-editor .CodeMirror-scroll {
+/* Every project editor auto-grows (setSize('100%', 'auto') in JS) with
+   scrollbarStyle:'null', so CodeMirror never draws its own scrollbars. This
+   belt-and-suspenders rule also clips the inner .CodeMirror-scroll element,
+   which used to stamp in a stray scrollbar even when content fit. Safe
+   because lineWrapping is on (long lines wrap) and the wrapper height is
+   auto (no fixed vertical clip to scroll inside of). */
+.task-editor .CodeMirror-scroll {
     overflow: hidden;
 }
 
@@ -2665,6 +2665,63 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
     border-left-width: 4px;
 }
 .project-task.project-task-card::before { display: none; }
+
+/* Knowledge card (left column): explains a piece of pre-filled code rather
+   than setting a task. Amber, like the full-width concept cards, so it reads
+   as "info you can lean on", but compact enough to sit beside its code area.
+   Used for explainer tasks (e.g. draw_scene) and the State section, both of
+   which start as a no-op for the student. */
+.project-knowledge-card {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border: 1px solid #fcd34d;
+    border-left: 4px solid #f59e0b;
+}
+.project-task.project-knowledge-card::before { display: none; }
+.knowledge-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.knowledge-icon {
+    font-size: 1.6rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+.knowledge-title {
+    margin: 0;
+    font-size: 1.05rem;
+    color: #78350f;
+    font-weight: 700;
+}
+.knowledge-body {
+    color: #451a03;
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+.knowledge-body p { margin: 0 0 8px; }
+.knowledge-body p:last-child { margin-bottom: 0; }
+.knowledge-body code {
+    background: rgba(0, 0, 0, 0.08);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+.knowledge-body ul,
+.knowledge-body ol {
+    padding-left: 1.5em;
+    margin: 0 0 8px;
+}
+.knowledge-body li {
+    margin-bottom: 3px;
+    line-height: 1.5;
+}
+
+/* The State section reuses the band grid so its knowledge card + code area
+   line up exactly like a draw_scene-style explainer pair. No band label. */
+.project-band-setup {
+    gap: 0;
+}
 
 /* "optional" badge: shown on C and A-B task cards in place of the
    previous tier label, so students know they can skip without feeling

@@ -182,6 +182,9 @@ function renderBands() {
     let nextNum = 1;
     for (const block of entries) {
         if (block.type === 'concept' || block.type === 'setup-anchor') continue;
+        // Explainer tasks render as knowledge cards (no visible number), so
+        // skip them in the count to keep the student-facing numbers contiguous.
+        if (block.explainer) continue;
         block._taskNumber = nextNum++;
     }
 
@@ -253,48 +256,73 @@ function appendToBand(bandEl, kind, task) {
     }
 }
 
-// ─── Setup card (unchanged shape) ────────────────────────────────────────
+// ─── Setup (State) card ──────────────────────────────────────────────────
 
+// State renders as a knowledge-card + code-area pair, the same shape as the
+// draw_scene explainer: a short "what this is" card on the left, the (already
+// filled in, editable) state code on the right. It's a no-op for the student
+// to start; they only come back to it to add their own variables.
 function buildSetupCard() {
-    const card = document.createElement('article');
-    card.className = 'project-task project-setup';
-    card.dataset.taskId = '__setup__';
+    const section = document.createElement('section');
+    section.className = 'project-band project-band-setup';
+    section.dataset.taskId = '__setup__';
+
+    const grid = document.createElement('div');
+    grid.className = 'band-grid band-grid-1';
+    section.appendChild(grid);
+
+    // Left: knowledge card.
+    const know = makeKnowledgeCard({
+        icon: '📦',
+        title: 'State',
+        guidance: '<p>The <code>state</code> object is your project\'s memory. It holds on to things between key presses, like where the player is. Its starting position is set to <code>(10, 10)</code> for you.</p><p>You don\'t need to change anything here to begin. Later you can add your own variables (like a score) to remember more.</p>',
+    });
+    grid.appendChild(know);
+
+    // Right: area card holding the editable state editor.
+    const area = document.createElement('article');
+    area.className = 'project-area-card project-area-setup';
 
     const header = document.createElement('header');
-    header.className = 'project-task-header';
+    header.className = 'area-card-header';
     header.innerHTML = `
-        <div class="project-task-titles">
-            <span class="task-number setup-number">⚙</span>
-            <h3 class="task-title">State</h3>
-        </div>
-        <span class="task-status task-status-pending" data-status>○ ready</span>
+        <code class="area-signature">state</code>
+        <span class="area-syntax-badge" data-syntax style="display:none;">⚠ syntax error</span>
     `;
-    card.appendChild(header);
+    area.appendChild(header);
 
-    const guidance = document.createElement('div');
-    guidance.className = 'task-guidance';
-    guidance.innerHTML = '<p>The locked top line creates the <code>state</code> object. Below it are the player\'s position variables, read or change them in any task. Add your own if you want to remember other things between key presses (a score, a colour, a high-water mark&hellip;).</p>';
-    card.appendChild(guidance);
+    const desc = document.createElement('div');
+    desc.className = 'area-description';
+    desc.textContent = 'Runs once before everything else. The top line is locked; add your own variables below it.';
+    area.appendChild(desc);
 
     const editorFrame = document.createElement('div');
     editorFrame.className = 'task-editor-frame';
-
     const editorEl = document.createElement('div');
     editorEl.className = 'task-editor setup-editor';
     editorFrame.appendChild(editorEl);
-
-    card.appendChild(editorFrame);
+    area.appendChild(editorFrame);
 
     const setupError = document.createElement('div');
     setupError.className = 'task-error';
     setupError.style.display = 'none';
-    card.appendChild(setupError);
+    area.appendChild(setupError);
+
+    grid.appendChild(area);
+
+    // Hidden status span: setSetupError() / resetAllStatus() still poke a
+    // statusEl, but State shows no pill now (the red error box and syntax
+    // badge surface any problem). See makeKnowledgeCard for the same pattern.
+    const status = document.createElement('span');
+    status.className = 'task-status';
+    status.style.display = 'none';
 
     setupCardState = {
-        card,
+        card: section,
         editorEl,
-        statusEl: header.querySelector('[data-status]'),
+        statusEl: status,
         errorEl: setupError,
+        syntaxBadge: header.querySelector('[data-syntax]'),
     };
 }
 
@@ -306,6 +334,7 @@ function getSetupHost() {
         _editorEl: setupCardState.editorEl,
         _statusEl: setupCardState.statusEl,
         _errorEl: setupCardState.errorEl,
+        _syntaxBadge: setupCardState.syntaxBadge,
     } : null;
 }
 
@@ -313,7 +342,7 @@ function getSetupHost() {
 
 // Returns { taskCard, areaCard } for a Band 1 or Band 3 task.
 function renderPair(task, isFreestyle) {
-    const taskCard = makeTaskCard(task);
+    const taskCard = task.explainer ? makeKnowledgeCard(task) : makeTaskCard(task);
     const areaCard = makeAreaCard(task, isFreestyle);
 
     // Register the area editor so initTaskEditors() can wire CodeMirror.
@@ -332,6 +361,43 @@ function renderPair(task, isFreestyle) {
     });
 
     return { taskCard, areaCard };
+}
+
+// A "knowledge card" sits in the left column where a task card would, but
+// explains a piece of pre-filled code instead of asking the student to write
+// it. Used for tasks flagged `explainer: true` (e.g. draw_scene, State): the
+// code on the right is already complete, a no-op for the student to start, so
+// there's no status pill or number, just a short explanation.
+function makeKnowledgeCard(task) {
+    const card = document.createElement('article');
+    card.className = 'project-task project-knowledge-card';
+    if (task.id) card.dataset.taskId = task.id;
+
+    const header = document.createElement('header');
+    header.className = 'knowledge-card-header';
+    header.innerHTML = `
+        <span class="knowledge-icon">${task.icon || '📘'}</span>
+        <h3 class="knowledge-title">${escapeHtml(task.title)}</h3>
+    `;
+    card.appendChild(header);
+
+    const body = document.createElement('div');
+    body.className = 'knowledge-body';
+    body.innerHTML = task.guidance || task.content || '';
+    card.appendChild(body);
+
+    // The run/validation machinery expects every registered task entry to
+    // have a statusEl it can poke. A knowledge card shows no pill, so give it
+    // a detached, hidden status span purely to satisfy that contract. There's
+    // no card-level validation message either (errors surface on the area
+    // card via isSelfManaged), so cardErrorEl is null.
+    const status = document.createElement('span');
+    status.className = 'task-status';
+    status.style.display = 'none';
+    card._statusEl = status;
+    card._cardErrorEl = null;
+
+    return card;
 }
 
 function makeTaskCard(task) {
@@ -571,9 +637,16 @@ function initTaskEditors() {
             indentWithTabs: false,
             lineWrapping: true,
             viewportMargin: Infinity,
+            // No CodeMirror scrollbars: the editor auto-grows to fit its
+            // content (setSize 'auto' below) and lineWrapping handles long
+            // lines, so a scrollbar would only ever be a stray artifact.
+            scrollbarStyle: 'null',
         });
         const seedLines = countSeedLines();
-        setupEditor.setSize('100%', '12.5em');
+        // Auto-grow with content, like every task editor. min-height keeps a
+        // fresh State section from collapsing to a sliver.
+        setupEditor.setSize('100%', 'auto');
+        setupEditor.getWrapperElement().style.minHeight = '12.5em';
         if (seedLines > 0) {
             setupEditor.on('beforeChange', (_cm, change) => {
                 if (change.origin === 'setValue') return;
@@ -608,6 +681,10 @@ function initTaskEditors() {
             indentWithTabs: false,
             lineWrapping: true,
             viewportMargin: Infinity,
+            // See the setup editor above: every editor auto-grows, so
+            // CodeMirror's own scrollbars are never needed and only ever
+            // flash in as a stray artifact. Turn them off everywhere.
+            scrollbarStyle: 'null',
         });
 
         if (!isFreestyle) {
@@ -655,17 +732,14 @@ function initTaskEditors() {
             });
         }
 
-        if (isFreestyle) {
-            // Freestyle editor auto-grows with content rather than
-            // overflow-scrolling. min-height keeps a fresh project from
-            // starting with a tiny box; after that, newlines extend it.
-            cm.setSize('100%', 'auto');
-            const minLines = task.editorHeight || 6;
-            cm.getWrapperElement().style.minHeight = `${minLines * 1.5}em`;
-        } else {
-            const heightLines = (task.editorHeight || 6) + (multi ? task.functions.length : 1);
-            cm.setSize('100%', `${heightLines * 1.5}em`);
-        }
+        // Every editor auto-grows with its content rather than
+        // overflow-scrolling. min-height keeps a fresh editor from starting
+        // as a tiny box; after that, new lines extend it. For function
+        // editors the min also reserves room for the locked def header(s).
+        cm.setSize('100%', 'auto');
+        const defLines = isFreestyle ? 0 : (multi ? task.functions.length : 1);
+        const minLines = (task.editorHeight || 6) + defLines;
+        cm.getWrapperElement().style.minHeight = `${minLines * 1.5}em`;
         cm.on('change', (_cm, change) => {
             if (change.origin !== 'setValue') {
                 markDirty();
@@ -739,6 +813,14 @@ function getFunctionTasks() {
 
 function getFreestyleTask() {
     return (projectDef.tasks || []).find(t => t.freestyle);
+}
+
+// Tasks the run/validation machinery should not stamp a pass/fail pill on.
+// selfCheck tasks own their own tick; explainer tasks are knowledge cards
+// whose code is pre-filled (a no-op for the student) so there's nothing to
+// grade. Both still surface real syntax/runtime errors on their area card.
+function isSelfManaged(task) {
+    return Boolean(task.selfCheck || task.explainer);
 }
 
 // ─── Run flow ────────────────────────────────────────────────────────────
@@ -834,7 +916,7 @@ async function runProject() {
     // 7. Per-task validation. Self-check tasks skip programmatic validation.
     for (const [taskId, entry] of taskEditors.entries()) {
         if (entry.statusEl.classList.contains('task-status-fail')) continue;
-        if (entry.task.selfCheck) continue;
+        if (isSelfManaged(entry.task)) continue;
         const result = await validateTask(entry.task);
         applyValidationResult(taskId, result);
     }
@@ -1147,12 +1229,14 @@ function resetAllStatus() {
         host._statusEl.textContent = '○ ready';
     }
     if (host && host._errorEl) host._errorEl.style.display = 'none';
+    if (host && host._syntaxBadge) host._syntaxBadge.style.display = 'none';
 
     for (const entry of taskEditors.values()) {
         if (entry.cardErrorEl) entry.cardErrorEl.style.display = 'none';
         // Self-check pills stay as the student left them - they're not reset
-        // by a project run.
-        if (entry.task.selfCheck) {
+        // by a project run. Explainer cards have no pill at all, but follow
+        // the same "clear errors, leave status alone" path.
+        if (isSelfManaged(entry.task)) {
             entry.errorEl.style.display = 'none';
             const card = entry.editorEl.closest('.project-area-card');
             if (card && card._syntaxBadge) card._syntaxBadge.style.display = 'none';
@@ -1176,6 +1260,7 @@ function setSetupError(msg) {
     host._statusEl.textContent = '✗ error';
     host._errorEl.style.display = 'block';
     host._errorEl.textContent = msg;
+    if (host._syntaxBadge) host._syntaxBadge.style.display = '';
 }
 
 function setExtrasError(msg) {
@@ -1343,9 +1428,9 @@ def _wavelet_find_duplicate_def(src):
 function markTaskError(taskId, msg) {
     const entry = taskEditors.get(taskId);
     if (!entry) return;
-    // For self-check tasks, surface the error on the area card without
-    // overwriting the student's self-check pill.
-    if (entry.task.selfCheck) {
+    // For self-managed tasks (self-check + explainer), surface the error on
+    // the area card without touching a pill the student owns / that isn't there.
+    if (isSelfManaged(entry.task)) {
         entry.errorEl.style.display = 'block';
         entry.errorEl.textContent = msg;
         const card = entry.editorEl.closest('.project-area-card');
@@ -1533,7 +1618,7 @@ function expandCells(spec) {
 
 function applyValidationResult(taskId, result) {
     const entry = taskEditors.get(taskId);
-    if (!entry || entry.task.selfCheck) return;
+    if (!entry || isSelfManaged(entry.task)) return;
     if (result.pass) {
         entry.statusEl.className = 'task-status task-status-pass';
         entry.statusEl.textContent = '✓ working';
@@ -1766,7 +1851,7 @@ function loadFileIntoEditors(text, filename) {
             missing.push(task.title);
         }
         entry.errorEl.style.display = 'none';
-        if (!entry.task.selfCheck) {
+        if (!isSelfManaged(entry.task)) {
             entry.statusEl.className = 'task-status task-status-pending';
             entry.statusEl.textContent = '○ not run';
         }
