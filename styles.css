@@ -2113,6 +2113,17 @@ body.stage-fullscreen-active .project-stage--fullscreen .run-project-btn:hover {
     transform: none;
     box-shadow: none;
 }
+/* Stop stays visible (red) in play mode so students can halt the on_tick
+   animation without leaving full screen. */
+body.stage-fullscreen-active .project-stage--fullscreen .stop-project-btn {
+    padding: 8px 18px;
+    font-size: 0.9rem;
+    box-shadow: none;
+}
+body.stage-fullscreen-active .project-stage--fullscreen .stop-project-btn:hover {
+    transform: none;
+    box-shadow: none;
+}
 body.stage-fullscreen-active .project-stage--fullscreen .dpad {
     /* Bigger d-pad for play mode. */
     grid-template-columns: repeat(3, 64px);
@@ -2231,6 +2242,24 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
 .run-project-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 14px rgba(16, 185, 129, 0.4);
+}
+
+.stop-project-btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+    transition: all 0.2s ease;
+}
+
+.stop-project-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(239, 68, 68, 0.4);
 }
 
 /* 3x3 grid: ↑ on top, ← ↓ → on bottom row */

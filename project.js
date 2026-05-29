@@ -41,6 +41,10 @@ let lastEditedTaskId = null;
 // run replaces the old loop instead of stacking ticks.
 let tickInterval = null;
 const TICK_MS = 1000;
+// True once Run has loaded the code and the project is interactive (d-pad,
+// arrow keys, and the on_tick loop are live). Stop flips it back to false so
+// the project freezes on its last frame until the next Run.
+let projectRunning = false;
 // Setup state. The card is built up-front so initTaskEditors can wire
 // CodeMirror; renderBands decides where to insert it (default = at the
 // top, or wherever a setup-anchor block in the JSON places it).
@@ -101,6 +105,7 @@ function renderProject() {
     renderBands();
 
     document.getElementById('run-project-btn').addEventListener('click', runProject);
+    document.getElementById('stop-project-btn').addEventListener('click', stopProject);
     document.querySelectorAll('.dpad-btn').forEach(btn => {
         btn.addEventListener('click', () => onKeyPress(btn.dataset.key));
     });
@@ -819,9 +824,32 @@ async function runProject() {
     // 8. Start (or restart) the on_tick loop. If the student has defined
     //    on_tick(), the project calls it once per second so they can build
     //    real-time things (a wandering creature, a countdown timer).
+    projectRunning = true;
+    setRunningUI(true);
     startTickLoop();
 
     finalizeRunStatus();
+}
+
+// Stop the running project: halt the on_tick loop and stop responding to the
+// d-pad / arrow keys. The canvas keeps its last frame so the scene doesn't
+// vanish; clicking Run Project starts it again. Python state is left intact.
+function stopProject() {
+    if (!projectRunning) return;
+    stopTickLoop();
+    projectRunning = false;
+    setRunningUI(false);
+    const status = document.getElementById('project-status');
+    if (status) {
+        status.innerHTML = '⏹ Project stopped. Click <strong>Run Project</strong> to play again.';
+    }
+}
+
+// Toggle the Run / Stop buttons. Run stays visible (it doubles as restart);
+// Stop only appears while the project is live.
+function setRunningUI(running) {
+    const stopBtn = document.getElementById('stop-project-btn');
+    if (stopBtn) stopBtn.style.display = running ? '' : 'none';
 }
 
 // Tick loop: drives on_tick() at TICK_MS intervals. Started after every
@@ -841,6 +869,7 @@ function stopTickLoop() {
 }
 
 async function handleTick() {
+    if (!projectRunning) return;
     if (!executor || !executor.isReady()) return;
     if (!functionDefinedInPython('on_tick')) return;
     const py = executor.getPyodide();
@@ -1054,7 +1083,7 @@ async function onKeyPress(direction) {
     const fnName = `on_${direction}_key`;
 
     const py = executor.getPyodide();
-    if (!py.globals.get('_wavelet_call_safely')) {
+    if (!projectRunning || !py.globals.get('_wavelet_call_safely')) {
         document.getElementById('project-status').innerHTML =
             'Click <strong>Run Project</strong> first to load your code.';
         return;
@@ -1088,6 +1117,11 @@ async function onKeyPress(direction) {
 
 function resetAllStatus() {
     stopTickLoop();
+    // Drop out of the running state until this Run reaches the interactive
+    // stage. If it fails early (e.g. setup error) the Stop button stays
+    // hidden; a successful Run sets it back to true at the end.
+    projectRunning = false;
+    setRunningUI(false);
     setPlayInfo('');
     const host = getSetupHost();
     if (host && host._statusEl) {
