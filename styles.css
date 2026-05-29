@@ -2045,8 +2045,9 @@ body.stage-fullscreen-active .project-stage--fullscreen {
     padding: 0;
     max-height: none;
     overflow: hidden;
-    /* Center the canvas in the viewport; controls and play-info float to
-       fixed positions so they don't push the canvas off-center. */
+    /* Center the canvas in the viewport. The print-output panel is pinned
+       to the left and the controls (Run / Stop / d-pad) to the right, both
+       absolutely positioned so they never push the canvas off-center. */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2065,37 +2066,43 @@ body.stage-fullscreen-active .project-stage--fullscreen .project-canvas-wrapper 
     height: auto;
 }
 body.stage-fullscreen-active .project-stage--fullscreen .project-canvas-wrapper canvas {
-    /* Largest square that leaves room for:
-       - the floating d-pad below (134px tall + 24px padding + ~50px
-         drop-shadow extending past the canvas bottom)
-       - the play-info panel above (~80px)
-       Canvas is vertically centered, so we subtract twice the larger
-       margin from viewport height to avoid the shadow / dpad collision.
+    /* Always show the FULL grid, scaled down to fit. The canvas is a square
+       sized by whichever is smaller: the viewport height (minus a small
+       margin) or the viewport width minus the two ~240px side columns we
+       reserve for the print-output panel (left) and the controls (right).
+       Because the side panels are absolutely positioned within those
+       reserved margins, the canvas never overlaps them and never crops.
        !important overrides the inline width/height set by canvas-system.js. */
-    width: min(calc(100vh - 420px), calc(100vw - 80px)) !important;
-    height: min(calc(100vh - 420px), calc(100vw - 80px)) !important;
+    width: min(calc(100vh - 32px), calc(100vw - 480px)) !important;
+    height: min(calc(100vh - 32px), calc(100vw - 480px)) !important;
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
     border-radius: 6px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 body.stage-fullscreen-active .project-stage--fullscreen .play-info {
+    /* Print output flows down the left side, vertically centered. */
     position: absolute;
-    top: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    max-width: min(60vw, 540px);
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 220px;
+    max-width: 220px;
+    max-height: 80vh;
     font-size: 1rem;
 }
 body.stage-fullscreen-active .project-stage--fullscreen .project-controls {
+    /* Run / Stop / d-pad stack down the right side, vertically centered. */
     position: absolute;
-    bottom: 24px;
-    left: 0;
-    right: 0;
-    flex-direction: row;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    left: auto;
+    bottom: auto;
+    flex-direction: column;
     justify-content: center;
-    align-items: flex-end;
-    gap: 24px;
+    align-items: center;
+    gap: 20px;
     width: auto;
 }
 body.stage-fullscreen-active .project-stage--fullscreen .run-project-btn {
@@ -2135,7 +2142,7 @@ body.stage-fullscreen-active .project-stage--fullscreen .dpad-btn {
 }
 /* Hide chatty status text in play mode, ie. the "Run", "1 task needs
    fixing", "Project running" messages. Score / print() output is still
-   shown via the .play-info panel at the top. */
+   shown via the .play-info panel on the left. */
 body.stage-fullscreen-active .project-stage--fullscreen .project-status {
     display: none;
 }
@@ -2152,38 +2159,6 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn {
 body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:hover {
     background: rgba(255, 255, 255, 0.3);
     color: white;
-}
-
-/* Short viewports (small laptops, or Chrome devtools docked at the bottom):
-   the default fullscreen layout centres the canvas vertically and floats
-   the d-pad at the bottom, which reserves ~420px of height and shrinks the
-   canvas to almost nothing when there isn't that much room. Below this
-   breakpoint we lay the canvas and controls out side by side instead, so
-   the canvas is sized by whichever of width/height is smaller and stays
-   large. The controls become a normal flex child (no longer absolute) so
-   the canvas + d-pad centre as a group with no overlap. */
-@media (max-height: 700px) {
-    body.stage-fullscreen-active .project-stage--fullscreen .project-canvas-wrapper canvas {
-        width: min(calc(100vh - 40px), calc(100vw - 260px)) !important;
-        height: min(calc(100vh - 40px), calc(100vw - 260px)) !important;
-    }
-    body.stage-fullscreen-active .project-stage--fullscreen .project-controls {
-        position: static;
-        bottom: auto;
-        left: auto;
-        right: auto;
-        transform: none;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 16px;
-        width: auto;
-        margin-left: 24px;
-    }
-    body.stage-fullscreen-active .project-stage--fullscreen .play-info {
-        top: 8px;
-        max-height: 30vh;
-    }
 }
 
 .project-canvas-wrapper {
