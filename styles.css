@@ -1969,7 +1969,7 @@ code {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     /* Constrain vertical so the sidebar fits within the viewport on small
        laptops; canvas + controls scroll internally if they overflow.
        The sticky position also acts as the positioning context for the
@@ -2202,7 +2202,7 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     width: 100%;
 }
 
@@ -2221,9 +2221,9 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
     background: linear-gradient(135deg, #10b981, #059669);
     color: white;
     border: none;
-    padding: 12px 22px;
+    padding: 8px 18px;
     border-radius: 10px;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
     white-space: nowrap;
     cursor: pointer;
@@ -2240,9 +2240,9 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
     background: linear-gradient(135deg, #ef4444, #dc2626);
     color: white;
     border: none;
-    padding: 12px 22px;
+    padding: 8px 18px;
     border-radius: 10px;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
     white-space: nowrap;
     cursor: pointer;
@@ -2258,8 +2258,8 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
 /* 3x3 grid: ↑ on top, ← ↓ → on bottom row */
 .dpad {
     display: grid;
-    grid-template-columns: 50px 50px 50px;
-    grid-template-rows: 50px 50px;
+    grid-template-columns: 40px 40px 40px;
+    grid-template-rows: 40px 40px;
     gap: 4px;
 }
 
@@ -2267,7 +2267,7 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
     background: white;
     border: 2px solid #adb5bd;
     border-radius: 8px;
-    font-size: 1.4rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: #495057;
     cursor: pointer;
