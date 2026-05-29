@@ -2475,13 +2475,16 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
 }
 
 /* Every project editor auto-grows (setSize('100%', 'auto') in JS) with
-   scrollbarStyle:'null', so CodeMirror never draws its own scrollbars. This
-   belt-and-suspenders rule also clips the inner .CodeMirror-scroll element,
-   which used to stamp in a stray scrollbar even when content fit. Safe
-   because lineWrapping is on (long lines wrap) and the wrapper height is
-   auto (no fixed vertical clip to scroll inside of). */
+   scrollbarStyle:'null', so CodeMirror never draws its own fake scrollbars.
+   But CodeMirror's base stylesheet sets `.CodeMirror-scroll { overflow:
+   scroll !important }` and hides the resulting NATIVE scrollbars with a
+   -50px margin trick that only works when the wrapper has a fixed height.
+   Auto height breaks that trick, so a stray native scrollbar leaks in (worst
+   on short content, vanishing as lines are added, which is the bug we saw).
+   We must use !important here to win against the base rule. Safe: lineWrapping
+   is on and height is auto, so nothing ever needs to scroll in the editor. */
 .task-editor .CodeMirror-scroll {
-    overflow: hidden;
+    overflow: hidden !important;
 }
 
 /* Line 0 of each task editor is the locked `def fn():` line. Tint it so it
