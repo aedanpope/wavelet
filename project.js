@@ -192,6 +192,11 @@ function renderBands() {
     let currentBandKind = null;
     const closeBand = () => { currentBandEl = null; currentBandKind = null; };
 
+    // Only the first "Tasks" (Band 1) group gets a heading; later Band 1
+    // groups (split apart by concept cards / the State anchor) render without
+    // a repeated label so the page reads as one continuous task list.
+    let firstTaskBandSeen = false;
+
     if (!hasAnchor && setupCardState) {
         host.appendChild(setupCardState.card);
     }
@@ -210,7 +215,12 @@ function renderBands() {
         const kind = bandFor(block);
         if (kind !== currentBandKind) {
             closeBand();
-            currentBandEl = openBand(kind);
+            let labelText = bandLabel(kind);
+            if (kind === 1) {
+                labelText = firstTaskBandSeen ? '' : labelText;
+                firstTaskBandSeen = true;
+            }
+            currentBandEl = openBand(kind, labelText);
             host.appendChild(currentBandEl);
             currentBandKind = kind;
         }
@@ -224,19 +234,25 @@ function bandFor(task) {
     return 1;
 }
 
-function openBand(kind) {
+function bandLabel(kind) {
+    return {
+        1: 'Tasks',
+        2: 'Combine your code',
+        3: 'Freestyle'
+    }[kind] || '';
+}
+
+function openBand(kind, labelText) {
     const section = document.createElement('section');
     section.className = `project-band project-band-${kind}`;
     section.dataset.band = String(kind);
 
-    const label = document.createElement('div');
-    label.className = 'band-label';
-    label.textContent = {
-        1: 'Step by step',
-        2: 'Combine your code',
-        3: 'Freestyle'
-    }[kind] || '';
-    section.appendChild(label);
+    if (labelText) {
+        const label = document.createElement('div');
+        label.className = 'band-label';
+        label.textContent = labelText;
+        section.appendChild(label);
+    }
 
     const inner = document.createElement('div');
     inner.className = `band-grid band-grid-${kind}`;
