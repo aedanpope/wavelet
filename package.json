@@ -44,10 +44,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/python-browser-editor.git"
+    "url": "https://github.com/aedanpope/wavelet.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/python-browser-editor/issues"
+    "url": "https://github.com/aedanpope/wavelet/issues"
   },
-  "homepage": "https://github.com/yourusername/python-browser-editor#readme"
+  "homepage": "https://github.com/aedanpope/wavelet#readme"
 }

@@ -202,6 +202,7 @@ Examples:
 
 ## Important Notes
 
+- **For every code change: open a PR and `subscribe_pr_activity` to it.** After pushing a code change, always open a pull request and subscribe to its activity so GitHub Actions lint/test results and review comments come back into the session (the container has no local Node, so this is the only way to verify tests). Do this automatically, without waiting to be asked.
 - User is on Windows (native, no WSL2) - use bash-compatible commands via Git Bash
 - All Python code execution happens in browser via Pyodide
 - Educational context is paramount - keep UI intuitive for beginners
