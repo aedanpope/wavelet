@@ -63,7 +63,7 @@ For detailed descriptions of each worksheet, see [WORKSHEETS.md](WORKSHEETS.md).
 
 - **Frontend**: HTML5, CSS3, JavaScript (ES6+)
 - **Code Editor**: CodeMirror 5.65.2
-- **Python Runtime**: Pyodide v0.24.1 (Python compiled to WebAssembly)
+- **Python Runtime**: Pyodide v0.28.2 (Python compiled to WebAssembly)
 - **Data Format**: JSON for worksheet content
 
 ## Development
