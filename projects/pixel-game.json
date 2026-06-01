@@ -159,7 +159,7 @@
       "freestyle": true,
       "function": "your_additions",
       "areaDescription": "Free coding space. Code here runs at the top level after Setup. Add helpers, extra state, new functions, anything.",
-      "guidance": "<p>Your turn. The editor on the right is a blank slate at the top level of your project. You can:</p><ul><li>Define a new helper function (e.g. <code>def draw_creature(x, y):</code>) and call it from <code>draw_scene</code></li><li>Add a new state variable and use it in your handlers</li><li>Compute something fancy using the <a href='https://docs.python.org/3/library/random.html' target='_blank' rel='noopener'>random</a> or <a href='https://docs.python.org/3/library/math.html' target='_blank' rel='noopener'>math</a> libraries</li><li>Anything else you want to try</li></ul><p>Tick this card when you've built something you're proud of.</p>",
+      "guidance": "<p>Your turn. The editor on the right is a blank slate at the top level of your project. You can:</p><ul><li>Define a new helper function (e.g. <code>def draw_creature(x, y):</code>) and call it from <code>draw_scene</code></li><li>Add a new state variable and use it in your handlers</li><li>Compute something fancy using the <a href='https://www.w3schools.com/python/module_random.asp' target='_blank' rel='noopener'>random</a> or <a href='https://www.w3schools.com/python/module_math.asp' target='_blank' rel='noopener'>math</a> libraries</li><li>Anything else you want to try</li></ul><p>Tick this card when you've built something you're proud of.</p>",
       "starterBody": "# Your code here. Whatever you write runs at the top level\n# after Setup, before the function definitions.\n",
       "editorHeight": 8
     },
