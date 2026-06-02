@@ -87,8 +87,10 @@
             font-size: inherit;
         }
         .ref-code .cmt { color: #75715e; }
-        .ref-desc { color: #334155; font-size: 0.95rem; line-height: 1.55; }
-        .ref-desc p { margin: 0 0 8px; }
+        .ref-desc { color: #1e293b; font-size: 0.88rem; line-height: 1.5; }
+        /* Override the global .worksheet-selection p (1.2rem, #7f8c8d) so the
+           notes are smaller and higher-contrast. */
+        .ref-desc p { margin: 0 0 8px; color: #1e293b; font-size: 0.88rem; }
         .ref-desc p:last-of-type { margin-bottom: 8px; }
         .ref-desc code {
             background: #f1f5f9;
