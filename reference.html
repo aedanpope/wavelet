@@ -6,6 +6,9 @@
     <title>Python Reference - Python Learning Platform</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
     <link rel="stylesheet" href="styles.css">
+    <!-- CodeMirror monokai theme: supplies the token colours for the
+         syntax-highlighted code blocks (applied via runMode below). -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
     <style>
         /* Page-local styles for the reference cheat-sheet. Kept here so we
            don't accumulate one-off classes in styles.css. */
@@ -498,5 +501,24 @@ for n in nums:
             </div>
         </div>
     </div>
+
+    <!-- Syntax highlighting: reuse CodeMirror's runMode addon to tokenize each
+         static code block into the same monokai spans the editors use. This is
+         progressive enhancement, if these fail to load the blocks still read
+         fine as plain monokai-coloured text. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/runmode/runmode.min.js"></script>
+    <script>
+        (function () {
+            if (!window.CodeMirror || !CodeMirror.runMode) return;
+            document.querySelectorAll('pre.ref-code > code').forEach(function (codeEl) {
+                var src = codeEl.textContent;
+                codeEl.parentElement.classList.add('cm-s-monokai');
+                codeEl.textContent = '';
+                CodeMirror.runMode(src, 'python', codeEl);
+            });
+        })();
+    </script>
 </body>
 </html>
