@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Reference - Python Learning Platform</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Page-local styles for the reference cheat-sheet. Kept here so we
+           don't accumulate one-off classes in styles.css. */
+        .ref-intro {
+            background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+            border-left: 4px solid #6366f1;
+            padding: 20px 24px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            color: #1e293b;
+        }
+        .ref-intro p { color: #334155; margin: 0 0 10px; }
+        .ref-intro p:last-child { margin-bottom: 0; }
+        .ref-intro a { color: #4338ca; font-weight: 600; }
+
+        /* Jump links to each category. */
+        .ref-toc {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 26px;
+        }
+        .ref-toc a {
+            font-size: 0.85rem;
+            padding: 5px 12px;
+            border-radius: 16px;
+            background: #f1f5f9;
+            color: #475569;
+            text-decoration: none;
+            border: 1px solid #e2e8f0;
+        }
+        .ref-toc a:hover { background: #e0e7ff; color: #3730a3; }
+
+        /* Category headings reuse .section-heading; offset anchor jumps so the
+           heading isn't hidden under the top of the viewport. */
+        .section-heading { scroll-margin-top: 16px; }
+
+        /* One entry: code on the left, plain-English note on the right. */
+        .ref-item {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 16px;
+            align-items: start;
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-left: 4px solid #6366f1;
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+        }
+        @media (max-width: 640px) {
+            .ref-item { grid-template-columns: 1fr; gap: 10px; }
+        }
+        .ref-code {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 6px;
+            padding: 12px 14px;
+            margin: 0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre;
+        }
+        .ref-code .cmt { color: #94a3b8; font-style: italic; }
+        .ref-desc { color: #334155; font-size: 0.95rem; line-height: 1.55; }
+        .ref-desc p { margin: 0 0 8px; }
+        .ref-desc p:last-of-type { margin-bottom: 8px; }
+        .ref-desc code {
+            background: #f1f5f9;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        .wtag {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: #eef2ff;
+            color: #3730a3;
+            letter-spacing: 0.03em;
+        }
+        .ref-back { margin: 8px 0 30px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="worksheet-selection">
+            <header>
+                <h1>🐍 Python Reference</h1>
+                <p>Every function and idea from Worksheets 1 to 7, in one place.</p>
+            </header>
+
+            <div class="ref-intro">
+                <p>A quick cheat-sheet for everything you've learned so far. Each box shows a tiny example with a plain-English note, and a tag for the worksheet where it first showed up.</p>
+                <p>Want to try something out? Open the <a href="scratchpad.html">Python Scratchpad</a> and paste it in.</p>
+            </div>
+
+            <nav class="ref-toc">
+                <a href="#output">Output</a>
+                <a href="#input">Input</a>
+                <a href="#variables">Variables &amp; types</a>
+                <a href="#math">Maths</a>
+                <a href="#comparisons">Comparing &amp; booleans</a>
+                <a href="#conditionals">Decisions (if)</a>
+                <a href="#loops">Loops</a>
+                <a href="#strings">Text (strings)</a>
+                <a href="#lists">Lists</a>
+                <a href="#functions">Functions</a>
+                <a href="#patterns">Handy patterns</a>
+            </nav>
+
+            <!-- ── Output ─────────────────────────────────────────────── -->
+            <h2 class="section-heading" id="output">Output</h2>
+            <div class="ref-item">
+                <pre class="ref-code"><code>print("Hello!")
+print(7 * 6)</code></pre>
+                <div class="ref-desc">
+                    <p>Show a message or a number on the screen.</p>
+                    <span class="wtag">Worksheet 1</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>print("Score:", score)
+print(name, "is", age)</code></pre>
+                <div class="ref-desc">
+                    <p>List several things separated by commas. Python puts a space between them.</p>
+                    <span class="wtag">Worksheet 5</span>
+                </div>
+            </div>
+
+            <!-- ── Input ──────────────────────────────────────────────── -->
+            <h2 class="section-heading" id="input">Input</h2>
+            <div class="ref-item">
+                <pre class="ref-code"><code>age = get_input()</code></pre>
+                <div class="ref-desc">
+                    <p>Read whatever was typed into the input box.</p>
+                    <span class="wtag">Worksheet 2</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>first = get_input('first_number')
+second = get_input('second_number')</code></pre>
+                <div class="ref-desc">
+                    <p>When there's more than one box, read each one by its name.</p>
+                    <span class="wtag">Worksheet 2</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>choice = get_choice(2)
+if choice == 1:
+  print("First button")</code></pre>
+                <div class="ref-desc">
+                    <p>Show buttons and get back which one was pressed (<code>1</code>, <code>2</code>, ...).</p>
+                    <span class="wtag">Worksheet 4</span>
+                </div>
+            </div>
+
+            <!-- ── Variables & types ──────────────────────────────────── -->
+            <h2 class="section-heading" id="variables">Variables &amp; types</h2>
+            <div class="ref-item">
+                <pre class="ref-code"><code>side = 5
+name = "Sam"</code></pre>
+                <div class="ref-desc">
+                    <p>Store a value in a name so you can use it again later.</p>
+                    <span class="wtag">Worksheet 2</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>score = 0      <span class="cmt"># whole number</span>
+price = 2.5    <span class="cmt"># decimal</span></code></pre>
+                <div class="ref-desc">
+                    <p>Numbers can be whole (<code>int</code>) or decimals (<code>float</code>).</p>
+                    <span class="wtag">Worksheet 1</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>greeting = "hello"
+letter = 'a'</code></pre>
+                <div class="ref-desc">
+                    <p>Text goes in quotes. Use matching quotes, both <code>"</code> or both <code>'</code>.</p>
+                    <span class="wtag">Worksheet 5</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>found = True
+done = False</code></pre>
+                <div class="ref-desc">
+                    <p>A boolean is either <code>True</code> or <code>False</code> (capital letters).</p>
+                    <span class="wtag">Worksheet 4</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>scores = [7, 3, 9]</code></pre>
+                <div class="ref-desc">
+                    <p>A list holds several items in order, inside square brackets.</p>
+                    <span class="wtag">Worksheet 6</span>
+                </div>
+            </div>
+
+            <!-- ── Maths ──────────────────────────────────────────────── -->
+            <h2 class="section-heading" id="math">Maths</h2>
+            <div class="ref-item">
+                <pre class="ref-code"><code>2 + 3      <span class="cmt"># add</span>
+10 - 4     <span class="cmt"># subtract</span>
+6 * 7      <span class="cmt"># multiply</span>
+20 / 4     <span class="cmt"># divide</span></code></pre>
+                <div class="ref-desc">
+                    <p>The four basic operators.</p>
+                    <span class="wtag">Worksheet 1</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>2 + 3 * 4      <span class="cmt"># 14, not 20</span>
+(2 + 3) * 4    <span class="cmt"># 20</span></code></pre>
+                <div class="ref-desc">
+                    <p><code>*</code> and <code>/</code> happen before <code>+</code> and <code>-</code>. Use <code>( )</code> to change the order.</p>
+                    <span class="wtag">Worksheet 1</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>13 % 5        <span class="cmt"># 3 (the remainder)</span>
+n % 2 == 0    <span class="cmt"># True when n is even</span></code></pre>
+                <div class="ref-desc">
+                    <p><code>%</code> gives the remainder after dividing. Great for even/odd checks.</p>
+                    <span class="wtag">Worksheet 5</span>
+                </div>
+            </div>
+
+            <!-- ── Comparing & booleans ───────────────────────────────── -->
+            <h2 class="section-heading" id="comparisons">Comparing &amp; booleans</h2>
+            <div class="ref-item">
+                <pre class="ref-code"><code>a &gt; b     <span class="cmt"># greater than</span>
+a &lt; b     <span class="cmt"># less than</span>
+a == b    <span class="cmt"># equal to</span>
+a != b    <span class="cmt"># not equal to</span>
+a &gt;= b    <span class="cmt"># greater or equal</span>
+a &lt;= b    <span class="cmt"># less or equal</span></code></pre>
+                <div class="ref-desc">
+                    <p>Each comparison gives back <code>True</code> or <code>False</code>.</p>
+                    <span class="wtag">Worksheet 4</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>x &gt; 0 and x &lt; 10
+day == "Sat" or day == "Sun"
+not done</code></pre>
+                <div class="ref-desc">
+                    <p><code>and</code> needs both true, <code>or</code> needs either true, <code>not</code> flips it.</p>
+                    <span class="wtag">Worksheet 4</span>
+                </div>
+            </div>
+
+            <!-- ── Decisions (if) ─────────────────────────────────────── -->
+            <h2 class="section-heading" id="conditionals">Decisions (if)</h2>
+            <div class="ref-item">
+                <pre class="ref-code"><code>if score &gt; 10:
+  print("Great!")
+elif score &gt; 5:
+  print("Good")
+else:
+  print("Keep going")</code></pre>
+                <div class="ref-desc">
+                    <p>Run different code depending on what's true. Indent each body 2 spaces. <code>elif</code> and <code>else</code> are optional.</p>
+                    <span class="wtag">Worksheet 4</span>
+                </div>
+            </div>
+
+            <!-- ── Loops ──────────────────────────────────────────────── -->
+            <h2 class="section-heading" id="loops">Loops</h2>
+            <div class="ref-item">
+                <pre class="ref-code"><code>for i in range(5):
+  print(i)     <span class="cmt"># 0 1 2 3 4</span></code></pre>
+                <div class="ref-desc">
+                    <p><code>range(5)</code> counts from 0 up to 4. The indented lines run each time.</p>
+                    <span class="wtag">Worksheet 3</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>for n in range(1, 6):
+  print(n)     <span class="cmt"># 1 2 3 4 5</span></code></pre>
+                <div class="ref-desc">
+                    <p>Count from a start up to (but not including) the stop number.</p>
+                    <span class="wtag">Worksheet 3</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>for colour in ["red", "blue"]:
+  print(colour)</code></pre>
+                <div class="ref-desc">
+                    <p>Do something with each item of a list in turn.</p>
+                    <span class="wtag">Worksheet 3</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>for n in range(100):
+  if n == 7:
+    break</code></pre>
+                <div class="ref-desc">
+                    <p><code>break</code> leaves the loop straight away.</p>
+                    <span class="wtag">Worksheet 5</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>for y in range(3):
+  for x in range(3):
+    print(x, y)</code></pre>
+                <div class="ref-desc">
+                    <p>A loop inside a loop. The inner body is indented twice (4 spaces).</p>
+                    <span class="wtag">Worksheet 3</span>
+                </div>
+            </div>
+
+            <!-- ── Text (strings) ─────────────────────────────────────── -->
+            <h2 class="section-heading" id="strings">Text (strings)</h2>
+            <div class="ref-item">
+                <pre class="ref-code"><code>"hello" + " " + "world"
+<span class="cmt"># "hello world"</span></code></pre>
+                <div class="ref-desc">
+                    <p><code>+</code> joins strings together.</p>
+                    <span class="wtag">Worksheet 5</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>"*" * 5      <span class="cmt"># "*****"</span></code></pre>
+                <div class="ref-desc">
+                    <p><code>*</code> repeats a string.</p>
+                    <span class="wtag">Worksheet 3</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>len("hello")    <span class="cmt"># 5</span></code></pre>
+                <div class="ref-desc">
+                    <p><code>len()</code> counts the characters in a string.</p>
+                    <span class="wtag">Worksheet 5</span>
+                </div>
+            </div>
+
+            <!-- ── Lists ──────────────────────────────────────────────── -->
+            <h2 class="section-heading" id="lists">Lists</h2>
+            <div class="ref-item">
+                <pre class="ref-code"><code>nums = [10, 20, 30]
+nums[0]     <span class="cmt"># 10  (the first item)</span>
+nums[2]     <span class="cmt"># 30</span></code></pre>
+                <div class="ref-desc">
+                    <p>Read an item by its position. Counting starts at <code>0</code>.</p>
+                    <span class="wtag">Worksheet 6</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>nums[1] = 99</code></pre>
+                <div class="ref-desc">
+                    <p>Replace the item at a position with a new value.</p>
+                    <span class="wtag">Worksheet 6</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>len(nums)     <span class="cmt"># 3</span></code></pre>
+                <div class="ref-desc">
+                    <p><code>len()</code> counts how many items are in the list.</p>
+                    <span class="wtag">Worksheet 6</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>nums.append(40)</code></pre>
+                <div class="ref-desc">
+                    <p><code>.append()</code> adds an item to the end.</p>
+                    <span class="wtag">Worksheet 6</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>for i in range(len(nums)):
+  print(i, nums[i])</code></pre>
+                <div class="ref-desc">
+                    <p>Loop with the index when you need the position as well as the item.</p>
+                    <span class="wtag">Worksheet 6</span>
+                </div>
+            </div>
+
+            <!-- ── Functions ──────────────────────────────────────────── -->
+            <h2 class="section-heading" id="functions">Functions</h2>
+            <div class="ref-item">
+                <pre class="ref-code"><code>def greet():
+  print("Hi!")
+
+greet()</code></pre>
+                <div class="ref-desc">
+                    <p><code>def</code> makes a reusable block of code. Run it by writing its name with <code>()</code>.</p>
+                    <span class="wtag">Worksheet 7</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>def add(a, b):
+  print(a + b)
+
+add(2, 3)     <span class="cmt"># 5</span></code></pre>
+                <div class="ref-desc">
+                    <p>Pass values in through the brackets. They become <code>a</code> and <code>b</code> inside.</p>
+                    <span class="wtag">Worksheet 7</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>def double(n):
+  return n * 2
+
+answer = double(5)    <span class="cmt"># 10</span></code></pre>
+                <div class="ref-desc">
+                    <p><code>return</code> hands a result back so you can store or use it. (<code>print</code> only shows it.)</p>
+                    <span class="wtag">Worksheet 7</span>
+                </div>
+            </div>
+
+            <!-- ── Handy patterns ─────────────────────────────────────── -->
+            <h2 class="section-heading" id="patterns">Handy patterns</h2>
+            <div class="ref-item">
+                <pre class="ref-code"><code>total = 0
+for n in [3, 5, 2]:
+  total = total + n
+print(total)     <span class="cmt"># 10</span></code></pre>
+                <div class="ref-desc">
+                    <p><strong>Running total:</strong> start at 0, add each time through the loop, use it after.</p>
+                    <span class="wtag">Worksheet 3</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>count = 0
+for n in nums:
+  if n &gt; 10:
+    count = count + 1</code></pre>
+                <div class="ref-desc">
+                    <p><strong>Counter:</strong> count how many items match a test.</p>
+                    <span class="wtag">Worksheet 6</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>evens = []
+for n in range(10):
+  if n % 2 == 0:
+    evens.append(n)</code></pre>
+                <div class="ref-desc">
+                    <p><strong>Build a list:</strong> start empty, append the items you want to keep.</p>
+                    <span class="wtag">Worksheet 6</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>found = False
+for n in nums:
+  if n == target:
+    found = True</code></pre>
+                <div class="ref-desc">
+                    <p><strong>Flag:</strong> remember whether something happened while looping.</p>
+                    <span class="wtag">Worksheet 5</span>
+                </div>
+            </div>
+            <div class="ref-item">
+                <pre class="ref-code"><code>biggest = nums[0]
+for n in nums:
+  if n &gt; biggest:
+    biggest = n</code></pre>
+                <div class="ref-desc">
+                    <p><strong>Biggest / smallest:</strong> start with the first item, update when you see a better one.</p>
+                    <span class="wtag">Worksheet 6</span>
+                </div>
+            </div>
+
+            <div class="ref-back">
+                <a href="index.html">&larr; Back to home</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
