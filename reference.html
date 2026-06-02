@@ -278,11 +278,16 @@ a &lt;= b    <span class="cmt"># less or equal</span></code></pre>
                 </div>
             </div>
             <div class="ref-item">
-                <pre class="ref-code"><code>x &gt; 0 and x &lt; 10
-day == "Sat" or day == "Sun"
-not done</code></pre>
+                <pre class="ref-code"><code>if x &gt; 0 and x &lt; 10:
+  print("in range")
+
+if day == "Sat" or day == "Sun":
+  print("weekend!")
+
+if not done:
+  print("keep going")</code></pre>
                 <div class="ref-desc">
-                    <p><code>and</code> needs both true, <code>or</code> needs either true, <code>not</code> flips it.</p>
+                    <p>Join tests together to make richer decisions: <code>and</code> needs both true, <code>or</code> needs either true, <code>not</code> flips it.</p>
                     <a class="wtag" href="worksheet.html?id=worksheet-4">Worksheet 4</a>
                 </div>
             </div>
