@@ -59,9 +59,11 @@
         @media (max-width: 640px) {
             .ref-item { grid-template-columns: 1fr; gap: 10px; }
         }
+        /* Code blocks use the CodeMirror monokai palette so they read the same
+           as the editors in the worksheets and projects. */
         .ref-code {
-            background: #1e293b;
-            color: #e2e8f0;
+            background: #272822;
+            color: #f8f8f2;
             border-radius: 6px;
             padding: 12px 14px;
             margin: 0;
@@ -71,7 +73,17 @@
             font-family: 'Consolas', 'Monaco', monospace;
             white-space: pre;
         }
-        .ref-code .cmt { color: #94a3b8; font-style: italic; }
+        /* Reset the global `code { background: #e9ecef; ... }` rule so the
+           inner <code> doesn't paint a light box on top of the dark block. */
+        .ref-code code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            color: inherit;
+            font-family: inherit;
+            font-size: inherit;
+        }
+        .ref-code .cmt { color: #75715e; }
         .ref-desc { color: #334155; font-size: 0.95rem; line-height: 1.55; }
         .ref-desc p { margin: 0 0 8px; }
         .ref-desc p:last-of-type { margin-bottom: 8px; }
