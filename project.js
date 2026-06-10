@@ -1351,10 +1351,11 @@ function scrollToTask(taskId) {
         `.project-task[data-task-id="${taskId}"]`
     );
     if (!card) return;
-    const stage = document.querySelector('.project-stage');
-    const stageHeight = stage ? stage.offsetHeight : 0;
+    // Scroll the card to the top of the viewport. Nothing overlays the
+    // content while scrolling: the stage sits in its own column on wide
+    // layouts and is position: static (not sticky) on stacked layouts.
     const cardTop = card.getBoundingClientRect().top + window.scrollY;
-    window.scrollTo({ top: cardTop - stageHeight - 16, behavior: 'smooth' });
+    window.scrollTo({ top: cardTop - 16, behavior: 'smooth' });
 }
 
 // ─── Code assembly ───────────────────────────────────────────────────────
