@@ -130,7 +130,7 @@
       "title": "Stop the player at the walls",
       "crossArea": true,
       "areaChips": ["on_left_key", "on_right_key", "on_up_key", "on_down_key"],
-      "guidance": "<p>Right now the player can walk off the edge of the canvas. Fix that.</p><p>Press the left arrow over and over: the player moves left because <code>state.player_x</code> keeps decreasing, 10, 9, 8, 7... and eventually the player moves off the edge of the canvas and a warning appears.</p><p>So: what value of <code>state.player_x</code> is too small?</p><p>Inside <code>on_left_key</code>, use an if-statement to check when <code>state.player_x</code> has become too small, and update its value to undo the player moving too far. For a refresher on if-statements, see the <a href='reference.html#conditionals' target='_blank' rel='noopener'>reference sheet on if-statements</a>.</p><p>Then do the same in the other three handlers. The canvas runs from <code>0</code> to <code>19</code> in both <code>x</code> and <code>y</code>.</p><p>Another way to do this could be to use the <a href='https://www.w3schools.com/python/ref_func_max.asp' target='_blank' rel='noopener'>max</a> and <a href='https://www.w3schools.com/python/ref_func_min.asp' target='_blank' rel='noopener'>min</a> functions.</p><p>Tick this card when the player can't walk off any edge.</p>"
+      "guidance": "<p>Right now the player can walk off the edge of the canvas. Fix that.</p><p>Press the left arrow over and over: the player moves left because <code>state.player_x</code> keeps decreasing, 10, 9, 8, 7... and eventually the player moves off the edge of the canvas and a warning appears.</p><p>So: what value of <code>state.player_x</code> is too small?</p><p>Inside <code>on_left_key</code>, use an if-statement to check when <code>state.player_x</code> has become too small, and update its value to undo the player moving too far. For a refresher on if-statements, see the <a href='reference.html#conditionals' target='_blank' rel='noopener'>reference sheet on if-statements</a>.</p><p>Then do the same in the other three handlers. The canvas runs from <code>0</code> to <code>19</code> in both <code>x</code> and <code>y</code>.</p><p>Another way to do this could be to use the <a href='https://www.w3schools.com/python/ref_func_max.asp' target='_blank' rel='noopener'>max</a> and <a href='https://www.w3schools.com/python/ref_func_min.asp' target='_blank' rel='noopener'>min</a> functions.</p>"
     },
     {
       "id": "score",
@@ -139,7 +139,7 @@
       "title": "Add a score",
       "crossArea": true,
       "areaChips": ["State", "draw_scene", "on_*_key"],
-      "guidance": "<p>Add a <code>state.score = 0</code> line to the <strong>State</strong> section. In one or more of your key handlers, bump the score (<code>state.score += 1</code>). In <code>draw_scene</code>, <code>print('Score:', state.score)</code> to show it under the canvas.</p><p>Variations: score only when you hit a target cell, score that resets when you press a particular key, score that grows a bar of cells. Up to you.</p><p>Tick this card when your score does something visible.</p>"
+      "guidance": "<p>Add a <code>state.score = 0</code> line to the <strong>State</strong> section. In one or more of your key handlers, bump the score (<code>state.score += 1</code>). In <code>draw_scene</code>, <code>print('Score:', state.score)</code> to show it under the canvas.</p><p>Variations: score only when you hit a target cell, score that resets when you press a particular key, score that grows a bar of cells. Up to you.</p>"
     },
     {
       "type": "concept",
@@ -154,7 +154,7 @@
       "freestyle": true,
       "function": "your_additions",
       "areaDescription": "Free coding space. Code here runs at the top level after Setup. Add helpers, extra state, new functions, anything.",
-      "guidance": "<p>Your turn. The editor on the right is a blank slate at the top level of your project. You can:</p><ul><li>Define a new helper function (e.g. <code>def draw_creature(x, y):</code>) and call it from <code>draw_scene</code></li><li>Add a new state variable and use it in your handlers</li><li>Compute something fancy using the <a href='https://www.w3schools.com/python/module_random.asp' target='_blank' rel='noopener'>random</a> or <a href='https://www.w3schools.com/python/module_math.asp' target='_blank' rel='noopener'>math</a> libraries</li><li>Anything else you want to try</li></ul><p>Tick this card when you've built something you're proud of.</p>",
+      "guidance": "<p>Your turn. The editor on the right is a blank slate at the top level of your project. You can:</p><ul><li>Define a new helper function (e.g. <code>def draw_creature(x, y):</code>) and call it from <code>draw_scene</code></li><li>Add a new state variable and use it in your handlers</li><li>Compute something fancy using the <a href='https://www.w3schools.com/python/module_random.asp' target='_blank' rel='noopener'>random</a> or <a href='https://www.w3schools.com/python/module_math.asp' target='_blank' rel='noopener'>math</a> libraries</li><li>Anything else you want to try</li></ul>",
       "starterBody": "# Your code here. Whatever you write runs at the top level\n# after Setup, before the function definitions.\n",
       "editorHeight": 8
     },
