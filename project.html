@@ -87,6 +87,12 @@
                         <!-- Play-info panel: captures anything print()ed during
                              the most recent draw_scene call. Hidden when empty. -->
                         <pre class="play-info" id="play-info" aria-live="polite" style="display: none;"></pre>
+                        <!-- Status sits above the controls so the "Keep going
+                             on task N / Jump to it" message stays visible even
+                             when the stage scrolls internally on small screens. -->
+                        <div class="project-status" id="project-status">
+                            Click <strong>Run Project</strong> to start.
+                        </div>
                         <div class="project-controls">
                             <div class="run-stop-row">
                                 <button class="run-project-btn" id="run-project-btn">▶ Run Project</button>
@@ -97,9 +103,6 @@
                                 <button class="dpad-btn dpad-left"  data-key="left"  aria-label="Left">←</button>
                                 <button class="dpad-btn dpad-down"  data-key="down"  aria-label="Down">↓</button>
                                 <button class="dpad-btn dpad-right" data-key="right" aria-label="Right">→</button>
-                            </div>
-                            <div class="project-status" id="project-status">
-                                Click <strong>Run Project</strong> to start.
                             </div>
                         </div>
                     </div>
