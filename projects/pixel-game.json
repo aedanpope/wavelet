@@ -65,9 +65,9 @@
       "title": "The background",
       "function": "draw_background",
       "areaDescription": "Called from draw_scene first, so the player sits on top.",
-      "guidance": "<p><code>draw_background</code> draws everything that sits <em>behind</em> the player. It's already filled in to call your <code>draw_border()</code> and <code>draw_corners()</code>, so you don't need to change anything here.</p><p>Later, if you want to decorate your scene (stripes, dots, a shape), come back and add your own <code>draw</code> calls below those two lines.</p>",
-      "starterBody": "draw_border()\ndraw_corners()\n# later: add your own stuff here! stripes, dots, shapes, anything.\n\n",
-      "editorHeight": 10
+      "guidance": "<p><code>draw_background</code> draws everything that sits <em>behind</em> the player. It's already filled in to call your <code>draw_border()</code> and <code>draw_corners()</code>, so you don't need to change anything here.</p>",
+      "starterBody": "draw_border()\ndraw_corners()\n",
+      "editorHeight": 3
     },
     { "type": "setup-anchor" },
     {
