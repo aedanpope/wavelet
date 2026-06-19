@@ -159,7 +159,7 @@ Since we now hold a database:
 
 ## 11. Open / deferred
 
-- **Architecture / hosting** is now drafted in §12 (recommendation: Cloudflare Pages Functions + D1). The one fork still to confirm is **D1 vs Supabase**.
+- **Architecture / hosting** is drafted in §12. Resolved: target is WA government schools → onshore required → **Cloudflare Pages (static) + Supabase Sydney (data tier)**. Remaining confirmations: AU-region baseline vs full sovereignty (§12.7), and whether to keep student names off the server entirely.
 - Exact **code scheme** (word list size, check-word vs. check-digit, minimum edit distance) to be specified when we build §3.1.
 - Retention window length for §5 (how many months after completion).
 - Whether the teacher dashboard's progress view should fold in the broader **Phase 3 "Assessment"** goals from `ROADMAP.md` (per-problem pass/fail export), since both want a teacher-facing progress surface.
@@ -168,16 +168,22 @@ Since we now hold a database:
 
 ## 12. Architecture & hosting (draft)
 
-### 12.1 Platform: stay entirely on Cloudflare
+### 12.1 Platform: split frontend (Cloudflare) from an onshore (AU) data tier
 
-The app is fully static today and already deploys to **Cloudflare Pages** (`wavelet-e8x`). The scale is tiny (2 classes, ~56 students). So the lowest-ops choice is to add a backend **on the same platform**:
+**Decision driver: the target is WA government schools** (confirmed), which fall under the PRIS Act 2024 / IPP 9 (§12.7). Student data, at rest **and** in processing, should stay **onshore in Australia**. Cloudflare D1 cannot *guarantee* AU residency (no AU jurisdiction; read replicas roam), so **Cloudflare D1 is ruled out for the data tier.** This reverses the earlier "lean D1" call: the residency requirement is exactly what tips the choice to a hosted AU-region database.
 
-- **Cloudflare Pages Functions** (Workers under the hood) for the API, served same-origin at `wavelet.zone/api/*`. One repo, one deploy, **no CORS**, and the existing per-branch preview deployments cover the backend too.
-- **Cloudflare D1** (serverless SQLite) for storage.
+Chosen shape:
 
-**Alternative considered — Supabase** (hosted Postgres): gives a free admin table-editor GUI out of the box (could stand in for some owner-facing data controls in §8), at the cost of a second vendor and losing same-origin simplicity. **Lean: D1**, because the scale is trivial, the data model is plain relational (identical either way), and a solo maintainer benefits from not splitting platforms. Revisit if a ready-made admin GUI becomes worth more than the simplicity.
+- **Frontend stays on Cloudflare Pages** (`wavelet-e8x`): static assets carry no personal information, so the existing deploy and per-branch previews are unaffected.
+- **Data tier in an AU region.** Recommended: a **Supabase project in Sydney (`ap-southeast-2`)** for Postgres + Supabase Storage (blobs) + `pg_cron` (scheduled jobs) + PostgREST/RPC (in-region API so *processing* stays onshore, not just storage). The browser calls the in-region Supabase endpoint directly (CORS), with the code-as-capability model enforced by `SECURITY DEFINER` RPC functions + Row Level Security. This also hands us the **owner data-control GUI** (§8) for free via Supabase Studio.
 
-**Rejected — VPS / self-hosted Postgres / Node server:** too much ops for a solo maintainer; nothing here needs it.
+This is a deliberate move off "one platform": we accept a second vendor and cross-origin calls (standard CORS) in exchange for an onshore data tier. The lower-ops parts of Cloudflare (static hosting, previews) stay.
+
+**Alternatives for the AU data tier:** any AU-region Postgres works (AWS `ap-southeast-2`/`ap-southeast-4` directly, Azure Australia East, GCP Sydney, Neon AU, Fly.io `syd`). Supabase is recommended for the managed Postgres + Storage + cron + admin GUI in one, at this scale. See §12.7 for the residency-vs-sovereignty nuance that could push this to an *Australian-owned* provider.
+
+**Non-government / independent schools** (federal APP 8 only) could instead use the simpler **Cloudflare-only stack** (Pages Functions + D1 + R2 + Cron Triggers, same-origin, no CORS) described in the earlier draft of this section; it is retained as a variant in §12.9 should the deployment target ever broaden.
+
+**Rejected — VPS / self-hosted Postgres / Node server:** too much ops for a solo maintainer; a managed AU-region Postgres covers it.
 
 Durable Objects / real-time-collab machinery are **not needed**: the versioning model below is append-only, so we get no-clobber recovery without locks or coordination.
 
@@ -205,34 +211,43 @@ It is possible to push a final save as the tab closes, but **only as a best-effo
 - **Why it can't be the guarantee:** the beacon returns **no response**, so the client can never confirm the row committed. It therefore **must stay invisible**: it never updates the "✓ saved" indicator and never tells the student they are safe. If it silently fails, the student loses only the last debounce-window of edits, which is the risk already accepted in §3.3.
 - **Net effect:** shrinks worst-case loss from "everything since the last ~30s save" to "usually nothing," without weakening the contract. The server treats the beacon as an ordinary append/overwrite (idempotent with the periodic path).
 
-### 12.4 Data model (sketch, identical on SQLite or Postgres)
+### 12.4 Data model (sketch; Postgres, see §12.1)
+
+Three tiers, so that a class running a **second project later** is just a new `class_projects` row, and the cohort + teacher code persist across projects:
 
 ```sql
--- A class / term, managed by a shared teacher code.
+-- Durable cohort: a class of students with a teacher. Persists across projects.
 classes (
-  id              TEXT PRIMARY KEY,
-  school          TEXT,            -- which school this class belongs to
-  name            TEXT,
-  project_slug    TEXT,            -- which project DEFINITION the class is assigned,
-                                   -- a slug into the static repo (e.g. 'pixel-game' ->
-                                   -- projects/pixel-game.json). NOT a FK to projects(id).
-  teacher_code_hash TEXT NOT NULL, -- teacher codes stored hashed (§12.5)
-  name_clear_after DATE,           -- when student names auto-delete (§5)
-  created_at      TIMESTAMP
+  id               TEXT PRIMARY KEY,
+  school           TEXT,            -- which school this cohort belongs to
+  name             TEXT,            -- e.g. 'Year 5 Blue'
+  teacher_code_hash TEXT NOT NULL,  -- stable across the cohort's projects; hashed (§12.5)
+  created_at       TIMESTAMP
 )
 
--- Identity row = one student's project INSTANCE for one term (code = one project, §3.2).
--- Distinct from classes.project_slug, which names the shared definition this is an
--- instance of. Name lives here, separate from project content, so deletion just nulls it (§5).
+-- One row per project the class runs. A 2nd project = a 2nd row here.
+-- This is the unit the dashboard view and name-retention attach to.
+class_projects (
+  id               TEXT PRIMARY KEY,
+  class_id         TEXT REFERENCES classes(id),
+  project_slug     TEXT,            -- the project DEFINITION ('pixel-game' ->
+                                    -- projects/pixel-game.json). NOT a FK to projects(id).
+  name_clear_after DATE,            -- when student names auto-delete, per project run (§5)
+  created_at       TIMESTAMP
+)
+
+-- Identity row = one student's project INSTANCE for one project run (code = one project, §3.2).
+-- Distinct from class_projects.project_slug, which names the shared definition this instances.
+-- Name lives here, separate from project content, so deletion just nulls it (§5).
 projects (
-  id              TEXT PRIMARY KEY,      -- the instance id; current_state/snapshots FK to this
-  class_id        TEXT REFERENCES classes(id),
-  student_code    TEXT UNIQUE NOT NULL,  -- capability, reprintable (§12.5)
-  display_name    TEXT,                  -- nullable; auto-cleared per class_id
-  current_version INTEGER NOT NULL DEFAULT 0,
-  last_writer     TEXT,                  -- session token of last writer
-  last_saved_at   TIMESTAMP,
-  completed_at    TIMESTAMP              -- set on completion; triggers compaction
+  id               TEXT PRIMARY KEY,     -- the instance id; current_state/snapshots FK to this
+  class_project_id TEXT REFERENCES class_projects(id),
+  student_code     TEXT UNIQUE NOT NULL, -- capability, reprintable (§12.5)
+  display_name     TEXT,                 -- nullable; auto-cleared per class_projects row
+  current_version  INTEGER NOT NULL DEFAULT 0,
+  last_writer      TEXT,                 -- session token of last writer
+  last_saved_at    TIMESTAMP,
+  completed_at     TIMESTAMP             -- set on completion; triggers compaction
 )
 
 -- Latest content, overwritten each save. No PII (FK only).
@@ -245,17 +260,17 @@ current_state (
 
 -- Append-only history. No PII (FK only). Compacted to milestones after completion.
 snapshots (
-  id              INTEGER PRIMARY KEY,
+  id              BIGSERIAL PRIMARY KEY,
   project_id      TEXT REFERENCES projects(id),
   version         INTEGER NOT NULL,
   content         TEXT NOT NULL,
   writer_session  TEXT,                  -- to surface cross-laptop divergence
-  is_milestone    BOOLEAN DEFAULT 0,     -- survives compaction
+  is_milestone    BOOLEAN DEFAULT FALSE, -- survives compaction
   created_at      TIMESTAMP
 )
 ```
 
-Content is stored as **full snapshots** (a few KB each), not diffs: simpler, and trivial at this scale. Post-completion compaction keeps milestone snapshots and prunes the rest.
+Naming note: the table that couples a class to one project is `class_projects` (a *project run*), not `classes`. `classes` is the durable cohort (school, roster, teacher code); `class_projects` is "this cohort doing pixel-game this term"; `projects` is one student's instance within that run.
 
 ### 12.5 Auth at rest
 
@@ -283,31 +298,32 @@ Owner (auth = owner secret):
 
 ### 12.7 Scale, cost, residency
 
-- **Cost:** comfortably inside D1's **free tier**. Peak write load ~56 kids × a save every ~10-30s ≈ low tens of thousands of writes per session, under the free daily budget; storage is tens of MB before compaction. Throttling snapshots (§12.2) keeps both in check.
-- **Data residency (verified June 2026):** students are AU primary kids. Cloudflare lets you **hint** the primary location to Oceania for both D1 and R2 via the `oc` location hint (`wrangler d1 create <name> --location=oc`; R2 buckets take the same hint). This is **best-effort, not a guarantee**, and D1 auto-creates **read replicas in other regions** based on traffic, so copies can exist outside Oceania. The only **hard** residency control is "Jurisdictions," and the only jurisdictions offered are `eu` and `fedramp`: **there is no Australia / Oceania jurisdiction**, so a guaranteed "data stays in AU" lock is not available on Cloudflare today.
-  - **Plan:** create the D1 DB and R2 buckets with `--location=oc` (also a minor latency win on slow school laptops). This is almost certainly sufficient given the data is already PII-minimised (term-scoped non-account codes, names auto-deleted, content non-PII).
-  - **Legal context (researched June 2026; general info, not legal advice):**
-    - **Federal baseline (Privacy Act 1988, APP 8):** no data-localization rule. Offshore storage of personal information is permitted under an *accountability* model (you stay accountable and take reasonable steps to ensure the overseas recipient complies with the APPs). Most non-government / independent schools sit here (and are "APP entities" regardless of turnover because they handle health info). Under this regime, Cloudflare-only with `--location=oc` is fine.
-    - **WA government schools are stricter (PRIS Act 2024):** WA public entities, including the Department of Education and WA government schools, are now "IPP entities" (Royal Assent Dec 2024, obligations phasing in ~2026-2027). **IPP 9 (Disclosures outside Australia) restricts overseas disclosure and explicitly extends to *de-identified* information**, not just personal information. So this design's PII-minimisation does **not** cleanly sidestep the rule under WA law the way it would federally. IPP 9 is a restriction with conditions, not an absolute ban, but the simplest way for a WA government school to satisfy it (and the likely outcome of their "Online Services Acceptable Use" vetting) is to **require onshore hosting**.
-  - **Implication:** because Cloudflare cannot *guarantee* AU residency (no AU jurisdiction; D1 read replicas roam), Cloudflare-only is a **real compliance gap for WA government-school deployments**, not just a hypothetical contractual clause. Mitigations: (a) host **only this database** in an AU region (e.g. Supabase Sydney or any AU-region Postgres) while keeping the static site + Pages Functions on Cloudflare; or (b) push minimisation so far that **student names never reach the server** (names live only on the teacher's paper roster / client-side-generated cards), leaving the server holding opaque codes + creative code, though that may still be "de-identified info" under IPP 9, so onshore remains safest for WA government schools.
-  - **Key unknown to resolve before build:** are the target schools **WA government** (PRIS / IPP 9 → storage tier should be onshore) or **non-government / independent** (federal APP 8 → Cloudflare-only with `--location=oc` is acceptable)? Confirm with the school's privacy/ICT contact and their online-services assessment.
+- **Cost:** trivial at this scale (2 classes, ~56 students). Peak write load ~56 kids × a save every ~10-30s ≈ low tens of thousands of writes per session; storage is tens of MB before compaction. Throttling snapshots (§12.2) keeps both in check. Comfortably inside a managed Postgres free/hobby tier (e.g. Supabase free tier).
+- **Data residency vs. data sovereignty (researched June 2026; general info, not legal advice).** These are different, and WA government schools may care about both:
+  - **Residency** = where the bytes physically sit. An **AU-region** Supabase/AWS project (`ap-southeast-2` Sydney) keeps data **at rest and processed in Australia**. This satisfies the IPP 9 "don't disclose outside Australia" concern (§12.1) and is almost certainly enough for a primary-school coding tool with minimal data.
+  - **Sovereignty** = whose *law* the data falls under. AWS/Azure/GCP (and therefore Supabase, which runs on AWS) are **US-owned**, so the US **CLOUD Act** can compel disclosure even when the data is physically in Sydney. AU *region* is **not** the same as AU *sovereignty*.
+  - **Tiered recommendation:**
+    1. **Baseline (recommended, almost certainly sufficient):** AU-region Supabase (Sydney) + strong data minimisation + a privacy policy. Clears the residency requirement and the likely "Online Services Acceptable Use" assessment for a low-sensitivity tool.
+    2. **If the Department demands true sovereignty (CLOUD Act-proof):** an **Australian-owned** provider (e.g. Vault, AUCloud, Macquarie Government) hosting Postgres. Heavier and pricier; only if explicitly required. Sovereign requirements usually target classified/sensitive government data, not a kids' pixel-art tool, so this is a fallback, not the plan.
+  - **The biggest lever to shrink the whole problem: keep student names entirely off the server** (names live only on the teacher's paper roster and client-side-generated cards, §4/§5). If the server holds only opaque codes + creative code and **no names**, the personal-information surface shrinks dramatically, easing both the legal position and the school assessment. (Even then, content may count as "de-identified info" under IPP 9, so AU-region hosting still applies, but the case is much cleaner.)
+  - **Action before build:** run the design past the school's privacy/ICT contact via their online-services assessment to confirm AU-region (baseline) is accepted rather than full sovereignty.
 
 ### 12.8 Deploy & local dev
 
-- Add a `wrangler.toml` and a `functions/` (or `/api`) directory to the existing repo; `wrangler` provides a local D1 for dev. The static `npm run build` flow is unchanged; Pages builds the Functions alongside it.
-- Migrations as plain SQL files applied via `wrangler d1 migrations`.
+- **Frontend:** unchanged. Static `npm run build` → Cloudflare Pages, with existing per-branch previews.
+- **Data tier:** a Supabase project (Sydney region). Schema as plain SQL migrations (`supabase/migrations/*.sql`) applied via the Supabase CLI; local dev runs the Supabase stack in Docker. Scheduled jobs via `pg_cron`.
+- Two origins now, so the frontend calls the Supabase endpoint over CORS (standard) instead of same-origin `/api`.
 
-### 12.9 Which Cloudflare storage primitive for what
+### 12.9 Storage primitives: the onshore (Supabase) stack, with the Cloudflare variant
 
-All on one platform. The stack is **Pages Functions + D1 + R2 + Cron Triggers**.
+**Chosen (WA government / onshore):** Postgres + Supabase Storage + `pg_cron` + PostgREST/RPC, all in **Sydney (`ap-southeast-2`)**.
 
-| Primitive | Role here | Verdict |
+| Need | Onshore (chosen) | Cloudflare-only variant (non-gov schools) |
 |---|---|---|
-| **D1** (serverless SQLite) | System of record: relational, *queried* data (roster, last-saved times, codes, retention dates, version pointers) and, in v1, the snapshot/current content as TEXT. | **Primary store.** Only D1 can answer "list this class with each student's last save." |
-| **R2** (S3-compatible objects) | Blob-shaped *outputs*: generated cover-sheet PDFs (§4), exported `.py` (§9), canvas snapshot PNGs. Migration target for snapshot history if it ever outgrows D1. | **Add, for files only.** Strong read-after-write, zero egress, ~10GB free. |
-| **Cron Triggers** (scheduled Worker) | The scheduled jobs: name auto-deletion (§5) and post-completion compaction (§6). | **Add.** Native fit for both; fills a real gap. |
-| **KV** (global key-value) | Eventually consistent (writes propagate over up to ~a minute). | **Reject as system of record.** Conflicts with "resume on another laptop and see your last save" and the hard-source-of-truth contract (§12.3). |
-| **Durable Objects** | Strict per-entity single-writer serialization; foundation for real-time collaboration. | **Not v1.** We don't need collab; append-only + optimistic concurrency (§12.2) already prevents loss, and D1 serializes same-row writes. **Upgrade path** if we ever want live multi-device sync. |
-| **Queues** | Async job pipeline. | **Not v1.** At ~56 students, generate PDFs synchronously and compact on a Cron Trigger. |
+| Relational system of record (roster, last-saved times, codes, version pointers) and the snapshot/current content as TEXT | **Postgres** (Supabase, Sydney) | D1 (serverless SQLite, `--location=oc`) |
+| Blob outputs: cover-sheet PDFs (§4), `.py` exports (§9), canvas PNGs | **Supabase Storage** (in-region) | R2 (`oc` hint) |
+| Scheduled jobs: name auto-deletion (§5), compaction (§6) | **`pg_cron`** | Cron Triggers |
+| In-region API / auth | **PostgREST + `SECURITY DEFINER` RPC + RLS** (code-as-capability); browser calls Sydney endpoint over CORS | Pages Functions (same-origin), code in URL path |
+| Real-time multi-device sync | Not needed v1; append-only model suffices (Postgres serializes same-row writes) | Not needed v1; Durable Objects would be the upgrade path |
 
-**Content placement decision for v1:** keep snapshot/current content as **TEXT in D1**, not R2. Splitting content into R2 makes a save two non-atomic writes (R2 PUT + D1 pointer), which complicates the single-confirm durability contract for no benefit at this scale. R2 is for file-like outputs only; "snapshots → R2" is a documented migration path, not v1.
+**Content placement decision for v1 (unchanged):** keep snapshot/current content as **TEXT in Postgres**, not object storage. Splitting content into Storage makes a save two non-atomic writes (object PUT + row pointer), which complicates the single-confirm durability contract for no benefit at this scale. Object storage is for file-like outputs only; "snapshots → object storage" is a documented migration path, not v1.
