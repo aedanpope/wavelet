@@ -136,6 +136,8 @@ Goal: give teachers a way to see how students are doing without a backend.
 
 Goal: let students build something over multiple sessions.
 
+> **Update (2026-06):** the OneDrive / OS-native file-picker approach below failed in real classroom use (slow OneDrive loads, laptops that would not sign in, work saved to local Documents instead of OneDrive, lost work). The storage design for the Pixel Game project moves to a small backend that owns identity and durable storage. See `design_docs/PROJECT_STORAGE_V2.md`, which supersedes the OneDrive parts of this section and the login-friction table.
+
 ### Scratchpad file save/open (shipped Apr 2026)
 
 The scratchpad has Open / Save buttons backed by two paths:
