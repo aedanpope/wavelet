@@ -78,7 +78,13 @@ declare
   v_proj projects%rowtype;
   v_new_version integer;
   v_conflict boolean;
+  v_last_snap timestamptz;
 begin
+  -- Cap content size (pixel files are a few KB) so a client can't fill storage per save.
+  if octet_length(coalesce(p_content, '')) > 262144 then
+    return jsonb_build_object('ok', false, 'error', 'too_large');
+  end if;
+
   select * into v_proj from projects where student_code_hash = hash_code(p_code) for update;
   if not found then
     return jsonb_build_object('ok', false, 'error', 'unknown_code');
@@ -93,8 +99,16 @@ begin
   on conflict (project_id)
     do update set content = excluded.content, version = excluded.version, updated_at = now();
 
-  insert into snapshots (project_id, version, content, writer_session, is_milestone)
-  values (v_proj.id, v_new_version, p_content, p_session, coalesce(p_is_milestone, false));
+  -- Append a history snapshot, but throttle: skip it when the last snapshot is very recent
+  -- and this is not a milestone, so a client that ignores the ~30s client cadence (§12.2)
+  -- can't bloat the snapshot table. current_state is still updated on every save above.
+  select max(created_at) into v_last_snap from snapshots where project_id = v_proj.id;
+  if coalesce(p_is_milestone, false)
+     or v_last_snap is null
+     or v_last_snap < now() - interval '5 seconds' then
+    insert into snapshots (project_id, version, content, writer_session, is_milestone)
+    values (v_proj.id, v_new_version, p_content, p_session, coalesce(p_is_milestone, false));
+  end if;
 
   update projects
     set current_version = v_new_version, last_writer = p_session, last_saved_at = now()
@@ -167,6 +181,7 @@ declare
   v_class uuid;
   v_cp uuid;
   v_id uuid;
+  v_count integer;
 begin
   v_class := class_for_teacher(p_teacher_code);
   if v_class is null then
@@ -179,6 +194,12 @@ begin
   if v_cp is null then
     insert into class_projects (class_id, project_slug) values (v_class, p_project_slug)
       returning id into v_cp;
+  end if;
+
+  -- Cap students per project run, so a leaked/guessed teacher code can't mint unbounded rows.
+  select count(*) into v_count from projects where class_project_id = v_cp;
+  if v_count >= 200 then
+    return jsonb_build_object('ok', false, 'error', 'class_full');
   end if;
 
   begin
