@@ -115,11 +115,19 @@ revoke all on app_secret, classes, class_projects, projects, current_state, snap
   from anon, authenticated;
 
 -- ---------------------------------------------------------------------------
--- One-time owner setup (run once in the SQL editor with the service role, then delete the
--- statement so the literal secret is not left lying around):
+-- One-time owner setup: seed the pepper (run in the SQL editor as the service role).
 --
 --   insert into app_secret (pepper) values (encode(gen_random_bytes(32), 'hex'))
 --   on conflict (id) do nothing;
 --
--- After this, mint classes with the owner RPC (next migration) using the service-role key.
+-- This is idempotent and SAFE TO KEEP / RE-RUN: app_secret has a single row (id is the
+-- PK, default true), so the first run seeds the pepper and every later run hits the
+-- conflict and the `do nothing` discards the freshly generated value. The pepper is set
+-- once and never overwritten.
+--
+-- NEVER change this to `do update` (or otherwise overwrite the pepper): the pepper is the
+-- key for every student_code_hash, so replacing it would invalidate all existing codes and
+-- lock every student out.
+--
+-- After seeding, mint classes with the owner RPC (next migration) using the service-role key.
 -- ---------------------------------------------------------------------------
