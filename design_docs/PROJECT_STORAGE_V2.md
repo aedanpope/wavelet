@@ -159,7 +159,7 @@ Since we now hold a database:
 
 ## 11. Open / deferred
 
-- **Architecture / hosting** is drafted in §12. Resolved: target is WA government schools → onshore required → **Cloudflare Pages (static) + Supabase Sydney (data tier)**. Remaining confirmations: AU-region baseline vs full sovereignty (§12.7), and whether to keep student names off the server entirely.
+- **Architecture / hosting** is drafted in §12. Resolved: target is WA government schools → onshore required → **Cloudflare Pages (static) + Supabase Sydney (data tier)**. Compliance bar resolved to **parity with Grok Academy** (AWS Sydney + encryption, §12.7), so sovereign-AU hosting is not needed and names-on-server is acceptable. Remaining: confirm parity clears the school's online-services assessment.
 - Exact **code scheme** (word list size, check-word vs. check-digit, minimum edit distance) to be specified when we build §3.1.
 - Retention window length for §5 (how many months after completion).
 - Whether the teacher dashboard's progress view should fold in the broader **Phase 3 "Assessment"** goals from `ROADMAP.md` (per-problem pass/fail export), since both want a teacher-facing progress surface.
@@ -179,7 +179,7 @@ Chosen shape:
 
 This is a deliberate move off "one platform": we accept a second vendor and cross-origin calls (standard CORS) in exchange for an onshore data tier. The lower-ops parts of Cloudflare (static hosting, previews) stay.
 
-**Alternatives for the AU data tier:** any AU-region Postgres works (AWS `ap-southeast-2`/`ap-southeast-4` directly, Azure Australia East, GCP Sydney, Neon AU, Fly.io `syd`). Supabase is recommended for the managed Postgres + Storage + cron + admin GUI in one, at this scale. See §12.7 for the residency-vs-sovereignty nuance that could push this to an *Australian-owned* provider.
+**Alternatives for the AU data tier:** any AU-region Postgres works (AWS `ap-southeast-2`/`ap-southeast-4` directly, Azure Australia East, GCP Sydney, Neon AU, Fly.io `syd`). Supabase is recommended for the managed Postgres + Storage + cron + admin GUI in one, at this scale. The compliance bar is **parity with Grok Academy** (AWS Sydney + encryption), which Supabase-on-AWS-Sydney meets directly, so an Australian-owned "sovereign" provider is **not** required (§12.7).
 
 **Non-government / independent schools** (federal APP 8 only) could instead use the simpler **Cloudflare-only stack** (Pages Functions + D1 + R2 + Cron Triggers, same-origin, no CORS) described in the earlier draft of this section; it is retained as a variant in §12.9 should the deployment target ever broaden.
 
@@ -299,14 +299,28 @@ Owner (auth = owner secret):
 ### 12.7 Scale, cost, residency
 
 - **Cost:** trivial at this scale (2 classes, ~56 students). Peak write load ~56 kids × a save every ~10-30s ≈ low tens of thousands of writes per session; storage is tens of MB before compaction. Throttling snapshots (§12.2) keeps both in check. Comfortably inside a managed Postgres free/hobby tier (e.g. Supabase free tier).
-- **Data residency vs. data sovereignty (researched June 2026; general info, not legal advice).** These are different, and WA government schools may care about both:
-  - **Residency** = where the bytes physically sit. An **AU-region** Supabase/AWS project (`ap-southeast-2` Sydney) keeps data **at rest and processed in Australia**. This satisfies the IPP 9 "don't disclose outside Australia" concern (§12.1) and is almost certainly enough for a primary-school coding tool with minimal data.
-  - **Sovereignty** = whose *law* the data falls under. AWS/Azure/GCP (and therefore Supabase, which runs on AWS) are **US-owned**, so the US **CLOUD Act** can compel disclosure even when the data is physically in Sydney. AU *region* is **not** the same as AU *sovereignty*.
-  - **Tiered recommendation:**
-    1. **Baseline (recommended, almost certainly sufficient):** AU-region Supabase (Sydney) + strong data minimisation + a privacy policy. Clears the residency requirement and the likely "Online Services Acceptable Use" assessment for a low-sensitivity tool.
-    2. **If the Department demands true sovereignty (CLOUD Act-proof):** an **Australian-owned** provider (e.g. Vault, AUCloud, Macquarie Government) hosting Postgres. Heavier and pricier; only if explicitly required. Sovereign requirements usually target classified/sensitive government data, not a kids' pixel-art tool, so this is a fallback, not the plan.
-  - **The biggest lever to shrink the whole problem: keep student names entirely off the server** (names live only on the teacher's paper roster and client-side-generated cards, §4/§5). If the server holds only opaque codes + creative code and **no names**, the personal-information surface shrinks dramatically, easing both the legal position and the school assessment. (Even then, content may count as "de-identified info" under IPP 9, so AU-region hosting still applies, but the case is much cleaner.)
-  - **Action before build:** run the design past the school's privacy/ICT contact via their online-services assessment to confirm AU-region (baseline) is accepted rather than full sovereignty.
+
+**Compliance target: parity with Grok Academy.** WA schools already use Grok Academy for student flows, so the pragmatic bar is to match its security posture rather than reason from first principles or chase a higher one. Grok's published posture (verified June 2026, [groklearning.com/policies/security](https://groklearning.com/policies/security/)):
+
+- **All Grok platform data is stored in Australia, in the Sydney AWS region.**
+- **Encrypted at rest and in transit.**
+- Hosted on **AWS**; where PII sits in third-party services, those are **Australian data centres, encrypted at rest and in transit**.
+
+This settles two things from the earlier draft:
+
+- **AU region + encryption is the bar; full "Australian-owned sovereignty" is not required.** Grok runs on AWS (a US-owned cloud) in the Sydney region, the exact "AU residency, not AU-owned" posture WA schools have already accepted. The US CLOUD Act nuance is therefore **moot for our purposes**: the approved incumbent runs on the same footing. The "Australian-owned provider" tier is dropped.
+- **Supabase Sydney reaches parity directly, because Supabase runs on AWS.** Choosing `ap-southeast-2` puts us on the same infrastructure footing as Grok.
+
+**Parity checklist (design requirements):**
+
+1. **All student data in the AWS Sydney region** (`ap-southeast-2`). Matches Grok. (§12.1)
+2. **Encrypted in transit** (TLS to the Supabase endpoint) **and at rest** (Supabase/AWS default AES-256). Make this an explicit requirement, not an assumption.
+3. **Any sub-processor that touches student data is Australian-hosted and encrypted.** Keep the sub-processor list short; if email/PDF/etc. services are added, choose AU-hosted ones. We have no analogue to Grok's Microsoft Dynamics educator-PII sync, so the sub-processor surface is smaller.
+4. **Publish a short security/privacy page** mirroring Grok's (where data lives, encryption, retention, deletion) for the school's online-services assessment.
+
+Because parity allows AU-hosted encrypted student PII, **storing `display_name` in the AU-region DB is acceptable** (Grok stores student PII in AWS Sydney too). Keeping names off the server entirely (§4/§5) becomes an *optional* extra-minimisation, not a requirement. Name retention auto-delete (§5) still applies as good practice.
+
+- **Action before build:** hand the school's privacy/ICT contact the §12.7 parity page and confirm "matches Grok's posture" clears their online-services assessment.
 
 ### 12.8 Deploy & local dev
 
