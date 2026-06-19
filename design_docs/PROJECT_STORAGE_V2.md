@@ -159,7 +159,117 @@ Since we now hold a database:
 
 ## 11. Open / deferred
 
-- **Architecture / hosting** is deliberately *not* decided here. The brainstorm settled UX requirements first. The friction table in `ROADMAP.md` already floated candidates (Cloudflare Workers, serverless, Supabase); pick when we move from requirements to build.
+- **Architecture / hosting** is now drafted in §12 (recommendation: Cloudflare Pages Functions + D1). The one fork still to confirm is **D1 vs Supabase**.
 - Exact **code scheme** (word list size, check-word vs. check-digit, minimum edit distance) to be specified when we build §3.1.
 - Retention window length for §5 (how many months after completion).
 - Whether the teacher dashboard's progress view should fold in the broader **Phase 3 "Assessment"** goals from `ROADMAP.md` (per-problem pass/fail export), since both want a teacher-facing progress surface.
+
+---
+
+## 12. Architecture & hosting (draft)
+
+### 12.1 Platform: stay entirely on Cloudflare
+
+The app is fully static today and already deploys to **Cloudflare Pages** (`wavelet-e8x`). The scale is tiny (2 classes, ~56 students). So the lowest-ops choice is to add a backend **on the same platform**:
+
+- **Cloudflare Pages Functions** (Workers under the hood) for the API, served same-origin at `wavelet.zone/api/*`. One repo, one deploy, **no CORS**, and the existing per-branch preview deployments cover the backend too.
+- **Cloudflare D1** (serverless SQLite) for storage.
+
+**Alternative considered — Supabase** (hosted Postgres): gives a free admin table-editor GUI out of the box (could stand in for some owner-facing data controls in §8), at the cost of a second vendor and losing same-origin simplicity. **Lean: D1**, because the scale is trivial, the data model is plain relational (identical either way), and a solo maintainer benefits from not splitting platforms. Revisit if a ready-made admin GUI becomes worth more than the simplicity.
+
+**Rejected — VPS / self-hosted Postgres / Node server:** too much ops for a solo maintainer; nothing here needs it.
+
+Durable Objects / real-time-collab machinery are **not needed**: the versioning model below is append-only, so we get no-clobber recovery without locks or coordination.
+
+### 12.2 Two-tier write model (core mechanic)
+
+- **`current_state`** — one row per project, holds the latest content. Overwritten on every autosave. This is what **resume** reads (a single-row fetch, fast on slow laptops).
+- **`snapshots`** — append-only history. A new immutable row on a throttled cadence (at most one per ~30s of active editing, plus on each run / milestone). **Nothing is ever destroyed**, so a last-write-wins clobber on `current_state` is always recoverable here. This is what the student's history browser (§6) reads.
+
+**Optimistic concurrency:** the client sends the version number it loaded. If the server's has advanced from a *different* session token, the response flags "also edited on another laptop," and the student resolves it via the history browser. No merge.
+
+### 12.3 Hard-source-of-truth contract (implements §3.3)
+
+The client treats a save as durable **only** on a `2xx` confirming the row committed. UI shows "saving…" until then; on failure it shows a **blocked** state and never claims the work is saved. D1 writes are durable on commit. There is no local "work offline and sync later" path.
+
+### 12.4 Data model (sketch, identical on SQLite or Postgres)
+
+```sql
+-- A class / term, managed by a shared teacher code.
+classes (
+  id              TEXT PRIMARY KEY,
+  name            TEXT,
+  project_id      TEXT,            -- which project (e.g. 'pixel-game')
+  teacher_code_hash TEXT NOT NULL, -- teacher codes stored hashed (§12.5)
+  name_clear_after DATE,           -- when student names auto-delete (§5)
+  created_at      TIMESTAMP
+)
+
+-- Identity row = one project instance for one term (code = one project, §3.2).
+-- Name lives here, separate from project content, so deletion just nulls it (§5).
+projects (
+  id              TEXT PRIMARY KEY,
+  class_id        TEXT REFERENCES classes(id),
+  student_code    TEXT UNIQUE NOT NULL,  -- capability, reprintable (§12.5)
+  display_name    TEXT,                  -- nullable; auto-cleared per class_id
+  current_version INTEGER NOT NULL DEFAULT 0,
+  last_writer     TEXT,                  -- session token of last writer
+  last_saved_at   TIMESTAMP,
+  completed_at    TIMESTAMP              -- set on completion; triggers compaction
+)
+
+-- Latest content, overwritten each save. No PII (FK only).
+current_state (
+  project_id      TEXT PRIMARY KEY REFERENCES projects(id),
+  content         TEXT NOT NULL,         -- the assembled .py / structured JSON
+  version         INTEGER NOT NULL,
+  updated_at      TIMESTAMP
+)
+
+-- Append-only history. No PII (FK only). Compacted to milestones after completion.
+snapshots (
+  id              INTEGER PRIMARY KEY,
+  project_id      TEXT REFERENCES projects(id),
+  version         INTEGER NOT NULL,
+  content         TEXT NOT NULL,
+  writer_session  TEXT,                  -- to surface cross-laptop divergence
+  is_milestone    BOOLEAN DEFAULT 0,     -- survives compaction
+  created_at      TIMESTAMP
+)
+```
+
+Content is stored as **full snapshots** (a few KB each), not diffs: simpler, and trivial at this scale. Post-completion compaction keeps milestone snapshots and prunes the rest.
+
+### 12.5 Auth at rest
+
+- **Student codes** are capabilities (knowing the code = access to that one term's project) and must be **reprintable** from the dashboard, so they are stored **recoverably** (plaintext, or encrypted with a Worker secret). Low stakes: term-scoped, rotated each term, names auto-deleted. *Open: plaintext vs encrypted-at-rest.*
+- **Teacher codes** are higher-value and never reprinted by the system (the owner mints and hands them out), so they are stored **hashed** and verified per request. Shared between teachers for many-to-many access (§3.4).
+
+### 12.6 API surface (sketch)
+
+Student (auth = student code in path/header):
+- `GET  /api/p/:code` — load `current_state` (resume).
+- `POST /api/p/:code/save` — append/overwrite a version; returns `{version, saved_at}` or a concurrency flag. The only durability signal the client trusts.
+- `GET  /api/p/:code/history` — list snapshots for the history browser.
+- `GET  /api/p/:code/history/:version` — fetch one snapshot.
+- `GET  /api/p/:code/export.py` — `.py` download (§9).
+
+Teacher (auth = teacher code):
+- `GET  /api/class/:teacherCode` — roster + last-saved times (codes hidden client-side until hovered, §7).
+- `POST /api/class/:teacherCode/students` — append a student, mint code.
+- `GET  /api/class/:teacherCode/cards?set=start|final` — cover-sheet data / PDF inputs (§4).
+- `POST /api/class/:teacherCode/retention/extend` — push back name auto-delete (§5).
+
+Owner (auth = owner secret):
+- `POST /api/admin/class` — mint a class + teacher code.
+- `GET/DELETE /api/admin/student/:id` — export / delete a student (§8).
+
+### 12.7 Scale, cost, residency
+
+- **Cost:** comfortably inside D1's **free tier**. Peak write load ~56 kids × a save every ~10-30s ≈ low tens of thousands of writes per session, under the free daily budget; storage is tens of MB before compaction. Throttling snapshots (§12.2) keeps both in check.
+- **Data residency:** students are AU primary kids. **To verify against current Cloudflare docs** whether D1 can be pinned to an AU region. Risk is already low (term-scoped non-account codes, names auto-deleted, content non-PII), but confirm before launch.
+
+### 12.8 Deploy & local dev
+
+- Add a `wrangler.toml` and a `functions/` (or `/api`) directory to the existing repo; `wrangler` provides a local D1 for dev. The static `npm run build` flow is unchanged; Pages builds the Functions alongside it.
+- Migrations as plain SQL files applied via `wrangler d1 migrations`.
