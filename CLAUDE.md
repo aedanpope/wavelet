@@ -42,7 +42,10 @@ npm run test:validation         # validation system tests
 npm run test:input-system       # input system tests
 ```
 
-**Remote sessions (no local Node):** Claude Code on the web has no `node` / `npm` in the container, so the test suite can't run locally. To verify a change runs the tests, open a PR and `subscribe_pr_activity` to it: GitHub Actions runs lint + tests on every push to the PR branch and the results come back as webhook events. Use this instead of claiming "tests should pass" without evidence.
+**Remote sessions (no local Node):** Claude Code on the web has no `node` / `npm` in the container, so `npm test` can't run.
+
+- **Pure-logic JS tests can still be run locally via embedded V8**: `pip install mini-racer` then `python3 scripts/run-js-tests.py <name>-test.js`. This runs the real test file (e.g. `code-words-test.js`, `error-handler-test.js`, `input-system-test.js`) and exits non-zero on failure. Prefer this for fast feedback before pushing. It cannot run tests that need a real Node environment, namely `validation-test.js` (loads Pyodide) and `homepage-basic-test.js` (uses `fs`).
+- **For the full suite (and as the source of truth):** open a PR and `subscribe_pr_activity` to it. GitHub Actions runs `npm run test:all` (lint + every `*-test.js`) on Node on each push, and results come back as webhook events. Use this instead of claiming "tests should pass" without evidence.
 
 ### Deployment
 ```bash
