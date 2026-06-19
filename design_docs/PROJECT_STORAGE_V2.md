@@ -188,9 +188,22 @@ Durable Objects / real-time-collab machinery are **not needed**: the versioning 
 
 **Optimistic concurrency:** the client sends the version number it loaded. If the server's has advanced from a *different* session token, the response flags "also edited on another laptop," and the student resolves it via the history browser. No merge.
 
+**Save triggers:**
+1. **Periodic confirmed autosave** — the throttled cadence above (every ~30s of active editing + on each run / milestone). This is the *only* save that counts toward durability (see §12.3).
+2. **Best-effort close-time flush** — captures the last debounce-window of keystrokes that periodic autosave has not yet persisted. See §12.3a.
+
 ### 12.3 Hard-source-of-truth contract (implements §3.3)
 
 The client treats a save as durable **only** on a `2xx` confirming the row committed. UI shows "saving…" until then; on failure it shows a **blocked** state and never claims the work is saved. D1 writes are durable on commit. There is no local "work offline and sync later" path.
+
+### 12.3a Close-time flush (best-effort only)
+
+It is possible to push a final save as the tab closes, but **only as a best-effort flush that cannot be confirmed**, so it never participates in the durability contract above.
+
+- **Trigger:** hook the page-lifecycle event `visibilitychange` → `document.visibilityState === 'hidden'` (and/or `pagehide`). Do **not** try to intercept `ctrl+w`/the keystroke, and do **not** rely on `unload`/`beforeunload` for the save: they can't run async work reliably, `unload` is deprecated, breaks the back/forward cache, and often never fires on mobile. `visibilitychange→hidden` is the last reliable moment and also covers mobile backgrounding.
+- **Mechanism:** `navigator.sendBeacon()` (or `fetch(url, {keepalive: true})`). The browser sends the POST after the page is gone, fire-and-forget. Code goes in the URL path (`/api/p/:code/save`) because a beacon can't set auth headers. Payload cap is ~64KB (our content is a few KB).
+- **Why it can't be the guarantee:** the beacon returns **no response**, so the client can never confirm the row committed. It therefore **must stay invisible**: it never updates the "✓ saved" indicator and never tells the student they are safe. If it silently fails, the student loses only the last debounce-window of edits, which is the risk already accepted in §3.3.
+- **Net effect:** shrinks worst-case loss from "everything since the last ~30s save" to "usually nothing," without weakening the contract. The server treats the beacon as an ordinary append/overwrite (idempotent with the periodic path).
 
 ### 12.4 Data model (sketch, identical on SQLite or Postgres)
 
