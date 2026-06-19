@@ -47,20 +47,23 @@ function tokenize(input) {
     return String(input).toLowerCase().split(/[^a-z]+/).filter(Boolean);
 }
 
-// Generate a random valid code with `wordCount` content words (default 2, for students).
-function generate(wordCount = 2) {
+// Generate a random valid code with `contentWords` content words (default 2, for
+// students). NOTE: the returned code has `contentWords + 1` words, because a check
+// word is always appended. So generate(2) returns a 3-word code like "brave-otter-maple".
+function generate(contentWords = 2) {
     const content = [];
-    for (let i = 0; i < wordCount; i++) {
+    for (let i = 0; i < contentWords; i++) {
         content.push(Math.floor(Math.random() * MOD));
     }
     const indices = content.concat(checkByte(content));
     return indices.map((i) => WORDS[i]).join('-');
 }
 
-// True if `input` is a well-formed, checksum-valid code of `wordCount` content words.
-function isValid(input, wordCount = 2) {
+// True if `input` is a well-formed, checksum-valid code with `contentWords` content
+// words (so a total of `contentWords + 1` words including the check word).
+function isValid(input, contentWords = 2) {
     const tokens = tokenize(input);
-    if (tokens.length !== wordCount + 1) {
+    if (tokens.length !== contentWords + 1) {
         return false;
     }
     const indices = [];
@@ -71,15 +74,15 @@ function isValid(input, wordCount = 2) {
         }
         indices.push(idx);
     }
-    const content = indices.slice(0, wordCount);
-    return checkByte(content) === indices[wordCount];
+    const content = indices.slice(0, contentWords);
+    return checkByte(content) === indices[contentWords];
 }
 
 // Canonical "a-b-c" form (lowercased, single dashes) for a valid code, else null.
 // Use this to derive the value you hash for login lookup, so equivalent typings collapse
 // to one key.
-function canonical(input, wordCount = 2) {
-    if (!isValid(input, wordCount)) {
+function canonical(input, contentWords = 2) {
+    if (!isValid(input, contentWords)) {
         return null;
     }
     return tokenize(input).join('-');

@@ -25,16 +25,16 @@ check('word list entries are lowercase a-z', WORDS.every((w) => /^[a-z]+$/.test(
 // ---------------------------------------------------------------------------
 // generate() produces valid codes, at different word counts
 // ---------------------------------------------------------------------------
-for (const wordCount of [2, 3, 4]) {
+for (const contentWords of [2, 3, 4]) {
     let allValid = true;
     let allShaped = true;
     for (let i = 0; i < 3000; i++) {
-        const code = generate(wordCount);
-        if (!isValid(code, wordCount)) allValid = false;
-        if (code.split('-').length !== wordCount + 1) allShaped = false;
+        const code = generate(contentWords);
+        if (!isValid(code, contentWords)) allValid = false;
+        if (code.split('-').length !== contentWords + 1) allShaped = false;
     }
-    check(`generate(${wordCount}) always produces a valid code`, allValid);
-    check(`generate(${wordCount}) has ${wordCount + 1} words`, allShaped);
+    check(`generate(${contentWords}) always produces a valid code`, allValid);
+    check(`generate(${contentWords}) yields ${contentWords + 1} words (incl. check)`, allShaped);
 }
 
 // A 2-word code (the student default) must be valid against the default arg.
