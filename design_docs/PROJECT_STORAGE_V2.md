@@ -303,7 +303,15 @@ Student codes serve two jobs that pull in opposite directions: **login lookup** 
 
 ### 12.6 API surface (sketch)
 
-Student (auth = student code in path/header):
+**No custom server between the frontend and the database in v1.** Supabase ships a managed in-region API layer (**PostgREST** + RPC), so the static frontend (Cloudflare Pages) calls the **Supabase Sydney endpoint directly** over HTTPS with the public **anon key**. The routes below are a *logical* sketch; each is implemented as a Postgres **`SECURITY DEFINER` RPC function**, not an HTTP handler we run:
+
+- Lock the tables so the `anon` role has **no direct access**; the only way in is the RPC functions. Each takes the **code as a parameter** and authorises internally. This gives code-as-capability auth **without Supabase Auth accounts** (we have no logins). Processing stays onshore because PostgREST runs in the Sydney region.
+- **Owner/admin functions are NOT exposed to the browser.** Run them via Supabase Studio or the **service-role key from a trusted (non-browser) context** only.
+- **`SECURITY DEFINER` + `pgcrypto`** also implements the encrypted-code unlock (§12.5): a teacher-code-keyed decrypt happens inside the reprint function.
+- The close-time `sendBeacon` (§12.3a) can't set headers, so it posts to the RPC with the key as a **`?apikey=<anon>`** query param (PostgREST accepts this).
+- **When a real server is ever needed** (heavy PDF generation, P3 rate-limiting, external calls): use a **region-pinned Supabase Edge Function** (Sydney) or a small **AU-region service** (Fly.io `syd`, AWS `ap-southeast-2`). **Not** Cloudflare Workers, which run globally and would process student data offshore (the reason the data tier left Cloudflare). Cover-sheet PDFs can be generated **client-side** instead, avoiding a server entirely.
+
+Student (auth = student code, passed as an RPC argument):
 - `GET  /api/p/:code` — load `current_state` (resume).
 - `POST /api/p/:code/save` — append/overwrite a version; returns `{version, saved_at}` or a concurrency flag. The only durability signal the client trusts.
 - `GET  /api/p/:code/history` — list snapshots for the history browser.
