@@ -88,7 +88,24 @@ function canonical(input, contentWords = 2) {
     return tokenize(input).join('-');
 }
 
-const api = { generate, isValid, canonical, WORDS, MOD };
+// Generate a code not already in use, retrying on collision. `isTaken(code)` returns
+// truthy if the code is already used; pass e.g. a Set's `.has` bound for batch minting a
+// class roster, or a wrapper around a lookup. generate() is pure-random and has no view
+// of existing codes, so the AUTHORITATIVE uniqueness guard is the DB
+// (projects.student_code_hash UNIQUE); this helper just keeps the rare in-process
+// collision out of the way. Throws after `maxAttempts` (a signal the space is filling up,
+// at which point increase contentWords).
+function generateUnique(isTaken, contentWords = 2, maxAttempts = 100) {
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        const code = generate(contentWords);
+        if (!isTaken(code)) {
+            return code;
+        }
+    }
+    throw new Error('code-words: no unused code found; increase contentWords');
+}
+
+const api = { generate, generateUnique, isValid, canonical, WORDS, MOD };
 
 // Export for Node.js (CommonJS)
 if (typeof module !== 'undefined' && module.exports) {

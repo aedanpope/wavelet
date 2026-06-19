@@ -41,6 +41,29 @@ for (const contentWords of [2, 3, 4]) {
 check('generate() defaults to a valid 2-word code', isValid(generate()));
 
 // ---------------------------------------------------------------------------
+// generateUnique(): batch minting yields distinct, valid codes
+// ---------------------------------------------------------------------------
+const { generateUnique } = require('./code-words.js');
+const taken = new Set();
+let batchAllValid = true;
+for (let i = 0; i < 300; i++) {
+    const code = generateUnique((c) => taken.has(c));
+    if (!isValid(code) || taken.has(code)) batchAllValid = false;
+    taken.add(code);
+}
+check('generateUnique mints distinct valid codes for a batch', batchAllValid);
+check('generateUnique produced 300 unique codes', taken.size === 300);
+
+// Throws when no free code can be found (everything taken).
+let threw = false;
+try {
+    generateUnique(() => true, 2, 50);
+} catch (e) {
+    threw = e instanceof Error;
+}
+check('generateUnique throws when the space is exhausted', threw);
+
+// ---------------------------------------------------------------------------
 // Input normalisation: case, spaces, doubled/var separators
 // ---------------------------------------------------------------------------
 const sample = generate(2); // e.g. "brave-otter-maple"
