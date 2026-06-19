@@ -211,17 +211,21 @@ It is possible to push a final save as the tab closes, but **only as a best-effo
 -- A class / term, managed by a shared teacher code.
 classes (
   id              TEXT PRIMARY KEY,
+  school          TEXT,            -- which school this class belongs to
   name            TEXT,
-  project_id      TEXT,            -- which project (e.g. 'pixel-game')
+  project_slug    TEXT,            -- which project DEFINITION the class is assigned,
+                                   -- a slug into the static repo (e.g. 'pixel-game' ->
+                                   -- projects/pixel-game.json). NOT a FK to projects(id).
   teacher_code_hash TEXT NOT NULL, -- teacher codes stored hashed (§12.5)
   name_clear_after DATE,           -- when student names auto-delete (§5)
   created_at      TIMESTAMP
 )
 
--- Identity row = one project instance for one term (code = one project, §3.2).
--- Name lives here, separate from project content, so deletion just nulls it (§5).
+-- Identity row = one student's project INSTANCE for one term (code = one project, §3.2).
+-- Distinct from classes.project_slug, which names the shared definition this is an
+-- instance of. Name lives here, separate from project content, so deletion just nulls it (§5).
 projects (
-  id              TEXT PRIMARY KEY,
+  id              TEXT PRIMARY KEY,      -- the instance id; current_state/snapshots FK to this
   class_id        TEXT REFERENCES classes(id),
   student_code    TEXT UNIQUE NOT NULL,  -- capability, reprintable (§12.5)
   display_name    TEXT,                  -- nullable; auto-cleared per class_id
