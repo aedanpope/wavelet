@@ -273,3 +273,18 @@ Owner (auth = owner secret):
 
 - Add a `wrangler.toml` and a `functions/` (or `/api`) directory to the existing repo; `wrangler` provides a local D1 for dev. The static `npm run build` flow is unchanged; Pages builds the Functions alongside it.
 - Migrations as plain SQL files applied via `wrangler d1 migrations`.
+
+### 12.9 Which Cloudflare storage primitive for what
+
+All on one platform. The stack is **Pages Functions + D1 + R2 + Cron Triggers**.
+
+| Primitive | Role here | Verdict |
+|---|---|---|
+| **D1** (serverless SQLite) | System of record: relational, *queried* data (roster, last-saved times, codes, retention dates, version pointers) and, in v1, the snapshot/current content as TEXT. | **Primary store.** Only D1 can answer "list this class with each student's last save." |
+| **R2** (S3-compatible objects) | Blob-shaped *outputs*: generated cover-sheet PDFs (§4), exported `.py` (§9), canvas snapshot PNGs. Migration target for snapshot history if it ever outgrows D1. | **Add, for files only.** Strong read-after-write, zero egress, ~10GB free. |
+| **Cron Triggers** (scheduled Worker) | The scheduled jobs: name auto-deletion (§5) and post-completion compaction (§6). | **Add.** Native fit for both; fills a real gap. |
+| **KV** (global key-value) | Eventually consistent (writes propagate over up to ~a minute). | **Reject as system of record.** Conflicts with "resume on another laptop and see your last save" and the hard-source-of-truth contract (§12.3). |
+| **Durable Objects** | Strict per-entity single-writer serialization; foundation for real-time collaboration. | **Not v1.** We don't need collab; append-only + optimistic concurrency (§12.2) already prevents loss, and D1 serializes same-row writes. **Upgrade path** if we ever want live multi-device sync. |
+| **Queues** | Async job pipeline. | **Not v1.** At ~56 students, generate PDFs synchronously and compact on a Cron Trigger. |
+
+**Content placement decision for v1:** keep snapshot/current content as **TEXT in D1**, not R2. Splitting content into R2 makes a save two non-atomic writes (R2 PUT + D1 pointer), which complicates the single-confirm durability contract for no benefit at this scale. R2 is for file-like outputs only; "snapshots → R2" is a documented migration path, not v1.
