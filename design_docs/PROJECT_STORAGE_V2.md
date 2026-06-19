@@ -284,7 +284,9 @@ Owner (auth = owner secret):
 ### 12.7 Scale, cost, residency
 
 - **Cost:** comfortably inside D1's **free tier**. Peak write load ~56 kids × a save every ~10-30s ≈ low tens of thousands of writes per session, under the free daily budget; storage is tens of MB before compaction. Throttling snapshots (§12.2) keeps both in check.
-- **Data residency:** students are AU primary kids. **To verify against current Cloudflare docs** whether D1 can be pinned to an AU region. Risk is already low (term-scoped non-account codes, names auto-deleted, content non-PII), but confirm before launch.
+- **Data residency (verified June 2026):** students are AU primary kids. Cloudflare lets you **hint** the primary location to Oceania for both D1 and R2 via the `oc` location hint (`wrangler d1 create <name> --location=oc`; R2 buckets take the same hint). This is **best-effort, not a guarantee**, and D1 auto-creates **read replicas in other regions** based on traffic, so copies can exist outside Oceania. The only **hard** residency control is "Jurisdictions," and the only jurisdictions offered are `eu` and `fedramp`: **there is no Australia / Oceania jurisdiction**, so a guaranteed "data stays in AU" lock is not available on Cloudflare today.
+  - **Plan:** create the D1 DB and R2 buckets with `--location=oc` (also a minor latency win on slow school laptops). This is almost certainly sufficient given the data is already PII-minimised (term-scoped non-account codes, names auto-deleted, content non-PII).
+  - **The one residual risk:** if a school/department imposes a *contractual* "all student data must physically remain in Australia" requirement, Cloudflare cannot meet it. That single requirement (and only that) would force an AU-region alternative (e.g. a hosted Postgres in an AU region) for storage. Flag this before pitching to a school's IT.
 
 ### 12.8 Deploy & local dev
 
