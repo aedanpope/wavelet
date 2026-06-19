@@ -170,8 +170,11 @@ Since we now hold a database:
 - **Cover-sheet overflow:** crop the code (full code is in the `.py`); rendered canvas image on the sheet is **future work** (§4B, §9).
 
 **Still open (genuinely undecided):**
-- **Code scheme (§3.1):** word-list size, check-word vs check-digit, and minimum edit distance to guarantee no single typo is a valid code. Must hold across the **globally unique** code space (login has no class selector), and pairs with **brute-force rate-limiting** on the login lookup.
+- **Code scheme (§3.1):** word-list size, check-word vs check-digit, and minimum edit distance to guarantee no single typo is a valid code. Must hold across the **globally unique** code space (login has no class selector). Since brute-force rate-limiting is deferred (below), the code's own entropy is the only line of defence in v1, so lean toward a slightly larger keyspace within what kids can still type.
 - **Whether the teacher dashboard folds in the Phase 3 "Assessment" goals** from `ROADMAP.md` (per-problem pass/fail export), since both want a teacher-facing progress surface.
+
+**Deferred — P3:**
+- **Brute-force rate-limiting on the login lookup.** Deliberately *not* in the early cut: it is easy to get wrong and a misconfigured limiter would break the happy path for a whole class (school laptops share one NAT IP, so per-IP limits can lock out 28 kids at lesson start). Accepted v1 risk: low-entropy codes are guessable without it; the code-scheme entropy partly compensates. When built, key the limit on the **code** (and global anomaly detection), keep any per-IP limit generous.
 
 **Action (not a design choice):** confirm the §12.7 Grok-parity page clears the school's online-services assessment.
 
@@ -294,7 +297,7 @@ Naming note: the table that couples a class to one project is `class_projects` (
 
 Student codes serve two jobs that pull in opposite directions: **login lookup** (no teacher present) and **reprinting** (teacher present). So each student code is stored **twice**:
 
-- `student_code_hash` — for **login**: the server hashes the typed code and finds the project row. No teacher code needed. This is also the column the brute-force rate-limit (§11) protects.
+- `student_code_hash` — for **login**: the server hashes the typed code and finds the project row. No teacher code needed. (Brute-force rate-limiting on this lookup is deferred to P3, see §11.)
 - `student_code_enc` — for **reprinting**: the code **encrypted at rest**, decryptable only when the **teacher code unlocks it**. The decryption key is derived from the teacher code at request time (KDF) and never stored, so a database dump alone does not reveal student codes, only a teacher presenting their cohort's code can decrypt them for a reprint. (Simpler fallback if key-derivation is fiddly: encrypt with a server secret and gate the reprint endpoint behind teacher-code auth; weaker, but still "encrypted at rest, unlocked by the teacher code" in spirit.)
 - **Teacher codes** are stored **hashed** (`teacher_code_hash`), one shared hash per cohort, never reprinted by the system (the owner mints and hands them out). Many-to-many access is by sharing the code (§3.4). **No per-teacher revocation in v1** (confirmed); rotating a leaked code means re-minting and re-wrapping the cohort's `student_code_enc`.
 
