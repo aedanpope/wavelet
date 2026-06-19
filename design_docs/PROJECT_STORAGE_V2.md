@@ -85,7 +85,8 @@ There are **two** printable cover sheets, both generated from the dashboard, bot
 **B. Final / progress-pack sheet** (printed at the end, goes in the progress pack):
 
 - The identity block plus **the student's actual finished code**.
-- Must **fit on a single page**: shrink the code font as needed so the whole program fits. (This sheet absorbs the "showcase print" idea: it is the tangible artifact of the finished work. See §9.)
+- Must **fit on a single page**: shrink the code font as needed, and if it still overflows, **just crop the code** (don't spill to a second page). The full program is always in the `.py` export (§9), so a crop loses nothing important.
+- **Rendered canvas image is future work.** Including the student's drawn scene on the sheet is desirable but technically awkward to produce at "generate progress-pack sheets" time (it means running each student's project headless to render the canvas). Deferred, not v1.
 
 Teachers generate **both sets** from the dashboard (the start set up front, the final set at the end).
 
@@ -95,7 +96,7 @@ Teachers generate **both sets** from the dashboard (the start set up front, the 
 
 - Names are stored in a **separate table from the project content**, linked by code, so the project bytes are **non-PII by construction**.
 - The name field is **optional, editable, and appendable later** (a teacher can pass a class list up front to mint one code per name, and still add or correct names afterward).
-- Names **auto-delete on a schedule** some months after the project is complete. Because the name lives in its own table, deletion is just nulling a field and never touches the work.
+- Names **auto-delete 12 months after the project run is marked complete** (`completed_at`). Because the name lives in its own table, deletion is just nulling a field and never touches the work.
 - The schedule is **visible to the teacher** ("names for this class auto-clear on 2026-12-01") with a one-click **extend**.
 
 ---
@@ -135,7 +136,7 @@ Since we now hold a database:
 ## 9. Take-home & artifacts
 
 - Keep the existing **`.py` export** so a kid can show parents or open the file in IDLE. The take-home story no longer *depends* on the file (the QR + code do that), but the file stays as a nice artifact.
-- **Showcase print is v1**, not a nice-to-have: the **final / progress-pack cover sheet** (§4B) is the showcase, the student's actual code shrunk to fit one page, optionally with the rendered canvas image. This is needed for the progress packs going out **next week**, so it has to ship in the first cut.
+- **Showcase print is v1**, not a nice-to-have: the **final / progress-pack cover sheet** (§4B) is the showcase, the student's actual code shrunk to fit one page (cropped if it overflows). This is needed for the progress packs going out **next week**, so it has to ship in the first cut. The rendered canvas image on the sheet is **future work** (§4B).
 
 ---
 
@@ -159,10 +160,20 @@ Since we now hold a database:
 
 ## 11. Open / deferred
 
-- **Architecture / hosting** is drafted in §12. Resolved: target is WA government schools → onshore required → **Cloudflare Pages (static) + Supabase Sydney (data tier)**. Compliance bar resolved to **parity with Grok Academy** (AWS Sydney + encryption, §12.7), so sovereign-AU hosting is not needed and names-on-server is acceptable. Remaining: confirm parity clears the school's online-services assessment.
-- Exact **code scheme** (word list size, check-word vs. check-digit, minimum edit distance) to be specified when we build §3.1.
-- Retention window length for §5 (how many months after completion).
-- Whether the teacher dashboard's progress view should fold in the broader **Phase 3 "Assessment"** goals from `ROADMAP.md` (per-problem pass/fail export), since both want a teacher-facing progress surface.
+**Resolved (locked):**
+- **Architecture / hosting:** WA government schools → onshore → **Cloudflare Pages (static) + Supabase Sydney (data tier)**, compliance bar = **parity with Grok Academy** (AWS Sydney + encryption, §12.7). Sovereign-AU hosting not needed; names-on-server acceptable.
+- **Schema:** three-tier `classes` → `class_projects` → `projects` (§12.4). One shared `teacher_code_hash` per cohort, no per-teacher revocation in v1.
+- **Name retention:** auto-delete **12 months** after `completed_at` (teacher-marked), teacher-extendable (§5).
+- **Content blob:** **`.py` only** in v1; self-check/pill state is not persisted (unused feature, OK to lose) (§12.4).
+- **Save/snapshot cadence:** one trigger (on Run + ~30s active editing); each save overwrites `current_state` and appends a `snapshot` (Run snapshots = milestones) (§12.2).
+- **Codes at rest:** student codes **encrypted at rest, unlocked by the teacher code**, with a separate hash for login lookup (§12.5).
+- **Cover-sheet overflow:** crop the code (full code is in the `.py`); rendered canvas image on the sheet is **future work** (§4B, §9).
+
+**Still open (genuinely undecided):**
+- **Code scheme (§3.1):** word-list size, check-word vs check-digit, and minimum edit distance to guarantee no single typo is a valid code. Must hold across the **globally unique** code space (login has no class selector), and pairs with **brute-force rate-limiting** on the login lookup.
+- **Whether the teacher dashboard folds in the Phase 3 "Assessment" goals** from `ROADMAP.md` (per-problem pass/fail export), since both want a teacher-facing progress surface.
+
+**Action (not a design choice):** confirm the §12.7 Grok-parity page clears the school's online-services assessment.
 
 ---
 
@@ -189,8 +200,12 @@ Durable Objects / real-time-collab machinery are **not needed**: the versioning 
 
 ### 12.2 Two-tier write model (core mechanic)
 
-- **`current_state`** — one row per project, holds the latest content. Overwritten on every autosave. This is what **resume** reads (a single-row fetch, fast on slow laptops).
-- **`snapshots`** — append-only history. A new immutable row on a throttled cadence (at most one per ~30s of active editing, plus on each run / milestone). **Nothing is ever destroyed**, so a last-write-wins clobber on `current_state` is always recoverable here. This is what the student's history browser (§6) reads.
+There is **one save trigger** (the autosave event): on each **Run**, and after **~30s of active editing** (debounced). Every save event does **both** writes together:
+
+- **`current_state`** — one row per project, **overwritten** with the latest content on each save. This is what **resume** reads (a single-row fetch, fast on slow laptops).
+- **`snapshots`** — an **append** of the same content on each save (a Run-triggered snapshot is flagged `is_milestone`). **Nothing is ever destroyed**, so a last-write-wins clobber on `current_state` is always recoverable here. This is what the student's history browser (§6) reads.
+
+So current_state and snapshots share the **same cadence** (one save = one current_state overwrite + one snapshot append); there is no separate throttle. Post-completion compaction (§6) later prunes the non-milestone snapshots.
 
 **Optimistic concurrency:** the client sends the version number it loaded. If the server's has advanced from a *different* session token, the response flags "also edited on another laptop," and the student resolves it via the history browser. No merge.
 
@@ -242,18 +257,21 @@ class_projects (
 projects (
   id               TEXT PRIMARY KEY,     -- the instance id; current_state/snapshots FK to this
   class_project_id TEXT REFERENCES class_projects(id),
-  student_code     TEXT UNIQUE NOT NULL, -- capability, reprintable (§12.5)
-  display_name     TEXT,                 -- nullable; auto-cleared per class_projects row
+  student_code_hash TEXT UNIQUE NOT NULL,-- login lookup; globally unique (§12.5)
+  student_code_enc TEXT NOT NULL,        -- code encrypted at rest, unlocked by teacher code (§12.5)
+  display_name     TEXT,                 -- nullable; auto-cleared 12mo after completed_at (§5)
   current_version  INTEGER NOT NULL DEFAULT 0,
   last_writer      TEXT,                 -- session token of last writer
   last_saved_at    TIMESTAMP,
-  completed_at     TIMESTAMP             -- set on completion; triggers compaction
+  completed_at     TIMESTAMP             -- set when TEACHER marks the run complete; starts the
+                                         -- 12mo name-retention clock and triggers compaction
 )
 
 -- Latest content, overwritten each save. No PII (FK only).
 current_state (
   project_id      TEXT PRIMARY KEY REFERENCES projects(id),
-  content         TEXT NOT NULL,         -- the assembled .py / structured JSON
+  content         TEXT NOT NULL,         -- the assembled .py ONLY (v1). Self-check/pill
+                                         -- state is NOT persisted in v1 (unused feature).
   version         INTEGER NOT NULL,
   updated_at      TIMESTAMP
 )
@@ -274,8 +292,11 @@ Naming note: the table that couples a class to one project is `class_projects` (
 
 ### 12.5 Auth at rest
 
-- **Student codes** are capabilities (knowing the code = access to that one term's project) and must be **reprintable** from the dashboard, so they are stored **recoverably** (plaintext, or encrypted with a Worker secret). Low stakes: term-scoped, rotated each term, names auto-deleted. *Open: plaintext vs encrypted-at-rest.*
-- **Teacher codes** are higher-value and never reprinted by the system (the owner mints and hands them out), so they are stored **hashed** and verified per request. Shared between teachers for many-to-many access (§3.4).
+Student codes serve two jobs that pull in opposite directions: **login lookup** (no teacher present) and **reprinting** (teacher present). So each student code is stored **twice**:
+
+- `student_code_hash` — for **login**: the server hashes the typed code and finds the project row. No teacher code needed. This is also the column the brute-force rate-limit (§11) protects.
+- `student_code_enc` — for **reprinting**: the code **encrypted at rest**, decryptable only when the **teacher code unlocks it**. The decryption key is derived from the teacher code at request time (KDF) and never stored, so a database dump alone does not reveal student codes, only a teacher presenting their cohort's code can decrypt them for a reprint. (Simpler fallback if key-derivation is fiddly: encrypt with a server secret and gate the reprint endpoint behind teacher-code auth; weaker, but still "encrypted at rest, unlocked by the teacher code" in spirit.)
+- **Teacher codes** are stored **hashed** (`teacher_code_hash`), one shared hash per cohort, never reprinted by the system (the owner mints and hands them out). Many-to-many access is by sharing the code (§3.4). **No per-teacher revocation in v1** (confirmed); rotating a leaked code means re-minting and re-wrapping the cohort's `student_code_enc`.
 
 ### 12.6 API surface (sketch)
 
