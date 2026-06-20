@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wavelet — Teacher Dashboard</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .dash { max-width: 960px; margin: 0 auto; padding: 24px; }
+    .dash h1 { margin-bottom: 4px; }
+    .dash .muted { color: #6b7280; font-size: 0.9rem; }
+    .dash .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 16px 0; }
+    .dash input[type=text] { padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem; }
+    .dash button { padding: 8px 14px; border: 0; border-radius: 6px; background: #2563eb; color: #fff; font-size: 0.95rem; cursor: pointer; }
+    .dash button.secondary { background: #6b7280; }
+    .dash button:disabled { opacity: 0.5; cursor: default; }
+    .dash table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .dash th, .dash td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #e5e7eb; font-size: 0.92rem; }
+    .dash th { color: #374151; background: #f9fafb; }
+    .dash .code-cell { font-family: monospace; }
+    .dash .hidden-code { color: #9ca3af; }
+    .dash .msg { padding: 8px 12px; border-radius: 6px; margin: 8px 0; }
+    .dash .msg.err { background: #fef2f2; color: #991b1b; }
+    .dash .msg.ok { background: #ecfdf5; color: #065f46; }
+    .dash .card-out { background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 10px 12px; margin: 8px 0; }
+    .dash fieldset { border: 1px solid #e5e7eb; border-radius: 8px; margin-top: 24px; padding: 12px 16px; }
+    .dash legend { padding: 0 6px; color: #374151; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="dash">
+    <h1>Teacher Dashboard</h1>
+    <p class="muted">Enter your teacher code to see your class. Student codes stay hidden until you reveal them (so the dashboard is safe to show on a projector).</p>
+
+    <div class="row">
+      <input id="teacher-code" type="text" placeholder="teacher code" size="34" autocomplete="off" spellcheck="false">
+      <button id="load-btn">Load class</button>
+    </div>
+
+    <div id="status"></div>
+
+    <div id="roster-wrap" style="display:none">
+      <div class="row">
+        <strong id="roster-count"></strong>
+        <button id="reveal-btn" class="secondary">Reveal codes</button>
+        <button id="refresh-btn" class="secondary">Refresh</button>
+      </div>
+      <table id="roster">
+        <thead>
+          <tr><th>#</th><th>Name</th><th>Project</th><th>Version</th><th>Last saved</th><th>Status</th><th>Code</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <fieldset>
+        <legend>Add a student</legend>
+        <div class="row">
+          <input id="add-name" type="text" placeholder="student name" size="20" autocomplete="off">
+          <input id="add-slug" type="text" value="pixel-game" size="14" autocomplete="off">
+          <button id="add-btn">Add &amp; generate code</button>
+        </div>
+        <div id="add-result"></div>
+      </fieldset>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="code-words-list.js"></script>
+  <script src="code-words.js"></script>
+  <script src="supabase-client.js"></script>
+  <script src="teacher-dashboard.js"></script>
+</body>
+</html>
