@@ -427,8 +427,12 @@ They are fully isolated (separate URLs, keys, **separate peppers**, separate ser
 - **Rollback:** forward-only, so a "rollback" is a new migration that reverts the change; for data-loss risk, restore from backup.
 - **Drift detection:** use `supabase db diff` to catch any out-of-band dashboard edits. Policy: **no manual edits to prod** — every change is a migration. (This is exactly why we are moving off the UI.)
 
-### 13.7 Immediate next steps (implementation)
+### 13.7 Rollout: single DB now (P1), dev/prod split later (P2)
+
+The dev/prod split above is **P2**, deferred so the current class can start ASAP. For now (**P1**) the **single existing project serves the live cohort directly** (it plays the role of prod), and migrations are applied to it via the SQL editor / `db push` as today. The integration test's test class (its own teacher code) is isolated from the real class, so running `supabase-itest.py` against this same project is safe in the interim; just don't point it at real-class teacher codes.
+
+When we do the P2 split (after this cohort): create a fresh **prod** project for future classes, **retire the current project to dev** (it becomes the throwaway/test DB), and then complete the implementation list:
 
 - Add `supabase/config.toml` and checked-in `db:push:dev` / `db:push:prod` scripts.
-- Create the **prod** project; relabel the current project as **dev**; record both sets of secrets in Bitwarden.
+- Record both environments' secrets in Bitwarden (dev/prod namespaced).
 - Point `test-config.json` at dev and add the CI workflow that applies to dev + runs the integration test.
