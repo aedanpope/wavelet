@@ -1842,6 +1842,7 @@ function showHistoryOverlay(versions) {
             `<li class="history-row" data-version="${v.version}">` +
             `<span class="hv-when">${fmtHistoryTime(v.created_at)}</span>` +
             `${v.is_milestone ? '<span class="hv-tag">after Run</span>' : ''}` +
+            `${typeof v.line_count === 'number' ? `<span class="hv-lines">${v.line_count} line${v.line_count === 1 ? '' : 's'}</span>` : ''}` +
             `<span class="hv-go">Go back to this →</span>` +
             '</li>').join('')
         : '<li class="history-empty">No saved versions yet. Edit and your work will appear here.</li>';

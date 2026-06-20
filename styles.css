@@ -3101,6 +3101,7 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
 .history-row .hv-when { font-weight: 600; }
 .history-row .hv-tag { font-size: 0.75rem; background: #dbeafe; color: #1e40af; padding: 2px 8px;
     border-radius: 999px; }
+.history-row .hv-lines { font-size: 0.78rem; color: #6b7280; }
 .history-row .hv-go { margin-left: auto; color: #2563eb; font-size: 0.85rem; }
 .history-empty { padding: 16px; color: #6b7280; text-align: center; }
 .history-card button.secondary { background: #6b7280; color: #fff; border: 0; border-radius: 8px;
