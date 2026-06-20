@@ -73,7 +73,7 @@
         return line.slice(0, maxChars - 1) + '…';
     }
 
-    // ── PDF rendering (browser only; needs window.jspdf + window.QRCode) ─────
+    // ── PDF rendering (browser only; needs window.jspdf + window.qrcode) ─────
 
     const A4 = { w: 595.28, h: 841.89 };
     const MARGIN = 40;
