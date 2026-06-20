@@ -3060,3 +3060,10 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
 .login-card input { width: 100%; padding: 10px 12px; font-size: 1.1rem; border: 1px solid #d1d5db; border-radius: 8px; margin: 10px 0; box-sizing: border-box; font-family: monospace; }
 .login-card button { padding: 10px 22px; background: #2563eb; color: #fff; border: 0; border-radius: 8px; font-size: 1rem; cursor: pointer; }
 .login-msg { margin-top: 10px; color: #6b7280; min-height: 1.2em; }
+@keyframes wavelet-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-7px); }
+  40%, 80% { transform: translateX(7px); }
+}
+.login-card.shake { animation: wavelet-shake 0.4s; }
+.login-msg.err { color: #991b1b; font-weight: 600; }

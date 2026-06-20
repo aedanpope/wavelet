@@ -1714,13 +1714,25 @@ function showLoginOverlay() {
     input.focus();
 }
 
+// Replay a CSS animation even if the element already has the class (removing it and forcing
+// a reflow lets the same animation run again on a repeated failure).
+function replayShake(elx) {
+    if (!elx) return;
+    elx.classList.remove('shake');
+    void elx.offsetWidth;
+    elx.classList.add('shake');
+}
+
 async function handleServerLogin(overlay, raw) {
     const msgEl = overlay.querySelector('#login-msg');
+    const card = overlay.querySelector('.login-card');
+    const fail = (text) => { msgEl.textContent = text; msgEl.classList.add('err'); replayShake(card); };
     const code = window.CodeWords ? window.CodeWords.canonical(raw) : null;
     if (!code) {
-        msgEl.textContent = 'Please check your code and try again.';
+        fail('Please check your code and try again.');
         return;
     }
+    msgEl.classList.remove('err');
     msgEl.textContent = 'Opening…';
     let res;
     try {
@@ -1729,7 +1741,7 @@ async function handleServerLogin(overlay, raw) {
         res = null;
     }
     if (!res || !res.ok || !res.data || res.data.found === false) {
-        msgEl.textContent = "We couldn't find that project. Check your code.";
+        fail("We couldn't find that project. Check your code.");
         return;
     }
     const data = res.data;
