@@ -68,7 +68,12 @@
     const getContent = o.getContent || function () { return ''; };
     const onStatus = o.onStatus || function () {};
     const onConflict = o.onConflict || function () {};
-    const sched = o.scheduler || { setTimeout: setTimeout, clearTimeout: clearTimeout };
+    // Wrap the timer globals: storing them as object methods and calling sched.setTimeout(...)
+    // would invoke setTimeout with this=sched, which browsers reject ("Illegal invocation").
+    const sched = o.scheduler || {
+      setTimeout: (fn, ms) => setTimeout(fn, ms),
+      clearTimeout: (id) => clearTimeout(id)
+    };
     const session = o.session || makeSession();
 
     let version = 0;
