@@ -21,6 +21,7 @@
     "test": "node error-handler-test.js",
     "test:code-words": "node code-words-test.js",
     "test:supabase-client": "node supabase-client-test.js",
+    "test:project-storage": "node project-storage-test.js",
     "test:homepage:basic": "node homepage-basic-test.js",
     "test:validation": "node validation-test.js",
     "test:input-system": "node input-system-test.js",
