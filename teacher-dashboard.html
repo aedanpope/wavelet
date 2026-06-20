@@ -19,7 +19,7 @@
     .dash th, .dash td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #e5e7eb; font-size: 0.92rem; }
     .dash th { color: #374151; background: #f9fafb; }
     .dash .code-cell { font-family: monospace; }
-    .dash .hidden-code { color: #9ca3af; }
+    .dash .code-toggle { color: #2563eb; cursor: pointer; text-decoration: underline; user-select: none; }
     .dash .msg { padding: 8px 12px; border-radius: 6px; margin: 8px 0; }
     .dash .msg.err { background: #fef2f2; color: #991b1b; }
     .dash .msg.ok { background: #ecfdf5; color: #065f46; }
@@ -43,7 +43,7 @@
     <div id="roster-wrap" style="display:none">
       <div class="row">
         <strong id="roster-count"></strong>
-        <button id="reveal-btn" class="secondary">Reveal codes</button>
+        <button id="reveal-btn" class="secondary">Reveal all codes</button>
         <button id="refresh-btn" class="secondary">Refresh</button>
       </div>
       <table id="roster">
