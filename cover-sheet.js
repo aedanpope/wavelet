@@ -36,10 +36,11 @@
         return String(url).replace(/^https?:\/\//, '').replace(/\/\?/, '?');
     }
 
-    // "Sam's Pixel Game" (falls back to just the project title when there's no name).
+    // "Sam's Pixel Game", or "My Pixel Game" when there's no name (we'll merge in some
+    // students without names, so the sheet must still read naturally).
     function sheetTitle(name, projectTitle) {
         const n = (name || '').trim();
-        return n ? `${n}'s ${projectTitle}` : projectTitle;
+        return n ? `${n}'s ${projectTitle}` : `My ${projectTitle}`;
     }
 
     // Largest font (pt) in [minFont, maxFont] at which lineCount lines fit in

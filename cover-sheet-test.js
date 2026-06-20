@@ -37,8 +37,9 @@ check('displayUrl leaves a path-bearing url readable',
 
 // ── sheetTitle ──────────────────────────────────────────────────────────────
 check('sheetTitle adds the possessive', sheetTitle('Sam', 'Pixel Game') === "Sam's Pixel Game");
-check('sheetTitle falls back to title when no name', sheetTitle('', 'Pixel Game') === 'Pixel Game');
-check('sheetTitle trims whitespace', sheetTitle('  Sam  ', 'Pixel Game') === "Sam's Pixel Game");
+check('sheetTitle says "My ..." when there is no name', sheetTitle('', 'Pixel Game') === 'My Pixel Game');
+check('sheetTitle treats whitespace-only as no name', sheetTitle('   ', 'Pixel Game') === 'My Pixel Game');
+check('sheetTitle trims whitespace around a real name', sheetTitle('  Sam  ', 'Pixel Game') === "Sam's Pixel Game");
 
 // ── fitCodeFontSize ─────────────────────────────────────────────────────────
 const geom = { availableHeight: 600, maxFont: 9, minFont: 5, lineHeightRatio: 1.25 };
