@@ -1695,25 +1695,6 @@ function initServerStorage() {
     showLoginOverlay();
 }
 
-function showLoginOverlay() {
-    const overlay = document.createElement('div');
-    overlay.className = 'login-overlay';
-    overlay.innerHTML =
-        '<div class="login-card">' +
-        '<h2>Open your project</h2>' +
-        '<p>Type the code from your card.</p>' +
-        '<input id="login-code" type="text" autocomplete="off" spellcheck="false" placeholder="brave-otter-oak">' +
-        '<button id="login-btn">Open</button>' +
-        '<div id="login-msg" class="login-msg"></div>' +
-        '</div>';
-    document.body.appendChild(overlay);
-    const input = overlay.querySelector('#login-code');
-    const doLogin = () => handleServerLogin(overlay, input.value);
-    overlay.querySelector('#login-btn').addEventListener('click', doLogin);
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-    input.focus();
-}
-
 // Replay a CSS animation even if the element already has the class (removing it and forcing
 // a reflow lets the same animation run again on a repeated failure).
 function replayShake(elx) {
@@ -1723,33 +1704,81 @@ function replayShake(elx) {
     elx.classList.add('shake');
 }
 
-async function handleServerLogin(overlay, raw) {
-    const msgEl = overlay.querySelector('#login-msg');
+function showLoginOverlay() {
+    const overlay = document.createElement('div');
+    overlay.className = 'login-overlay';
+    overlay.innerHTML =
+        '<div class="login-card">' +
+        '  <div id="login-step-code">' +
+        '    <h2>Open your project</h2>' +
+        '    <p>Type the code from your card.</p>' +
+        '    <input id="login-code" type="text" autocomplete="off" spellcheck="false" placeholder="brave-otter-oak">' +
+        '    <button id="login-btn">Open</button>' +
+        '    <div id="login-msg" class="login-msg"></div>' +
+        '  </div>' +
+        '  <div id="login-step-confirm" style="display:none">' +
+        '    <h2>Is this your project?</h2>' +
+        '    <p class="confirm-name" id="confirm-name"></p>' +
+        '    <div class="confirm-actions">' +
+        '      <button id="confirm-yes">Yes, this is me</button>' +
+        '      <button id="confirm-no" class="secondary">No, go back</button>' +
+        '    </div>' +
+        '  </div>' +
+        '</div>';
+    document.body.appendChild(overlay);
+
     const card = overlay.querySelector('.login-card');
+    const codeStep = overlay.querySelector('#login-step-code');
+    const confirmStep = overlay.querySelector('#login-step-confirm');
+    const input = overlay.querySelector('#login-code');
+    const msgEl = overlay.querySelector('#login-msg');
     const fail = (text) => { msgEl.textContent = text; msgEl.classList.add('err'); replayShake(card); };
-    const code = window.CodeWords ? window.CodeWords.canonical(raw) : null;
-    if (!code) {
-        fail('Please check your code and try again.');
-        return;
+
+    function backToCode() {
+        confirmStep.style.display = 'none';
+        codeStep.style.display = '';
+        input.focus();
+        input.select();
     }
-    msgEl.classList.remove('err');
-    msgEl.textContent = 'Opening…';
-    let res;
-    try {
-        res = await window.SupabaseClient.loadProject(code);
-    } catch {
-        res = null;
+
+    async function submitCode() {
+        const code = window.CodeWords ? window.CodeWords.canonical(input.value) : null;
+        if (!code) { fail('Please check your code and try again.'); return; }
+        msgEl.classList.remove('err');
+        msgEl.textContent = 'Opening…';
+        let res;
+        try {
+            res = await window.SupabaseClient.loadProject(code);
+        } catch {
+            res = null;
+        }
+        if (!res || !res.ok || !res.data || res.data.found === false) {
+            fail("We couldn't find that project. Check your code.");
+            return;
+        }
+        const data = res.data;
+        if (data.display_name) {
+            // Confirmation is a step IN the dialog (not a browser confirm(), which kids
+            // click through without reading).
+            overlay.querySelector('#confirm-name').textContent = data.display_name;
+            msgEl.textContent = '';
+            codeStep.style.display = 'none';
+            confirmStep.style.display = '';
+            overlay.querySelector('#confirm-yes').onclick = () => openWithProject(overlay, code, data);
+            overlay.querySelector('#confirm-no').onclick = backToCode;
+        } else {
+            openWithProject(overlay, code, data);
+        }
     }
-    if (!res || !res.ok || !res.data || res.data.found === false) {
-        fail("We couldn't find that project. Check your code.");
-        return;
-    }
-    const data = res.data;
-    if (data.display_name && !confirm(`Is this ${data.display_name}'s project?`)) {
-        msgEl.textContent = 'No problem, type your own code.';
-        return;
-    }
-    // Resume: load saved content into the editors (a new project has null content).
+
+    overlay.querySelector('#login-btn').addEventListener('click', submitCode);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') submitCode(); });
+    input.focus();
+}
+
+// Resume saved content (a new project has none) and wire the storage controller, then
+// dismiss the overlay.
+function openWithProject(overlay, code, data) {
     if (data.content) {
         loadFileIntoEditors(data.content, 'your project');
     }

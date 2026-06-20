@@ -34,6 +34,36 @@
       ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   }
 
+  // Feather "copy" icon (two overlapping rounded rectangles).
+  const COPY_ICON =
+    '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" ' +
+    'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+    '<rect x="9" y="9" width="13" height="13" rx="2"></rect>' +
+    '<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+
+  async function copyText(text, btn) {
+    try {
+      if (window.navigator && window.navigator.clipboard) {
+        await window.navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+      }
+      if (btn) {
+        const prev = btn.innerHTML;
+        btn.innerHTML = '✓';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.innerHTML = prev; btn.classList.remove('copied'); }, 1200);
+      }
+    } catch {
+      /* clipboard blocked; the code text is still selectable */
+    }
+  }
+
   function updateRevealBtn() {
     revealBtn.textContent = revealedIds.size > 0 ? 'Hide all codes' : 'Reveal all codes';
   }
@@ -43,8 +73,10 @@
     rosterCount.textContent = `${roster.length} student${roster.length === 1 ? '' : 's'}`;
     rosterBody.innerHTML = roster.map((r, i) => {
       const id = esc(r.project_id);
+      const codeVal = (codesById && codesById[r.project_id]) || '';
       const codeCell = revealedIds.has(r.project_id)
-        ? `<span class="code-cell">${esc((codesById && codesById[r.project_id]) || '…')}</span> ` +
+        ? `<span class="code-cell">${esc(codeVal || '…')}</span>` +
+          `<button class="copy-btn" data-copy="${esc(codeVal)}" title="Copy code">${COPY_ICON}</button> ` +
           `<span class="code-toggle" data-reveal-id="${id}">hide</span>`
         : `<span class="code-toggle" data-reveal-id="${id}">show</span>`;
       const status = r.completed_at ? '✓ complete' : '—';
@@ -100,6 +132,8 @@
 
   // Per-row click: toggle just that student's code (lazily fetching codes on first reveal).
   async function onRosterClick(e) {
+    const copyBtn = e.target.closest('.copy-btn');
+    if (copyBtn) { copyText(copyBtn.getAttribute('data-copy'), copyBtn); return; }
     const target = e.target.closest('[data-reveal-id]');
     if (!target) { return; }
     const id = target.getAttribute('data-reveal-id');
@@ -152,7 +186,10 @@
       }
       el('add-result').innerHTML =
         `<div class="card-out">Added <strong>${esc(name)}</strong>. Their code (write it on a card):<br>` +
-        `<span class="code-cell" style="font-size:1.1rem">${esc(code)}</span></div>`;
+        `<span class="code-cell" style="font-size:1.1rem">${esc(code)}</span> ` +
+        `<button class="copy-btn" data-copy="${esc(code)}" title="Copy code">${COPY_ICON}</button></div>`;
+      const addCopyBtn = el('add-result').querySelector('.copy-btn');
+      if (addCopyBtn) { addCopyBtn.addEventListener('click', () => copyText(addCopyBtn.getAttribute('data-copy'), addCopyBtn)); }
       el('add-name').value = '';
       codesById = null;        // a new student exists; refetch codes on next reveal
       revealedIds = new Set();  // collapse reveals so nothing shows a stale placeholder

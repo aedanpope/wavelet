@@ -3067,3 +3067,6 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
 }
 .login-card.shake { animation: wavelet-shake 0.4s; }
 .login-msg.err { color: #991b1b; font-weight: 600; }
+.login-card .confirm-name { font-size: 1.4rem; font-weight: 700; margin: 8px 0 18px; }
+.login-card .confirm-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.login-card button.secondary { background: #6b7280; }
