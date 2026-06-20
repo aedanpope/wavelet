@@ -124,7 +124,13 @@ function renderProject() {
 
     // Project Storage v2: when enabled, swap the file Open/Save flow for code-login + server
     // autosave. Default off, so the existing flow is untouched for the current cohort.
-    if (window.WaveletConfig && window.WaveletConfig.serverStorage) {
+    // Enabled by the committed flag OR a per-visit URL override (?storage=server), so the
+    // preview can be tested without changing the default; ?storage=file forces it off.
+    const search = window.location.search;
+    const cfgOn = !!(window.WaveletConfig && window.WaveletConfig.serverStorage);
+    const urlOn = /[?&]storage=server(&|$)/.test(search);
+    const urlOff = /[?&]storage=file(&|$)/.test(search);
+    if ((cfgOn || urlOn) && !urlOff) {
         initServerStorage();
     }
 
