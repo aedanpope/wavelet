@@ -1,0 +1,18 @@
+// Public Wavelet runtime config. These values are PUBLIC by design: the Supabase
+// publishable (anon) key only permits the SECURITY DEFINER RPCs, which authorise via the
+// codes passed as arguments (see design_docs/PROJECT_STORAGE_V2.md §12.5/§12.6). Never put
+// the service-role key, DB password, or pepper here.
+//
+// Single project for now ("prod for the current cohort"); a dev/prod split is P2 (§13).
+
+const WaveletConfig = {
+  supabaseUrl: 'https://rphrxfyhlgacyellhcrw.supabase.co',
+  supabasePublishableKey: 'sb_publishable_5WpjivY8tRSvETZMypTFMw_uw8t12E5'
+};
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = WaveletConfig;
+}
+if (typeof window !== 'undefined') {
+  window.WaveletConfig = WaveletConfig;
+}
