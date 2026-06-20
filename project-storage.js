@@ -18,6 +18,8 @@
   const AUTOSAVE_MS = 30000;     // save this long after the last edit (idle debounce, §12.2)
   const AUTOSAVE_MAX_MS = 60000; // ...but never wait longer than this while dirty, so a
                                  // student typing non-stop still autosaves periodically.
+  const RETRY_MS = 8000;         // while a save is blocked, retry in the background this often
+                                 // so reconnecting recovers without the student editing again.
 
   // A per-tab session token, used for optimistic-concurrency ("edited on another laptop").
   function makeSession() {
@@ -73,6 +75,7 @@
     let dirty = false;
     let timer = null;      // idle debounce, reset on every edit
     let maxTimer = null;   // max-wait cap, armed once per dirty period, NOT reset per edit
+    let retryTimer = null; // background retry while blocked
     let inFlight = false;
 
     function setStatus(s, extra) {
@@ -83,6 +86,7 @@
     function clearTimers() {
       if (timer !== null) { sched.clearTimeout(timer); timer = null; }
       if (maxTimer !== null) { sched.clearTimeout(maxTimer); maxTimer = null; }
+      if (retryTimer !== null) { sched.clearTimeout(retryTimer); retryTimer = null; }
     }
 
     // Seed from a load_project result.
@@ -129,6 +133,9 @@
         if (outcome.conflict) { onConflict(); }
       } else {
         setStatus('blocked', { error: outcome.error });
+        // Retry in the background; combined with the 'online' listener this recovers on
+        // reconnect without the student having to edit again.
+        retryTimer = sched.setTimeout(function () { retryTimer = null; save(false); }, RETRY_MS);
       }
       return outcome;
     }
@@ -144,6 +151,10 @@
           nav.sendBeacon(b.url, new Blob([b.body], { type: 'application/json' }));
         }
       });
+      // Reconnecting: retry immediately so a blocked save clears without an edit.
+      if (typeof window !== 'undefined') {
+        window.addEventListener('online', function () { if (dirty) { save(false); } });
+      }
     }
 
     return {
