@@ -29,6 +29,7 @@ const selfCheckPills = new Map(); // taskId -> pill element
 let setupEditor = null; // CodeMirror for the editable preamble
 let currentFileHandle = null;
 let serverCtl = null; // Project Storage v2 controller, set by initServerStorage() when serverStorage is on
+let serverCode = null; // the student's code, for history lookups
 let saveBarTimer = null; // auto-hide timer for the "✓ Saved" butterbar state
 let dirty = false;
 let savedFlashTimer = null;
@@ -138,6 +139,8 @@ function renderProject() {
     document.addEventListener('keydown', e => {
         if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 's') {
             e.preventDefault();
+            // Server mode autosaves; Ctrl+S just forces an immediate save (no file dialog).
+            if (serverCtl) { serverCtl.saveNow(); return; }
             if (e.shiftKey) saveProjectAs();
             else saveProject();
             return;
@@ -1693,6 +1696,8 @@ function initServerStorage() {
         const elx = document.getElementById(id);
         if (elx) elx.style.display = 'none';
     });
+    const histBtn = document.getElementById('history-btn');
+    if (histBtn) histBtn.addEventListener('click', openHistory);
     showLoginOverlay();
 }
 
@@ -1781,9 +1786,10 @@ function showLoginOverlay() {
 // dismiss the overlay.
 function openWithProject(overlay, code, data) {
     if (data.content) {
-        loadFileIntoEditors(data.content, 'your project');
+        loadFileIntoEditors(data.content, 'your project', true);
     }
     markClean();
+    serverCode = code;
     serverCtl = window.ProjectStorage.createController({
         code: code,
         getContent: assembleFileForDisk,
@@ -1792,7 +1798,78 @@ function openWithProject(overlay, code, data) {
     });
     serverCtl.start({ version: data.version });
     serverCtl.attachLifecycle();
+    const histBtn = document.getElementById('history-btn');
+    if (histBtn) histBtn.style.display = '';
     overlay.remove();
+}
+
+// ── History / restore (student-facing version browser, §6) ──────────────────
+
+async function openHistory() {
+    if (!serverCode) return;
+    let res;
+    try {
+        res = await window.SupabaseClient.projectHistory(serverCode);
+    } catch {
+        res = null;
+    }
+    const versions = (res && res.ok && res.data && res.data.found) ? (res.data.versions || []) : [];
+    showHistoryOverlay(versions);
+}
+
+function fmtHistoryTime(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
+    const mins = Math.round((Date.now() - d.getTime()) / 60000);
+    if (mins < 1) return 'just now';
+    if (mins < 60) return `${mins} min ago`;
+    const hrs = Math.round(mins / 60);
+    if (hrs < 24) return `${hrs} hour${hrs === 1 ? '' : 's'} ago`;
+    return d.toLocaleString();
+}
+
+function showHistoryOverlay(versions) {
+    const overlay = document.createElement('div');
+    overlay.className = 'history-overlay';
+    const rows = versions.length
+        ? versions.map(v =>
+            `<li class="history-row" data-version="${v.version}">` +
+            `<span class="hv-when">${fmtHistoryTime(v.created_at)}</span>` +
+            `${v.is_milestone ? '<span class="hv-tag">after Run</span>' : ''}` +
+            `<span class="hv-go">Go back to this →</span>` +
+            '</li>').join('')
+        : '<li class="history-empty">No saved versions yet. Edit and your work will appear here.</li>';
+    overlay.innerHTML =
+        '<div class="history-card">' +
+        '  <h2>Your saved versions</h2>' +
+        '  <p>Pick one to go back to it. Your current work is kept in history too, so you can switch back.</p>' +
+        `  <ul class="history-list">${rows}</ul>` +
+        '  <button id="history-close" class="secondary">Close</button>' +
+        '</div>';
+    document.body.appendChild(overlay);
+    overlay.querySelector('#history-close').addEventListener('click', () => overlay.remove());
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    overlay.querySelectorAll('.history-row').forEach(row => {
+        row.addEventListener('click', () => restoreVersion(parseInt(row.getAttribute('data-version'), 10), overlay));
+    });
+}
+
+async function restoreVersion(version, overlay) {
+    let res;
+    try {
+        res = await window.SupabaseClient.projectVersion(serverCode, version);
+    } catch {
+        res = null;
+    }
+    if (!res || !res.ok || !res.data || !res.data.found) {
+        return; // leave the overlay open; nothing changed
+    }
+    // Load the old content and let autosave write it as a new latest version (history is
+    // append-only, so nothing is lost).
+    loadFileIntoEditors(res.data.content, 'a saved version', true);
+    markDirty();
+    if (overlay) overlay.remove();
 }
 
 function updateSaveStatus(s) {
@@ -1998,9 +2075,9 @@ function handleFallbackFileInput(e) {
     reader.readAsText(file);
 }
 
-function loadFileIntoEditors(text, filename) {
+function loadFileIntoEditors(text, filename, skipConfirm) {
     const looksLikeProject = text.trimStart().startsWith(FILE_HEADER_MARKER);
-    if (!looksLikeProject) {
+    if (!looksLikeProject && !skipConfirm) {
         const ok = confirm(
             `"${filename}" doesn't look like a saved Wavelet project (no marker comment).\n\n` +
             `Open it anyway? Any function whose name matches a task will be loaded; everything else goes into the read-only Extras panel.`
@@ -2009,7 +2086,7 @@ function loadFileIntoEditors(text, filename) {
     }
 
     const dirtyBefore = anyEditorDifferentFromStarter();
-    if (dirtyBefore && !confirm('Replace your current project with the contents of this file?')) {
+    if (!skipConfirm && dirtyBefore && !confirm('Replace your current project with the contents of this file?')) {
         return false;
     }
 
