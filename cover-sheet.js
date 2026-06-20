@@ -125,9 +125,9 @@
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(9);
         doc.setTextColor(90);
-        doc.text('Scan to play at home, or type this on a laptop:', MARGIN, MARGIN + 64);
+        doc.text('Scan to play at home, or type this in a browser:', MARGIN, MARGIN + 64);
         doc.setTextColor(37, 99, 235);
-        doc.text(displayUrl(shortUrl), MARGIN, MARGIN + 78, { maxWidth: A4.w - 2 * MARGIN - QR_SIZE - 16 });
+        doc.text('http://' + displayUrl(shortUrl), MARGIN, MARGIN + 78, { maxWidth: A4.w - 2 * MARGIN - QR_SIZE - 16 });
         doc.setTextColor(0);
 
         // QR top-right with caption.
