@@ -3,7 +3,8 @@
 // Run with: node cover-sheet-test.js  (or: python3 scripts/run-js-tests.py cover-sheet-test.js)
 
 const {
-    buildProjectUrl, sheetTitle, fitCodeFontSize, linesThatFit, cropCodeLines, clipLine
+    buildProjectUrl, buildShortUrl, displayUrl, sheetTitle,
+    fitCodeFontSize, linesThatFit, cropCodeLines, clipLine
 } = require('./cover-sheet.js');
 
 let passed = 0;
@@ -23,6 +24,16 @@ check('buildProjectUrl encodes the project id',
     buildProjectUrl('https://x.dev', 'a b', 'c').indexOf('project=a%20b') !== -1);
 check('buildProjectUrl keeps code out of the query string',
     buildProjectUrl('https://x.dev', 'p', 'secret-code').indexOf('?project=p#code=secret-code') !== -1);
+
+// ── buildShortUrl / displayUrl ───────────────────────────────────────────────
+check('buildShortUrl is the root with a code query',
+    buildShortUrl('https://wavelet.zone', 'perky-fish-fig') === 'https://wavelet.zone/?code=perky-fish-fig');
+check('buildShortUrl strips a trailing slash on origin',
+    buildShortUrl('https://wavelet.zone/', 'a-b-c') === 'https://wavelet.zone/?code=a-b-c');
+check('displayUrl drops protocol and the slash before the query',
+    displayUrl('https://wavelet.zone/?code=perky-fish-fig') === 'wavelet.zone?code=perky-fish-fig');
+check('displayUrl leaves a path-bearing url readable',
+    displayUrl('https://x.dev/project.html?project=p#code=c') === 'x.dev/project.html?project=p#code=c');
 
 // ── sheetTitle ──────────────────────────────────────────────────────────────
 check('sheetTitle adds the possessive', sheetTitle('Sam', 'Pixel Game') === "Sam's Pixel Game");

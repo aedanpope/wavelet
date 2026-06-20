@@ -1771,7 +1771,7 @@ function showLoginOverlay() {
         input.select();
     }
 
-    async function submitCode() {
+    async function submitCode(skipConfirm) {
         const code = window.CodeWords ? window.CodeWords.canonical(input.value) : null;
         if (!code) { fail('Please check your code and try again.'); return; }
         msgEl.classList.remove('err');
@@ -1787,7 +1787,7 @@ function showLoginOverlay() {
             return;
         }
         const data = res.data;
-        if (data.display_name) {
+        if (data.display_name && !skipConfirm) {
             // Confirmation is a step IN the dialog (not a browser confirm(), which kids
             // click through without reading).
             overlay.querySelector('#confirm-name').textContent = data.display_name;
@@ -1801,16 +1801,18 @@ function showLoginOverlay() {
         }
     }
 
-    overlay.querySelector('#login-btn').addEventListener('click', submitCode);
+    // Wrap so the click event object isn't passed as the skipConfirm flag.
+    overlay.querySelector('#login-btn').addEventListener('click', () => submitCode());
     input.addEventListener('keydown', e => { if (e.key === 'Enter') submitCode(); });
     input.focus();
 
     // Pre-fill and auto-open when a code came in via the URL (cover-sheet QR / link).
-    // The "is this you?" confirm step still gates, so a mistyped/stale link is safe.
+    // Skip the "is this you?" confirm here: the code came straight from the student's own
+    // sheet, so the extra tap is just friction on the take-home / scan path.
     const preset = codeFromUrl();
     if (preset) {
         input.value = preset;
-        submitCode();
+        submitCode(true);
     }
 }
 

@@ -22,6 +22,20 @@
         return `${base}/project.html?project=${encodeURIComponent(projectId)}#code=${encodeURIComponent(code)}`;
     }
 
+    // A short, typeable URL for laptop entry (wavelet.zone/?code=brave-otter-oak). The
+    // homepage redirects it to the project's fragment form. This is the in-class path;
+    // the QR (buildProjectUrl) is the direct, no-redirect take-home path.
+    function buildShortUrl(origin, code) {
+        const base = String(origin || '').replace(/\/+$/, '');
+        return `${base}/?code=${encodeURIComponent(code)}`;
+    }
+
+    // Strip protocol and the slash before the query for a compact printed string
+    // (https://wavelet.zone/?code=x -> wavelet.zone?code=x).
+    function displayUrl(url) {
+        return String(url).replace(/^https?:\/\//, '').replace(/\/\?/, '?');
+    }
+
     // "Sam's Pixel Game" (falls back to just the project title when there's no name).
     function sheetTitle(name, projectTitle) {
         const n = (name || '').trim();
@@ -97,7 +111,7 @@
 
     function renderOneFinalPage(doc, student, ctx) {
         const { projectTitle, origin, projectId } = ctx;
-        const url = buildProjectUrl(origin, projectId, student.code);
+        const shortUrl = buildShortUrl(origin, student.code);
 
         // Identity block (left), QR (right).
         doc.setFont('helvetica', 'bold');
@@ -113,7 +127,7 @@
         doc.setTextColor(90);
         doc.text('Scan to play at home, or type this on a laptop:', MARGIN, MARGIN + 64);
         doc.setTextColor(37, 99, 235);
-        doc.text(url.replace(/^https?:\/\//, ''), MARGIN, MARGIN + 78, { maxWidth: A4.w - 2 * MARGIN - QR_SIZE - 16 });
+        doc.text(displayUrl(shortUrl), MARGIN, MARGIN + 78, { maxWidth: A4.w - 2 * MARGIN - QR_SIZE - 16 });
         doc.setTextColor(0);
 
         // QR top-right with caption.
@@ -173,7 +187,8 @@
     }
 
     const api = {
-        buildProjectUrl, sheetTitle, fitCodeFontSize, linesThatFit, cropCodeLines, clipLine,
+        buildProjectUrl, buildShortUrl, displayUrl, sheetTitle,
+        fitCodeFontSize, linesThatFit, cropCodeLines, clipLine,
         generateFinalSheets
     };
 
