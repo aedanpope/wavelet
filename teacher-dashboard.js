@@ -199,10 +199,57 @@
     }
   }
 
+  // Turn a project slug into a friendly title for the sheet ("pixel-game" -> "Pixel Game").
+  function prettyTitle(slug) {
+    return String(slug || 'project').split(/[-_]/).filter(Boolean)
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  }
+
+  // Build the whole-class progress-pack PDF (one page per student): identity block +
+  // play-at-home QR + their finished code. Fetches each student's content via load_project.
+  async function onPrintFinal() {
+    if (!teacherCode || !currentRoster.length) { msg('Load a class first.', 'err'); return; }
+    if (!window.CoverSheet) { msg('Printing is unavailable (library failed to load).', 'err'); return; }
+    const btn = el('print-final-btn');
+    const prev = btn.textContent;
+    btn.disabled = true;
+    try {
+      if (!(await ensureCodes())) { return; }
+      const students = [];
+      for (let i = 0; i < currentRoster.length; i++) {
+        const r = currentRoster[i];
+        const code = codesById[r.project_id];
+        if (!code) { continue; }
+        btn.textContent = `Building… ${i + 1}/${currentRoster.length}`;
+        let content = '';
+        try {
+          const res = await SC.loadProject(code);
+          if (res.ok && res.data && res.data.found !== false) { content = res.data.content || ''; }
+        } catch {
+          /* leave content empty; the sheet still prints the identity block */
+        }
+        students.push({ name: r.display_name, code, content });
+      }
+      if (!students.length) { msg('No students to print.', 'err'); return; }
+      const slug = (currentRoster[0] && currentRoster[0].project_slug) || 'pixel-game';
+      btn.textContent = 'Saving PDF…';
+      await window.CoverSheet.generateFinalSheets({
+        students, projectId: slug, projectTitle: prettyTitle(slug)
+      });
+      msg(`Built progress sheets for ${students.length} student${students.length === 1 ? '' : 's'}.`, 'ok');
+    } catch (e) {
+      msg('Could not build the PDF: ' + esc(e && e.message ? e.message : e), 'err');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = prev;
+    }
+  }
+
   el('load-btn').addEventListener('click', onLoad);
   teacherInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { onLoad(); } });
   revealBtn.addEventListener('click', onRevealToggle);
   el('refresh-btn').addEventListener('click', loadRoster);
   el('add-btn').addEventListener('click', onAdd);
+  el('print-final-btn').addEventListener('click', onPrintFinal);
   rosterBody.addEventListener('click', onRosterClick);
 })();

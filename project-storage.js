@@ -79,6 +79,8 @@
     let version = 0;
     let status = 'idle';
     let dirty = false;
+    let lastSavedContent = null; // content of the last confirmed save (and the seeded start
+                                 // state), so a Run / autosave with no real change is skipped
     let timer = null;      // idle debounce, reset on every edit
     let maxTimer = null;   // max-wait cap, armed once per dirty period, NOT reset per edit
     let retryTimer = null; // background retry while blocked
@@ -99,6 +101,9 @@
     function start(loadResult) {
       version = (loadResult && typeof loadResult.version === 'number') ? loadResult.version : 0;
       dirty = false;
+      // Snapshot the loaded/starter content so an immediate Run (e.g. opening from a QR just
+      // to play) with no edits is recognised as a no-op and doesn't create a version.
+      lastSavedContent = getContent();
       setStatus('saved');
     }
 
@@ -121,9 +126,16 @@
     async function save(milestone) {
       clearTimers();
       if (inFlight || (!dirty && !milestone)) { return null; }
+      const content = getContent();
+      // Skip saves that wouldn't change anything: a Run with no edits (playing the game is a
+      // "run"), or an edit that was undone. This keeps history free of identical versions.
+      if (content === lastSavedContent) {
+        dirty = false;
+        if (status !== 'saved') { setStatus('saved'); }
+        return null;
+      }
       inFlight = true;
       setStatus('saving');
-      const content = getContent();
       let result;
       try {
         result = await client.saveProject(code, content, version, session, !!milestone);
@@ -134,6 +146,7 @@
       inFlight = false;
       if (outcome.status === 'saved') {
         version = outcome.version;
+        lastSavedContent = content;
         dirty = false;
         setStatus('saved', { conflict: outcome.conflict });
         if (outcome.conflict) { onConflict(); }

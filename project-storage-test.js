@@ -61,6 +61,39 @@ check('beacon body has all args, is_milestone false',
   bb.p_code === 'brave-otter-oak' && bb.p_content === 'print(1)' && bb.p_base_version === 3
   && bb.p_session === 'sess-1' && bb.p_is_milestone === false, beacon.body);
 
+// ---- controller: skip saves that would create an identical version ----
+// save()'s no-op short-circuit returns before any await, so it's observable synchronously.
+function makeFakeClient() {
+  return {
+    calls: [],
+    saveProject: function (code, content, version, session, milestone) {
+      this.calls.push({ code: code, content: content, version: version, milestone: milestone });
+      return Promise.resolve({ ok: true, status: 200, data: { ok: true, version: version + 1, conflict: false } });
+    }
+  };
+}
+const noopSched = { setTimeout: function () { return 0; }, clearTimeout: function () {} };
+
+(function () {
+  const client = makeFakeClient();
+  let content = 'print(1)\n';
+  const ctl = PS.createController({
+    code: 'a-b-c', getContent: function () { return content; },
+    client: client, config: cfg, scheduler: noopSched
+  });
+  ctl.start({ version: 4 });    // seeds lastSavedContent from getContent()
+  ctl.run();                    // a Run (e.g. opening from a QR to play) with no edits
+  check('Run with no change does not hit the server', client.calls.length === 0, JSON.stringify(client.calls));
+  check('Run with no change stays saved', ctl.getStatus() === 'saved', ctl.getStatus());
+
+  content = 'print(2)\n';       // now the student actually edits
+  ctl.run();
+  check('Run after a real change saves once', client.calls.length === 1, JSON.stringify(client.calls));
+  check('Run save is a milestone at the current version with the new content',
+    client.calls.length === 1 && client.calls[0].milestone === true
+    && client.calls[0].version === 4 && client.calls[0].content === 'print(2)\n', JSON.stringify(client.calls));
+})();
+
 // ---- makeSession ----
 const s1 = PS.makeSession();
 const s2 = PS.makeSession();

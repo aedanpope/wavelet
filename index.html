@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Python Learning Platform - Interactive Worksheets</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
+    <script>
+        // Short-link handler: wavelet.zone/?code=brave-otter-oak opens the project with
+        // that code. Runs first, before any third-party script loads, and lands the code
+        // in the project URL's *fragment* so the project page never sends it in a Referer
+        // header to third-party CDNs. Single project for now (pixel-game); a code->project
+        // lookup would be needed once there are several.
+        (function () {
+            try {
+                var m = /[?#&]code=([^&\s]+)/.exec(window.location.search + window.location.hash);
+                if (m && m[1]) {
+                    window.location.replace('project.html?project=pixel-game#code=' + encodeURIComponent(decodeURIComponent(m[1])));
+                }
+            } catch (e) { /* fall through to the normal homepage */ }
+        })();
+    </script>
     <link rel="stylesheet" href="styles.css">
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="version.js" onerror="window.APP_VERSION='dev-fallback'"></script>

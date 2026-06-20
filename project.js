@@ -130,11 +130,12 @@ function renderProject() {
 
     // Project Storage v2: when enabled, swap the file Open/Save flow for code-login + server
     // autosave. Default off, so the existing flow is untouched for the current cohort.
-    // Enabled by the committed flag OR a per-visit URL override (?storage=server), so the
-    // preview can be tested without changing the default; ?storage=file forces it off.
+    // Enabled by the committed flag, a per-visit URL override (?storage=server), or the
+    // presence of a code in the URL (a cover-sheet QR / link is implicitly server mode, so
+    // the QR works even while the flag is off). ?storage=file forces it off for testing.
     const search = window.location.search;
     const cfgOn = !!(window.WaveletConfig && window.WaveletConfig.serverStorage);
-    const urlOn = /[?&]storage=server(&|$)/.test(search);
+    const urlOn = /[?&]storage=server(&|$)/.test(search) || !!codeFromUrl();
     const urlOff = /[?&]storage=file(&|$)/.test(search);
     if ((cfgOn || urlOn) && !urlOff) {
         initServerStorage();
@@ -1719,6 +1720,20 @@ function replayShake(elx) {
     elx.classList.add('shake');
 }
 
+// A code can arrive in the URL fragment from a cover-sheet QR / link
+// (project.html?project=pixel-game#code=brave-otter-oak). We read the fragment, not
+// the query string, so the code stays out of server access logs and Referer headers.
+// Falls back to ?code= for convenience.
+function codeFromUrl() {
+    try {
+        const m = /[#&]code=([^&]+)/.exec(window.location.hash || '');
+        if (m) return decodeURIComponent(m[1]);
+        return new URLSearchParams(window.location.search).get('code');
+    } catch {
+        return null;
+    }
+}
+
 function showLoginOverlay() {
     const overlay = document.createElement('div');
     overlay.className = 'login-overlay';
@@ -1756,7 +1771,7 @@ function showLoginOverlay() {
         input.select();
     }
 
-    async function submitCode() {
+    async function submitCode(skipConfirm) {
         const code = window.CodeWords ? window.CodeWords.canonical(input.value) : null;
         if (!code) { fail('Please check your code and try again.'); return; }
         msgEl.classList.remove('err');
@@ -1772,7 +1787,7 @@ function showLoginOverlay() {
             return;
         }
         const data = res.data;
-        if (data.display_name) {
+        if (data.display_name && !skipConfirm) {
             // Confirmation is a step IN the dialog (not a browser confirm(), which kids
             // click through without reading).
             overlay.querySelector('#confirm-name').textContent = data.display_name;
@@ -1786,9 +1801,19 @@ function showLoginOverlay() {
         }
     }
 
-    overlay.querySelector('#login-btn').addEventListener('click', submitCode);
+    // Wrap so the click event object isn't passed as the skipConfirm flag.
+    overlay.querySelector('#login-btn').addEventListener('click', () => submitCode());
     input.addEventListener('keydown', e => { if (e.key === 'Enter') submitCode(); });
     input.focus();
+
+    // Pre-fill and auto-open when a code came in via the URL (cover-sheet QR / link).
+    // Skip the "is this you?" confirm here: the code came straight from the student's own
+    // sheet, so the extra tap is just friction on the take-home / scan path.
+    const preset = codeFromUrl();
+    if (preset) {
+        input.value = preset;
+        submitCode(true);
+    }
 }
 
 // Resume saved content (a new project has none) and wire the storage controller, then
