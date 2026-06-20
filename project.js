@@ -1844,7 +1844,6 @@ function showHistoryOverlay(versions, baseline) {
     overlay.className = 'history-overlay';
     const rows = versions.length
         ? versions.map(v => {
-            const tag = v.is_milestone ? '<span class="hv-tag">after Run</span>' : '';
             // The server returns each version's full line count; subtract the starter
             // file size to show how many lines the student has added beyond it.
             let lines = '';
@@ -1854,7 +1853,7 @@ function showHistoryOverlay(versions, baseline) {
             }
             return `<li class="history-row" data-version="${v.version}">` +
                 `<span class="hv-when">${fmtHistoryTime(v.created_at)}</span>` +
-                tag + lines +
+                lines +
                 `<span class="hv-go">Go back to this →</span>` +
                 '</li>';
         }).join('')
