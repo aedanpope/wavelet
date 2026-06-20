@@ -1817,17 +1817,15 @@ function updateSaveStatus(s) {
     if (s.status === 'saved') {
         markClean(); // server save confirmed: the page is no longer "unsaved"
         bar.textContent = '✓ Saved';
-        bar.className = 'save-bar saved';
-        bar.style.display = '';
-        saveBarTimer = setTimeout(() => { bar.style.display = 'none'; }, 2000);
+        bar.className = 'save-bar saved show';
+        saveBarTimer = setTimeout(() => { bar.classList.remove('show'); }, 2000);
     } else if (s.status === 'blocked') {
         bar.textContent = '⚠ Not saved — check your internet connection';
-        bar.className = 'save-bar blocked';
-        bar.style.display = '';
+        bar.className = 'save-bar blocked show';
     } else {
-        // 'unsaved' / 'saving' are transient and autosave is quick, so keep the bar hidden
-        // rather than nagging on every edit.
-        bar.style.display = 'none';
+        // 'unsaved' / 'saving' are transient and autosave is quick, so fade the pill out
+        // rather than nagging on every edit (state class kept so it fades, not snaps).
+        bar.classList.remove('show');
     }
 }
 
@@ -1838,9 +1836,8 @@ function onServerConflict() {
     if (saveBarTimer) { clearTimeout(saveBarTimer); saveBarTimer = null; }
     if (bar) {
         bar.textContent = '✓ Saved — note: also edited on another device';
-        bar.className = 'save-bar saved';
-        bar.style.display = '';
-        saveBarTimer = setTimeout(() => { bar.style.display = 'none'; }, 6000);
+        bar.className = 'save-bar saved show';
+        saveBarTimer = setTimeout(() => { bar.classList.remove('show'); }, 6000);
     }
 }
 
