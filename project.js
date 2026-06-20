@@ -139,8 +139,13 @@ function renderProject() {
     document.addEventListener('keydown', e => {
         if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 's') {
             e.preventDefault();
-            // Server mode autosaves; Ctrl+S just forces an immediate save (no file dialog).
-            if (serverCtl) { serverCtl.saveNow(); return; }
+            // Server mode autosaves; Ctrl+S forces an immediate save (no file dialog), or
+            // reassures the student when there's nothing to save.
+            if (serverCtl) {
+                if (serverCtl.getStatus() === 'saved') { flashSavedPill('✓ Already saved'); }
+                else { serverCtl.saveNow(); }
+                return;
+            }
             if (e.shiftKey) saveProjectAs();
             else saveProject();
             return;
@@ -1870,6 +1875,16 @@ async function restoreVersion(version, overlay) {
     loadFileIntoEditors(res.data.content, 'a saved version', true);
     markDirty();
     if (overlay) overlay.remove();
+}
+
+// Briefly flash the green save pill with custom text (e.g. Ctrl+S when already saved).
+function flashSavedPill(text) {
+    const bar = document.getElementById('save-bar');
+    if (!bar) return;
+    if (saveBarTimer) { clearTimeout(saveBarTimer); saveBarTimer = null; }
+    bar.textContent = text;
+    bar.className = 'save-bar saved show';
+    saveBarTimer = setTimeout(() => { bar.classList.remove('show'); }, 2000);
 }
 
 function updateSaveStatus(s) {
