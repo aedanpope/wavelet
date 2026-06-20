@@ -12,7 +12,13 @@ const WaveletConfig = {
   // Project page storage mode. false (default) keeps the existing File System Access
   // Open/Save flow untouched. true switches the project page to code-login + server
   // autosave (Project Storage v2). Off for now so the current cohort is unaffected.
-  serverStorage: false
+  serverStorage: false,
+
+  // Migration affordance (Project Storage v2 §6, step 6): in server mode, show an
+  // "Import old file" button so the current cohort can bring their existing OneDrive .py
+  // into the server (parsed + saved as their first server version). Turn off once the
+  // cohort has migrated, since new students start fresh.
+  importFromFile: true
 };
 
 if (typeof module !== 'undefined' && module.exports) {
