@@ -1,3 +1,4 @@
+(function () {
 // Word-based access codes for students and teachers (design_docs/PROJECT_STORAGE_V2.md §3.1).
 //
 // A code is a sequence of content words plus one trailing CHECK word. Each position draws
@@ -153,3 +154,4 @@ if (typeof module !== 'undefined' && module.exports) {
 if (typeof window !== 'undefined') {
     window.CodeWords = api;
 }
+})();

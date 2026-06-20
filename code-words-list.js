@@ -1,3 +1,4 @@
+(function () {
 // Word lists for access codes (design_docs/PROJECT_STORAGE_V2.md §3.1).
 // Three categories of exactly 256 words each, so each is a base-256 alphabet.
 // Student codes read adjective-animal-plant; the plant word is the mod-256
@@ -121,3 +122,4 @@ if (typeof module !== 'undefined' && module.exports) {
 if (typeof window !== 'undefined') {
     window.CodeWordsList = LISTS;
 }
+})();

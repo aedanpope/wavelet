@@ -1,3 +1,4 @@
+(function () {
 // Thin Supabase RPC client shared by the teacher dashboard and (later) the student storage
 // layer. The browser calls PostgREST directly: POST {url}/rest/v1/rpc/{fn} with the
 // publishable key and the args as JSON; the SECURITY DEFINER functions authorise via the
@@ -86,3 +87,4 @@ if (typeof module !== 'undefined' && module.exports) {
 if (typeof window !== 'undefined') {
   window.SupabaseClient = api;
 }
+})();
