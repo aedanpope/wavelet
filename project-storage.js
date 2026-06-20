@@ -15,8 +15,9 @@
     ? require('./config.js')
     : (typeof window !== 'undefined' ? window.WaveletConfig : undefined);
 
-  const AUTOSAVE_MS = 30000;     // save this long after the last edit (idle debounce, §12.2)
-  const AUTOSAVE_MAX_MS = 60000; // ...but never wait longer than this while dirty, so a
+  const AUTOSAVE_MS = 4000;      // save this long after the last edit (idle debounce). Short so
+                                // the window where unsaved work can be lost stays small.
+  const AUTOSAVE_MAX_MS = 15000; // ...but never wait longer than this while dirty, so a
                                  // student typing non-stop still autosaves periodically.
   const RETRY_MS = 8000;         // while a save is blocked, retry in the background this often
                                  // so reconnecting recovers without the student editing again.
@@ -145,14 +146,21 @@
       const doc = target || (typeof document !== 'undefined' ? document : null);
       if (!doc) { return; }
       const nav = (typeof window !== 'undefined') ? window.navigator : null;
-      doc.addEventListener('visibilitychange', function () {
-        if (doc.visibilityState === 'hidden' && dirty && nav && nav.sendBeacon) {
+      // Best-effort flush when the page is being hidden/unloaded. Listen to BOTH
+      // visibilitychange->hidden and pagehide, because a same-tab navigation (clicking a
+      // link / Back) doesn't always fire visibilitychange but does fire pagehide.
+      function flush() {
+        if (dirty && nav && nav.sendBeacon) {
           const b = buildBeaconSave(code, getContent(), version, session, cfg);
           nav.sendBeacon(b.url, new Blob([b.body], { type: 'application/json' }));
         }
+      }
+      doc.addEventListener('visibilitychange', function () {
+        if (doc.visibilityState === 'hidden') { flush(); }
       });
-      // Reconnecting: retry immediately so a blocked save clears without an edit.
       if (typeof window !== 'undefined') {
+        window.addEventListener('pagehide', flush);
+        // Reconnecting: retry immediately so a blocked save clears without an edit.
         window.addEventListener('online', function () { if (dirty) { save(false); } });
       }
     }

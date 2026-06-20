@@ -1799,32 +1799,33 @@ function updateSaveStatus(s) {
     const bar = document.getElementById('save-bar');
     if (!bar) return;
     if (saveBarTimer) { clearTimeout(saveBarTimer); saveBarTimer = null; }
-    const map = {
-        saving: ['Saving…', 'saving'],
-        saved: ['✓ Saved', 'saved'],
-        unsaved: ['Editing… (not saved yet)', 'unsaved'],
-        blocked: ['⚠ Not saved — check your internet connection', 'blocked']
-    };
-    const entry = map[s.status] || [s.status, ''];
-    bar.textContent = entry[0];
-    bar.className = 'save-bar ' + entry[1];
-    bar.style.display = '';
-    // The bar persists while there's anything unsaved; "✓ Saved" is just reassurance, so
-    // it shows briefly then hides.
     if (s.status === 'saved') {
-        saveBarTimer = setTimeout(() => { bar.style.display = 'none'; }, 2500);
+        markClean(); // server save confirmed: the page is no longer "unsaved"
+        bar.textContent = '✓ Saved';
+        bar.className = 'save-bar saved';
+        bar.style.display = '';
+        saveBarTimer = setTimeout(() => { bar.style.display = 'none'; }, 2000);
+    } else if (s.status === 'blocked') {
+        bar.textContent = '⚠ Not saved — check your internet connection';
+        bar.className = 'save-bar blocked';
+        bar.style.display = '';
+    } else {
+        // 'unsaved' / 'saving' are transient and autosave is quick, so keep the bar hidden
+        // rather than nagging on every edit.
+        bar.style.display = 'none';
     }
 }
 
 function onServerConflict() {
     // Latest change is saved, but another device also edited this project. A history/restore
-    // UI comes later; for now flag it on the butterbar.
+    // UI comes later; for now note it on the butterbar, then let it auto-hide.
     const bar = document.getElementById('save-bar');
     if (saveBarTimer) { clearTimeout(saveBarTimer); saveBarTimer = null; }
     if (bar) {
-        bar.textContent = '✓ Saved — note: this project was also edited on another device';
+        bar.textContent = '✓ Saved — note: also edited on another device';
         bar.className = 'save-bar saved';
         bar.style.display = '';
+        saveBarTimer = setTimeout(() => { bar.style.display = 'none'; }, 6000);
     }
 }
 
