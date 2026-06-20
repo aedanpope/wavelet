@@ -1822,12 +1822,21 @@ async function openHistory() {
     showHistoryOverlay(versions, projectOverheadLines());
 }
 
-// Lines the student actually edits: the setup preamble plus every task editor.
+// Lines the student can actually edit: each editor's content minus the locked,
+// uneditable lines (the setup seed lines and the generated `def name():` headers,
+// which CodeMirror freezes). Starter body lines are intentionally included, matching
+// the History summary intent ("lines you've entered, including the starter code").
 function studentLineCount() {
     let n = 0;
-    if (setupEditor) n += setupEditor.getValue().split('\n').length;
+    if (setupEditor) {
+        n += setupEditor.getValue().split('\n').length - countSeedLines();
+    }
     for (const entry of taskEditors.values()) {
-        if (entry && entry.cm) n += entry.cm.getValue().split('\n').length;
+        if (!entry || !entry.cm) continue;
+        const locked = entry.isFreestyle
+            ? 0
+            : (isMultiFunction(entry.task) ? entry.task.functions.length : 1);
+        n += entry.cm.getValue().split('\n').length - locked;
     }
     return n;
 }
