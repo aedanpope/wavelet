@@ -28,6 +28,8 @@ const taskEditors = new Map(); // taskId -> { cm, editorEl, statusEl, errorEl, t
 const selfCheckPills = new Map(); // taskId -> pill element
 let setupEditor = null; // CodeMirror for the editable preamble
 let currentFileHandle = null;
+let serverCtl = null; // Project Storage v2 controller, set by initServerStorage() when serverStorage is on
+let saveBarTimer = null; // auto-hide timer for the "✓ Saved" butterbar state
 let dirty = false;
 let savedFlashTimer = null;
 let currentExtras = ''; // raw source of any unrecognised top-level code from an opened file
@@ -120,6 +122,18 @@ function renderProject() {
     document.getElementById('save-as-file-btn').addEventListener('click', saveProjectAs);
     document.getElementById('open-file-btn').addEventListener('click', openProject);
     document.getElementById('file-input').addEventListener('change', handleFallbackFileInput);
+
+    // Project Storage v2: when enabled, swap the file Open/Save flow for code-login + server
+    // autosave. Default off, so the existing flow is untouched for the current cohort.
+    // Enabled by the committed flag OR a per-visit URL override (?storage=server), so the
+    // preview can be tested without changing the default; ?storage=file forces it off.
+    const search = window.location.search;
+    const cfgOn = !!(window.WaveletConfig && window.WaveletConfig.serverStorage);
+    const urlOn = /[?&]storage=server(&|$)/.test(search);
+    const urlOff = /[?&]storage=file(&|$)/.test(search);
+    if ((cfgOn || urlOn) && !urlOff) {
+        initServerStorage();
+    }
 
     document.addEventListener('keydown', e => {
         if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 's') {
@@ -848,6 +862,7 @@ function isSelfManaged(task) {
 
 async function runProject() {
     resetAllStatus();
+    if (serverCtl) serverCtl.run(); // a Run is a milestone save (fire-and-forget)
 
     const seg = assembleProgramSegmented();
 
@@ -1667,6 +1682,165 @@ function applyValidationResult(taskId, result) {
 
 // ─── Save / Open ─────────────────────────────────────────────────────────
 
+// ──────────────────────────────────────────────────────────────────────────
+// Project Storage v2 (server mode). Active only when WaveletConfig.serverStorage
+// is true; otherwise none of this runs and the file Open/Save flow above is used.
+// ──────────────────────────────────────────────────────────────────────────
+
+function initServerStorage() {
+    // Hide the file-based controls; server mode autosaves to the database.
+    ['current-file', 'open-file-btn', 'save-file-btn', 'save-as-file-btn'].forEach(id => {
+        const elx = document.getElementById(id);
+        if (elx) elx.style.display = 'none';
+    });
+    showLoginOverlay();
+}
+
+// Replay a CSS animation even if the element already has the class (removing it and forcing
+// a reflow lets the same animation run again on a repeated failure).
+function replayShake(elx) {
+    if (!elx) return;
+    elx.classList.remove('shake');
+    void elx.offsetWidth;
+    elx.classList.add('shake');
+}
+
+function showLoginOverlay() {
+    const overlay = document.createElement('div');
+    overlay.className = 'login-overlay';
+    overlay.innerHTML =
+        '<div class="login-card">' +
+        '  <div id="login-step-code">' +
+        '    <h2>Open your project</h2>' +
+        '    <p>Type the code from your card.</p>' +
+        '    <input id="login-code" type="text" autocomplete="off" spellcheck="false" placeholder="brave-otter-oak">' +
+        '    <button id="login-btn">Open</button>' +
+        '    <div id="login-msg" class="login-msg"></div>' +
+        '  </div>' +
+        '  <div id="login-step-confirm" style="display:none">' +
+        '    <h2>Is this your project?</h2>' +
+        '    <p class="confirm-name" id="confirm-name"></p>' +
+        '    <div class="confirm-actions">' +
+        '      <button id="confirm-yes">Yes, this is me</button>' +
+        '      <button id="confirm-no" class="secondary">No, go back</button>' +
+        '    </div>' +
+        '  </div>' +
+        '</div>';
+    document.body.appendChild(overlay);
+
+    const card = overlay.querySelector('.login-card');
+    const codeStep = overlay.querySelector('#login-step-code');
+    const confirmStep = overlay.querySelector('#login-step-confirm');
+    const input = overlay.querySelector('#login-code');
+    const msgEl = overlay.querySelector('#login-msg');
+    const fail = (text) => { msgEl.textContent = text; msgEl.classList.add('err'); replayShake(card); };
+
+    function backToCode() {
+        confirmStep.style.display = 'none';
+        codeStep.style.display = '';
+        input.focus();
+        input.select();
+    }
+
+    async function submitCode() {
+        const code = window.CodeWords ? window.CodeWords.canonical(input.value) : null;
+        if (!code) { fail('Please check your code and try again.'); return; }
+        msgEl.classList.remove('err');
+        msgEl.textContent = 'Opening…';
+        let res;
+        try {
+            res = await window.SupabaseClient.loadProject(code);
+        } catch {
+            res = null;
+        }
+        if (!res || !res.ok || !res.data || res.data.found === false) {
+            fail("We couldn't find that project. Check your code.");
+            return;
+        }
+        const data = res.data;
+        if (data.display_name) {
+            // Confirmation is a step IN the dialog (not a browser confirm(), which kids
+            // click through without reading).
+            overlay.querySelector('#confirm-name').textContent = data.display_name;
+            msgEl.textContent = '';
+            codeStep.style.display = 'none';
+            confirmStep.style.display = '';
+            overlay.querySelector('#confirm-yes').onclick = () => openWithProject(overlay, code, data);
+            overlay.querySelector('#confirm-no').onclick = backToCode;
+        } else {
+            openWithProject(overlay, code, data);
+        }
+    }
+
+    overlay.querySelector('#login-btn').addEventListener('click', submitCode);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') submitCode(); });
+    input.focus();
+}
+
+// Resume saved content (a new project has none) and wire the storage controller, then
+// dismiss the overlay.
+function openWithProject(overlay, code, data) {
+    if (data.content) {
+        loadFileIntoEditors(data.content, 'your project');
+    }
+    markClean();
+    serverCtl = window.ProjectStorage.createController({
+        code: code,
+        getContent: assembleFileForDisk,
+        onStatus: updateSaveStatus,
+        onConflict: onServerConflict
+    });
+    serverCtl.start({ version: data.version });
+    serverCtl.attachLifecycle();
+    overlay.remove();
+}
+
+function updateSaveStatus(s) {
+    // Persistent header chip: always reflects the current state for at-a-glance reassurance.
+    const chip = document.getElementById('save-status');
+    if (chip) {
+        const labels = {
+            saving: ['Saving…', 'saving'],
+            saved: ['✓ Saved', 'saved'],
+            unsaved: ['Editing…', 'unsaved'],
+            blocked: ['⚠ Not saved', 'blocked']
+        };
+        const lab = labels[s.status] || [s.status, ''];
+        chip.textContent = lab[0];
+        chip.className = 'save-status ' + lab[1];
+        chip.style.display = '';
+    }
+    // Transient butterbar: brief green when saved, persistent red when blocked, quiet while editing.
+    const bar = document.getElementById('save-bar');
+    if (!bar) return;
+    if (saveBarTimer) { clearTimeout(saveBarTimer); saveBarTimer = null; }
+    if (s.status === 'saved') {
+        markClean(); // server save confirmed: the page is no longer "unsaved"
+        bar.textContent = '✓ Saved';
+        bar.className = 'save-bar saved show';
+        saveBarTimer = setTimeout(() => { bar.classList.remove('show'); }, 2000);
+    } else if (s.status === 'blocked') {
+        bar.textContent = '⚠ Not saved — check your internet connection';
+        bar.className = 'save-bar blocked show';
+    } else {
+        // 'unsaved' / 'saving' are transient and autosave is quick, so fade the pill out
+        // rather than nagging on every edit (state class kept so it fades, not snaps).
+        bar.classList.remove('show');
+    }
+}
+
+function onServerConflict() {
+    // Latest change is saved, but another device also edited this project. A history/restore
+    // UI comes later; for now note it on the butterbar, then let it auto-hide.
+    const bar = document.getElementById('save-bar');
+    if (saveBarTimer) { clearTimeout(saveBarTimer); saveBarTimer = null; }
+    if (bar) {
+        bar.textContent = '✓ Saved — note: also edited on another device';
+        bar.className = 'save-bar saved show';
+        saveBarTimer = setTimeout(() => { bar.classList.remove('show'); }, 6000);
+    }
+}
+
 function assembleFileForDisk() {
     const today = new Date().toISOString().slice(0, 10);
     const lines = [
@@ -2067,6 +2241,7 @@ function suggestedFilename() {
 // ─── Dirty / saved indicator ─────────────────────────────────────────────
 
 function markDirty() {
+    if (serverCtl) serverCtl.noteEdit(); // fires on every edit; the controller debounces
     if (dirty) return;
     dirty = true;
     updateFileLabel();

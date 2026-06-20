@@ -7,7 +7,12 @@
 
 const WaveletConfig = {
   supabaseUrl: 'https://rphrxfyhlgacyellhcrw.supabase.co',
-  supabasePublishableKey: 'sb_publishable_5WpjivY8tRSvETZMypTFMw_uw8t12E5'
+  supabasePublishableKey: 'sb_publishable_5WpjivY8tRSvETZMypTFMw_uw8t12E5',
+
+  // Project page storage mode. false (default) keeps the existing File System Access
+  // Open/Save flow untouched. true switches the project page to code-login + server
+  // autosave (Project Storage v2). Off for now so the current cohort is unaffected.
+  serverStorage: false
 };
 
 if (typeof module !== 'undefined' && module.exports) {

@@ -15,7 +15,12 @@
     ? require('./config.js')
     : (typeof window !== 'undefined' ? window.WaveletConfig : undefined);
 
-  const AUTOSAVE_MS = 30000; // save after this much idle time since the last edit (§12.2)
+  const AUTOSAVE_MS = 4000;      // save this long after the last edit (idle debounce). Short so
+                                // the window where unsaved work can be lost stays small.
+  const AUTOSAVE_MAX_MS = 15000; // ...but never wait longer than this while dirty, so a
+                                 // student typing non-stop still autosaves periodically.
+  const RETRY_MS = 8000;         // while a save is blocked, retry in the background this often
+                                 // so reconnecting recovers without the student editing again.
 
   // A per-tab session token, used for optimistic-concurrency ("edited on another laptop").
   function makeSession() {
@@ -63,13 +68,20 @@
     const getContent = o.getContent || function () { return ''; };
     const onStatus = o.onStatus || function () {};
     const onConflict = o.onConflict || function () {};
-    const sched = o.scheduler || { setTimeout: setTimeout, clearTimeout: clearTimeout };
+    // Wrap the timer globals: storing them as object methods and calling sched.setTimeout(...)
+    // would invoke setTimeout with this=sched, which browsers reject ("Illegal invocation").
+    const sched = o.scheduler || {
+      setTimeout: (fn, ms) => setTimeout(fn, ms),
+      clearTimeout: (id) => clearTimeout(id)
+    };
     const session = o.session || makeSession();
 
     let version = 0;
     let status = 'idle';
     let dirty = false;
-    let timer = null;
+    let timer = null;      // idle debounce, reset on every edit
+    let maxTimer = null;   // max-wait cap, armed once per dirty period, NOT reset per edit
+    let retryTimer = null; // background retry while blocked
     let inFlight = false;
 
     function setStatus(s, extra) {
@@ -77,8 +89,10 @@
       onStatus(Object.assign({ status: s, version: version, dirty: dirty }, extra || {}));
     }
 
-    function clearTimer() {
+    function clearTimers() {
       if (timer !== null) { sched.clearTimeout(timer); timer = null; }
+      if (maxTimer !== null) { sched.clearTimeout(maxTimer); maxTimer = null; }
+      if (retryTimer !== null) { sched.clearTimeout(retryTimer); retryTimer = null; }
     }
 
     // Seed from a load_project result.
@@ -92,14 +106,20 @@
     function noteEdit() {
       dirty = true;
       setStatus('unsaved');
-      clearTimer();
+      // Idle debounce: (re)start the 30s timer on every edit.
+      if (timer !== null) { sched.clearTimeout(timer); }
       timer = sched.setTimeout(function () { timer = null; save(false); }, AUTOSAVE_MS);
+      // Max-wait cap: armed once when we first go dirty, NOT reset per edit, so non-stop
+      // typing still autosaves within AUTOSAVE_MAX_MS.
+      if (maxTimer === null) {
+        maxTimer = sched.setTimeout(function () { maxTimer = null; save(false); }, AUTOSAVE_MAX_MS);
+      }
     }
 
     // Confirmed save. milestone=true for a Run (always snapshots). Returns a promise of the
     // outcome from applySaveResult.
     async function save(milestone) {
-      clearTimer();
+      clearTimers();
       if (inFlight || (!dirty && !milestone)) { return null; }
       inFlight = true;
       setStatus('saving');
@@ -119,6 +139,9 @@
         if (outcome.conflict) { onConflict(); }
       } else {
         setStatus('blocked', { error: outcome.error });
+        // Retry in the background; combined with the 'online' listener this recovers on
+        // reconnect without the student having to edit again.
+        retryTimer = sched.setTimeout(function () { retryTimer = null; save(false); }, RETRY_MS);
       }
       return outcome;
     }
@@ -128,23 +151,34 @@
       const doc = target || (typeof document !== 'undefined' ? document : null);
       if (!doc) { return; }
       const nav = (typeof window !== 'undefined') ? window.navigator : null;
-      doc.addEventListener('visibilitychange', function () {
-        if (doc.visibilityState === 'hidden' && dirty && nav && nav.sendBeacon) {
+      // Best-effort flush when the page is being hidden/unloaded. Listen to BOTH
+      // visibilitychange->hidden and pagehide, because a same-tab navigation (clicking a
+      // link / Back) doesn't always fire visibilitychange but does fire pagehide.
+      function flush() {
+        if (dirty && nav && nav.sendBeacon) {
           const b = buildBeaconSave(code, getContent(), version, session, cfg);
           nav.sendBeacon(b.url, new Blob([b.body], { type: 'application/json' }));
         }
+      }
+      doc.addEventListener('visibilitychange', function () {
+        if (doc.visibilityState === 'hidden') { flush(); }
       });
+      if (typeof window !== 'undefined') {
+        window.addEventListener('pagehide', flush);
+        // Reconnecting: retry immediately so a blocked save clears without an edit.
+        window.addEventListener('online', function () { if (dirty) { save(false); } });
+      }
     }
 
     return {
-      start: start,
-      noteEdit: noteEdit,
-      run: function () { return save(true); },
-      saveNow: function () { return save(false); },
-      attachLifecycle: attachLifecycle,
-      getSession: function () { return session; },
-      getVersion: function () { return version; },
-      getStatus: function () { return status; }
+      start,
+      noteEdit,
+      attachLifecycle,
+      run: () => save(true),
+      saveNow: () => save(false),
+      getSession: () => session,
+      getVersion: () => version,
+      getStatus: () => status
     };
   }
 

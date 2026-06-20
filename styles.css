@@ -3047,3 +3047,41 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
     font-style: italic;
 }
 
+
+/* Project Storage v2 (server mode) */
+/* Persistent status chip in the header (scroll up any time for reassurance). Pill
+   background so it reads on any header colour. */
+.save-status { font-size: 0.85rem; font-weight: 600; padding: 4px 10px; border-radius: 999px;
+    align-self: center; white-space: nowrap; }
+.save-status.saving { background: #fef3c7; color: #92400e; }
+.save-status.unsaved { background: #fef3c7; color: #92400e; }
+.save-status.saved { background: #d1fae5; color: #065f46; }
+.save-status.blocked { background: #fee2e2; color: #991b1b; }
+/* Floating, centered pill that fades in/out (less jarring, and being fixed it never takes
+   layout space, so a brief "✓ Saved" on Run won't shove the canvas). Persists while blocked. */
+.save-bar { position: fixed; top: 14px; left: 50%; transform: translateX(-50%); z-index: 1100;
+    max-width: 90%; padding: 8px 18px; border-radius: 999px; font-size: 0.95rem; font-weight: 600;
+    text-align: center; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity 0.25s ease, visibility 0.25s ease; }
+.save-bar.show { opacity: 1; visibility: visible; }
+.save-bar.saving { background: #fcd34d; color: #78350f; }
+.save-bar.unsaved { background: #fcd34d; color: #78350f; }
+.save-bar.saved { background: #34d399; color: #064e3b; }
+.save-bar.blocked { background: #dc2626; color: #fff; }
+.login-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.login-card { background: #fff; padding: 28px 32px; border-radius: 12px; max-width: 360px; width: 90%; text-align: center; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); }
+.login-card h2 { margin: 0 0 6px; }
+.login-card input { width: 100%; padding: 10px 12px; font-size: 1.1rem; border: 1px solid #d1d5db; border-radius: 8px; margin: 10px 0; box-sizing: border-box; font-family: monospace; }
+.login-card button { padding: 10px 22px; background: #2563eb; color: #fff; border: 0; border-radius: 8px; font-size: 1rem; cursor: pointer; }
+.login-msg { margin-top: 10px; color: #6b7280; min-height: 1.2em; }
+@keyframes wavelet-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-7px); }
+  40%, 80% { transform: translateX(7px); }
+}
+.login-card.shake { animation: wavelet-shake 0.4s; }
+.login-msg.err { color: #991b1b; font-weight: 600; }
+.login-card .confirm-name { font-size: 1.4rem; font-weight: 700; margin: 8px 0 18px; }
+.login-card .confirm-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.login-card button.secondary { background: #6b7280; }
