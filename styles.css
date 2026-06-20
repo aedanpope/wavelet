@@ -3047,3 +3047,16 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
     font-style: italic;
 }
 
+
+/* Project Storage v2 (server mode) */
+.save-status { font-size: 0.9rem; padding: 4px 8px; border-radius: 6px; align-self: center; }
+.save-status.saving { color: #92400e; }
+.save-status.saved { color: #065f46; }
+.save-status.unsaved { color: #6b7280; }
+.save-status.blocked { color: #991b1b; font-weight: 600; }
+.login-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.login-card { background: #fff; padding: 28px 32px; border-radius: 12px; max-width: 360px; width: 90%; text-align: center; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); }
+.login-card h2 { margin: 0 0 6px; }
+.login-card input { width: 100%; padding: 10px 12px; font-size: 1.1rem; border: 1px solid #d1d5db; border-radius: 8px; margin: 10px 0; box-sizing: border-box; font-family: monospace; }
+.login-card button { padding: 10px 22px; background: #2563eb; color: #fff; border: 0; border-radius: 8px; font-size: 1rem; cursor: pointer; }
+.login-msg { margin-top: 10px; color: #6b7280; min-height: 1.2em; }

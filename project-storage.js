@@ -15,7 +15,9 @@
     ? require('./config.js')
     : (typeof window !== 'undefined' ? window.WaveletConfig : undefined);
 
-  const AUTOSAVE_MS = 30000; // save after this much idle time since the last edit (§12.2)
+  const AUTOSAVE_MS = 30000;     // save this long after the last edit (idle debounce, §12.2)
+  const AUTOSAVE_MAX_MS = 60000; // ...but never wait longer than this while dirty, so a
+                                 // student typing non-stop still autosaves periodically.
 
   // A per-tab session token, used for optimistic-concurrency ("edited on another laptop").
   function makeSession() {
@@ -69,7 +71,8 @@
     let version = 0;
     let status = 'idle';
     let dirty = false;
-    let timer = null;
+    let timer = null;      // idle debounce, reset on every edit
+    let maxTimer = null;   // max-wait cap, armed once per dirty period, NOT reset per edit
     let inFlight = false;
 
     function setStatus(s, extra) {
@@ -77,8 +80,9 @@
       onStatus(Object.assign({ status: s, version: version, dirty: dirty }, extra || {}));
     }
 
-    function clearTimer() {
+    function clearTimers() {
       if (timer !== null) { sched.clearTimeout(timer); timer = null; }
+      if (maxTimer !== null) { sched.clearTimeout(maxTimer); maxTimer = null; }
     }
 
     // Seed from a load_project result.
@@ -92,14 +96,20 @@
     function noteEdit() {
       dirty = true;
       setStatus('unsaved');
-      clearTimer();
+      // Idle debounce: (re)start the 30s timer on every edit.
+      if (timer !== null) { sched.clearTimeout(timer); }
       timer = sched.setTimeout(function () { timer = null; save(false); }, AUTOSAVE_MS);
+      // Max-wait cap: armed once when we first go dirty, NOT reset per edit, so non-stop
+      // typing still autosaves within AUTOSAVE_MAX_MS.
+      if (maxTimer === null) {
+        maxTimer = sched.setTimeout(function () { maxTimer = null; save(false); }, AUTOSAVE_MAX_MS);
+      }
     }
 
     // Confirmed save. milestone=true for a Run (always snapshots). Returns a promise of the
     // outcome from applySaveResult.
     async function save(milestone) {
-      clearTimer();
+      clearTimers();
       if (inFlight || (!dirty && !milestone)) { return null; }
       inFlight = true;
       setStatus('saving');
@@ -137,14 +147,14 @@
     }
 
     return {
-      start: start,
-      noteEdit: noteEdit,
-      run: function () { return save(true); },
-      saveNow: function () { return save(false); },
-      attachLifecycle: attachLifecycle,
-      getSession: function () { return session; },
-      getVersion: function () { return version; },
-      getStatus: function () { return status; }
+      start,
+      noteEdit,
+      attachLifecycle,
+      run: () => save(true),
+      saveNow: () => save(false),
+      getSession: () => session,
+      getVersion: () => version,
+      getStatus: () => status
     };
   }
 

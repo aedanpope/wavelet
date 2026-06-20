@@ -28,6 +28,7 @@ const taskEditors = new Map(); // taskId -> { cm, editorEl, statusEl, errorEl, t
 const selfCheckPills = new Map(); // taskId -> pill element
 let setupEditor = null; // CodeMirror for the editable preamble
 let currentFileHandle = null;
+let serverCtl = null; // Project Storage v2 controller, set by initServerStorage() when serverStorage is on
 let dirty = false;
 let savedFlashTimer = null;
 let currentExtras = ''; // raw source of any unrecognised top-level code from an opened file
@@ -120,6 +121,12 @@ function renderProject() {
     document.getElementById('save-as-file-btn').addEventListener('click', saveProjectAs);
     document.getElementById('open-file-btn').addEventListener('click', openProject);
     document.getElementById('file-input').addEventListener('change', handleFallbackFileInput);
+
+    // Project Storage v2: when enabled, swap the file Open/Save flow for code-login + server
+    // autosave. Default off, so the existing flow is untouched for the current cohort.
+    if (window.WaveletConfig && window.WaveletConfig.serverStorage) {
+        initServerStorage();
+    }
 
     document.addEventListener('keydown', e => {
         if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 's') {
@@ -848,6 +855,7 @@ function isSelfManaged(task) {
 
 async function runProject() {
     resetAllStatus();
+    if (serverCtl) serverCtl.run(); // a Run is a milestone save (fire-and-forget)
 
     const seg = assembleProgramSegmented();
 
@@ -1667,6 +1675,101 @@ function applyValidationResult(taskId, result) {
 
 // ─── Save / Open ─────────────────────────────────────────────────────────
 
+// ──────────────────────────────────────────────────────────────────────────
+// Project Storage v2 (server mode). Active only when WaveletConfig.serverStorage
+// is true; otherwise none of this runs and the file Open/Save flow above is used.
+// ──────────────────────────────────────────────────────────────────────────
+
+function initServerStorage() {
+    // Hide the file-based controls; server mode autosaves to the database.
+    ['current-file', 'open-file-btn', 'save-file-btn', 'save-as-file-btn'].forEach(id => {
+        const elx = document.getElementById(id);
+        if (elx) elx.style.display = 'none';
+    });
+    showLoginOverlay();
+}
+
+function showLoginOverlay() {
+    const overlay = document.createElement('div');
+    overlay.className = 'login-overlay';
+    overlay.innerHTML =
+        '<div class="login-card">' +
+        '<h2>Open your project</h2>' +
+        '<p>Type the code from your card.</p>' +
+        '<input id="login-code" type="text" autocomplete="off" spellcheck="false" placeholder="brave-otter-oak">' +
+        '<button id="login-btn">Open</button>' +
+        '<div id="login-msg" class="login-msg"></div>' +
+        '</div>';
+    document.body.appendChild(overlay);
+    const input = overlay.querySelector('#login-code');
+    const doLogin = () => handleServerLogin(overlay, input.value);
+    overlay.querySelector('#login-btn').addEventListener('click', doLogin);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+    input.focus();
+}
+
+async function handleServerLogin(overlay, raw) {
+    const msgEl = overlay.querySelector('#login-msg');
+    const code = window.CodeWords ? window.CodeWords.canonical(raw) : null;
+    if (!code) {
+        msgEl.textContent = 'Please check your code and try again.';
+        return;
+    }
+    msgEl.textContent = 'Opening…';
+    let res;
+    try {
+        res = await window.SupabaseClient.loadProject(code);
+    } catch {
+        res = null;
+    }
+    if (!res || !res.ok || !res.data || res.data.found === false) {
+        msgEl.textContent = "We couldn't find that project. Check your code.";
+        return;
+    }
+    const data = res.data;
+    if (data.display_name && !confirm(`Is this ${data.display_name}'s project?`)) {
+        msgEl.textContent = 'No problem, type your own code.';
+        return;
+    }
+    // Resume: load saved content into the editors (a new project has null content).
+    if (data.content) {
+        loadFileIntoEditors(data.content, 'your project');
+    }
+    markClean();
+    serverCtl = window.ProjectStorage.createController({
+        code: code,
+        getContent: assembleFileForDisk,
+        onStatus: updateSaveStatus,
+        onConflict: onServerConflict
+    });
+    serverCtl.start({ version: data.version });
+    serverCtl.attachLifecycle();
+    overlay.remove();
+}
+
+function updateSaveStatus(s) {
+    const elx = document.getElementById('save-status');
+    if (!elx) return;
+    const map = {
+        saving: ['Saving…', 'saving', ''],
+        saved: ['✓ Saved', 'saved', ''],
+        unsaved: ['Editing…', 'unsaved', ''],
+        blocked: ['⚠ Not saved', 'blocked', 'Your last change has not been saved. Check your internet connection.']
+    };
+    const entry = map[s.status] || [s.status, '', ''];
+    elx.style.display = '';
+    elx.textContent = entry[0];
+    elx.className = 'save-status ' + entry[1];
+    elx.title = entry[2];
+}
+
+function onServerConflict() {
+    // Latest change is saved, but another device also edited this project. A history/restore
+    // UI comes later; for now just flag it on the status chip.
+    const elx = document.getElementById('save-status');
+    if (elx) elx.title = 'This project was also edited on another device. Your latest change is saved.';
+}
+
 function assembleFileForDisk() {
     const today = new Date().toISOString().slice(0, 10);
     const lines = [
@@ -2067,6 +2170,7 @@ function suggestedFilename() {
 // ─── Dirty / saved indicator ─────────────────────────────────────────────
 
 function markDirty() {
+    if (serverCtl) serverCtl.noteEdit(); // fires on every edit; the controller debounces
     if (dirty) return;
     dirty = true;
     updateFileLabel();
