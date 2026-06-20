@@ -1,0 +1,7 @@
+{
+  "comment": "Config for scripts/supabase-itest.py against a THROWAWAY test class only. These are low-value public test values: the URL and publishable (anon) key are public by design (RLS/RPC enforce access), and the teacher code belongs to a disposable test class. Do NOT put real class teacher codes or any service-role key here.",
+  "url": "https://rphrxfyhlgacyellhcrw.supabase.co",
+  "publishable_key": "sb_publishable_5WpjivY8tRSvETZMypTFMw_uw8t12E5",
+  "teacher_code": "test-teacher-code-foxtrot-abacus",
+  "project_slug": "pixel-game"
+}
