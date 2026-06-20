@@ -1796,6 +1796,21 @@ function openWithProject(overlay, code, data) {
 }
 
 function updateSaveStatus(s) {
+    // Persistent header chip: always reflects the current state for at-a-glance reassurance.
+    const chip = document.getElementById('save-status');
+    if (chip) {
+        const labels = {
+            saving: ['Saving…', 'saving'],
+            saved: ['✓ Saved', 'saved'],
+            unsaved: ['Editing…', 'unsaved'],
+            blocked: ['⚠ Not saved', 'blocked']
+        };
+        const lab = labels[s.status] || [s.status, ''];
+        chip.textContent = lab[0];
+        chip.className = 'save-status ' + lab[1];
+        chip.style.display = '';
+    }
+    // Transient butterbar: brief green when saved, persistent red when blocked, quiet while editing.
     const bar = document.getElementById('save-bar');
     if (!bar) return;
     if (saveBarTimer) { clearTimeout(saveBarTimer); saveBarTimer = null; }

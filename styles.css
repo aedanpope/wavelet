@@ -3049,6 +3049,14 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
 
 
 /* Project Storage v2 (server mode) */
+/* Persistent status chip in the header (scroll up any time for reassurance). Pill
+   background so it reads on any header colour. */
+.save-status { font-size: 0.85rem; font-weight: 600; padding: 4px 10px; border-radius: 999px;
+    align-self: center; white-space: nowrap; }
+.save-status.saving { background: #fef3c7; color: #92400e; }
+.save-status.unsaved { background: #fef3c7; color: #92400e; }
+.save-status.saved { background: #d1fae5; color: #065f46; }
+.save-status.blocked { background: #fee2e2; color: #991b1b; }
 /* Full-width sticky save status butterbar: always visible, high contrast, and it
    persists while there are unsaved changes (the "saved" state auto-hides). */
 .save-bar { position: sticky; top: 0; z-index: 900; width: 100%; box-sizing: border-box;
