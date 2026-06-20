@@ -1,6 +1,6 @@
 # Project Storage v2 — Design
 
-> Status: **draft v1** — requirements brainstorm captured, architecture deliberately deferred.
+> Status: **in build** — architecture decided (§12), DB ops workflow defined (§13). Step 1 (the `code-words` access-code library) and step 2 (Supabase schema + RPC migrations, validated against a live project) are merged/in review; frontend wiring is next.
 > Scope: replace the OneDrive / OS-native file-picker storage for the Pixel Game project (and future multi-session projects) with a small backend that owns both student identity and durable storage.
 > Supersedes: the OneDrive-related parts of `ROADMAP.md` Phase 4 ("Scratchpad file save/open" and the login-friction table). The `.py` export stays; OneDrive as the save target is dropped.
 
@@ -373,3 +373,62 @@ Because parity allows AU-hosted encrypted student PII, **storing `display_name` 
 | Real-time multi-device sync | Not needed v1; append-only model suffices (Postgres serializes same-row writes) | Not needed v1; Durable Objects would be the upgrade path |
 
 **Content placement decision for v1 (unchanged):** keep snapshot/current content as **TEXT in Postgres**, not object storage. Splitting content into Storage makes a save two non-atomic writes (object PUT + row pointer), which complicates the single-confirm durability contract for no benefit at this scale. Object storage is for file-like outputs only; "snapshots → object storage" is a documented migration path, not v1.
+
+---
+
+## 13. Database environments & migration workflow (ops)
+
+How the Supabase data tier is maintained over time. Goal: changes are version-controlled, tested on a throwaway database first, and applied to the real one the same way every time, never by clicking around the dashboard.
+
+### 13.1 Two projects: dev and prod
+
+Run **two separate Supabase projects, both in Sydney** (`ap-southeast-2`):
+
+- **`wavelet-dev`** — a disposable database. Integration tests, schema experiments, and preview/branch deploys point here. Safe to wipe.
+- **`wavelet-prod`** — real student data. Only validated migrations reach it; nothing experimental.
+
+They are fully isolated (separate URLs, keys, **separate peppers**, separate service keys). The existing project (`rphrxfyhlgacyellhcrw`) becomes **dev**; spin up a fresh **prod** project before the first real class.
+
+**Which one the app talks to** is a deploy-time choice, not a code choice: the Cloudflare Pages **production** deploy (wavelet.zone / `main`) uses the prod URL+publishable key; **preview/branch** deploys and local dev use dev. Wire this through Pages environment variables / a small `config.js` that reads them, so the same build hits the right database per environment.
+
+### 13.2 Migrations are the source of truth (Supabase CLI, checked in)
+
+`supabase/migrations/*.sql` is the single source of truth for schema and functions. Adopt the **Supabase CLI** and check in `supabase/config.toml`.
+
+- Create new changes with `supabase migration new <name>` (timestamped files), never by editing the dashboard.
+- Apply with **`supabase db push`** (applies un-applied migrations in order). Provide a checked-in wrapper (e.g. `npm run db:push:dev` / `db:push:prod`) that targets dev or prod by project ref; the db password / access token come from the environment, never the repo.
+- **Forward-only and immutable once applied to prod.** Today we still freely edit `0001`/`0002` because nothing is in prod yet. After the first prod apply, an applied migration is frozen: to change something, add a *new* migration. Editing an already-applied file causes drift (Supabase tracks applied versions and won't re-run it).
+- Keep migrations **re-runnable on a fresh DB**: `create ... if not exists`, `create or replace function`, idempotent grants. This is what lets us rebuild dev from scratch.
+- Migrations contain **schema and functions only** — never secrets or environment data. The pepper seed and class minting are per-environment setup steps (§13.4), not migrations.
+
+### 13.3 Promotion flow
+
+1. Write a migration locally. Apply to **dev** (`db:push:dev`), or run a fully local stack with `supabase start` (Docker) for the fastest loop.
+2. Run the **integration test against dev** (§13.5) until green.
+3. Open a PR. CI applies the migration to dev and runs the integration test there (§13.5).
+4. On merge, **promote to prod** as a gated/manual step (`db:push:prod`), ideally requiring an approval. Take a backup first for destructive changes (§13.6).
+
+### 13.4 Secrets and per-environment setup
+
+- Each environment has its **own pepper** (seeded once, §0001 comment) and its own service-role key + db password. Store them in **Bitwarden, namespaced dev vs prod**. Back up each pepper (a lost/rotated pepper invalidates all hashes — §12.5).
+- CI authenticates the CLI with a **Supabase access token** stored as a GitHub Actions secret, scoped so **auto-apply only ever targets dev**; prod stays manual.
+- Never check in a service-role key or any prod teacher code.
+
+### 13.5 Integration tests hit dev only
+
+- `scripts/supabase-itest.py` and `supabase/test-config.json` point at **dev**, never prod. (`test-config.json` holds only public dev values + a disposable dev test-class teacher code.)
+- Make reruns clean: the test mints a uniquely-coded student and **deletes it on exit when `SUPABASE_SERVICE_KEY` (dev) is set**, so dev doesn't accumulate rows or drift toward the per-class cap.
+- Provide a **dev reset** (e.g. `scripts/db-reset-dev.sql`: `truncate classes cascade;` then re-seed the test class) for a clean slate. Guard it so it can only run against dev (refuse if the target looks like prod).
+- **CI:** a workflow (network is available in GitHub Actions) applies migrations to dev and runs the integration test on PRs that touch `supabase/`. This is separate from the Node `test:all` gate so unit tests stay network-free.
+
+### 13.6 Backups, rollback, drift
+
+- **Backups:** rely on Supabase's automatic prod backups (confirm cadence / point-in-time recovery for the chosen tier). Snapshot before any destructive prod migration.
+- **Rollback:** forward-only, so a "rollback" is a new migration that reverts the change; for data-loss risk, restore from backup.
+- **Drift detection:** use `supabase db diff` to catch any out-of-band dashboard edits. Policy: **no manual edits to prod** — every change is a migration. (This is exactly why we are moving off the UI.)
+
+### 13.7 Immediate next steps (implementation)
+
+- Add `supabase/config.toml` and checked-in `db:push:dev` / `db:push:prod` scripts.
+- Create the **prod** project; relabel the current project as **dev**; record both sets of secrets in Bitwarden.
+- Point `test-config.json` at dev and add the CI workflow that applies to dev + runs the integration test.
