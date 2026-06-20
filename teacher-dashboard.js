@@ -44,7 +44,8 @@
     rosterBody.innerHTML = roster.map((r, i) => {
       const id = esc(r.project_id);
       const codeCell = revealedIds.has(r.project_id)
-        ? `<span class="code-cell code-toggle" data-reveal-id="${id}" title="click to hide">${esc((codesById && codesById[r.project_id]) || '…')}</span>`
+        ? `<span class="code-cell">${esc((codesById && codesById[r.project_id]) || '…')}</span> ` +
+          `<span class="code-toggle" data-reveal-id="${id}">hide</span>`
         : `<span class="code-toggle" data-reveal-id="${id}">show</span>`;
       const status = r.completed_at ? '✓ complete' : '—';
       return `<tr>
