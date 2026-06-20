@@ -1819,7 +1819,26 @@ async function openHistory() {
         res = null;
     }
     const versions = (res && res.ok && res.data && res.data.found) ? (res.data.versions || []) : [];
-    showHistoryOverlay(versions);
+    showHistoryOverlay(versions, projectOverheadLines());
+}
+
+// Lines the student actually edits: the setup preamble plus every task editor.
+function studentLineCount() {
+    let n = 0;
+    if (setupEditor) n += setupEditor.getValue().split('\n').length;
+    for (const entry of taskEditors.values()) {
+        if (entry && entry.cm) n += entry.cm.getValue().split('\n').length;
+    }
+    return n;
+}
+
+// Everything in the saved file that isn't student-edited code (file header, locked
+// preamble, task-title comments, blank separators). This is roughly constant for a
+// given project, so the server returns each version's FULL line count and we subtract
+// this overhead to estimate "lines you wrote". Different projects have different
+// amounts of scaffolding, so this is computed from the live project, not hardcoded.
+function projectOverheadLines() {
+    return assembleFileForDisk().split('\n').length - studentLineCount();
 }
 
 function fmtHistoryTime(iso) {
@@ -1834,17 +1853,24 @@ function fmtHistoryTime(iso) {
     return d.toLocaleString();
 }
 
-function showHistoryOverlay(versions) {
+function showHistoryOverlay(versions, overhead) {
+    overhead = overhead || 0;
     const overlay = document.createElement('div');
     overlay.className = 'history-overlay';
     const rows = versions.length
-        ? versions.map(v =>
-            `<li class="history-row" data-version="${v.version}">` +
-            `<span class="hv-when">${fmtHistoryTime(v.created_at)}</span>` +
-            `${v.is_milestone ? '<span class="hv-tag">after Run</span>' : ''}` +
-            `${typeof v.line_count === 'number' ? `<span class="hv-lines">${v.line_count} line${v.line_count === 1 ? '' : 's'}</span>` : ''}` +
-            `<span class="hv-go">Go back to this →</span>` +
-            '</li>').join('')
+        ? versions.map(v => {
+            const tag = v.is_milestone ? '<span class="hv-tag">after Run</span>' : '';
+            let lines = '';
+            if (typeof v.line_count === 'number') {
+                const n = Math.max(0, v.line_count - overhead);
+                lines = `<span class="hv-lines">${n} line${n === 1 ? '' : 's'}</span>`;
+            }
+            return `<li class="history-row" data-version="${v.version}">` +
+                `<span class="hv-when">${fmtHistoryTime(v.created_at)}</span>` +
+                tag + lines +
+                `<span class="hv-go">Go back to this →</span>` +
+                '</li>';
+        }).join('')
         : '<li class="history-empty">No saved versions yet. Edit and your work will appear here.</li>';
     overlay.innerHTML =
         '<div class="history-card">' +
