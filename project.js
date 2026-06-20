@@ -30,6 +30,7 @@ let setupEditor = null; // CodeMirror for the editable preamble
 let currentFileHandle = null;
 let serverCtl = null; // Project Storage v2 controller, set by initServerStorage() when serverStorage is on
 let serverCode = null; // the student's code, for history lookups
+let starterFileLines = 0; // line count of the pristine starter file, captured at init; history shows lines added beyond it
 let saveBarTimer = null; // auto-hide timer for the "✓ Saved" butterbar state
 let dirty = false;
 let savedFlashTimer = null;
@@ -75,6 +76,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         // can measure itself. Initialise the per-task editors only after reveal,
         // otherwise they render blank until first focus.
         initTaskEditors();
+        // Capture the pristine starter file size before any saved work loads, so the
+        // History view can show "lines added beyond the starter" (§6).
+        starterFileLines = assembleFileForDisk().split('\n').length;
         restoreSelfCheckPills();
     } catch (err) {
         console.error('Project failed to load:', err);
@@ -1819,35 +1823,7 @@ async function openHistory() {
         res = null;
     }
     const versions = (res && res.ok && res.data && res.data.found) ? (res.data.versions || []) : [];
-    showHistoryOverlay(versions, projectOverheadLines());
-}
-
-// Lines the student can actually edit: each editor's content minus the locked,
-// uneditable lines (the setup seed lines and the generated `def name():` headers,
-// which CodeMirror freezes). Starter body lines are intentionally included, matching
-// the History summary intent ("lines you've entered, including the starter code").
-function studentLineCount() {
-    let n = 0;
-    if (setupEditor) {
-        n += setupEditor.getValue().split('\n').length - countSeedLines();
-    }
-    for (const entry of taskEditors.values()) {
-        if (!entry || !entry.cm) continue;
-        const locked = entry.isFreestyle
-            ? 0
-            : (isMultiFunction(entry.task) ? entry.task.functions.length : 1);
-        n += entry.cm.getValue().split('\n').length - locked;
-    }
-    return n;
-}
-
-// Everything in the saved file that isn't student-edited code (file header, locked
-// preamble, task-title comments, blank separators). This is roughly constant for a
-// given project, so the server returns each version's FULL line count and we subtract
-// this overhead to estimate "lines you wrote". Different projects have different
-// amounts of scaffolding, so this is computed from the live project, not hardcoded.
-function projectOverheadLines() {
-    return assembleFileForDisk().split('\n').length - studentLineCount();
+    showHistoryOverlay(versions, starterFileLines);
 }
 
 function fmtHistoryTime(iso) {
@@ -1862,17 +1838,19 @@ function fmtHistoryTime(iso) {
     return d.toLocaleString();
 }
 
-function showHistoryOverlay(versions, overhead) {
-    overhead = overhead || 0;
+function showHistoryOverlay(versions, baseline) {
+    baseline = baseline || 0;
     const overlay = document.createElement('div');
     overlay.className = 'history-overlay';
     const rows = versions.length
         ? versions.map(v => {
             const tag = v.is_milestone ? '<span class="hv-tag">after Run</span>' : '';
+            // The server returns each version's full line count; subtract the starter
+            // file size to show how many lines the student has added beyond it.
             let lines = '';
             if (typeof v.line_count === 'number') {
-                const n = Math.max(0, v.line_count - overhead);
-                lines = `<span class="hv-lines">${n} line${n === 1 ? '' : 's'}</span>`;
+                const n = Math.max(0, v.line_count - baseline);
+                lines = `<span class="hv-lines">+${n} line${n === 1 ? '' : 's'}</span>`;
             }
             return `<li class="history-row" data-version="${v.version}">` +
                 `<span class="hv-when">${fmtHistoryTime(v.created_at)}</span>` +
