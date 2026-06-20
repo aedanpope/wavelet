@@ -65,9 +65,34 @@
     const QR_SIZE = 120;
     const CODE_GEOM = { maxFont: 9, minFont: 5, lineHeightRatio: 1.25 };
 
-    async function qrDataUrl(text) {
-        // node-qrcode UMD exposes window.QRCode.toDataURL(text, opts) -> PNG data URL.
-        return window.QRCode.toDataURL(text, { margin: 1, width: 256, errorCorrectionLevel: 'M' });
+    // Render a QR for `text` to a PNG data URL by drawing the modules onto a canvas.
+    // Uses qrcode-generator (global `qrcode`), whose isDark/getModuleCount API is stable;
+    // going via a canvas means jsPDF gets a plain PNG (no dependence on the lib's own
+    // image output format). `targetPx` is the desired pixel size of the rendered image.
+    function qrDataUrl(text, targetPx) {
+        const qr = window.qrcode(0, 'M'); // type 0 = auto-size to fit the data
+        qr.addData(text);
+        qr.make();
+        const count = qr.getModuleCount();
+        const quiet = 4; // quiet-zone modules required by the spec
+        const totalModules = count + quiet * 2;
+        const scale = Math.max(1, Math.floor((targetPx || 256) / totalModules));
+        const px = totalModules * scale;
+        const canvas = document.createElement('canvas');
+        canvas.width = px;
+        canvas.height = px;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, px, px);
+        ctx.fillStyle = '#000000';
+        for (let r = 0; r < count; r++) {
+            for (let c = 0; c < count; c++) {
+                if (qr.isDark(r, c)) {
+                    ctx.fillRect((c + quiet) * scale, (r + quiet) * scale, scale, scale);
+                }
+            }
+        }
+        return canvas.toDataURL('image/png');
     }
 
     function renderOneFinalPage(doc, student, ctx) {
@@ -131,7 +156,7 @@
     async function generateFinalSheets(opts) {
         const { students, projectId, projectTitle, origin, filename } = opts;
         if (!window.jspdf || !window.jspdf.jsPDF) throw new Error('jsPDF not loaded');
-        if (!window.QRCode) throw new Error('qrcode library not loaded');
+        if (!window.qrcode) throw new Error('qrcode library not loaded');
         if (!students || !students.length) throw new Error('no students to print');
 
         const ctx = { projectId, projectTitle, origin: origin || window.location.origin };
@@ -140,8 +165,7 @@
 
         for (let i = 0; i < students.length; i++) {
             const s = students[i];
-            // QR is async; generate it before drawing the page.
-            s.qr = await qrDataUrl(buildProjectUrl(ctx.origin, projectId, s.code));
+            s.qr = qrDataUrl(buildProjectUrl(ctx.origin, projectId, s.code), 256);
             if (i > 0) doc.addPage();
             renderOneFinalPage(doc, s, ctx);
         }
