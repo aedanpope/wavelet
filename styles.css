@@ -3049,11 +3049,14 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
 
 
 /* Project Storage v2 (server mode) */
-.save-status { font-size: 0.9rem; padding: 4px 8px; border-radius: 6px; align-self: center; }
-.save-status.saving { color: #92400e; }
-.save-status.saved { color: #065f46; }
-.save-status.unsaved { color: #6b7280; }
-.save-status.blocked { color: #991b1b; font-weight: 600; }
+/* Full-width sticky save status butterbar: always visible, high contrast, and it
+   persists while there are unsaved changes (the "saved" state auto-hides). */
+.save-bar { position: sticky; top: 0; z-index: 900; width: 100%; box-sizing: border-box;
+    text-align: center; padding: 9px 14px; font-size: 0.95rem; font-weight: 600; }
+.save-bar.saving { background: #fcd34d; color: #78350f; }
+.save-bar.unsaved { background: #fcd34d; color: #78350f; }
+.save-bar.saved { background: #34d399; color: #064e3b; }
+.save-bar.blocked { background: #dc2626; color: #fff; }
 .login-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
 .login-card { background: #fff; padding: 28px 32px; border-radius: 12px; max-width: 360px; width: 90%; text-align: center; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); }
 .login-card h2 { margin: 0 0 6px; }

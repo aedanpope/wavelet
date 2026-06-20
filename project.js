@@ -29,6 +29,7 @@ const selfCheckPills = new Map(); // taskId -> pill element
 let setupEditor = null; // CodeMirror for the editable preamble
 let currentFileHandle = null;
 let serverCtl = null; // Project Storage v2 controller, set by initServerStorage() when serverStorage is on
+let saveBarTimer = null; // auto-hide timer for the "✓ Saved" butterbar state
 let dirty = false;
 let savedFlashTimer = null;
 let currentExtras = ''; // raw source of any unrecognised top-level code from an opened file
@@ -1795,26 +1796,36 @@ function openWithProject(overlay, code, data) {
 }
 
 function updateSaveStatus(s) {
-    const elx = document.getElementById('save-status');
-    if (!elx) return;
+    const bar = document.getElementById('save-bar');
+    if (!bar) return;
+    if (saveBarTimer) { clearTimeout(saveBarTimer); saveBarTimer = null; }
     const map = {
-        saving: ['Saving…', 'saving', ''],
-        saved: ['✓ Saved', 'saved', ''],
-        unsaved: ['Editing…', 'unsaved', ''],
-        blocked: ['⚠ Not saved', 'blocked', 'Your last change has not been saved. Check your internet connection.']
+        saving: ['Saving…', 'saving'],
+        saved: ['✓ Saved', 'saved'],
+        unsaved: ['Editing… (not saved yet)', 'unsaved'],
+        blocked: ['⚠ Not saved — check your internet connection', 'blocked']
     };
-    const entry = map[s.status] || [s.status, '', ''];
-    elx.style.display = '';
-    elx.textContent = entry[0];
-    elx.className = 'save-status ' + entry[1];
-    elx.title = entry[2];
+    const entry = map[s.status] || [s.status, ''];
+    bar.textContent = entry[0];
+    bar.className = 'save-bar ' + entry[1];
+    bar.style.display = '';
+    // The bar persists while there's anything unsaved; "✓ Saved" is just reassurance, so
+    // it shows briefly then hides.
+    if (s.status === 'saved') {
+        saveBarTimer = setTimeout(() => { bar.style.display = 'none'; }, 2500);
+    }
 }
 
 function onServerConflict() {
     // Latest change is saved, but another device also edited this project. A history/restore
-    // UI comes later; for now just flag it on the status chip.
-    const elx = document.getElementById('save-status');
-    if (elx) elx.title = 'This project was also edited on another device. Your latest change is saved.';
+    // UI comes later; for now flag it on the butterbar.
+    const bar = document.getElementById('save-bar');
+    if (saveBarTimer) { clearTimeout(saveBarTimer); saveBarTimer = null; }
+    if (bar) {
+        bar.textContent = '✓ Saved — note: this project was also edited on another device';
+        bar.className = 'save-bar saved';
+        bar.style.display = '';
+    }
 }
 
 function assembleFileForDisk() {
