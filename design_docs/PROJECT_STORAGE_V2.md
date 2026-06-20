@@ -1,6 +1,6 @@
 # Project Storage v2 — Design
 
-> Status: **in build** — architecture decided (§12), DB ops workflow defined (§13). Step 1 (the `code-words` access-code library) and step 2 (Supabase schema + RPC migrations, validated against a live project) are merged/in review; frontend wiring is next.
+> Status: **in build**. Architecture decided (§12), DB ops workflow defined (§13). Steps 1-4 are merged: the `code-words` library, the Supabase schema + RPCs (validated against the live project), the frontend storage client + autosave + code-entry login + student history/restore (all flag-gated behind `WaveletConfig.serverStorage`, default off), and the teacher dashboard. The whole server-mode flow is live behind the flag and on the per-visit `?storage=server` override. Next P1 work is cover sheets (step 5) so a class can actually be handed printed codes, then the in-flight-cohort file import (step 6). A non-feature refactor splitting `project.js` is open and paused (PR #44).
 > Scope: replace the OneDrive / OS-native file-picker storage for the Pixel Game project (and future multi-session projects) with a small backend that owns both student identity and durable storage.
 > Supersedes: the OneDrive-related parts of `ROADMAP.md` Phase 4 ("Scratchpad file save/open" and the login-friction table). The `.py` export stays; OneDrive as the save target is dropped.
 
@@ -444,11 +444,14 @@ When we do the P2 split (after this cohort): create a fresh **prod** project for
 Living checklist so any session can resume. Convention: **one PR per step, squash-merged**, branch `claude/<topic>`, and per `CLAUDE.md` every code change gets a PR + `subscribe_pr_activity` (the container has no Node, so CI is how the full suite runs).
 
 ### Status at a glance
-- ✅ **Step 1 — `code-words` access-code library** (merged, PR #36).
-- ✅ **Step 2 — Supabase schema + RPC migrations** (merged, PR #38; validated 16/16 against the live project).
-- ⏭️ **Step 3 — Frontend storage client + autosave + code-entry login** (next).
-- ⏭️ Steps 4-8 below.
-- 🅿️ **Dev/prod split + CI** — P2 (§13.7). Single project serves the current cohort for now.
+- ✅ **Step 1: `code-words` access-code library** (merged, PR #36).
+- ✅ **Step 2: Supabase schema + RPC migrations** (merged, PR #38; validated 16/16 against the live project). Later folded the full-line-count change into `project_history` (PR #43), so re-run `0002_rpc.sql` to apply.
+- ✅ **Step 3: Frontend storage client + autosave + code-entry login** (merged): RPC client + `config.js` (PR #40), hard-source-of-truth controller `project-storage.js` (PR #41), project-page wiring flag-gated behind `WaveletConfig.serverStorage` + `?storage=server` (PR #42), student history/restore UI (PR #43).
+- ✅ **Step 4: Teacher dashboard** (merged with the client, PR #40): roster, reveal/hide + copy codes, append student.
+- 🔁 **Refactor (non-feature): split `project.js`** (PR #44, **open, paused**): extracted the server-mode UI into `project-server.js`. First slice of breaking up the ~2.4k-line `project.js` by concern. Paused mid-flight; CI was last green on the lint fix.
+- ⏭️ **Step 5: Cover sheets** (next P1).
+- ⏭️ **Step 6: Import from file** (this-cohort migration).
+- 🅿️ **Steps 7-8: `pg_cron` jobs, plus dev/prod split + CI** (P2, §13.7). Single project serves the current cohort for now.
 
 ### Environment facts (so a new session doesn't re-derive them)
 - Supabase project (Sydney `ap-southeast-2`), ref **`rphrxfyhlgacyellhcrw`**, URL `https://rphrxfyhlgacyellhcrw.supabase.co`. This is "prod for now", retires to dev at the P2 split.
@@ -465,20 +468,16 @@ Living checklist so any session can resume. Convention: **one PR per step, squas
 ### Built so far (interfaces to reuse)
 - **`code-words.js`**: `generateStudentCode()` / `generateTeacherCode()`, `isStudentCode()` / `isTeacherCode()`, `canonical()`, `generateUnique(isTaken, scheme)`, and `STUDENT`/`TEACHER` schemes. Students `adjective-animal-plant` (65,536); teachers 5 words (~4.3B). Use `canonical()` to derive the string to send for login.
 - **RPC API** (§12.6, implemented in `supabase/migrations/0002_rpc.sql`): student `load_project`/`save_project`/`project_history`/`project_version`; teacher `append_student`/`teacher_roster`/`reprint_codes`/`mark_complete`; owner (service_role) `mint_class`/`export_student`/`delete_student`. Call directly from the browser via PostgREST `POST /rest/v1/rpc/<fn>` with the publishable key; codes are passed as args. `save_project` is durable only on `{ok:true}` and returns a `conflict` flag.
+- **`supabase-client.js`** (IIFE → `window.SupabaseClient`): pure `buildRpcRequest`/`parseRpcResponse` + async `rpc()` + typed wrappers (`loadProject`, `saveProject`, `projectHistory`, `projectVersion`, `teacherRoster`, `appendStudent`, `reprintCodes`, `markComplete`).
+- **`project-storage.js`** (IIFE → `window.ProjectStorage`): the hard-source-of-truth controller. `createController({code, getContent, onStatus, onConflict})` → `{ start, noteEdit, run, saveNow, getStatus, attachLifecycle }`. Debounced autosave (4s, 15s max-wait), `pagehide`/`visibilitychange` beacon close-flush, optimistic concurrency. Pure helpers (`applySaveResult`, `buildBeaconSave`, `makeSession`) are unit-tested in V8.
+- **`project-server.js`** (PR #44, on the paused branch, not yet on `main`): the project page's server-mode UI (login overlay, history/restore, save-status). Shares global scope with `project.js`.
+- **Project page** (`project.js`): server mode is entered from `initServerStorage()` when `WaveletConfig.serverStorage` is true or `?storage=server` is set (and not `?storage=file`); otherwise the existing File System Access open/save flow is untouched. `assembleFileForDisk()` is the single content source of truth shared by file-save and server-save.
 
-### Step 3 — Frontend storage client + login (next)
-Recommended internal order: **storage client first** (core save/resume loop), then dashboard, then history UI.
-- **`project-storage.js`** (+ `project-storage-test.js` with injected fake `fetch`): wraps the RPCs; implements the hard-source-of-truth save state machine (saving → confirmed/blocked, never a false "saved"), optimistic-concurrency handling, and the `visibilitychange`→`sendBeacon` close-flush (§12.3a).
-- **`config.js`**: committed public Supabase URL + publishable key.
-- **Project page**: code-entry login → `load_project` (show `display_name` for the "is this you?" confirm) → replace the File System Access save/open with the storage client → autosave indicator → student-facing history browser.
-- Manual browser testing (Pyodide/real DB): type code → load; edit → autosaves; reload/resume; two browsers → conflict surfaces; pull network → blocks rather than lying.
-
-### Steps 4-8 (later)
-- **Step 4 — Teacher dashboard** (`teacher-dashboard.html/.js`): enter teacher code → roster + last-saved (codes hidden until hover), append student (generate code client-side, call `append_student`, retry on `code_taken`), mark complete, generate codes from a class list.
-- **Step 5 — Cover sheets** (`cover-sheet.js`, jsPDF + qrcode via CDN): two one-page-per-student PDFs (start + final), QR → mobile game view, short typeable URL. Crop long code; canvas image deferred.
-- **Step 6 — Migration "Import from file"** (this-cohort only, behind a config flag): student logs in with new code, picks their old OneDrive `.py`, parse with existing `loadFileIntoEditors`, save as first server save. Thin reuse, not a parallel system.
-- **Step 7 — Scheduled jobs (P2)**: `pg_cron` for 12-month name auto-deletion (§5) and post-completion compaction (§6).
-- **Step 8 — Dev/prod split + CI (P2)**: §13.7.
+### Steps 5-8 (later)
+- **Step 5: Cover sheets** (`cover-sheet.js`, jsPDF + qrcode via CDN): two one-page-per-student PDFs (start + final), QR → mobile game view, short typeable URL. Crop long code; canvas image deferred.
+- **Step 6: Migration "Import from file"** (this-cohort only, behind a config flag): student logs in with new code, picks their old OneDrive `.py`, parse with existing `loadFileIntoEditors`, save as first server save. Thin reuse, not a parallel system.
+- **Step 7: Scheduled jobs (P2)**: `pg_cron` for 12-month name auto-deletion (§5) and post-completion compaction (§6).
+- **Step 8: Dev/prod split + CI (P2)**: §13.7.
 
 ### Still-open design decisions (don't lose these)
 - Brute-force rate-limiting on login = **P3** (per-code, not per-IP, §11).
