@@ -47,6 +47,7 @@
         <strong id="roster-count"></strong>
         <button id="reveal-btn" class="secondary">Reveal all codes</button>
         <button id="refresh-btn" class="secondary">Refresh</button>
+        <button id="print-final-btn" title="One PDF, one page per student: their code, a play-at-home QR, and their finished code">🖨️ Print progress sheets</button>
       </div>
       <table id="roster">
         <thead>
@@ -67,10 +68,14 @@
     </div>
   </div>
 
+  <!-- Cover-sheet PDF generation (loaded from CDN, used only when printing) -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
   <script src="config.js"></script>
   <script src="code-words-list.js"></script>
   <script src="code-words.js"></script>
   <script src="supabase-client.js"></script>
+  <script src="cover-sheet.js"></script>
   <script src="teacher-dashboard.js"></script>
 </body>
 </html>
