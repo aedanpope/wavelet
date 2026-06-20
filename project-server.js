@@ -12,6 +12,13 @@
 // See design_docs/PROJECT_STORAGE_V2.md §6 (history) and §12 (architecture).
 // ──────────────────────────────────────────────────────────────────────────
 
+/* global serverCtl:writable, loadFileIntoEditors, markClean, markDirty, assembleFileForDisk */
+
+// Server-mode state read here (and written from project.js's init for starterFileLines).
+let serverCode = null;     // the student's code, for history lookups
+let saveBarTimer = null;   // auto-hide timer for the "✓ Saved" butterbar state
+let starterFileLines = 0;  // pristine starter file size; History shows lines added beyond it
+
 function initServerStorage() {
     // Hide the file-based controls; server mode autosaves to the database.
     ['current-file', 'open-file-btn', 'save-file-btn', 'save-as-file-btn'].forEach(id => {

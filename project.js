@@ -10,6 +10,11 @@
 // A-B tier tasks use self-check pills the student ticks; C tasks default to
 // machine-validated but can self-check when the spec is genuinely subjective.
 
+/* global initServerStorage, flashSavedPill, starterFileLines:writable */
+// ^ Server-mode UI lives in project-server.js; both are classic scripts sharing
+//   this global scope. project.js calls those fns at runtime (serverStorage on) and
+//   captures starterFileLines here at init (declared there, where History reads it).
+
 const PARAM_PROJECT = 'project';
 const DEFAULT_PROJECT = 'pixel-game';
 const BODY_INDENT = '  ';
@@ -28,12 +33,10 @@ const taskEditors = new Map(); // taskId -> { cm, editorEl, statusEl, errorEl, t
 const selfCheckPills = new Map(); // taskId -> pill element
 let setupEditor = null; // CodeMirror for the editable preamble
 let currentFileHandle = null;
-// Project Storage v2 (server mode) state. These are shared with project-server.js,
-// which holds the server-mode UI; it runs in the same global scope (classic scripts).
-let serverCtl = null; // storage controller, set by initServerStorage() when serverStorage is on
-let serverCode = null; // the student's code, for history lookups
-let starterFileLines = 0; // line count of the pristine starter file, captured at init; history shows lines added beyond it
-let saveBarTimer = null; // auto-hide timer for the "✓ Saved" butterbar state
+// Project Storage v2 (server mode): serverCtl is read here (run / markDirty) and set by
+// openWithProject() in project-server.js. serverCode, saveBarTimer, and starterFileLines
+// are declared in project-server.js (where they're read); starterFileLines is captured here.
+let serverCtl = null; // storage controller, set by openWithProject() in project-server.js
 let dirty = false;
 let savedFlashTimer = null;
 let currentExtras = ''; // raw source of any unrecognised top-level code from an opened file
