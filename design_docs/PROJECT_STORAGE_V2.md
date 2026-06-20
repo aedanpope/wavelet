@@ -436,3 +436,50 @@ When we do the P2 split (after this cohort): create a fresh **prod** project for
 - Add `supabase/config.toml` and checked-in `db:push:dev` / `db:push:prod` scripts.
 - Record both environments' secrets in Bitwarden (dev/prod namespaced).
 - Point `test-config.json` at dev and add the CI workflow that applies to dev + runs the integration test.
+
+---
+
+## 14. Implementation plan & status (handoff)
+
+Living checklist so any session can resume. Convention: **one PR per step, squash-merged**, branch `claude/<topic>`, and per `CLAUDE.md` every code change gets a PR + `subscribe_pr_activity` (the container has no Node, so CI is how the full suite runs).
+
+### Status at a glance
+- ✅ **Step 1 — `code-words` access-code library** (merged, PR #36).
+- ✅ **Step 2 — Supabase schema + RPC migrations** (merged, PR #38; validated 16/16 against the live project).
+- ⏭️ **Step 3 — Frontend storage client + autosave + code-entry login** (next).
+- ⏭️ Steps 4-8 below.
+- 🅿️ **Dev/prod split + CI** — P2 (§13.7). Single project serves the current cohort for now.
+
+### Environment facts (so a new session doesn't re-derive them)
+- Supabase project (Sydney `ap-southeast-2`), ref **`rphrxfyhlgacyellhcrw`**, URL `https://rphrxfyhlgacyellhcrw.supabase.co`. This is "prod for now", retires to dev at the P2 split.
+- Public values (URL + **publishable/anon key**) live in `supabase/test-config.json` and will go in the frontend `config.js`. Secrets (DB password, **service-role key**, the **pepper** value) live in **Bitwarden**, never in the repo.
+- Pepper is seeded once in `app_secret` (see `0001_init.sql` footer) and must be backed up (losing/rotating it invalidates all code hashes, §12.5).
+- Disposable **test class** already minted; its teacher code (`test-teacher-code-foxtrot-abacus`) is in `supabase/test-config.json`.
+- **Network egress:** this sandbox can't reach `*.supabase.co` unless that host is on the environment's egress allowlist; otherwise run `supabase-itest.py` locally.
+
+### Dev tooling (already in repo)
+- `scripts/run-js-tests.py` — run the JS unit tests via embedded V8 (`pip install mini-racer`), since there's no Node here. Covers the pure-logic suites (`code-words-test.js` etc.).
+- `scripts/supabase-itest.py` — gated integration test that drives the live RPCs (reads `supabase/test-config.json`; set `SUPABASE_SERVICE_KEY` for cleanup). Hits the test class only.
+- SQL syntax can be checked offline with `pip install pglast` (`pglast.parse_sql(...)`).
+
+### Built so far (interfaces to reuse)
+- **`code-words.js`**: `generateStudentCode()` / `generateTeacherCode()`, `isStudentCode()` / `isTeacherCode()`, `canonical()`, `generateUnique(isTaken, scheme)`, and `STUDENT`/`TEACHER` schemes. Students `adjective-animal-plant` (65,536); teachers 5 words (~4.3B). Use `canonical()` to derive the string to send for login.
+- **RPC API** (§12.6, implemented in `supabase/migrations/0002_rpc.sql`): student `load_project`/`save_project`/`project_history`/`project_version`; teacher `append_student`/`teacher_roster`/`reprint_codes`/`mark_complete`; owner (service_role) `mint_class`/`export_student`/`delete_student`. Call directly from the browser via PostgREST `POST /rest/v1/rpc/<fn>` with the publishable key; codes are passed as args. `save_project` is durable only on `{ok:true}` and returns a `conflict` flag.
+
+### Step 3 — Frontend storage client + login (next)
+Recommended internal order: **storage client first** (core save/resume loop), then dashboard, then history UI.
+- **`project-storage.js`** (+ `project-storage-test.js` with injected fake `fetch`): wraps the RPCs; implements the hard-source-of-truth save state machine (saving → confirmed/blocked, never a false "saved"), optimistic-concurrency handling, and the `visibilitychange`→`sendBeacon` close-flush (§12.3a).
+- **`config.js`**: committed public Supabase URL + publishable key.
+- **Project page**: code-entry login → `load_project` (show `display_name` for the "is this you?" confirm) → replace the File System Access save/open with the storage client → autosave indicator → student-facing history browser.
+- Manual browser testing (Pyodide/real DB): type code → load; edit → autosaves; reload/resume; two browsers → conflict surfaces; pull network → blocks rather than lying.
+
+### Steps 4-8 (later)
+- **Step 4 — Teacher dashboard** (`teacher-dashboard.html/.js`): enter teacher code → roster + last-saved (codes hidden until hover), append student (generate code client-side, call `append_student`, retry on `code_taken`), mark complete, generate codes from a class list.
+- **Step 5 — Cover sheets** (`cover-sheet.js`, jsPDF + qrcode via CDN): two one-page-per-student PDFs (start + final), QR → mobile game view, short typeable URL. Crop long code; canvas image deferred.
+- **Step 6 — Migration "Import from file"** (this-cohort only, behind a config flag): student logs in with new code, picks their old OneDrive `.py`, parse with existing `loadFileIntoEditors`, save as first server save. Thin reuse, not a parallel system.
+- **Step 7 — Scheduled jobs (P2)**: `pg_cron` for 12-month name auto-deletion (§5) and post-completion compaction (§6).
+- **Step 8 — Dev/prod split + CI (P2)**: §13.7.
+
+### Still-open design decisions (don't lose these)
+- Brute-force rate-limiting on login = **P3** (per-code, not per-IP, §11).
+- Whether the dashboard folds in ROADMAP Phase 3 assessment (per-problem pass/fail).
