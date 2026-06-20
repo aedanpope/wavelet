@@ -8,7 +8,11 @@ RPC runtime (the migrations themselves only get syntax-checked offline).
 
 Config (a throwaway test class) comes from env vars, falling back to supabase/test-config.json:
   SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, SUPABASE_TEST_TEACHER_CODE, SUPABASE_TEST_PROJECT_SLUG
-Optional SUPABASE_SERVICE_KEY enables cleanup (delete_student) of the rows this run creates.
+
+Re-running is safe: each run mints a fresh student with a unique canonical code. Set
+SUPABASE_SERVICE_KEY (the service-role key) to delete that row at the end, so repeated runs
+stay fully idempotent and never accumulate toward the per-class cap. Without it, each run
+leaves one project row behind.
 
 Usage:
   python3 scripts/supabase-itest.py
@@ -19,10 +23,11 @@ be on the environment's egress allowlist.
 """
 import json
 import os
+import random
+import string
 import sys
 import urllib.request
 import urllib.error
-import uuid
 from pathlib import Path
 
 CONFIG_PATH = Path(__file__).resolve().parent.parent / "supabase" / "test-config.json"
@@ -86,8 +91,12 @@ def main():
         print("supabase-itest: no config (set env or supabase/test-config.json) -> skipped")
         return 0
 
-    student = "itest-" + uuid.uuid4().hex  # arbitrary unique code; server only hashes it
-    name = "ITest " + student[:12]
+    # A unique, CANONICAL code (lowercase letters + dashes only), like a real code-words
+    # code, so normalize_code() is a no-op and reprint round-trips exactly. Using digits
+    # here would be normalised to dashes and not match on reprint.
+    rand = "".join(random.choice(string.ascii_lowercase) for _ in range(12))
+    student = os.environ.get("SUPABASE_TEST_STUDENT_CODE", "itest-" + rand)
+    name = "ITest " + rand[:6]
 
     # append_student
     st, res = rpc(cfg, "append_student", {
