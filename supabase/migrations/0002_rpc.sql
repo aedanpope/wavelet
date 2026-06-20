@@ -133,9 +133,13 @@ begin
   if not found then
     return jsonb_build_object('found', false);
   end if;
+  -- line_count is the FULL line count of each snapshot; the client subtracts the
+  -- per-project scaffolding overhead (it knows projectDef) to show "lines you wrote",
+  -- since different projects carry different amounts of non-student code.
   return jsonb_build_object('found', true, 'versions', coalesce((
     select jsonb_agg(jsonb_build_object(
-      'version', s.version, 'created_at', s.created_at, 'is_milestone', s.is_milestone)
+      'version', s.version, 'created_at', s.created_at, 'is_milestone', s.is_milestone,
+      'line_count', array_length(string_to_array(s.content, E'\n'), 1))
       order by s.version desc)
     from snapshots s where s.project_id = v_proj.id), '[]'::jsonb));
 end;
