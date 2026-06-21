@@ -416,7 +416,7 @@
   <h1>${esc(className)}</h1>
   <p class="sub">${esc(subParts.filter(Boolean).join(' • '))}</p>
   <table><thead><tr><th>#</th><th>Name</th><th>Code</th></tr></thead><tbody>${tbody}</tbody></table>
-  <script>window.onload = function () { window.print(); };<\/script>
+  <script>window.onload = function () { window.print(); };</script>
 </body></html>`;
     w.document.write(html);
     w.document.close();
