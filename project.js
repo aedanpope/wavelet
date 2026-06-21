@@ -1708,7 +1708,63 @@ function initServerStorage() {
     });
     const histBtn = document.getElementById('history-btn');
     if (histBtn) histBtn.addEventListener('click', openHistory);
+    // Migration affordance (§6): let the current cohort bring their old OneDrive .py into
+    // the server. Gated by a config flag so it can be turned off once everyone has migrated.
+    if (window.WaveletConfig && window.WaveletConfig.importFromFile) {
+        const importBtn = document.getElementById('import-file-btn');
+        if (importBtn) {
+            importBtn.style.display = '';
+            importBtn.addEventListener('click', importOldFile);
+        }
+    }
     showLoginOverlay();
+}
+
+// Import a previously-saved .py (e.g. from OneDrive) into the editors and save it to the
+// server as the next version. Unlike the file-mode Open flow, this stays dirty and routes
+// through the storage controller (no markClean / file handle), so the work is persisted.
+async function importOldFile() {
+    const onText = (text, name) => {
+        // loadFileIntoEditors confirms before replacing existing work and returns false if
+        // the student cancels; bail out in that case.
+        if (!loadFileIntoEditors(text, name)) return;
+        markDirty();                        // -> serverCtl.noteEdit(), and unblocks the skip
+        if (serverCtl) serverCtl.saveNow(); // persist now rather than waiting for the debounce
+    };
+    if (SUPPORTS_FSA) {
+        let handle;
+        try {
+            [handle] = await window.showOpenFilePicker({ types: [PY_FILE_TYPE], multiple: false });
+        } catch (err) {
+            if (err.name === 'AbortError') return;
+            alert('Could not open the file picker.');
+            return;
+        }
+        try {
+            const file = await handle.getFile();
+            onText(await file.text(), file.name);
+        } catch (err) {
+            alert('Could not read that file: ' + (err.message || err.name));
+        }
+        return;
+    }
+    // Fallback for browsers without the File System Access API: a transient <input>.
+    const inp = document.createElement('input');
+    inp.type = 'file';
+    inp.accept = '.py,text/x-python,text/plain';
+    inp.style.display = 'none';
+    inp.addEventListener('change', () => {
+        const file = inp.files && inp.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = ev => onText(ev.target.result || '', file.name);
+            reader.onerror = () => alert('Could not read that file.');
+            reader.readAsText(file);
+        }
+        inp.remove();
+    });
+    document.body.appendChild(inp);
+    inp.click();
 }
 
 // Replay a CSS animation even if the element already has the class (removing it and forcing
