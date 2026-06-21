@@ -82,13 +82,15 @@ const api = {
       p_teacher_code: teacherCode, p_class_id: classId, p_project_slug: slug,
       p_count: count, p_codes: codes
     }, opts),
-  teacherRoster: (teacherCode, opts) => rpc('teacher_roster', { p_teacher_code: teacherCode }, opts),
-  appendStudent: (teacherCode, slug, displayName, studentCode, opts) =>
+  teacherRoster: (teacherCode, classId, opts) =>
+    rpc('teacher_roster', { p_teacher_code: teacherCode, p_class_id: classId }, opts),
+  appendStudent: (teacherCode, classId, slug, displayName, studentCode, opts) =>
     rpc('append_student', {
-      p_teacher_code: teacherCode, p_project_slug: slug,
+      p_teacher_code: teacherCode, p_class_id: classId, p_project_slug: slug,
       p_display_name: displayName, p_student_code: studentCode
     }, opts),
-  reprintCodes: (teacherCode, opts) => rpc('reprint_codes', { p_teacher_code: teacherCode }, opts),
+  reprintCodes: (teacherCode, classId, opts) =>
+    rpc('reprint_codes', { p_teacher_code: teacherCode, p_class_id: classId }, opts),
   markComplete: (teacherCode, classProjectId, opts) =>
     rpc('mark_complete', { p_teacher_code: teacherCode, p_class_project_id: classProjectId }, opts)
 };
