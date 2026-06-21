@@ -451,7 +451,7 @@ Living checklist so any session can resume. Convention: **one PR per step, squas
 - 🔁 **Refactor (non-feature): split `project.js`** (PR #44, **open, paused**): extracted the server-mode UI into `project-server.js`. First slice of breaking up the ~2.4k-line `project.js` by concern. Paused mid-flight; CI was last green on the lint fix.
 - ✅ **Step 5: Cover sheets** (merged): final progress-pack PDF + QR/short-URL code-prefill login (PR #45), per-row reprint (PR #47). Start sheet (assessed prose + milestone checklist) still to do.
 - ✅ **Step 6: Import from file** (merged, PR #46): flag-gated "Import old file" button brings a cohort student's OneDrive `.py` into server storage.
-- 🔁 **Step 7: Teacher entity + multi-class** (in progress): a `teachers` table owns many classes, one teacher code unlocks all of them; owner-minted teachers self-serve classes. DB layer = `0003_teachers.sql` (teacher_classes / create_class / add_students_bulk / owner mint_teacher; class-scoped roster/reprint/append with single-arg compat shims). Dashboard class-list UI is the next slice.
+- 🔁 **Step 7: Teacher entity + multi-class** (in progress): a `teachers` table owns many classes, one teacher code unlocks all of them; owner-minted teachers self-serve classes. DB layer = `0003_teachers.sql` (teacher_classes / create_class / add_students_bulk (target count + a candidate code pool, spares cover collisions) / owner mint_teacher; class-scoped roster/reprint/append with single-arg compat shims). Dashboard class-list UI is the next slice.
 - 🅿️ **Steps 8-9: `pg_cron` jobs, plus dev/prod split + CI** (P2, §13.7). Single project serves the current cohort for now.
 
 ### Environment facts (so a new session doesn't re-derive them)

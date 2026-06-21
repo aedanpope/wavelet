@@ -133,24 +133,35 @@ begin
 end;
 $$;
 
--- Mint N anonymous students (no names) from client-generated codes. Skips hash collisions and
--- returns the codes actually added, so the client can top up any shortfall with fresh codes.
--- Names stay out of the database: the teacher pairs codes to the paper class list themselves.
+-- Mint up to p_count anonymous students (no names) from a candidate pool of client-generated
+-- codes. The pool should hold a few EXTRA codes beyond p_count: collisions are skipped and the
+-- next spare is tried, so a well-stocked pool lands exactly p_count in one round-trip. Returns
+-- the codes actually used plus the class's remaining capacity (so the client knows whether a
+-- shortfall means "send more spares" or "class is full"). Names stay out of the database: the
+-- teacher pairs codes to the paper class list themselves.
+drop function if exists add_students_bulk(text, uuid, text, text[]);
 create or replace function add_students_bulk(
   p_teacher_code text,
   p_class_id uuid,
   p_project_slug text,
+  p_count integer,
   p_codes text[]
 )
 returns jsonb language plpgsql security definer set search_path = public, extensions as $$
 declare
   v_cp uuid;
-  v_count integer;
+  v_existing integer;
   v_code text;
   v_added text[] := '{}';
+  v_want integer;
+  v_n integer := 0;
 begin
   if not class_owned_by(p_teacher_code, p_class_id) then
     return jsonb_build_object('ok', false, 'error', 'bad_teacher_code');
+  end if;
+  -- Bound the work a leaked code can trigger (the loop is also capped by v_want below).
+  if coalesce(array_length(p_codes, 1), 0) > 1000 then
+    return jsonb_build_object('ok', false, 'error', 'too_many_codes');
   end if;
   select id into v_cp from class_projects
     where class_id = p_class_id and project_slug = p_project_slug
@@ -159,19 +170,25 @@ begin
     insert into class_projects (class_id, project_slug) values (p_class_id, p_project_slug)
       returning id into v_cp;
   end if;
-  select count(*) into v_count from projects where class_project_id = v_cp;
+  select count(*) into v_existing from projects where class_project_id = v_cp;
+  -- Add at most the requested count, clamped to the remaining per-project capacity (cap 200).
+  v_want := least(greatest(coalesce(p_count, 0), 0), 200 - v_existing);
   foreach v_code in array coalesce(p_codes, '{}') loop
-    exit when v_count >= 200;  -- same per-project cap as append_student
+    exit when v_n >= v_want;
     begin
       insert into projects (class_project_id, student_code_hash, student_code_enc, display_name)
       values (v_cp, hash_code(v_code), pgp_sym_encrypt(normalize_code(v_code), p_teacher_code), null);
       v_added := array_append(v_added, v_code);
-      v_count := v_count + 1;
+      v_n := v_n + 1;
     exception when unique_violation then
-      null;  -- collision: skip; client retries the shortfall
+      null;  -- collision: skip and try the next spare in the pool
     end;
   end loop;
-  return jsonb_build_object('ok', true, 'class_project_id', v_cp, 'added', to_jsonb(v_added));
+  return jsonb_build_object(
+    'ok', true,
+    'class_project_id', v_cp,
+    'added', to_jsonb(v_added),
+    'remaining', 200 - v_existing - v_n);  -- capacity left in the project after this call
 end;
 $$;
 
@@ -350,7 +367,7 @@ declare
   anon_fns text[] := array[
     'teacher_classes(text)',
     'create_class(text, text, text, text)',
-    'add_students_bulk(text, uuid, text, text[])',
+    'add_students_bulk(text, uuid, text, integer, text[])',
     'append_student(text, uuid, text, text, text)',
     'teacher_roster(text, uuid)',
     'reprint_codes(text, uuid)'
