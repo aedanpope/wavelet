@@ -88,6 +88,7 @@
         <td>${esc(fmtTime(r.last_saved_at))}</td>
         <td>${status}</td>
         <td>${codeCell}</td>
+        <td><button class="print-row-btn" data-print-id="${id}" title="Print this student's progress sheet" aria-label="Print progress sheet">🖨️</button></td>
       </tr>`;
     }).join('');
     updateRevealBtn();
@@ -132,6 +133,8 @@
 
   // Per-row click: toggle just that student's code (lazily fetching codes on first reveal).
   async function onRosterClick(e) {
+    const printBtn = e.target.closest('.print-row-btn');
+    if (printBtn) { onPrintRow(printBtn.getAttribute('data-print-id')); return; }
     const copyBtn = e.target.closest('.copy-btn');
     if (copyBtn) { copyText(copyBtn.getAttribute('data-copy'), copyBtn); return; }
     const target = e.target.closest('[data-reveal-id]');
@@ -205,6 +208,21 @@
       .map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   }
 
+  // Gather one student's sheet data ({name, code, content}); needs ensureCodes() first.
+  // Returns null if the student has no code yet. Missing content is fine (identity-only sheet).
+  async function gatherStudent(r) {
+    const code = codesById[r.project_id];
+    if (!code) { return null; }
+    let content = '';
+    try {
+      const res = await SC.loadProject(code);
+      if (res.ok && res.data && res.data.found !== false) { content = res.data.content || ''; }
+    } catch {
+      /* leave content empty; the sheet still prints the identity block */
+    }
+    return { name: r.display_name, code: code, content: content };
+  }
+
   // Build the whole-class progress-pack PDF (one page per student): identity block +
   // play-at-home QR + their finished code. Fetches each student's content via load_project.
   async function onPrintFinal() {
@@ -217,18 +235,9 @@
       if (!(await ensureCodes())) { return; }
       const students = [];
       for (let i = 0; i < currentRoster.length; i++) {
-        const r = currentRoster[i];
-        const code = codesById[r.project_id];
-        if (!code) { continue; }
         btn.textContent = `Building… ${i + 1}/${currentRoster.length}`;
-        let content = '';
-        try {
-          const res = await SC.loadProject(code);
-          if (res.ok && res.data && res.data.found !== false) { content = res.data.content || ''; }
-        } catch {
-          /* leave content empty; the sheet still prints the identity block */
-        }
-        students.push({ name: r.display_name, code, content });
+        const s = await gatherStudent(currentRoster[i]);
+        if (s) { students.push(s); }
       }
       if (!students.length) { msg('No students to print.', 'err'); return; }
       const slug = (currentRoster[0] && currentRoster[0].project_slug) || 'pixel-game';
@@ -242,6 +251,28 @@
     } finally {
       btn.disabled = false;
       btn.textContent = prev;
+    }
+  }
+
+  // Reprint a single student's progress sheet (one-page PDF). Same content as the
+  // whole-class print, scoped to one row.
+  async function onPrintRow(projectId) {
+    if (!window.CoverSheet) { msg('Printing is unavailable (library failed to load).', 'err'); return; }
+    const r = currentRoster.find((x) => x.project_id === projectId);
+    if (!r) { return; }
+    try {
+      if (!(await ensureCodes())) { return; }
+      const s = await gatherStudent(r);
+      if (!s) { msg('No code for that student yet.', 'err'); return; }
+      const slug = r.project_slug || 'pixel-game';
+      const who = String(r.display_name || s.code).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      await window.CoverSheet.generateFinalSheets({
+        students: [s], projectId: slug, projectTitle: prettyTitle(slug),
+        filename: `${slug}-${who || 'student'}-progress.pdf`
+      });
+      msg(`Built a progress sheet for ${esc(r.display_name || s.code)}.`, 'ok');
+    } catch (e) {
+      msg('Could not build the PDF: ' + esc(e && e.message ? e.message : e), 'err');
     }
   }
 
