@@ -70,6 +70,18 @@ const api = {
   projectVersion: (code, version, opts) => rpc('project_version', { p_code: code, p_version: version }, opts),
 
   // Teacher
+  teacherClasses: (teacherCode, opts) => rpc('teacher_classes', { p_teacher_code: teacherCode }, opts),
+  createClass: (teacherCode, name, school, slug, opts) =>
+    rpc('create_class', {
+      p_teacher_code: teacherCode, p_name: name, p_school: school, p_project_slug: slug
+    }, opts),
+  // codes is a candidate pool; include a few extra beyond count so server-side collisions
+  // can be filled from spares in one round-trip. Returns { added: [...], remaining }.
+  addStudentsBulk: (teacherCode, classId, slug, count, codes, opts) =>
+    rpc('add_students_bulk', {
+      p_teacher_code: teacherCode, p_class_id: classId, p_project_slug: slug,
+      p_count: count, p_codes: codes
+    }, opts),
   teacherRoster: (teacherCode, opts) => rpc('teacher_roster', { p_teacher_code: teacherCode }, opts),
   appendStudent: (teacherCode, slug, displayName, studentCode, opts) =>
     rpc('append_student', {

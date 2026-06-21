@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Integration test for the Project Storage v2 RPCs against a live Supabase project.
 
-Drives the real plpgsql functions (0002_rpc.sql) end to end: append_student -> load ->
-save (incl. concurrency + size cap) -> history -> reprint -> mark_complete. The schema
-can only be validated against a running Postgres, so this is the source of truth for the
-RPC runtime (the migrations themselves only get syntax-checked offline).
+Drives the real plpgsql functions (0002_rpc.sql + 0003_teachers.sql) end to end:
+append_student -> load -> save (incl. concurrency + size cap) -> history -> reprint ->
+mark_complete, then the multi-class RPCs (teacher_classes, create_class, add_students_bulk,
+class-scoped roster). The schema can only be validated against a running Postgres, so this is
+the source of truth for the RPC runtime (the migrations themselves only get syntax-checked
+offline). Requires 0003 applied to the target DB.
 
 Config (a throwaway test class) comes from env vars, falling back to supabase/test-config.json:
   SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, SUPABASE_TEST_TEACHER_CODE, SUPABASE_TEST_PROJECT_SLUG
@@ -69,6 +71,20 @@ def rpc(cfg, fn, args, key=None):
             return r.status, parse(r.read().decode())
     except urllib.error.HTTPError as e:
         return e.code, parse(e.read().decode())
+
+
+def rest_delete(cfg, table, row_id):
+    """Service-role REST delete (bypasses RLS) for test cleanup. Returns True on success."""
+    req = urllib.request.Request(
+        f"{cfg['url']}/rest/v1/{table}?id=eq.{row_id}",
+        method="DELETE",
+        headers={"apikey": cfg["service"], "Authorization": "Bearer " + cfg["service"]},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return r.status in (200, 204)
+    except urllib.error.HTTPError:
+        return False
 
 
 PASS = 0
@@ -162,10 +178,43 @@ def main():
         _, res = rpc(cfg, "mark_complete", {"p_teacher_code": cfg["teacher"], "p_class_project_id": class_project_id})
         check("mark_complete ok", res.get("ok") is True, str(res))
 
+    # ---- multi-class RPCs (0003): teacher entity, class creation, bulk anonymous codes ----
+    _, res = rpc(cfg, "teacher_classes", {"p_teacher_code": cfg["teacher"]})
+    check("teacher_classes ok", res.get("ok") and isinstance(res.get("classes"), list), str(res)[:200])
+
+    _, res = rpc(cfg, "create_class", {
+        "p_teacher_code": cfg["teacher"], "p_name": "ITest Class " + rand[:6],
+        "p_school": None, "p_project_slug": cfg["slug"]})
+    check("create_class ok", res.get("ok") and res.get("class_id"), str(res))
+    new_class_id = res.get("class_id") if isinstance(res, dict) else None
+
+    # Pool of 5 candidates, ask for 3: server should land exactly 3 from the pool (the extras
+    # are spares for collisions).
+    bulk_pool = ["itbulk-" + rand[:6] + "-" + s for s in ("aaa", "bbb", "ccc", "ddd", "eee")]
+    _, res = rpc(cfg, "add_students_bulk", {
+        "p_teacher_code": cfg["teacher"], "p_class_id": new_class_id,
+        "p_project_slug": cfg["slug"], "p_count": 3, "p_codes": bulk_pool})
+    added = res.get("added", []) if res.get("ok") else []
+    check("add_students_bulk lands exactly count from the pool",
+          res.get("ok") and len(added) == 3 and set(added).issubset(bulk_pool), str(res))
+    check("add_students_bulk reports remaining capacity", res.get("remaining") == 197, str(res))
+
+    _, res = rpc(cfg, "teacher_roster", {"p_teacher_code": cfg["teacher"], "p_class_id": new_class_id})
+    roster = res.get("roster", []) if res.get("ok") else []
+    check("new class roster has 3 nameless students",
+          len(roster) == 3 and all(r.get("display_name") is None for r in roster), str(res)[:200])
+
+    _, res = rpc(cfg, "teacher_roster", {"p_teacher_code": "nope-not-a-teacher", "p_class_id": new_class_id})
+    check("class-scoped roster rejects a bad teacher code", res.get("ok") is False, str(res))
+
     # optional cleanup with service role
-    if cfg["service"] and project_id:
-        st, res = rpc(cfg, "delete_student", {"p_project_id": project_id}, key=cfg["service"])
-        check("cleanup delete_student", res.get("ok") is True, f"{st} {res}")
+    if cfg["service"]:
+        if project_id:
+            st, res = rpc(cfg, "delete_student", {"p_project_id": project_id}, key=cfg["service"])
+            check("cleanup delete_student", res.get("ok") is True, f"{st} {res}")
+        if new_class_id:
+            # Deleting the class cascades class_projects -> projects (the bulk students).
+            check("cleanup delete test class", rest_delete(cfg, "classes", new_class_id), "")
     else:
         print("  (no SUPABASE_SERVICE_KEY: leaving test rows in place)")
 
