@@ -12,7 +12,7 @@
     .dash h2 { margin: 0; font-size: 1.25rem; }
     .dash .muted { color: #6b7280; font-size: 0.9rem; }
     .dash .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 16px 0; }
-    .dash input[type=text], .dash input[type=number] { padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem; }
+    .dash input[type=text], .dash input[type=password], .dash input[type=number] { padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem; }
     .dash button { padding: 8px 14px; border: 0; border-radius: 6px; background: #2563eb; color: #fff; font-size: 0.95rem; cursor: pointer; }
     .dash button.secondary { background: #6b7280; }
     .dash button:disabled { opacity: 0.5; cursor: default; }
@@ -46,9 +46,15 @@
     <h1>Teacher Dashboard</h1>
     <p class="muted">Enter your teacher code to see your classes. Student codes stay hidden until you reveal them, so the dashboard is safe to show on a projector.</p>
 
-    <div class="row">
-      <input id="teacher-code" type="text" placeholder="teacher code" size="34" autocomplete="off" spellcheck="false">
+    <div id="login-row" class="row">
+      <input id="teacher-code" type="password" placeholder="teacher code" size="34" autocomplete="off" spellcheck="false">
       <button id="load-btn">Load classes</button>
+    </div>
+
+    <!-- Shown once loaded: the code is hidden so it is never on a projector. -->
+    <div id="session-row" class="row" style="display:none">
+      <span class="muted">Signed in. Your teacher code is hidden so it is safe to project.</span>
+      <button id="logout-btn" class="secondary">Log out</button>
     </div>
 
     <div id="status"></div>
@@ -80,7 +86,7 @@
         <strong id="roster-count"></strong>
         <button id="reveal-btn" class="secondary">Reveal all codes</button>
         <button id="refresh-btn" class="secondary">Refresh</button>
-        <button id="print-codes-btn" title="Print a Name + Code table to hand out in class (one or two pages)">🖨️ Print code table</button>
+        <button id="download-codes-btn" title="Download a Name + Code table (PDF) to print and hand out in class">⬇️ Download code table</button>
         <button id="print-final-btn" title="One PDF, one page per student: their code, a play-at-home QR, and their finished code">🖨️ Print progress sheets</button>
       </div>
       <table id="roster">
