@@ -192,9 +192,9 @@
         return String(s || 'class').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'class';
     }
 
-    // A compact Name + Code table for classroom handout, downloaded as a PDF. ~30 students fit
-    // on the first A4 page; it paginates after that. Blank names render as a write-on line so a
-    // teacher can pair codes to the class list by hand. rows: [{ name, code }].
+    // A Name + Code table for classroom handout, downloaded as a PDF, drawn as a boxed grid
+    // (~30 students per A4 page, then paginates). The Name cell is left empty for blank-name
+    // students so the teacher has the whole box to handwrite the name. rows: [{ name, code }].
     function generateCodeTable(opts) {
         const { className, school, rows, filename } = opts;
         if (!window.jspdf || !window.jspdf.jsPDF) throw new Error('jsPDF not loaded');
@@ -203,68 +203,81 @@
         const pageW = doc.internal.pageSize.getWidth();
         const pageH = doc.internal.pageSize.getHeight();
         const margin = 48;
-        const colNum = margin;
-        const colName = margin + 26;
-        const colCode = pageW * 0.56;
         const rowH = 22;
-        const bottom = pageH - margin;
+        const pad = 6;
+        const title = `${String(className || 'Class')} - Wavelet Login Codes`;
 
-        // Title + column headings; returns the y to start rows at. Drawn on every page.
-        function drawHeader() {
-            let y = margin;
+        // Vertical grid lines (column boundaries): left, after #, after Name, right.
+        const xLeft = margin;
+        const xName = margin + 30;
+        const xCode = pageW * 0.58;
+        const xRight = pageW - margin;
+        const tableTop = margin + 30;  // y where the grid starts, below the title block
+
+        // Title + optional school/count line. Drawn on every page.
+        function drawTitle() {
             doc.setTextColor(0);
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(16);
-            doc.text(String(className || 'Class'), margin, y);
-            y += 16;
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(10);
-            doc.setTextColor(110);
-            const sub = [school, `${rows.length} student${rows.length === 1 ? '' : 's'}`, 'Wavelet login codes']
-                .filter(Boolean).join('   •   ');
-            doc.text(sub, margin, y);
-            doc.setTextColor(0);
-            y += 20;
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(10);
-            doc.text('#', colNum, y);
-            doc.text('Name', colName, y);
-            doc.text('Code', colCode, y);
-            y += 5;
-            doc.setDrawColor(60);
-            doc.setLineWidth(1);
-            doc.line(margin, y, pageW - margin, y);
-            return y + 16;
+            doc.text(title, margin, margin);
+            const sub = [school, `${rows.length} student${rows.length === 1 ? '' : 's'}`].filter(Boolean).join('   •   ');
+            if (sub) {
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(10);
+                doc.setTextColor(110);
+                doc.text(sub, margin, margin + 15);
+                doc.setTextColor(0);
+            }
         }
 
-        let y = drawHeader();
-        for (let i = 0; i < rows.length; i++) {
-            if (y > bottom) {
-                doc.addPage();
-                y = drawHeader();
+        // Draw a boxed grid (header row + nData data rows) starting at tableTop.
+        function drawGrid(nData) {
+            const nLines = nData + 2;  // header row + data rows = nData + 1 cells -> nData + 2 lines
+            const gridBottom = tableTop + (nData + 1) * rowH;
+            doc.setDrawColor(150);
+            doc.setLineWidth(0.6);
+            for (let i = 0; i < nLines; i++) {
+                const yy = tableTop + i * rowH;
+                doc.line(xLeft, yy, xRight, yy);
             }
-            const r = rows[i];
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(9);
-            doc.setTextColor(120);
-            doc.text(String(i + 1), colNum, y);
-            doc.setFontSize(11);
+            [xLeft, xName, xCode, xRight].forEach((x) => doc.line(x, tableTop, x, gridBottom));
+            // Header labels (in the first cell row).
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
             doc.setTextColor(0);
-            const name = (r.name || '').trim();
-            if (name) {
-                doc.text(name, colName, y);
-            } else {
-                doc.setDrawColor(170);
-                doc.setLineWidth(0.5);
-                doc.line(colName, y + 2, colCode - 16, y + 2);  // write-on line
-            }
-            doc.setFont('courier', 'bold');
-            doc.text(String(r.code || ''), colCode, y);
-            doc.setDrawColor(225);
-            doc.setLineWidth(0.5);
-            doc.line(margin, y + 6, pageW - margin, y + 6);  // light row separator
-            y += rowH;
+            const hy = tableTop + rowH - 7;
+            doc.text('#', xLeft + pad, hy);
+            doc.text('Name', xName + pad, hy);
+            doc.text('Code', xCode + pad, hy);
         }
+
+        const availRows = Math.max(1, Math.floor((pageH - margin - tableTop) / rowH) - 1);
+        const total = rows.length;
+        let idx = 0;
+        let page = 0;
+        do {
+            if (page > 0) { doc.addPage(); }
+            drawTitle();
+            const pageRows = rows.slice(idx, idx + availRows);
+            drawGrid(pageRows.length);
+            for (let i = 0; i < pageRows.length; i++) {
+                const r = pageRows[i];
+                const ty = tableTop + (i + 2) * rowH - 7;  // baseline in the (i+1)-th data row
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(9);
+                doc.setTextColor(120);
+                doc.text(String(idx + i + 1), xLeft + pad, ty);
+                doc.setFontSize(11);
+                doc.setTextColor(0);
+                const name = (r.name || '').trim();
+                if (name) { doc.text(name, xName + pad, ty); }  // blank names: leave the box empty
+                doc.setFont('courier', 'bold');
+                doc.text(String(r.code || ''), xCode + pad, ty);
+            }
+            idx += availRows;
+            page++;
+        } while (idx < total);
+
         doc.save(filename || `${fileSlug(className)}-codes.pdf`);
     }
 
