@@ -25,6 +25,8 @@
   let currentRoster = [];     // last rendered roster
   let codesById = null;       // project_id -> student_code, fetched lazily via reprint
   let revealedIds = new Set();// which rows currently show their code
+  let projectIndex = null;    // projects/index.json (slug -> file), fetched once
+  const projectBaselines = {};// project_slug -> starter meaningful line count (baseline), or null
 
   function msg(text, kind) {
     statusBox.innerHTML = text ? `<div class="msg ${kind || ''}">${text}</div>` : '';
@@ -218,6 +220,49 @@
     return n ? esc(n) : '<span class="muted-name">(no name)</span>';
   }
 
+  // Net "lines you wrote" for a student: their latest meaningful line count (from the roster
+  // RPC) minus the project's starter baseline (computed locally, same definition as the
+  // student History view). Null when we don't have both numbers yet.
+  function netLines(r) {
+    const baseline = projectBaselines[r.project_slug];
+    if (typeof r.line_count !== 'number' || typeof baseline !== 'number') { return null; }
+    return Math.max(0, r.line_count - baseline);
+  }
+
+  function netCell(r) {
+    const n = netLines(r);
+    return n == null ? '<span class="muted-name">-</span>' : `+${n}`;
+  }
+
+  // The project's starter baseline (meaningful lines), computed once per slug by fetching the
+  // project definition and running the shared assembler. Cached; null if it can't be loaded.
+  async function baselineFor(slug) {
+    if (slug in projectBaselines) { return projectBaselines[slug]; }
+    let val = null;
+    try {
+      if (!projectIndex) {
+        const ir = await fetch('projects/index.json');
+        projectIndex = ((await ir.json()).projects) || [];
+      }
+      const entry = projectIndex.find((p) => p.id === slug);
+      if (entry && window.ProjectSource) {
+        const dr = await fetch(`projects/${entry.file}`);
+        val = window.ProjectSource.starterMeaningfulLines(await dr.json());
+      }
+    } catch {
+      val = null;
+    }
+    projectBaselines[slug] = val;
+    return val;
+  }
+
+  // Class heading carries the project name(s), since a class is one project per the model.
+  function updateClassHeading(slugs) {
+    const base = currentClass.school ? `${currentClass.name} (${currentClass.school})` : currentClass.name;
+    const proj = (slugs || []).map(prettyTitle).join(', ');
+    el('class-heading').textContent = proj ? `${base} · ${proj}` : base;
+  }
+
   function renderRoster(roster) {
     currentRoster = roster;
     rosterCount.textContent = `${roster.length} student${roster.length === 1 ? '' : 's'}`;
@@ -233,7 +278,7 @@
       return `<tr>
         <td>${i + 1}</td>
         <td>${nameCell(r.display_name)}</td>
-        <td>${esc(r.project_slug)}</td>
+        <td>${netCell(r)}</td>
         <td>${esc(r.version)}</td>
         <td>${esc(fmtTime(r.last_saved_at))}</td>
         <td>${status}</td>
@@ -266,7 +311,13 @@
       return false;
     }
     msg('');
-    renderRoster(res.data.roster || []);
+    const roster = res.data.roster || [];
+    // Load the starter baseline for each project in the class (usually one), then render the
+    // net "lines you wrote" and put the project name in the heading.
+    const slugs = [...new Set(roster.map((r) => r.project_slug).filter(Boolean))];
+    await Promise.all(slugs.map(baselineFor));
+    updateClassHeading(slugs);
+    renderRoster(roster);
     return true;
   }
 

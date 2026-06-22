@@ -174,6 +174,9 @@ def main():
     rids = [r.get("project_id") for r in res.get("roster", [])] if res.get("ok") else []
     check("roster lists the student", project_id in rids, str(res)[:200])
     check("roster leaks no codes", res.get("ok") and all("student_code" not in r for r in res.get("roster", [])), "")
+    # roster carries each student's latest meaningful line count (v4 content = 1 meaningful line)
+    row = next((r for r in res.get("roster", []) if r.get("project_id") == project_id), None)
+    check("roster row has meaningful line_count", row is not None and row.get("line_count") == 1, str(row))
 
     # reprint reveals our code (decrypted with the teacher code)
     _, res = rpc(cfg, "reprint_codes", {"p_teacher_code": cfg["teacher"]})
