@@ -468,15 +468,17 @@
 
   // ── Printing ────────────────────────────────────────────────────────────
 
-  // Download a compact Name + Code table (PDF) for classroom handout: class name header,
-  // one row per student, blank names rendered as a write-on line. ~30 fit on a page.
-  async function onDownloadCodeTable() {
+  // Download a Name + Code table (PDF) for classroom handout. scale 2 makes big strips that
+  // are easy to cut into one slip per student.
+  async function onDownloadCodeTable(scale) {
     if (!currentClass || !currentRoster.length) { msg('Add some students first.', 'err'); return; }
     if (!window.CoverSheet) { msg('Download is unavailable (library failed to load).', 'err'); return; }
     if (!(await ensureCodes())) { return; }
     const rows = currentRoster.map((r) => ({ name: r.display_name || '', code: codesById[r.project_id] || '' }));
     try {
-      window.CoverSheet.generateCodeTable({ className: currentClass.name, school: currentClass.school, rows });
+      window.CoverSheet.generateCodeTable({
+        className: currentClass.name, school: currentClass.school, rows, scale: scale || 1
+      });
     } catch (e) {
       msg('Could not build the PDF: ' + esc(e && e.message ? e.message : e), 'err');
     }
@@ -539,7 +541,8 @@
   el('refresh-btn').addEventListener('click', loadRoster);
   el('add-btn').addEventListener('click', onAdd);
   el('bulk-btn').addEventListener('click', onBulkAdd);
-  el('download-codes-btn').addEventListener('click', onDownloadCodeTable);
+  el('download-codes-btn').addEventListener('click', () => onDownloadCodeTable(1));
+  el('download-strips-btn').addEventListener('click', () => onDownloadCodeTable(2));
   el('print-final-btn').addEventListener('click', onPrintFinal);
   rosterBody.addEventListener('click', onRosterClick);
 })();
