@@ -1730,6 +1730,14 @@ async function importOldFile() {
         if (!loadFileIntoEditors(text, name)) return;
         markDirty();                        // -> serverCtl.noteEdit(), and unblocks the skip
         if (serverCtl) serverCtl.saveNow(); // persist now rather than waiting for the debounce
+        showConfirmModal({
+            icon: '📂',
+            title: 'File imported',
+            message: serverCtl
+                ? `"${name}" is now loaded and saving to your project.`
+                : `"${name}" is now loaded.`,
+            button: 'OK'
+        });
     };
     if (SUPPORTS_FSA) {
         let handle;
@@ -1891,6 +1899,56 @@ function openWithProject(overlay, code, data) {
     const histBtn = document.getElementById('history-btn');
     if (histBtn) histBtn.style.display = '';
     overlay.remove();
+    showLoginIndicator(code);
+    // An explicit click-through confirmation that they're in and saving (clearer than the
+    // save butterbar, which fades). Reassures the student which code they're working under.
+    showConfirmModal({
+        icon: '✅',
+        title: "You're logged in!",
+        message: 'Your work saves automatically as you go. You are working under the code:',
+        code: code,
+        button: 'Start coding'
+    });
+}
+
+// Persistent header chip showing the student is logged in under a code (near the save pill,
+// so it's clear work is being saved to that code, not a local file).
+function showLoginIndicator(code) {
+    const chip = document.getElementById('login-status');
+    if (!chip) return;
+    chip.textContent = '🔑 ' + code;
+    chip.style.display = '';
+}
+
+// A click-through confirmation modal for moments that deserve an explicit "got it" (login
+// success, file import), clearer than the auto-fading save butterbar. opts: { icon, title,
+// message, code, button }. All text is set via textContent (no injection from the code/name).
+function showConfirmModal(opts) {
+    const o = opts || {};
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML =
+        '<div class="modal-card" role="dialog" aria-modal="true">' +
+        '  <div class="modal-icon"></div>' +
+        '  <h2 class="modal-title"></h2>' +
+        '  <p class="modal-message"></p>' +
+        '  <div class="modal-code"></div>' +
+        '  <button class="modal-ok"></button>' +
+        '</div>';
+    const iconEl = overlay.querySelector('.modal-icon');
+    if (o.icon) { iconEl.textContent = o.icon; } else { iconEl.style.display = 'none'; }
+    overlay.querySelector('.modal-title').textContent = o.title || '';
+    overlay.querySelector('.modal-message').textContent = o.message || '';
+    const codeEl = overlay.querySelector('.modal-code');
+    if (o.code) { codeEl.textContent = o.code; } else { codeEl.style.display = 'none'; }
+    const okBtn = overlay.querySelector('.modal-ok');
+    okBtn.textContent = o.button || 'OK';
+    document.body.appendChild(overlay);
+    const close = () => overlay.remove();
+    okBtn.addEventListener('click', close);
+    overlay.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === 'Escape') { close(); } });
+    okBtn.focus();
+    return overlay;
 }
 
 // ── History / restore (student-facing version browser, §6) ──────────────────

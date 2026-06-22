@@ -3085,6 +3085,23 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
 .login-card .confirm-name { font-size: 1.4rem; font-weight: 700; margin: 8px 0 18px; }
 .login-card .confirm-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 .login-card button.secondary { background: #6b7280; }
+
+/* Project Storage v2 — logged-in header chip + click-through confirmation modal */
+.login-status { font-size: 0.85rem; font-weight: 600; padding: 4px 10px; border-radius: 999px;
+    background: #e0e7ff; color: #3730a3; font-family: monospace; white-space: nowrap; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); display: flex;
+    align-items: center; justify-content: center; z-index: 1200; }
+.modal-card { background: #fff; padding: 28px 32px; border-radius: 12px; max-width: 380px; width: 90%;
+    text-align: center; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); }
+.modal-card .modal-icon { font-size: 2.4rem; line-height: 1; margin-bottom: 6px; }
+.modal-card .modal-title { margin: 0 0 8px; font-size: 1.3rem; }
+.modal-card .modal-message { margin: 0 0 12px; color: #374151; }
+.modal-card .modal-code { font-family: monospace; font-size: 1.25rem; font-weight: 700;
+    background: #eef2ff; color: #3730a3; padding: 8px 12px; border-radius: 8px; margin: 0 0 16px;
+    user-select: all; word-break: break-all; }
+.modal-card .modal-ok { padding: 10px 24px; background: #2563eb; color: #fff; border: 0;
+    border-radius: 8px; font-size: 1rem; cursor: pointer; }
+
 /* Project Storage v2 — history / restore */
 .history-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); display: flex;
     align-items: center; justify-content: center; z-index: 1000; }
