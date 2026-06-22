@@ -6,7 +6,7 @@ append_student -> load -> save (incl. concurrency + size cap) -> history -> repr
 mark_complete, then the multi-class RPCs (teacher_classes, create_class, add_students_bulk,
 class-scoped roster). The schema can only be validated against a running Postgres, so this is
 the source of truth for the RPC runtime (the migrations themselves only get syntax-checked
-offline). Requires 0003 applied to the target DB.
+offline). Requires migrations 0002-0006 applied to the target DB.
 
 Config (a throwaway test class) comes from env vars, falling back to supabase/test-config.json:
   SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, SUPABASE_TEST_TEACHER_CODE, SUPABASE_TEST_PROJECT_SLUG
@@ -114,9 +114,19 @@ def main():
     student = os.environ.get("SUPABASE_TEST_STUDENT_CODE", "itest-" + rand)
     name = "ITest " + rand[:6]
 
-    # append_student
+    # The teacher's earliest class (teacher_classes orders by created_at). All the class-scoped
+    # teacher RPCs below take this class_id.
+    _, res = rpc(cfg, "teacher_classes", {"p_teacher_code": cfg["teacher"]})
+    classes = res.get("classes", []) if isinstance(res, dict) and res.get("ok") else []
+    check("teacher_classes returns a class to test against", len(classes) >= 1, str(res)[:200])
+    if not classes:
+        print(f"\nsupabase-itest: {PASS} passed, {FAIL} failed")
+        return 1
+    class_id = classes[0]["class_id"]
+
+    # append_student (class-scoped)
     st, res = rpc(cfg, "append_student", {
-        "p_teacher_code": cfg["teacher"], "p_project_slug": cfg["slug"],
+        "p_teacher_code": cfg["teacher"], "p_class_id": class_id, "p_project_slug": cfg["slug"],
         "p_display_name": name, "p_student_code": student})
     check("append_student ok", st == 200 and res and res.get("ok"), f"{st} {res}")
     project_id = res.get("project_id") if isinstance(res, dict) else None
@@ -165,12 +175,12 @@ def main():
     _, res = rpc(cfg, "save_project", {"p_code": "definitely-not-a-real-code-xyz", "p_content": "x", "p_base_version": 0, "p_session": "s1"})
     check("unknown code rejected", res.get("ok") is False and res.get("error") == "unknown_code", str(res))
 
-    # bad teacher code rejected
-    _, res = rpc(cfg, "teacher_roster", {"p_teacher_code": "nope-not-a-teacher"})
+    # bad teacher code rejected (class-scoped: ownership check fails)
+    _, res = rpc(cfg, "teacher_roster", {"p_teacher_code": "nope-not-a-teacher", "p_class_id": class_id})
     check("bad teacher code rejected", res.get("ok") is False and res.get("error") == "bad_teacher_code", str(res))
 
     # roster includes our student (no codes leaked)
-    _, res = rpc(cfg, "teacher_roster", {"p_teacher_code": cfg["teacher"]})
+    _, res = rpc(cfg, "teacher_roster", {"p_teacher_code": cfg["teacher"], "p_class_id": class_id})
     rids = [r.get("project_id") for r in res.get("roster", [])] if res.get("ok") else []
     check("roster lists the student", project_id in rids, str(res)[:200])
     check("roster leaks no codes", res.get("ok") and all("student_code" not in r for r in res.get("roster", [])), "")
@@ -179,7 +189,7 @@ def main():
     check("roster row has meaningful line_count", row is not None and row.get("line_count") == 1, str(row))
 
     # reprint reveals our code (decrypted with the teacher code)
-    _, res = rpc(cfg, "reprint_codes", {"p_teacher_code": cfg["teacher"]})
+    _, res = rpc(cfg, "reprint_codes", {"p_teacher_code": cfg["teacher"], "p_class_id": class_id})
     codes = {c.get("project_id"): c.get("student_code") for c in res.get("cards", [])} if res.get("ok") else {}
     check("reprint returns our plaintext code", codes.get(project_id) == student, str(codes.get(project_id)))
 
