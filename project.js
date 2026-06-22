@@ -30,7 +30,7 @@ let setupEditor = null; // CodeMirror for the editable preamble
 let currentFileHandle = null;
 let serverCtl = null; // Project Storage v2 controller, set by initServerStorage() when serverStorage is on
 let serverCode = null; // the student's code, for history lookups
-let starterFileLines = 0; // line count of the pristine starter file, captured at init; history shows lines added beyond it
+let starterFileLines = 0; // meaningful line count of the pristine starter file, captured at init; history shows meaningful lines added beyond it
 let saveBarTimer = null; // auto-hide timer for the "✓ Saved" butterbar state
 let dirty = false;
 let savedFlashTimer = null;
@@ -77,8 +77,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         // otherwise they render blank until first focus.
         initTaskEditors();
         // Capture the pristine starter file size before any saved work loads, so the
-        // History view can show "lines added beyond the starter" (§6).
-        starterFileLines = assembleFileForDisk().split('\n').length;
+        // History view can show "lines added beyond the starter" (§6). Counts MEANINGFUL
+        // lines only (see meaningfulLineCount), matching the server's per-snapshot count.
+        starterFileLines = meaningfulLineCount(assembleFileForDisk());
         restoreSelfCheckPills();
     } catch (err) {
         console.error('Project failed to load:', err);
@@ -1919,14 +1920,24 @@ function fmtHistoryTime(iso) {
     return d.toLocaleString();
 }
 
+// Count "meaningful" code lines: non-blank, not a comment-only (#...) line, not a bare `pass`.
+// Mirrors meaningful_line_count() in supabase/migrations/0004_meaningful_lines.sql; keep the
+// two in sync so the server's per-snapshot count and this starter-file baseline match.
+function meaningfulLineCount(content) {
+    return String(content || '').split('\n').filter((line) => {
+        const t = line.trim();
+        return t !== '' && t[0] !== '#' && t !== 'pass';
+    }).length;
+}
+
 function showHistoryOverlay(versions, baseline) {
     baseline = baseline || 0;
     const overlay = document.createElement('div');
     overlay.className = 'history-overlay';
     const rows = versions.length
         ? versions.map(v => {
-            // The server returns each version's full line count; subtract the starter
-            // file size to show how many lines the student has added beyond it.
+            // The server returns each version's meaningful line count; subtract the starter
+            // file's meaningful count to show how many real lines the student added beyond it.
             let lines = '';
             if (typeof v.line_count === 'number') {
                 const n = Math.max(0, v.line_count - baseline);
