@@ -154,6 +154,13 @@ def main():
     _, res = rpc(cfg, "project_version", {"p_code": student, "p_version": 1})
     check("fetch v1 snapshot content", res.get("found") and res.get("content") == "print('hi')", str(res))
 
+    # meaningful line count: blank lines, comment-only lines, and bare `pass` are not counted.
+    _, res = rpc(cfg, "save_project", {"p_code": student, "p_content": "# a comment\npass\n\nprint('real')", "p_base_version": 3, "p_session": "s1", "p_is_milestone": True})
+    check("save v4 (mixed content) ok", res.get("ok") and res.get("version") == 4, str(res))
+    _, res = rpc(cfg, "project_history", {"p_code": student})
+    v4 = next((v for v in res.get("versions", []) if v.get("version") == 4), None)
+    check("history counts only meaningful lines (1 of 4)", v4 is not None and v4.get("line_count") == 1, str(v4))
+
     # unknown code rejected
     _, res = rpc(cfg, "save_project", {"p_code": "definitely-not-a-real-code-xyz", "p_content": "x", "p_base_version": 0, "p_session": "s1"})
     check("unknown code rejected", res.get("ok") is False and res.get("error") == "unknown_code", str(res))

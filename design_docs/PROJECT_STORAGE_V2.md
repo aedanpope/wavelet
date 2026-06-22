@@ -445,7 +445,7 @@ Living checklist so any session can resume. Convention: **one PR per step, squas
 
 ### Status at a glance
 - ✅ **Step 1: `code-words` access-code library** (merged, PR #36).
-- ✅ **Step 2: Supabase schema + RPC migrations** (merged, PR #38; validated 16/16 against the live project). Later folded the full-line-count change into `project_history` (PR #43), so re-run `0002_rpc.sql` to apply.
+- ✅ **Step 2: Supabase schema + RPC migrations** (merged, PR #38; validated 16/16 against the live project). Migrations are now **append-only** (re-running `0002` would clobber `0003`'s compat shims): `0003_teachers.sql` (teacher entity + multi-class) and `0004_meaningful_lines.sql` (redefine `project_history`'s `line_count` as **meaningful** lines: non-blank, not comment-only `#`, not bare `pass`; the client's starter baseline in `project.js` uses the same definition) layer on top.
 - ✅ **Step 3: Frontend storage client + autosave + code-entry login** (merged): RPC client + `config.js` (PR #40), hard-source-of-truth controller `project-storage.js` (PR #41), project-page wiring flag-gated behind `WaveletConfig.serverStorage` + `?storage=server` (PR #42), student history/restore UI (PR #43).
 - ✅ **Step 4: Teacher dashboard** (merged with the client, PR #40): roster, reveal/hide + copy codes, append student.
 - 🔁 **Refactor (non-feature): split `project.js`** (PR #44, **open, paused**): extracted the server-mode UI into `project-server.js`. First slice of breaking up the ~2.4k-line `project.js` by concern. Paused mid-flight; CI was last green on the lint fix.
