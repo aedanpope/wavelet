@@ -9,6 +9,8 @@
 
   const el = (id) => document.getElementById(id);
   const teacherInput = el('teacher-code');
+  const loginRow = el('login-row');
+  const sessionRow = el('session-row');
   const statusBox = el('status');
   const classesWrap = el('classes-wrap');
   const rosterWrap = el('roster-wrap');
@@ -83,6 +85,31 @@
 
   // ── View switching ──────────────────────────────────────────────────────
 
+  // Once signed in, hide the teacher-code field (so it is never on a projector) and offer
+  // Log out instead.
+  function setSignedIn(on) {
+    loginRow.style.display = on ? 'none' : '';
+    sessionRow.style.display = on ? '' : 'none';
+  }
+
+  // Reset the session: there is no server state to clear, just wipe what is in memory and the
+  // code field, and return to the login view.
+  function logout() {
+    teacherCode = null;
+    teacherInfo = null;
+    classes = [];
+    currentClass = null;
+    currentRoster = [];
+    codesById = null;
+    revealedIds = new Set();
+    teacherInput.value = '';
+    classesWrap.style.display = 'none';
+    rosterWrap.style.display = 'none';
+    setSignedIn(false);
+    msg('');
+    teacherInput.focus();
+  }
+
   function showClasses() {
     currentClass = null;
     rosterWrap.style.display = 'none';
@@ -121,11 +148,13 @@
     if (!res.ok || !res.data || res.data.ok === false) {
       const err = res.data && res.data.error ? res.data.error : `HTTP ${res.status}`;
       msg(err === 'bad_teacher_code' ? 'That teacher code was not recognised.' : `Error: ${esc(err)}`, 'err');
+      setSignedIn(false);
       classesWrap.style.display = 'none';
       rosterWrap.style.display = 'none';
       return false;
     }
     msg('');
+    setSignedIn(true);  // logged in: hide the code field, show Log out
     teacherInfo = res.data.teacher || {};
     classes = res.data.classes || [];
     renderClassList();
@@ -473,6 +502,7 @@
 
   el('load-btn').addEventListener('click', onLoad);
   teacherInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { onLoad(); } });
+  el('logout-btn').addEventListener('click', logout);
   el('create-class-btn').addEventListener('click', onCreateClass);
   el('class-list').addEventListener('click', (e) => {
     const card = e.target.closest('[data-class-id]');

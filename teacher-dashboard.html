@@ -46,9 +46,15 @@
     <h1>Teacher Dashboard</h1>
     <p class="muted">Enter your teacher code to see your classes. Student codes stay hidden until you reveal them, so the dashboard is safe to show on a projector.</p>
 
-    <div class="row">
-      <input id="teacher-code" type="text" placeholder="teacher code" size="34" autocomplete="off" spellcheck="false">
+    <div id="login-row" class="row">
+      <input id="teacher-code" type="password" placeholder="teacher code" size="34" autocomplete="off" spellcheck="false">
       <button id="load-btn">Load classes</button>
+    </div>
+
+    <!-- Shown once loaded: the code is hidden so it is never on a projector. -->
+    <div id="session-row" class="row" style="display:none">
+      <span class="muted">Signed in. Your teacher code is hidden so it is safe to project.</span>
+      <button id="logout-btn" class="secondary">Log out</button>
     </div>
 
     <div id="status"></div>
