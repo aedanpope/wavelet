@@ -417,45 +417,18 @@
 
   // ── Printing ────────────────────────────────────────────────────────────
 
-  // A compact Name + Code table for classroom handout (one or two pages). Opens a print
-  // window; blank names render as a write-on line so a teacher can pair codes to the class
-  // list by hand.
-  function openCodeTablePrint(className, school, rows) {
-    const w = window.open('', '_blank');
-    if (!w) { msg('Pop-up blocked. Allow pop-ups for this site to print the code table.', 'err'); return; }
-    const tbody = rows.map((r, i) => {
-      const name = (r.name || '').trim();
-      const nameCellHtml = name ? esc(name) : '<span class="blank"></span>';
-      return `<tr><td class="n">${i + 1}</td><td>${nameCellHtml}</td><td class="code">${esc(r.code)}</td></tr>`;
-    }).join('');
-    const subParts = [school, `${rows.length} student${rows.length === 1 ? '' : 's'}`, 'Wavelet login codes'];
-    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${esc(className)} codes</title>
-<style>
-  body { font-family: Arial, Helvetica, sans-serif; color: #111; margin: 24px; }
-  h1 { font-size: 18px; margin: 0 0 2px; }
-  .sub { color: #555; font-size: 12px; margin: 0 0 12px; }
-  table { width: 100%; border-collapse: collapse; }
-  th, td { text-align: left; padding: 5px 8px; border-bottom: 1px solid #ccc; font-size: 13px; }
-  th { border-bottom: 2px solid #333; }
-  td.n { width: 28px; color: #777; }
-  td.code { font-family: 'Courier New', monospace; font-weight: bold; white-space: nowrap; }
-  .blank { display: inline-block; border-bottom: 1px solid #aaa; width: 150px; height: 1em; }
-  @media print { body { margin: 12mm; } }
-</style></head><body>
-  <h1>${esc(className)}</h1>
-  <p class="sub">${esc(subParts.filter(Boolean).join(' • '))}</p>
-  <table><thead><tr><th>#</th><th>Name</th><th>Code</th></tr></thead><tbody>${tbody}</tbody></table>
-  <script>window.onload = function () { window.print(); };</script>
-</body></html>`;
-    w.document.write(html);
-    w.document.close();
-  }
-
-  async function onPrintCodeTable() {
+  // Download a compact Name + Code table (PDF) for classroom handout: class name header,
+  // one row per student, blank names rendered as a write-on line. ~30 fit on a page.
+  async function onDownloadCodeTable() {
     if (!currentClass || !currentRoster.length) { msg('Add some students first.', 'err'); return; }
+    if (!window.CoverSheet) { msg('Download is unavailable (library failed to load).', 'err'); return; }
     if (!(await ensureCodes())) { return; }
     const rows = currentRoster.map((r) => ({ name: r.display_name || '', code: codesById[r.project_id] || '' }));
-    openCodeTablePrint(currentClass.name, currentClass.school, rows);
+    try {
+      window.CoverSheet.generateCodeTable({ className: currentClass.name, school: currentClass.school, rows });
+    } catch (e) {
+      msg('Could not build the PDF: ' + esc(e && e.message ? e.message : e), 'err');
+    }
   }
 
   // Build the whole-class progress-pack PDF (one page per student): identity block +
@@ -515,7 +488,7 @@
   el('refresh-btn').addEventListener('click', loadRoster);
   el('add-btn').addEventListener('click', onAdd);
   el('bulk-btn').addEventListener('click', onBulkAdd);
-  el('print-codes-btn').addEventListener('click', onPrintCodeTable);
+  el('download-codes-btn').addEventListener('click', onDownloadCodeTable);
   el('print-final-btn').addEventListener('click', onPrintFinal);
   rosterBody.addEventListener('click', onRosterClick);
 })();

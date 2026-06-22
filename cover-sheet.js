@@ -187,10 +187,91 @@
         doc.save(filename || `${projectId}-progress-sheets.pdf`);
     }
 
+    // Filename-safe slug from a class name ("5B Room 12" -> "5b-room-12").
+    function fileSlug(s) {
+        return String(s || 'class').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'class';
+    }
+
+    // A compact Name + Code table for classroom handout, downloaded as a PDF. ~30 students fit
+    // on the first A4 page; it paginates after that. Blank names render as a write-on line so a
+    // teacher can pair codes to the class list by hand. rows: [{ name, code }].
+    function generateCodeTable(opts) {
+        const { className, school, rows, filename } = opts;
+        if (!window.jspdf || !window.jspdf.jsPDF) throw new Error('jsPDF not loaded');
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+        const pageW = doc.internal.pageSize.getWidth();
+        const pageH = doc.internal.pageSize.getHeight();
+        const margin = 48;
+        const colNum = margin;
+        const colName = margin + 26;
+        const colCode = pageW * 0.56;
+        const rowH = 22;
+        const bottom = pageH - margin;
+
+        // Title + column headings; returns the y to start rows at. Drawn on every page.
+        function drawHeader() {
+            let y = margin;
+            doc.setTextColor(0);
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(16);
+            doc.text(String(className || 'Class'), margin, y);
+            y += 16;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.setTextColor(110);
+            const sub = [school, `${rows.length} student${rows.length === 1 ? '' : 's'}`, 'Wavelet login codes']
+                .filter(Boolean).join('   •   ');
+            doc.text(sub, margin, y);
+            doc.setTextColor(0);
+            y += 20;
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.text('#', colNum, y);
+            doc.text('Name', colName, y);
+            doc.text('Code', colCode, y);
+            y += 5;
+            doc.setDrawColor(60);
+            doc.setLineWidth(1);
+            doc.line(margin, y, pageW - margin, y);
+            return y + 16;
+        }
+
+        let y = drawHeader();
+        for (let i = 0; i < rows.length; i++) {
+            if (y > bottom) {
+                doc.addPage();
+                y = drawHeader();
+            }
+            const r = rows[i];
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(120);
+            doc.text(String(i + 1), colNum, y);
+            doc.setFontSize(11);
+            doc.setTextColor(0);
+            const name = (r.name || '').trim();
+            if (name) {
+                doc.text(name, colName, y);
+            } else {
+                doc.setDrawColor(170);
+                doc.setLineWidth(0.5);
+                doc.line(colName, y + 2, colCode - 16, y + 2);  // write-on line
+            }
+            doc.setFont('courier', 'bold');
+            doc.text(String(r.code || ''), colCode, y);
+            doc.setDrawColor(225);
+            doc.setLineWidth(0.5);
+            doc.line(margin, y + 6, pageW - margin, y + 6);  // light row separator
+            y += rowH;
+        }
+        doc.save(filename || `${fileSlug(className)}-codes.pdf`);
+    }
+
     const api = {
         buildProjectUrl, buildShortUrl, displayUrl, sheetTitle,
         fitCodeFontSize, linesThatFit, cropCodeLines, clipLine,
-        generateFinalSheets
+        generateFinalSheets, generateCodeTable
     };
 
     if (typeof module !== 'undefined' && module.exports) module.exports = api;
