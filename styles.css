@@ -3101,6 +3101,8 @@ body.stage-fullscreen-active .project-stage--fullscreen .stage-fullscreen-btn:ho
     user-select: all; word-break: break-all; }
 .modal-card .modal-ok { padding: 10px 24px; background: #2563eb; color: #fff; border: 0;
     border-radius: 8px; font-size: 1rem; cursor: pointer; }
+.modal-card .modal-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.modal-card .modal-ok.secondary { background: #6b7280; }
 
 /* Project Storage v2 — history / restore */
 .history-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); display: flex;
