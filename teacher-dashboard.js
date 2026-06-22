@@ -99,7 +99,7 @@
   function renderClassList() {
     teacherInfo = teacherInfo || {};
     const who = teacherInfo.name || 'Your classes';
-    el('teacher-heading').textContent = teacherInfo.school ? `${who} — ${teacherInfo.school}` : who;
+    el('teacher-heading').textContent = teacherInfo.school ? `${who} (${teacherInfo.school})` : who;
     if (!classes.length) {
       el('class-list').innerHTML = '<div class="empty">No classes yet. Create one below.</div>';
       return;
@@ -173,7 +173,7 @@
     currentClass = cls;
     codesById = null;
     revealedIds = new Set();
-    el('class-heading').textContent = cls.school ? `${cls.name} — ${cls.school}` : cls.name;
+    el('class-heading').textContent = cls.school ? `${cls.name} (${cls.school})` : cls.name;
     el('add-result').innerHTML = '';
     el('bulk-result').innerHTML = '';
     showRoster();
@@ -400,7 +400,7 @@
       return `<tr><td class="n">${i + 1}</td><td>${nameCellHtml}</td><td class="code">${esc(r.code)}</td></tr>`;
     }).join('');
     const subParts = [school, `${rows.length} student${rows.length === 1 ? '' : 's'}`, 'Wavelet login codes'];
-    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${esc(className)} — codes</title>
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${esc(className)} codes</title>
 <style>
   body { font-family: Arial, Helvetica, sans-serif; color: #111; margin: 24px; }
   h1 { font-size: 18px; margin: 0 0 2px; }
