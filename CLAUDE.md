@@ -46,6 +46,12 @@ npm run test:input-system       # input system tests
 
 - **Pure-logic JS tests can still be run locally via embedded V8**: `pip install mini-racer` then `python3 scripts/run-js-tests.py <name>-test.js`. This runs the real test file (e.g. `code-words-test.js`, `error-handler-test.js`, `input-system-test.js`) and exits non-zero on failure. Prefer this for fast feedback before pushing. It cannot run tests that need a real Node environment, namely `validation-test.js` (loads Pyodide) and `homepage-basic-test.js` (uses `fs`).
 - **For the full suite (and as the source of truth):** open a PR and `subscribe_pr_activity` to it. GitHub Actions runs `npm run test:all` (lint + every `*-test.js`) on Node on each push, and results come back as webhook events. Use this instead of claiming "tests should pass" without evidence.
+- **`scripts/supabase-itest.py` (live-DB integration test):** the user runs this on their own machine (Windows, Git Bash, `python`). Whenever asking them to run it, ALWAYS give the ready-to-paste Git Bash commands to check out the relevant PR branch first and then run it:
+  ```bash
+  git fetch origin <branch> && git checkout <branch> && git pull origin <branch>
+  python scripts/supabase-itest.py
+  ```
+  (Their Supabase config is already in `supabase/test-config.json`, so no env vars needed.)
 
 ### Deployment
 ```bash
