@@ -55,16 +55,31 @@ check('projectHistory', fnOf(g) === 'project_history' && body(g).p_code === 'a-b
 g = capture((o) => SC.projectVersion('a-b-c', 5, o));
 check('projectVersion', fnOf(g) === 'project_version' && body(g).p_version === 5);
 
-g = capture((o) => SC.teacherRoster('teach-code', o));
-check('teacherRoster', fnOf(g) === 'teacher_roster' && body(g).p_teacher_code === 'teach-code');
+g = capture((o) => SC.teacherClasses('teach-code', o));
+check('teacherClasses', fnOf(g) === 'teacher_classes' && body(g).p_teacher_code === 'teach-code');
 
-g = capture((o) => SC.appendStudent('teach-code', 'pixel-game', 'Mia', 's-t-u', o));
+g = capture((o) => SC.createClass('teach-code', '5B', 'Acme PS', 'pixel-game', o));
+check('createClass maps all args', fnOf(g) === 'create_class'
+  && body(g).p_name === '5B' && body(g).p_school === 'Acme PS'
+  && body(g).p_project_slug === 'pixel-game', JSON.stringify(g && body(g)));
+
+g = capture((o) => SC.addStudentsBulk('teach-code', 'cls-1', 'pixel-game', 10, ['a-b-c', 'd-e-f'], o));
+check('addStudentsBulk maps count + pool', fnOf(g) === 'add_students_bulk'
+  && body(g).p_class_id === 'cls-1' && body(g).p_count === 10
+  && Array.isArray(body(g).p_codes) && body(g).p_codes.length === 2, JSON.stringify(g && body(g)));
+
+g = capture((o) => SC.teacherRoster('teach-code', 'cls-1', o));
+check('teacherRoster maps class_id', fnOf(g) === 'teacher_roster'
+  && body(g).p_teacher_code === 'teach-code' && body(g).p_class_id === 'cls-1');
+
+g = capture((o) => SC.appendStudent('teach-code', 'cls-1', 'pixel-game', 'Mia', 's-t-u', o));
 check('appendStudent maps all args', fnOf(g) === 'append_student'
-  && body(g).p_project_slug === 'pixel-game' && body(g).p_display_name === 'Mia'
-  && body(g).p_student_code === 's-t-u', JSON.stringify(g && body(g)));
+  && body(g).p_class_id === 'cls-1' && body(g).p_project_slug === 'pixel-game'
+  && body(g).p_display_name === 'Mia' && body(g).p_student_code === 's-t-u', JSON.stringify(g && body(g)));
 
-g = capture((o) => SC.reprintCodes('teach-code', o));
-check('reprintCodes', fnOf(g) === 'reprint_codes' && body(g).p_teacher_code === 'teach-code');
+g = capture((o) => SC.reprintCodes('teach-code', 'cls-1', o));
+check('reprintCodes maps class_id', fnOf(g) === 'reprint_codes'
+  && body(g).p_teacher_code === 'teach-code' && body(g).p_class_id === 'cls-1');
 
 g = capture((o) => SC.markComplete('teach-code', 'cp-id', o));
 check('markComplete', fnOf(g) === 'mark_complete' && body(g).p_class_project_id === 'cp-id');

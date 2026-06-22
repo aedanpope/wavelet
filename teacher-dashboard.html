@@ -9,9 +9,10 @@
   <style>
     .dash { max-width: 960px; margin: 24px auto; padding: 24px 28px; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); }
     .dash h1 { margin-bottom: 4px; }
+    .dash h2 { margin: 0; font-size: 1.25rem; }
     .dash .muted { color: #6b7280; font-size: 0.9rem; }
     .dash .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 16px 0; }
-    .dash input[type=text] { padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem; }
+    .dash input[type=text], .dash input[type=number] { padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem; }
     .dash button { padding: 8px 14px; border: 0; border-radius: 6px; background: #2563eb; color: #fff; font-size: 0.95rem; cursor: pointer; }
     .dash button.secondary { background: #6b7280; }
     .dash button:disabled { opacity: 0.5; cursor: default; }
@@ -22,37 +23,69 @@
     .dash .copy-btn { background: none; border: 0; color: #2563eb; cursor: pointer; padding: 2px 5px; vertical-align: middle; line-height: 0; }
     .dash .copy-btn.copied { color: #065f46; }
     .dash .code-toggle { color: #2563eb; cursor: pointer; text-decoration: underline; user-select: none; }
-    .dash .print-row-btn { background: none; border: 0; cursor: pointer; font-size: 1rem; padding: 2px 6px; line-height: 1; }
+    .dash .muted-name { color: #9ca3af; font-style: italic; }
     .dash .msg { padding: 8px 12px; border-radius: 6px; margin: 8px 0; }
     .dash .msg.err { background: #fef2f2; color: #991b1b; }
     .dash .msg.ok { background: #ecfdf5; color: #065f46; }
     .dash .card-out { background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 10px 12px; margin: 8px 0; }
     .dash fieldset { border: 1px solid #e5e7eb; border-radius: 8px; margin-top: 24px; padding: 12px 16px; }
     .dash legend { padding: 0 6px; color: #374151; font-weight: 600; }
+    /* Class list */
+    .dash .class-list { display: grid; gap: 8px; margin-top: 12px; }
+    .dash .class-card { display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      padding: 12px 14px; border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer; background: #fff; text-align: left; color: inherit; width: 100%; }
+    .dash .class-card:hover { border-color: #2563eb; background: #f8fafc; }
+    .dash .class-card .cc-name { font-weight: 600; font-size: 1.05rem; }
+    .dash .class-card .cc-meta { color: #6b7280; font-size: 0.85rem; }
+    .dash .class-card .cc-count { color: #2563eb; font-weight: 600; white-space: nowrap; }
+    .dash .empty { color: #6b7280; font-style: italic; margin-top: 12px; }
   </style>
 </head>
 <body>
   <div class="dash">
     <h1>Teacher Dashboard</h1>
-    <p class="muted">Enter your teacher code to see your class. Student codes stay hidden until you reveal them (so the dashboard is safe to show on a projector).</p>
+    <p class="muted">Enter your teacher code to see your classes. Student codes stay hidden until you reveal them, so the dashboard is safe to show on a projector.</p>
 
     <div class="row">
       <input id="teacher-code" type="text" placeholder="teacher code" size="34" autocomplete="off" spellcheck="false">
-      <button id="load-btn">Load class</button>
+      <button id="load-btn">Load classes</button>
     </div>
 
     <div id="status"></div>
 
+    <!-- CLASS LIST VIEW -->
+    <div id="classes-wrap" style="display:none">
+      <h2 id="teacher-heading"></h2>
+      <div id="class-list" class="class-list"></div>
+
+      <fieldset>
+        <legend>Create a class</legend>
+        <div class="row">
+          <input id="new-class-name" type="text" placeholder="class name (e.g. 5B Room 12)" size="24" autocomplete="off">
+          <input id="new-class-school" type="text" placeholder="school (optional)" size="18" autocomplete="off">
+          <input id="new-class-slug" type="text" value="pixel-game" size="14" autocomplete="off">
+          <button id="create-class-btn">Create class</button>
+        </div>
+        <div id="create-result"></div>
+      </fieldset>
+    </div>
+
+    <!-- ROSTER VIEW (one class) -->
     <div id="roster-wrap" style="display:none">
+      <div class="row">
+        <button id="back-btn" class="secondary">← Classes</button>
+        <h2 id="class-heading"></h2>
+      </div>
       <div class="row">
         <strong id="roster-count"></strong>
         <button id="reveal-btn" class="secondary">Reveal all codes</button>
         <button id="refresh-btn" class="secondary">Refresh</button>
+        <button id="print-codes-btn" title="Print a Name + Code table to hand out in class (one or two pages)">🖨️ Print code table</button>
         <button id="print-final-btn" title="One PDF, one page per student: their code, a play-at-home QR, and their finished code">🖨️ Print progress sheets</button>
       </div>
       <table id="roster">
         <thead>
-          <tr><th>#</th><th>Name</th><th>Project</th><th>Version</th><th>Last saved</th><th>Status</th><th>Code</th><th>Sheet</th></tr>
+          <tr><th>#</th><th>Name</th><th>Project</th><th>Version</th><th>Last saved</th><th>Status</th><th>Code</th></tr>
         </thead>
         <tbody></tbody>
       </table>
@@ -60,11 +93,24 @@
       <fieldset>
         <legend>Add a student</legend>
         <div class="row">
-          <input id="add-name" type="text" placeholder="student name" size="20" autocomplete="off">
+          <input id="add-name" type="text" placeholder="student name (optional)" size="20" autocomplete="off">
           <input id="add-slug" type="text" value="pixel-game" size="14" autocomplete="off">
           <button id="add-btn">Add &amp; generate code</button>
         </div>
         <div id="add-result"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Add several students at once</legend>
+        <p class="muted">Generates blank-name codes (write each one against your paper class list). Use this to set up a whole class quickly.</p>
+        <div class="row">
+          <label>How many?
+            <input id="bulk-count" type="number" min="1" max="40" value="10" size="4">
+          </label>
+          <input id="bulk-slug" type="text" value="pixel-game" size="14" autocomplete="off">
+          <button id="bulk-btn">Generate codes</button>
+        </div>
+        <div id="bulk-result"></div>
       </fieldset>
     </div>
   </div>
