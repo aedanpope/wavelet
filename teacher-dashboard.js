@@ -27,6 +27,7 @@
   let revealedIds = new Set();// which rows currently show their code
   let projectIndex = null;    // projects/index.json (slug -> file), fetched once
   const projectBaselines = {};// project_slug -> starter meaningful line count (baseline), or null
+  let rosterTimer = null;     // setInterval handle for the 30s live roster auto-refresh
 
   function msg(text, kind) {
     statusBox.innerHTML = text ? `<div class="msg ${kind || ''}">${text}</div>` : '';
@@ -97,6 +98,7 @@
   // Reset the session: there is no server state to clear, just wipe what is in memory and the
   // code field, and return to the login view.
   function logout() {
+    stopRosterAutoRefresh();
     teacherCode = null;
     teacherInfo = null;
     classes = [];
@@ -113,6 +115,7 @@
   }
 
   function showClasses() {
+    stopRosterAutoRefresh();
     currentClass = null;
     rosterWrap.style.display = 'none';
     classesWrap.style.display = '';
@@ -209,6 +212,7 @@
     el('bulk-result').innerHTML = '';
     showRoster();
     loadRoster();
+    startRosterAutoRefresh();
   }
 
   function updateRevealBtn() {
@@ -301,16 +305,21 @@
     return true;
   }
 
-  async function loadRoster() {
+  async function loadRoster(opts) {
     if (!currentClass) { return false; }
-    msg('Loading…');
+    const silent = opts && opts.silent;
+    // On a manual load show "Loading…" inside the roster-count chip (a stable element, so it
+    // doesn't shift the layout). On the silent 30s auto-refresh, show nothing and never nag.
+    if (!silent) { rosterCount.textContent = 'Loading…'; }
     const res = await SC.teacherRoster(teacherCode, currentClass.class_id);
     if (!res.ok || !res.data || res.data.ok === false) {
+      if (silent) { return false; }  // auto-refresh: keep the last good roster, no error flash
       const err = res.data && res.data.error ? res.data.error : `HTTP ${res.status}`;
       msg(err === 'bad_teacher_code' ? 'That class was not recognised.' : `Error: ${esc(err)}`, 'err');
+      rosterCount.textContent = '';
       return false;
     }
-    msg('');
+    if (!silent) { msg(''); }  // clear any prior error
     const roster = res.data.roster || [];
     // Load the starter baseline for each project in the class (usually one), then render the
     // net "lines you wrote" and put the project name in the heading.
@@ -319,6 +328,17 @@
     updateClassHeading(slugs);
     renderRoster(roster);
     return true;
+  }
+
+  // Poll the roster every 30s while a class is open, so progress shows up live without the
+  // teacher refreshing. Silent (no "Loading…", no error flash) to avoid flicker.
+  function startRosterAutoRefresh() {
+    stopRosterAutoRefresh();
+    rosterTimer = setInterval(() => { if (currentClass) { loadRoster({ silent: true }); } }, 30000);
+  }
+
+  function stopRosterAutoRefresh() {
+    if (rosterTimer) { clearInterval(rosterTimer); rosterTimer = null; }
   }
 
   // Per-row click: toggle just that student's code (lazily fetching codes on first reveal).
@@ -538,7 +558,7 @@
   });
   el('back-btn').addEventListener('click', () => { loadClasses(); });
   revealBtn.addEventListener('click', onRevealToggle);
-  el('refresh-btn').addEventListener('click', loadRoster);
+  el('refresh-btn').addEventListener('click', () => loadRoster());
   el('add-btn').addEventListener('click', onAdd);
   el('bulk-btn').addEventListener('click', onBulkAdd);
   el('download-codes-btn').addEventListener('click', () => onDownloadCodeTable(1));
