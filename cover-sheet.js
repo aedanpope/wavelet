@@ -192,9 +192,11 @@
         return String(s || 'class').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'class';
     }
 
-    // A Name + Code table for classroom handout, downloaded as a PDF, drawn as a boxed grid
-    // (~30 students per A4 page, then paginates). The Name cell is left empty for blank-name
-    // students so the teacher has the whole box to handwrite the name. rows: [{ name, code }].
+    // A Name + Code table for classroom handout, downloaded as a PDF, drawn as a boxed grid.
+    // The Name cell is left empty for blank-name students so the teacher can handwrite it.
+    // opts.scale (default 1) enlarges the rows + text: scale 2 makes tall strips that are easy
+    // to guillotine into one slip per student (fewer rows per page, it paginates).
+    // rows: [{ name, code }].
     function generateCodeTable(opts) {
         const { className, school, rows, filename } = opts;
         if (!window.jspdf || !window.jspdf.jsPDF) throw new Error('jsPDF not loaded');
@@ -202,19 +204,29 @@
         const doc = new jsPDF({ unit: 'pt', format: 'a4' });
         const pageW = doc.internal.pageSize.getWidth();
         const pageH = doc.internal.pageSize.getHeight();
+        const scale = Math.max(1, opts.scale || 1);
         const margin = 48;
-        const rowH = 22;
-        const pad = 6;
+        const rowH = 22 * scale;
+        const pad = 6 * scale;
+        const numFont = 9 * scale;
+        const bodyFont = 11 * scale;
+        const headFont = 10 * scale;
         const title = `${String(className || 'Class')} - Wavelet Login Codes`;
 
-        // Vertical grid lines (column boundaries): left, after #, after Name, right.
+        // Vertical grid lines (column boundaries): left, after #, after Name, right. The larger
+        // version gives the Code column more room (names are often handwritten / blank).
         const xLeft = margin;
-        const xName = margin + 30;
-        const xCode = pageW * 0.58;
+        const xName = margin + 30 * scale;
+        const xCode = pageW * (scale > 1 ? 0.45 : 0.58);
         const xRight = pageW - margin;
-        const tableTop = margin + 30;  // y where the grid starts, below the title block
+        const tableTop = margin + 30;  // y where the grid starts, below the (unscaled) title block
 
-        // Title + optional school/count line. Drawn on every page.
+        // Fit the (monospace) code font so the longest code never overflows its column.
+        const maxCodeLen = rows.reduce((m, r) => Math.max(m, String(r.code || '').length), 1);
+        const codeColW = xRight - xCode - 2 * pad;
+        const codeFont = Math.max(7, Math.min(bodyFont, codeColW / (maxCodeLen * 0.6)));
+
+        // Title + optional school/count line (same size regardless of scale).
         function drawTitle() {
             doc.setTextColor(0);
             doc.setFont('helvetica', 'bold');
@@ -243,9 +255,9 @@
             [xLeft, xName, xCode, xRight].forEach((x) => doc.line(x, tableTop, x, gridBottom));
             // Header labels (in the first cell row).
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(10);
+            doc.setFontSize(headFont);
             doc.setTextColor(0);
-            const hy = tableTop + rowH - 7;
+            const hy = tableTop + rowH - 7 * scale;
             doc.text('#', xLeft + pad, hy);
             doc.text('Name', xName + pad, hy);
             doc.text('Code', xCode + pad, hy);
@@ -262,23 +274,24 @@
             drawGrid(pageRows.length);
             for (let i = 0; i < pageRows.length; i++) {
                 const r = pageRows[i];
-                const ty = tableTop + (i + 2) * rowH - 7;  // baseline in the (i+1)-th data row
+                const ty = tableTop + (i + 2) * rowH - 7 * scale;  // baseline in the (i+1)-th data row
                 doc.setFont('helvetica', 'normal');
-                doc.setFontSize(9);
+                doc.setFontSize(numFont);
                 doc.setTextColor(120);
                 doc.text(String(idx + i + 1), xLeft + pad, ty);
-                doc.setFontSize(11);
+                doc.setFontSize(bodyFont);
                 doc.setTextColor(0);
                 const name = (r.name || '').trim();
                 if (name) { doc.text(name, xName + pad, ty); }  // blank names: leave the box empty
                 doc.setFont('courier', 'bold');
+                doc.setFontSize(codeFont);
                 doc.text(String(r.code || ''), xCode + pad, ty);
             }
             idx += availRows;
             page++;
         } while (idx < total);
 
-        doc.save(filename || `${fileSlug(className)}-codes.pdf`);
+        doc.save(filename || `${fileSlug(className)}-codes${scale > 1 ? '-large' : ''}.pdf`);
     }
 
     const api = {
