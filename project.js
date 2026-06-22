@@ -1725,12 +1725,46 @@ function initServerStorage() {
 // server as the next version. Unlike the file-mode Open flow, this stays dirty and routes
 // through the storage controller (no markClean / file handle), so the work is persisted.
 async function importOldFile() {
-    const onText = (text, name) => {
-        // loadFileIntoEditors confirms before replacing existing work and returns false if
-        // the student cancels; bail out in that case.
-        if (!loadFileIntoEditors(text, name)) return;
-        markDirty();                        // -> serverCtl.noteEdit(), and unblocks the skip
-        if (serverCtl) serverCtl.saveNow(); // persist now rather than waiting for the debounce
+    // Import chain: file picker -> "replace?" modal (only if there's work to overwrite) ->
+    // load -> "Saving…" -> confirm only once the save is actually complete.
+    const onText = async (text, name) => {
+        if (anyEditorDifferentFromStarter()) {
+            const ok = await showChoiceModal({
+                icon: '📂',
+                title: 'Replace your current project?',
+                message: `This will replace what's in the editors with the contents of "${name}".`,
+                confirmText: 'Replace',
+                cancelText: 'Cancel'
+            });
+            if (!ok) { return; }
+        }
+        loadFileIntoEditors(text, name, true);  // skip the built-in confirms; we just asked
+        markDirty();                            // -> serverCtl.noteEdit(), and unblocks the skip
+        if (!serverCtl) {
+            showConfirmModal({ icon: '📂', title: 'File imported', message: `"${name}" is now loaded.`, button: 'OK' });
+            return;
+        }
+        const saving = showProgressModal({ icon: '⏳', title: 'Saving…', message: `Saving "${name}" to your project.` });
+        let outcome;
+        try { outcome = await serverCtl.saveNow(); } catch { outcome = null; }
+        saving.remove();
+        // saveNow() returns null when there was nothing new to send (already saved), or an
+        // outcome whose status is 'saved' / 'blocked'.
+        if (!outcome || outcome.status === 'saved') {
+            showConfirmModal({
+                icon: '✅',
+                title: 'Imported and saved',
+                message: `"${name}" is now loaded and saved to your project.`,
+                button: 'OK'
+            });
+        } else {
+            showConfirmModal({
+                icon: '⚠️',
+                title: 'Imported, but not saved yet',
+                message: `"${name}" is loaded but couldn't be saved (check your internet). It will keep trying.`,
+                button: 'OK'
+            });
+        }
     };
     if (SUPPORTS_FSA) {
         let handle;
@@ -1743,7 +1777,7 @@ async function importOldFile() {
         }
         try {
             const file = await handle.getFile();
-            onText(await file.text(), file.name);
+            await onText(await file.text(), file.name);
         } catch (err) {
             alert('Could not read that file: ' + (err.message || err.name));
         }
@@ -1892,6 +1926,96 @@ function openWithProject(overlay, code, data) {
     const histBtn = document.getElementById('history-btn');
     if (histBtn) histBtn.style.display = '';
     overlay.remove();
+    showLoginIndicator(code);
+    // An explicit click-through confirmation that they're in and saving (clearer than the
+    // save butterbar, which fades). Reassures the student which code they're working under.
+    showConfirmModal({
+        icon: '✅',
+        title: "You're logged in!",
+        message: 'Your work saves automatically as you go. You are working under the code:',
+        code: code,
+        button: 'Start coding'
+    });
+}
+
+// Persistent header chip showing the student is logged in under a code (near the save pill,
+// so it's clear work is being saved to that code, not a local file).
+function showLoginIndicator(code) {
+    const chip = document.getElementById('login-status');
+    if (!chip) return;
+    chip.textContent = '🔑 ' + code;
+    chip.style.display = '';
+}
+
+// Build a modal overlay + card with the shared bits (icon/title/message/code), set via
+// textContent (no injection from the code/file name). Callers append their own buttons.
+// Returns { overlay, card }. The overlay is already in the DOM.
+function buildModal(o) {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    const card = document.createElement('div');
+    card.className = 'modal-card';
+    card.setAttribute('role', 'dialog');
+    card.setAttribute('aria-modal', 'true');
+    const add = (tag, cls, text) => {
+        if (!text) { return; }
+        const elx = document.createElement(tag);
+        elx.className = cls;
+        elx.textContent = text;
+        card.appendChild(elx);
+    };
+    add('div', 'modal-icon', o.icon);
+    add('h2', 'modal-title', o.title);
+    add('p', 'modal-message', o.message);
+    add('div', 'modal-code', o.code);
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+    return { overlay, card };
+}
+
+// A click-through confirmation modal for moments that deserve an explicit "got it" (login
+// success, import complete), clearer than the auto-fading save butterbar.
+function showConfirmModal(opts) {
+    const o = opts || {};
+    const { overlay, card } = buildModal(o);
+    const okBtn = document.createElement('button');
+    okBtn.className = 'modal-ok';
+    okBtn.textContent = o.button || 'OK';
+    card.appendChild(okBtn);
+    const close = () => overlay.remove();
+    okBtn.addEventListener('click', close);
+    overlay.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === 'Escape') { close(); } });
+    okBtn.focus();
+    return overlay;
+}
+
+// A two-choice modal (replaces a browser confirm()). Resolves true (confirm) or false (cancel).
+function showChoiceModal(opts) {
+    const o = opts || {};
+    return new Promise((resolve) => {
+        const { overlay, card } = buildModal(o);
+        const actions = document.createElement('div');
+        actions.className = 'modal-actions';
+        const yes = document.createElement('button');
+        yes.className = 'modal-ok';
+        yes.textContent = o.confirmText || 'Yes';
+        const no = document.createElement('button');
+        no.className = 'modal-ok secondary';
+        no.textContent = o.cancelText || 'Cancel';
+        actions.appendChild(yes);
+        actions.appendChild(no);
+        card.appendChild(actions);
+        const done = (val) => { overlay.remove(); resolve(val); };
+        yes.addEventListener('click', () => done(true));
+        no.addEventListener('click', () => done(false));
+        overlay.addEventListener('keydown', (e) => { if (e.key === 'Escape') { done(false); } });
+        yes.focus();
+    });
+}
+
+// A buttonless progress modal (e.g. "Saving…"). Caller removes the returned overlay when done.
+function showProgressModal(opts) {
+    return buildModal(opts || {}).overlay;
 }
 
 // ── History / restore (student-facing version browser, §6) ──────────────────
