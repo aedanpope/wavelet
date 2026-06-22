@@ -52,6 +52,7 @@ npm run test:input-system       # input system tests
   python scripts/supabase-itest.py
   ```
   (Their Supabase config is already in `supabase/test-config.json`, so no env vars needed.)
+- **Applying a migration (SQL the user runs in Supabase):** the user applies `supabase/migrations/*.sql` by hand in the Supabase SQL editor. Whenever asking them to apply one, ALWAYS (1) link the file on the **PR branch** (`https://github.com/aedanpope/wavelet/blob/<branch>/supabase/migrations/<file>`), never `main` (it 404s until the PR merges), and (2) paste the full SQL inline so they can copy-paste it straight in. Migrations are append-only and written to be re-runnable.
 
 ### Deployment
 ```bash
