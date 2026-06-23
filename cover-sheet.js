@@ -145,7 +145,7 @@
         const labelY = dividerY + 22;
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(11);
-        doc.text('Your finished code', MARGIN, labelY);
+        doc.text('My finished code', MARGIN, labelY);
 
         // Code body: fit font, crop to page, clip long lines.
         const bodyTop = labelY + 14;
