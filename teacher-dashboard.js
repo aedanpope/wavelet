@@ -519,6 +519,7 @@
         const r = currentRoster[i];
         const code = codesById[r.project_id];
         if (!code) { continue; }
+        if (!r.version) { continue; }  // skip unused codes (never saved -> nothing to print)
         btn.textContent = `Building… ${i + 1}/${currentRoster.length}`;
         let content = '';
         try {
@@ -529,7 +530,7 @@
         }
         students.push({ name: r.display_name, code, content });
       }
-      if (!students.length) { msg('No students to print.', 'err'); return; }
+      if (!students.length) { msg('No students with saved work to print yet.', 'err'); return; }
       const slug = (currentRoster[0] && currentRoster[0].project_slug) || 'pixel-game';
       btn.textContent = 'Saving PDF…';
       await window.CoverSheet.generateFinalSheets({
