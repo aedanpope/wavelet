@@ -130,10 +130,9 @@ function renderProject() {
     document.getElementById('file-input').addEventListener('change', handleFallbackFileInput);
 
     // Project Storage v2: when enabled, swap the file Open/Save flow for code-login + server
-    // autosave. Default off, so the existing flow is untouched for the current cohort.
-    // Enabled by the committed flag, a per-visit URL override (?storage=server), or the
-    // presence of a code in the URL (a cover-sheet QR / link is implicitly server mode, so
-    // the QR works even while the flag is off). ?storage=file forces it off for testing.
+    // autosave. ON via the committed flag (the cohort migration). Also enabled per-visit by
+    // ?storage=server or by a code in the URL (a cover-sheet QR / link is implicitly server
+    // mode). ?storage=file forces it off (escape hatch back to the file flow / for testing).
     const search = window.location.search;
     const cfgOn = !!(window.WaveletConfig && window.WaveletConfig.serverStorage);
     const urlOn = /[?&]storage=server(&|$)/.test(search) || !!codeFromUrl();

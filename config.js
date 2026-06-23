@@ -9,10 +9,10 @@ const WaveletConfig = {
   supabaseUrl: 'https://rphrxfyhlgacyellhcrw.supabase.co',
   supabasePublishableKey: 'sb_publishable_5WpjivY8tRSvETZMypTFMw_uw8t12E5',
 
-  // Project page storage mode. false (default) keeps the existing File System Access
-  // Open/Save flow untouched. true switches the project page to code-login + server
-  // autosave (Project Storage v2). Off for now so the current cohort is unaffected.
-  serverStorage: false,
+  // Project page storage mode. false keeps the existing File System Access Open/Save flow.
+  // true switches the project page to code-login + server autosave (Project Storage v2).
+  // ON for the cohort migration. Per-visit escape hatch back to the file flow: ?storage=file.
+  serverStorage: true,
 
   // Migration affordance (Project Storage v2 §6, step 6): in server mode, show an
   // "Import old file" button so the current cohort can bring their existing OneDrive .py
