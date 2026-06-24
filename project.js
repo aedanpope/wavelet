@@ -1914,6 +1914,30 @@ function openWithProject(overlay, code, data) {
     }
     markClean();
     serverCode = code;
+    overlay.remove();
+    showLoginIndicator(code);
+
+    // Read-only lock (set by the teacher): the student can view and run, but not save. The
+    // server also rejects saves (the real guard); here we make the editors read-only, skip the
+    // autosave controller entirely, and say so, so nothing gives the false impression of saving.
+    if (data.readonly) {
+        setEditorsReadOnly(true);
+        const importBtn = document.getElementById('import-file-btn');
+        if (importBtn) { importBtn.style.display = 'none'; }
+        const chip = document.getElementById('save-status');
+        if (chip) { chip.textContent = '🔒 Locked (view only)'; chip.className = 'save-status'; chip.style.display = ''; }
+        const histBtn = document.getElementById('history-btn');
+        if (histBtn) { histBtn.style.display = ''; }
+        showConfirmModal({
+            icon: '🔒',
+            title: 'This project is locked',
+            message: 'Your teacher set this to view-only. You can read it and run it, but changes will not be saved.',
+            code: code,
+            button: 'OK'
+        });
+        return;
+    }
+
     serverCtl = window.ProjectStorage.createController({
         code: code,
         getContent: assembleFileForDisk,
@@ -1924,8 +1948,6 @@ function openWithProject(overlay, code, data) {
     serverCtl.attachLifecycle();
     const histBtn = document.getElementById('history-btn');
     if (histBtn) histBtn.style.display = '';
-    overlay.remove();
-    showLoginIndicator(code);
     // An explicit click-through confirmation that they're in and saving (clearer than the
     // save butterbar, which fades). Reassures the student which code they're working under.
     showConfirmModal({
@@ -1935,6 +1957,13 @@ function openWithProject(overlay, code, data) {
         code: code,
         button: 'Start coding'
     });
+}
+
+// Make every code editor (setup preamble + each task, including freestyle) read-only or
+// editable. Used for the teacher's read-only lock; selection/copy still work.
+function setEditorsReadOnly(on) {
+    if (setupEditor) { setupEditor.setOption('readOnly', on); }
+    taskEditors.forEach((entry) => { if (entry && entry.cm) { entry.cm.setOption('readOnly', on); } });
 }
 
 // Persistent header chip showing the student is logged in under a code (near the save pill,

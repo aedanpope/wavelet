@@ -91,6 +91,8 @@ const api = {
     }, opts),
   reprintCodes: (teacherCode, classId, opts) =>
     rpc('reprint_codes', { p_teacher_code: teacherCode, p_class_id: classId }, opts),
+  setReadonly: (teacherCode, projectId, readonly, opts) =>
+    rpc('set_readonly', { p_teacher_code: teacherCode, p_project_id: projectId, p_readonly: !!readonly }, opts),
   markComplete: (teacherCode, classProjectId, opts) =>
     rpc('mark_complete', { p_teacher_code: teacherCode, p_class_project_id: classProjectId }, opts)
 };
