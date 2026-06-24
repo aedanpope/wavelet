@@ -84,6 +84,10 @@ check('reprintCodes maps class_id', fnOf(g) === 'reprint_codes'
 g = capture((o) => SC.markComplete('teach-code', 'cp-id', o));
 check('markComplete', fnOf(g) === 'mark_complete' && body(g).p_class_project_id === 'cp-id');
 
+g = capture((o) => SC.setReadonly('teach-code', 'proj-1', true, o));
+check('setReadonly maps args', fnOf(g) === 'set_readonly'
+  && body(g).p_project_id === 'proj-1' && body(g).p_readonly === true);
+
 console.log(`\n📊 supabase-client test summary\n✅ Passed: ${passed}\n❌ Failed: ${failed}`);
 if (failed === 0) { console.log('\n🎉 All supabase-client tests passed!'); process.exit(0); }
 else { console.log(`\n⚠️  ${failed} failed.`); process.exit(1); }

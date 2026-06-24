@@ -238,6 +238,14 @@
     return n == null ? '<span class="muted-name">-</span>' : `+${n}`;
   }
 
+  // Per-row lock toggle: 🔒 Locked (read-only) vs 🔓 Open. Click flips it via set_readonly.
+  function lockCell(r) {
+    const id = esc(r.project_id);
+    return r.readonly
+      ? `<button class="lock-btn locked" data-lock-id="${id}" data-readonly="1" title="Locked: the student can view and run but not save. Click to unlock.">🔒 Locked</button>`
+      : `<button class="lock-btn" data-lock-id="${id}" data-readonly="0" title="Editable. Click to lock (make view-only).">🔓 Open</button>`;
+  }
+
   // The project's starter baseline (meaningful lines), computed once per slug by fetching the
   // project definition and running the shared assembler. Cached; null if it can't be loaded.
   async function baselineFor(slug) {
@@ -286,6 +294,7 @@
         <td>${esc(r.version)}</td>
         <td>${esc(fmtTime(r.last_saved_at))}</td>
         <td>${status}</td>
+        <td>${lockCell(r)}</td>
         <td>${codeCell}</td>
       </tr>`;
     }).join('');
@@ -341,8 +350,27 @@
     if (rosterTimer) { clearInterval(rosterTimer); rosterTimer = null; }
   }
 
+  // Lock / unlock a student's project (read-only). Updates the row in place; the 30s refresh
+  // reconciles with the server.
+  async function onLockToggle(btn) {
+    const id = btn.getAttribute('data-lock-id');
+    const makeReadonly = btn.getAttribute('data-readonly') !== '1';  // currently open -> lock
+    btn.disabled = true;
+    const res = await SC.setReadonly(teacherCode, id, makeReadonly);
+    if (!res.ok || !res.data || res.data.ok === false) {
+      msg('Could not change the lock. Try again.', 'err');
+      btn.disabled = false;
+      return;
+    }
+    const row = currentRoster.find((r) => r.project_id === id);
+    if (row) { row.readonly = makeReadonly; }
+    renderRoster(currentRoster);
+  }
+
   // Per-row click: toggle just that student's code (lazily fetching codes on first reveal).
   async function onRosterClick(e) {
+    const lockBtn = e.target.closest('.lock-btn');
+    if (lockBtn) { onLockToggle(lockBtn); return; }
     const copyBtn = e.target.closest('.copy-btn');
     if (copyBtn) { copyText(copyBtn.getAttribute('data-copy'), copyBtn); return; }
     const target = e.target.closest('[data-reveal-id]');

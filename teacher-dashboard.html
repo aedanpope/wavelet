@@ -23,6 +23,9 @@
     .dash .copy-btn { background: none; border: 0; color: #2563eb; cursor: pointer; padding: 2px 5px; vertical-align: middle; line-height: 0; }
     .dash .copy-btn.copied { color: #065f46; }
     .dash .code-toggle { color: #2563eb; cursor: pointer; text-decoration: underline; user-select: none; }
+    .dash .lock-btn { background: none; border: 1px solid #d1d5db; border-radius: 6px; padding: 2px 8px; font-size: 0.8rem; color: #6b7280; cursor: pointer; white-space: nowrap; }
+    .dash .lock-btn.locked { color: #b45309; border-color: #fcd34d; background: #fffbeb; font-weight: 600; }
+    .dash .lock-btn:disabled { opacity: 0.5; cursor: default; }
     .dash .muted-name { color: #9ca3af; font-style: italic; }
     .dash .msg { padding: 8px 12px; border-radius: 6px; margin: 8px 0; }
     .dash .msg.err { background: #fef2f2; color: #991b1b; }
@@ -92,7 +95,7 @@
       </div>
       <table id="roster">
         <thead>
-          <tr><th>#</th><th>Name</th><th title="Meaningful lines this student wrote beyond the starter code">Lines</th><th>Version</th><th>Last saved</th><th>Status</th><th>Code</th></tr>
+          <tr><th>#</th><th>Name</th><th title="Meaningful lines this student wrote beyond the starter code">Lines</th><th>Version</th><th>Last saved</th><th>Status</th><th title="Lock a project so the student can view and run it but not save">Lock</th><th>Code</th></tr>
         </thead>
         <tbody></tbody>
       </table>

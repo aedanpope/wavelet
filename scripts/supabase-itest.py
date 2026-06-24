@@ -193,6 +193,23 @@ def main():
     codes = {c.get("project_id"): c.get("student_code") for c in res.get("cards", [])} if res.get("ok") else {}
     check("reprint returns our plaintext code", codes.get(project_id) == student, str(codes.get(project_id)))
 
+    # read-only lock: teacher locks -> save rejected server-side + load/roster report it; unlock -> saves work
+    _, res = rpc(cfg, "set_readonly", {"p_teacher_code": cfg["teacher"], "p_project_id": project_id, "p_readonly": True})
+    check("set_readonly lock ok", res.get("ok") is True and res.get("readonly") is True, str(res))
+    _, res = rpc(cfg, "save_project", {"p_code": student, "p_content": "print('x')", "p_base_version": 4, "p_session": "s1"})
+    check("save rejected while locked", res.get("ok") is False and res.get("error") == "readonly", str(res))
+    _, res = rpc(cfg, "load_project", {"p_code": student})
+    check("load reports readonly", res.get("readonly") is True, str(res))
+    _, res = rpc(cfg, "teacher_roster", {"p_teacher_code": cfg["teacher"], "p_class_id": class_id})
+    row = next((r for r in res.get("roster", []) if r.get("project_id") == project_id), None)
+    check("roster row shows readonly", row is not None and row.get("readonly") is True, str(row))
+    _, res = rpc(cfg, "set_readonly", {"p_teacher_code": "nope-not-a-teacher", "p_project_id": project_id, "p_readonly": False})
+    check("set_readonly rejects a bad teacher code", res.get("ok") is False, str(res))
+    _, res = rpc(cfg, "set_readonly", {"p_teacher_code": cfg["teacher"], "p_project_id": project_id, "p_readonly": False})
+    check("set_readonly unlock ok", res.get("ok") is True and res.get("readonly") is False, str(res))
+    _, res = rpc(cfg, "save_project", {"p_code": student, "p_content": "print('unlocked')", "p_base_version": 4, "p_session": "s1"})
+    check("save works after unlock", res.get("ok") is True, str(res))
+
     # mark_complete
     if class_project_id:
         _, res = rpc(cfg, "mark_complete", {"p_teacher_code": cfg["teacher"], "p_class_project_id": class_project_id})
