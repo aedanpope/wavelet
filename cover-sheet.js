@@ -73,12 +73,27 @@
         return line.slice(0, maxChars - 1) + '…';
     }
 
+    // Distribute lines across `columns` columns, filling each column top-to-bottom up to
+    // linesPerColumn before spilling into the next (column-fill / newspaper order, so the code
+    // reads down the left column then down the right). Short programs stay in the left column.
+    // Returns an array of `columns` line-arrays (trailing columns may be empty).
+    function splitIntoColumns(lines, linesPerColumn, columns) {
+        const per = Math.max(1, linesPerColumn);
+        const cols = [];
+        for (let c = 0; c < columns; c++) {
+            cols.push(lines.slice(c * per, (c + 1) * per));
+        }
+        return cols;
+    }
+
     // ── PDF rendering (browser only; needs window.jspdf + window.qrcode) ─────
 
     const A4 = { w: 595.28, h: 841.89 };
     const MARGIN = 40;
     const QR_SIZE = 120;
     const CODE_GEOM = { maxFont: 9, minFont: 5, lineHeightRatio: 1.25 };
+    const CODE_COLS = 2;     // the finished code is laid out in two columns to fit more per page
+    const CODE_GUTTER = 18;  // pt of space between the two code columns
 
     // Render a QR for `text` to a PNG data URL by drawing the modules onto a canvas.
     // Uses qrcode-generator (global `qrcode`), whose isDark/getModuleCount API is stable;
@@ -201,22 +216,28 @@
         doc.setFontSize(11);
         doc.text('My finished code', MARGIN, labelY);
 
-        // Code body: fit font, crop to page, clip long lines.
+        // Code body: two columns so more code fits on the single page. Size the font from the
+        // per-column line count, crop to the two-column capacity, clip long lines to the
+        // (narrower) column width. Code fills the left column first, then spills into the right.
         const bodyTop = labelY + 14;
         const availableHeight = A4.h - MARGIN - bodyTop;
+        const colWidth = (A4.w - 2 * MARGIN - CODE_GUTTER * (CODE_COLS - 1)) / CODE_COLS;
         const rawLines = String(student.content || '').replace(/\s+$/, '').split('\n');
         const geom = Object.assign({ availableHeight }, CODE_GEOM);
-        const fontSize = fitCodeFontSize(rawLines.length, geom);
-        const maxLines = linesThatFit(fontSize, geom);
-        const { lines } = cropCodeLines(rawLines, maxLines);
-        const maxChars = Math.floor((A4.w - 2 * MARGIN) / (fontSize * 0.6));
+        const fontSize = fitCodeFontSize(Math.ceil(rawLines.length / CODE_COLS), geom);
+        const linesPerCol = linesThatFit(fontSize, geom);
+        const { lines } = cropCodeLines(rawLines, CODE_COLS * linesPerCol);
+        const maxChars = Math.floor(colWidth / (fontSize * 0.6));
 
         doc.setFont('courier', 'normal');
         doc.setFontSize(fontSize);
         doc.setTextColor(20);
         const lineH = fontSize * CODE_GEOM.lineHeightRatio;
-        lines.forEach((line, i) => {
-            doc.text(clipLine(line, maxChars), MARGIN, bodyTop + (i + 1) * lineH);
+        splitIntoColumns(lines, linesPerCol, CODE_COLS).forEach((colLines, c) => {
+            const colX = MARGIN + c * (colWidth + CODE_GUTTER);
+            colLines.forEach((line, i) => {
+                doc.text(clipLine(line, maxChars), colX, bodyTop + (i + 1) * lineH);
+            });
         });
         doc.setTextColor(0);
     }
@@ -350,7 +371,7 @@
 
     const api = {
         buildProjectUrl, buildShortUrl, displayUrl, sheetTitle,
-        fitCodeFontSize, linesThatFit, cropCodeLines, clipLine,
+        fitCodeFontSize, linesThatFit, cropCodeLines, clipLine, splitIntoColumns,
         generateFinalSheets, generateCodeTable
     };
 
