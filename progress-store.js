@@ -11,19 +11,39 @@ const ProgressStore = (() => {
     const PROGRESS_KEY = 'pythonProgress';
     const VERSION_KEY  = 'appVersion';
 
+    // Local data that must SURVIVE a content-version bump. The "clear on update" below is meant
+    // to reset student worksheet/project progress when content changes; it must NOT wipe the
+    // teacher dashboard's device-local data: the PDF names and the saved teacher code (both live
+    // on the teacher's own machine and are not tied to any worksheet version).
+    const PRESERVE_KEYS = ['wavelet-pdf-names', 'wavelet-teacher-code'];
+
+    // Apply a content-version change to a storage: when the stored version differs from the
+    // current one, clear it (resetting student progress) but carry over PRESERVE_KEYS, then
+    // record the current version. storage + version are injectable so this is unit-testable;
+    // checkVersion() passes the real localStorage and window.APP_VERSION.
+    function applyVersion(storage, version) {
+        if (!storage || typeof version === 'undefined') { return; }
+        const stored = storage.getItem(VERSION_KEY);
+        if (stored && stored !== version) {
+            console.log(`📚 App updated (${stored.substring(0, 8)} → ${version.substring(0, 8)}), clearing storage`);
+            const preserved = {};
+            PRESERVE_KEYS.forEach((k) => {
+                const v = storage.getItem(k);
+                if (v !== null) { preserved[k] = v; }
+            });
+            storage.clear();
+            Object.keys(preserved).forEach((k) => storage.setItem(k, preserved[k]));
+        }
+        storage.setItem(VERSION_KEY, version);
+    }
+
     function checkVersion() {
         try {
             if (typeof window.APP_VERSION === 'undefined') {
                 console.warn('App version not available, skipping version check');
                 return;
             }
-            const current = window.APP_VERSION;
-            const stored  = localStorage.getItem(VERSION_KEY);
-            if (stored && stored !== current) {
-                console.log(`📚 App updated (${stored.substring(0, 8)} → ${current.substring(0, 8)}), clearing storage`);
-                localStorage.clear();
-            }
-            localStorage.setItem(VERSION_KEY, current);
+            applyVersion(localStorage, window.APP_VERSION);
         } catch (error) {
             console.warn('Version check failed:', error);
         }
@@ -70,7 +90,8 @@ const ProgressStore = (() => {
         return _loadAll();
     }
 
-    return { checkVersion, saveWorksheet, loadWorksheet, clearWorksheet, exportReport };
+    return { checkVersion, applyVersion, saveWorksheet, loadWorksheet, clearWorksheet, exportReport };
 })();
 
-window.ProgressStore = ProgressStore;
+if (typeof window !== 'undefined') { window.ProgressStore = ProgressStore; }
+if (typeof module !== 'undefined' && module.exports) { module.exports = ProgressStore; }

@@ -49,18 +49,19 @@
       : (r.display_name || '');
   }
 
-  // Keep the teacher code across a refresh, in sessionStorage (this tab only; cleared when the
-  // tab closes or on Log out). It's the capability that unlocks the class, so it stays out of
-  // localStorage / disk and is never shown once signed in.
+  // Keep the teacher code on this device so it survives a refresh, a new tab, and a browser
+  // restart, on the teacher's own machine. Stored in localStorage and on the preserve list in
+  // progress-store.js, so a content-version bump does not clear it. Cleared on Log out. It is
+  // still never shown once signed in, so the dashboard stays safe to project.
   const TEACHER_CODE_KEY = 'wavelet-teacher-code';
   function rememberTeacherCode(code) {
-    try { window.sessionStorage.setItem(TEACHER_CODE_KEY, code); } catch { /* storage blocked */ }
+    try { localStorage.setItem(TEACHER_CODE_KEY, code); } catch { /* storage blocked */ }
   }
   function forgetTeacherCode() {
-    try { window.sessionStorage.removeItem(TEACHER_CODE_KEY); } catch { /* storage blocked */ }
+    try { localStorage.removeItem(TEACHER_CODE_KEY); } catch { /* storage blocked */ }
   }
   function savedTeacherCode() {
-    try { return window.sessionStorage.getItem(TEACHER_CODE_KEY) || ''; } catch { return ''; }
+    try { return localStorage.getItem(TEACHER_CODE_KEY) || ''; } catch { return ''; }
   }
 
   function msg(text, kind) {
