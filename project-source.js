@@ -61,9 +61,41 @@
     return meaningfulLineCount(assembleStarterSource(def));
   }
 
+  // The PRISTINE starter file as it would be saved to disk, mirroring project.js
+  // assembleFileForDisk() with no student edits: header, locked preamble, setup (seed +
+  // editable preamble), the freestyle section, then each function task under a "# Task N"
+  // marker. Used by the teacher dashboard to print a starter page for an "assigned" student
+  // who has no saved work yet, so it reads the same as a real submission. The "# Saved:" date
+  // line is intentionally omitted: nothing was saved.
+  function assembleStarterFile(def) {
+    const d = def || {};
+    const lines = [`# Wavelet ${d.title || ''}`, `# Project: ${d.id || ''}`, ''];
+    (d.lockedPreamble || []).forEach((l) => lines.push(l));
+    const setup = ((d.setupSeed || '') + (d.editablePreamble || ''));
+    if (setup.trim()) { lines.push(setup.replace(/\s+$/g, '')); }
+    lines.push('');
+    const tasks = d.tasks || [];
+    const freestyle = tasks.find((t) => t.freestyle);
+    if (freestyle) {
+      lines.push('# ── Freestyle ──');
+      lines.push((freestyle.starterBody || '').replace(/\s+$/g, ''));
+      lines.push('');
+    }
+    // getFunctionTasks(): real coding tasks (no `type`, not crossArea), excluding freestyle.
+    tasks.filter((t) => !t.type && !t.crossArea && !t.freestyle).forEach((task, idx) => {
+      const src = isMultiFunction(task)
+        ? buildMultiFunctionSource(task.functions)
+        : buildEditorSource(task.function, task.starterBody);
+      lines.push(`# Task ${idx + 1}: ${task.title || ''}`);
+      lines.push(src.replace(/\s+$/g, ''));
+      lines.push('');
+    });
+    return lines.join('\n');
+  }
+
   const api = {
     meaningfulLineCount, buildEditorSource, buildMultiFunctionSource,
-    isMultiFunction, assembleStarterSource, starterMeaningfulLines
+    isMultiFunction, assembleStarterSource, starterMeaningfulLines, assembleStarterFile
   };
   if (typeof module !== 'undefined' && module.exports) { module.exports = api; }
   if (typeof window !== 'undefined') { window.ProjectSource = api; }
