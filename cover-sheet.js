@@ -118,7 +118,6 @@
         let y = top;
         const objective = (pack.learningObjective || '').trim();
         const criteria = (pack.successCriteria || []).filter(Boolean);
-        const note = (pack.curriculumNote || '').trim();
 
         if (objective) {
             doc.setFont('helvetica', 'bold');
@@ -142,24 +141,13 @@
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(9.5);
             doc.setTextColor(40);
-            const indent = 16;
+            const indent = 14;
             criteria.forEach((c) => {
-                doc.setDrawColor(120);
-                doc.setLineWidth(0.6);
-                doc.rect(x + 1, y - 7.5, 8, 8);  // tick box the teacher can mark
+                doc.text('•', x + 2, y);  // bullet point
                 const lines = doc.splitTextToSize(c, width - indent);
                 lines.forEach((ln, i) => doc.text(ln, x + indent, y + i * 11));
                 y += Math.max(12, lines.length * 11) + 4;
             });
-            y += 2;
-        }
-
-        if (note) {
-            doc.setFont('helvetica', 'italic');
-            doc.setFontSize(8);
-            doc.setTextColor(110);
-            doc.splitTextToSize(note, width).forEach((ln) => { doc.text(ln, x, y); y += 10; });
-            doc.setTextColor(0);
             y += 2;
         }
         return y;

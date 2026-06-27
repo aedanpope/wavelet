@@ -13,8 +13,7 @@
       "I can make my program respond to user input so the arrow keys move the player.",
       "I can use if-statements to make decisions, such as stopping the player at the walls (branching).",
       "I can put the parts together, add my own ideas, and explain how my game works."
-    ],
-    "curriculumNote": "Western Australian Digital Technologies curriculum (Year 6): designing, following and implementing digital solutions as simple visual programs involving a sequence of steps, branching (decisions), iteration (repetition) and user input."
+    ]
   },
   "lockedPreamble": [
     "use_canvas(GRID20)",
