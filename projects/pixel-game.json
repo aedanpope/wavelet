@@ -13,7 +13,12 @@
       "I can make my program respond to user input so the arrow keys move the player.",
       "I can use if-statements to make decisions, such as stopping the player at the walls (branching).",
       "I can put the parts together, add my own ideas, and explain how my game works."
-    ]
+    ],
+    "curriculum": {
+      "framework": "Western Australian Digital Technologies curriculum (Year 6)",
+      "source": "https://k10outline.scsa.wa.edu.au/home/teaching/curriculum-browser/technologies-old/digital-technologies2#year-6-syllabus",
+      "rationale": "The learning objective and success criteria are mapped to the WA Year 6 Digital Technologies content: designing, following and implementing digital solutions as simple visual programs involving a sequence of steps, branching (decisions), iteration (repetition) and user input. Each success criterion targets one of those concepts: coordinates and ordered draw calls (sequence of steps), for loops (iteration / repetition), variables and state (representing and updating data), arrow-key handlers (user input), wall checks with if-statements (branching / decisions), and assembling and personalising the parts (creating a digital solution). Stored here as source rationale for a teacher-facing view; it is not printed on the student progress pack."
+    }
   },
   "lockedPreamble": [
     "use_canvas(GRID20)",
