@@ -4,7 +4,7 @@
 
 const {
     buildProjectUrl, buildShortUrl, displayUrl, sheetTitle,
-    fitCodeFontSize, linesThatFit, cropCodeLines, clipLine
+    fitCodeFontSize, linesThatFit, cropCodeLines, clipLine, splitIntoColumns
 } = require('./cover-sheet.js');
 
 let passed = 0;
@@ -73,6 +73,20 @@ check('cropCodeLines does not mutate its input', long.length === 20);
 check('clipLine leaves short lines alone', clipLine('hello', 10) === 'hello');
 check('clipLine truncates with an ellipsis', clipLine('hello world', 6) === 'hello…');
 check('clipLine handles tiny budgets', clipLine('abc', 1) === 'abc');
+
+// ── splitIntoColumns ────────────────────────────────────────────────────────
+const sixLines = ['a', 'b', 'c', 'd', 'e', 'f'];
+const split2 = splitIntoColumns(sixLines, 3, 2);
+check('splitIntoColumns returns one array per column', split2.length === 2);
+check('splitIntoColumns fills the left column first (column-fill order)',
+    split2[0].join('') === 'abc' && split2[1].join('') === 'def');
+check('splitIntoColumns keeps short input in the left column',
+    splitIntoColumns(['a', 'b'], 5, 2)[0].join('') === 'ab' &&
+    splitIntoColumns(['a', 'b'], 5, 2)[1].length === 0);
+check('splitIntoColumns covers every line exactly once',
+    split2.flat().join('') === sixLines.join(''));
+check('splitIntoColumns guards a zero per-column count (no infinite empties)',
+    splitIntoColumns(['a', 'b'], 0, 2)[0].length === 1);
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) { process.exit(1); }
