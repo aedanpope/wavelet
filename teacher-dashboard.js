@@ -48,6 +48,20 @@
       : (r.display_name || '');
   }
 
+  // Keep the teacher code across a refresh, in sessionStorage (this tab only; cleared when the
+  // tab closes or on Log out). It's the capability that unlocks the class, so it stays out of
+  // localStorage / disk and is never shown once signed in.
+  const TEACHER_CODE_KEY = 'wavelet-teacher-code';
+  function rememberTeacherCode(code) {
+    try { window.sessionStorage.setItem(TEACHER_CODE_KEY, code); } catch { /* storage blocked */ }
+  }
+  function forgetTeacherCode() {
+    try { window.sessionStorage.removeItem(TEACHER_CODE_KEY); } catch { /* storage blocked */ }
+  }
+  function savedTeacherCode() {
+    try { return window.sessionStorage.getItem(TEACHER_CODE_KEY) || ''; } catch { return ''; }
+  }
+
   function msg(text, kind) {
     statusBox.innerHTML = text ? `<div class="msg ${kind || ''}">${text}</div>` : '';
   }
@@ -118,6 +132,7 @@
   // code field, and return to the login view.
   function logout() {
     stopRosterAutoRefresh();
+    forgetTeacherCode();
     teacherCode = null;
     teacherInfo = null;
     classes = [];
@@ -172,6 +187,7 @@
     if (!res.ok || !res.data || res.data.ok === false) {
       const err = res.data && res.data.error ? res.data.error : `HTTP ${res.status}`;
       msg(err === 'bad_teacher_code' ? 'That teacher code was not recognised.' : `Error: ${esc(err)}`, 'err');
+      if (res.data && res.data.ok === false) { forgetTeacherCode(); }  // bad code: don't keep auto-trying it
       setSignedIn(false);
       classesWrap.style.display = 'none';
       rosterWrap.style.display = 'none';
@@ -179,6 +195,7 @@
     }
     msg('');
     setSignedIn(true);  // logged in: hide the code field, show Log out
+    rememberTeacherCode(teacherCode);  // survive a refresh (sessionStorage; cleared on tab close / log out)
     teacherInfo = res.data.teacher || {};
     classes = res.data.classes || [];
     renderClassList();
@@ -727,4 +744,12 @@
   el('rename-class-btn').addEventListener('click', onRenameClass);
   rosterBody.addEventListener('click', onRosterClick);
   rosterBody.addEventListener('input', onNameInput);
+
+  // Auto-resume from a saved teacher code (survives refresh). onLoad re-validates it; a bad/
+  // rotated code falls back to the login form and clears the saved value.
+  const resume = savedTeacherCode();
+  if (resume) {
+    teacherInput.value = resume;
+    onLoad();
+  }
 })();
