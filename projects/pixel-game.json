@@ -4,6 +4,22 @@
   "description": "Build a tiny scene that comes alive when you press the arrow keys.",
   "intro": "<p>Build your own pixel-game scene that <strong>animates when you press the arrow keys</strong>. You'll fill in a few small Python functions, run them together, and end up with a tiny game you can save and take home.</p><p><strong>How to work through it:</strong></p><ol><li><strong>Read the <em>Pixel coordinates</em> card below</strong> so you know how the canvas grid works.</li><li><strong>Pick a task card on the left</strong>, then type your code into the editor on its right.</li><li>Click <strong>▶ Run Project</strong> (in the sidebar) to see your scene on the canvas.</li><li>Watch for the green <strong>✓</strong> tick on each task as you finish it.</li><li>Click the <strong>⛶</strong> on the canvas to play in <strong>full screen</strong> (press <kbd>Esc</kbd> to exit).</li><li>Use the <strong>💾 Save</strong> button (or <kbd>Ctrl</kbd>+<kbd>S</kbd>) to save your file so you can keep working on it next class.</li><li><strong>Saving to OneDrive:</strong> when the Save or Open window pops up, click <strong>OneDrive</strong> in the list on the left (or browse to <em>This PC</em> then <em>OneDrive</em>). Saving there means your file is safe and you can open it again from any computer next class.</li><li>Next class, click <strong>📂 Open</strong> at the top to load your saved file and pick up where you left off.</li></ol><p><strong>Useful things to know:</strong></p><ul><li>Tasks marked <em>optional</em> are stretch goals, finish the others first.</li><li>The arrow keys on your keyboard work too (when you're not editing code).</li><li>Anything you <code>print()</code> shows up under the canvas, great for showing a score.</li></ul><p class=\"laptop-only-note\">💻 <strong>This project works best on a laptop.</strong> You'll be using the keyboard a lot.</p>",
   "canvas": "GRID20",
+  "progressPack": {
+    "learningObjective": "Implement a digital solution as a simple visual program that responds to user input, using a sequence of steps, repetition (loops) and branching (if-statements) to build and control an interactive scene.",
+    "successCriteria": [
+      "I can use (x, y) coordinates to draw on the grid in the right places (a sequence of steps).",
+      "I can use a for loop to repeat my drawing instead of writing out every cell by hand (iteration / repetition).",
+      "I can store and update information in variables and state, such as where the player is.",
+      "I can make my program respond to user input so the arrow keys move the player.",
+      "I can use if-statements to make decisions, such as stopping the player at the walls (branching).",
+      "I can put the parts together, add my own ideas, and explain how my game works."
+    ],
+    "curriculum": {
+      "framework": "Western Australian Digital Technologies curriculum (Year 6)",
+      "source": "https://k10outline.scsa.wa.edu.au/home/teaching/curriculum-browser/technologies-old/digital-technologies2#year-6-syllabus",
+      "rationale": "The learning objective and success criteria are mapped to the WA Year 6 Digital Technologies content: designing, following and implementing digital solutions as simple visual programs involving a sequence of steps, branching (decisions), iteration (repetition) and user input. Each success criterion targets one of those concepts: coordinates and ordered draw calls (sequence of steps), for loops (iteration / repetition), variables and state (representing and updating data), arrow-key handlers (user input), wall checks with if-statements (branching / decisions), and assembling and personalising the parts (creating a digital solution). Stored here as source rationale for a teacher-facing view; it is not printed on the student progress pack."
+    }
+  },
   "lockedPreamble": [
     "use_canvas(GRID20)",
     "from types import SimpleNamespace",

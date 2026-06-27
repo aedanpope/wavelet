@@ -73,12 +73,27 @@
         return line.slice(0, maxChars - 1) + '…';
     }
 
+    // Distribute lines across `columns` columns, filling each column top-to-bottom up to
+    // linesPerColumn before spilling into the next (column-fill / newspaper order, so the code
+    // reads down the left column then down the right). Short programs stay in the left column.
+    // Returns an array of `columns` line-arrays (trailing columns may be empty).
+    function splitIntoColumns(lines, linesPerColumn, columns) {
+        const per = Math.max(1, linesPerColumn);
+        const cols = [];
+        for (let c = 0; c < columns; c++) {
+            cols.push(lines.slice(c * per, (c + 1) * per));
+        }
+        return cols;
+    }
+
     // ── PDF rendering (browser only; needs window.jspdf + window.qrcode) ─────
 
     const A4 = { w: 595.28, h: 841.89 };
     const MARGIN = 40;
     const QR_SIZE = 120;
     const CODE_GEOM = { maxFont: 9, minFont: 5, lineHeightRatio: 1.25 };
+    const CODE_COLS = 2;     // the finished code is laid out in two columns to fit more per page
+    const CODE_GUTTER = 18;  // pt of space between the two code columns
 
     // Render a QR for `text` to a PNG data URL by drawing the modules onto a canvas.
     // Uses qrcode-generator (global `qrcode`), whose isDark/getModuleCount API is stable;
@@ -108,6 +123,49 @@
             }
         }
         return canvas.toDataURL('image/png');
+    }
+
+    // Render the learning-objective + success-criteria block (the assessment text from the
+    // project spec's `progressPack`). Returns the y just below the block so the code body can
+    // start there. `geom` is { x, top, width }. Browser-only (uses doc.splitTextToSize).
+    function renderAssessmentBlock(doc, pack, geom) {
+        const { x, top, width } = geom;
+        let y = top;
+        const objective = (pack.learningObjective || '').trim();
+        const criteria = (pack.successCriteria || []).filter(Boolean);
+
+        if (objective) {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.setTextColor(0);
+            doc.text('Learning objective', x, y);
+            y += 14;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9.5);
+            doc.setTextColor(40);
+            doc.splitTextToSize(objective, width).forEach((ln) => { doc.text(ln, x, y); y += 12; });
+            y += 6;
+        }
+
+        if (criteria.length) {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.setTextColor(0);
+            doc.text('Success criteria', x, y);
+            y += 14;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9.5);
+            doc.setTextColor(40);
+            const indent = 14;
+            criteria.forEach((c) => {
+                doc.text('•', x + 2, y);  // bullet point
+                const lines = doc.splitTextToSize(c, width - indent);
+                lines.forEach((ln, i) => doc.text(ln, x + indent, y + i * 11));
+                y += Math.max(12, lines.length * 11) + 4;
+            });
+            y += 2;
+        }
+        return y;
     }
 
     function renderOneFinalPage(doc, student, ctx) {
@@ -141,40 +199,57 @@
         doc.setDrawColor(210);
         doc.line(MARGIN, dividerY, A4.w - MARGIN, dividerY);
 
+        // Assessment block (learning objective + success criteria) from the project spec, if any.
+        // It sits between the identity block and the student's code, and pushes the code down.
+        const pack = ctx.progressPack;
+        let labelY = dividerY + 22;
+        if (pack && (pack.learningObjective || (pack.successCriteria && pack.successCriteria.length))) {
+            const endY = renderAssessmentBlock(doc, pack,
+                { x: MARGIN, top: dividerY + 22, width: A4.w - 2 * MARGIN });
+            doc.setDrawColor(225);
+            doc.line(MARGIN, endY + 2, A4.w - MARGIN, endY + 2);
+            labelY = endY + 22;
+        }
+
         // Code body label.
-        const labelY = dividerY + 22;
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(11);
         doc.text('My finished code', MARGIN, labelY);
 
-        // Code body: fit font, crop to page, clip long lines.
+        // Code body: two columns so more code fits on the single page. Size the font from the
+        // per-column line count, crop to the two-column capacity, clip long lines to the
+        // (narrower) column width. Code fills the left column first, then spills into the right.
         const bodyTop = labelY + 14;
         const availableHeight = A4.h - MARGIN - bodyTop;
+        const colWidth = (A4.w - 2 * MARGIN - CODE_GUTTER * (CODE_COLS - 1)) / CODE_COLS;
         const rawLines = String(student.content || '').replace(/\s+$/, '').split('\n');
         const geom = Object.assign({ availableHeight }, CODE_GEOM);
-        const fontSize = fitCodeFontSize(rawLines.length, geom);
-        const maxLines = linesThatFit(fontSize, geom);
-        const { lines } = cropCodeLines(rawLines, maxLines);
-        const maxChars = Math.floor((A4.w - 2 * MARGIN) / (fontSize * 0.6));
+        const fontSize = fitCodeFontSize(Math.ceil(rawLines.length / CODE_COLS), geom);
+        const linesPerCol = linesThatFit(fontSize, geom);
+        const { lines } = cropCodeLines(rawLines, CODE_COLS * linesPerCol);
+        const maxChars = Math.floor(colWidth / (fontSize * 0.6));
 
         doc.setFont('courier', 'normal');
         doc.setFontSize(fontSize);
         doc.setTextColor(20);
         const lineH = fontSize * CODE_GEOM.lineHeightRatio;
-        lines.forEach((line, i) => {
-            doc.text(clipLine(line, maxChars), MARGIN, bodyTop + (i + 1) * lineH);
+        splitIntoColumns(lines, linesPerCol, CODE_COLS).forEach((colLines, c) => {
+            const colX = MARGIN + c * (colWidth + CODE_GUTTER);
+            colLines.forEach((line, i) => {
+                doc.text(clipLine(line, maxChars), colX, bodyTop + (i + 1) * lineH);
+            });
         });
         doc.setTextColor(0);
     }
 
     // students: [{ name, code, content }]. Generates the multi-page PDF and downloads it.
     async function generateFinalSheets(opts) {
-        const { students, projectId, projectTitle, origin, filename } = opts;
+        const { students, projectId, projectTitle, origin, filename, progressPack } = opts;
         if (!window.jspdf || !window.jspdf.jsPDF) throw new Error('jsPDF not loaded');
         if (!window.qrcode) throw new Error('qrcode library not loaded');
         if (!students || !students.length) throw new Error('no students to print');
 
-        const ctx = { projectId, projectTitle, origin: origin || window.location.origin };
+        const ctx = { projectId, projectTitle, origin: origin || window.location.origin, progressPack };
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ unit: 'pt', format: 'a4' });
 
@@ -296,7 +371,7 @@
 
     const api = {
         buildProjectUrl, buildShortUrl, displayUrl, sheetTitle,
-        fitCodeFontSize, linesThatFit, cropCodeLines, clipLine,
+        fitCodeFontSize, linesThatFit, cropCodeLines, clipLine, splitIntoColumns,
         generateFinalSheets, generateCodeTable
     };
 
