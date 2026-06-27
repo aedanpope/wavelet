@@ -110,6 +110,61 @@
         return canvas.toDataURL('image/png');
     }
 
+    // Render the learning-objective + success-criteria block (the assessment text from the
+    // project spec's `progressPack`). Returns the y just below the block so the code body can
+    // start there. `geom` is { x, top, width }. Browser-only (uses doc.splitTextToSize).
+    function renderAssessmentBlock(doc, pack, geom) {
+        const { x, top, width } = geom;
+        let y = top;
+        const objective = (pack.learningObjective || '').trim();
+        const criteria = (pack.successCriteria || []).filter(Boolean);
+        const note = (pack.curriculumNote || '').trim();
+
+        if (objective) {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.setTextColor(0);
+            doc.text('Learning objective', x, y);
+            y += 14;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9.5);
+            doc.setTextColor(40);
+            doc.splitTextToSize(objective, width).forEach((ln) => { doc.text(ln, x, y); y += 12; });
+            y += 6;
+        }
+
+        if (criteria.length) {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(11);
+            doc.setTextColor(0);
+            doc.text('Success criteria', x, y);
+            y += 14;
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9.5);
+            doc.setTextColor(40);
+            const indent = 16;
+            criteria.forEach((c) => {
+                doc.setDrawColor(120);
+                doc.setLineWidth(0.6);
+                doc.rect(x + 1, y - 7.5, 8, 8);  // tick box the teacher can mark
+                const lines = doc.splitTextToSize(c, width - indent);
+                lines.forEach((ln, i) => doc.text(ln, x + indent, y + i * 11));
+                y += Math.max(12, lines.length * 11) + 4;
+            });
+            y += 2;
+        }
+
+        if (note) {
+            doc.setFont('helvetica', 'italic');
+            doc.setFontSize(8);
+            doc.setTextColor(110);
+            doc.splitTextToSize(note, width).forEach((ln) => { doc.text(ln, x, y); y += 10; });
+            doc.setTextColor(0);
+            y += 2;
+        }
+        return y;
+    }
+
     function renderOneFinalPage(doc, student, ctx) {
         const { projectTitle, origin, projectId } = ctx;
         const shortUrl = buildShortUrl(origin, student.code);
@@ -141,8 +196,19 @@
         doc.setDrawColor(210);
         doc.line(MARGIN, dividerY, A4.w - MARGIN, dividerY);
 
+        // Assessment block (learning objective + success criteria) from the project spec, if any.
+        // It sits between the identity block and the student's code, and pushes the code down.
+        const pack = ctx.progressPack;
+        let labelY = dividerY + 22;
+        if (pack && (pack.learningObjective || (pack.successCriteria && pack.successCriteria.length))) {
+            const endY = renderAssessmentBlock(doc, pack,
+                { x: MARGIN, top: dividerY + 22, width: A4.w - 2 * MARGIN });
+            doc.setDrawColor(225);
+            doc.line(MARGIN, endY + 2, A4.w - MARGIN, endY + 2);
+            labelY = endY + 22;
+        }
+
         // Code body label.
-        const labelY = dividerY + 22;
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(11);
         doc.text('My finished code', MARGIN, labelY);
@@ -169,12 +235,12 @@
 
     // students: [{ name, code, content }]. Generates the multi-page PDF and downloads it.
     async function generateFinalSheets(opts) {
-        const { students, projectId, projectTitle, origin, filename } = opts;
+        const { students, projectId, projectTitle, origin, filename, progressPack } = opts;
         if (!window.jspdf || !window.jspdf.jsPDF) throw new Error('jsPDF not loaded');
         if (!window.qrcode) throw new Error('qrcode library not loaded');
         if (!students || !students.length) throw new Error('no students to print');
 
-        const ctx = { projectId, projectTitle, origin: origin || window.location.origin };
+        const ctx = { projectId, projectTitle, origin: origin || window.location.origin, progressPack };
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ unit: 'pt', format: 'a4' });
 

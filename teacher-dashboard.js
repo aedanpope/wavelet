@@ -27,6 +27,7 @@
   let revealedIds = new Set();// which rows currently show their code
   let projectIndex = null;    // projects/index.json (slug -> file), fetched once
   const projectBaselines = {};// project_slug -> starter meaningful line count (baseline), or null
+  const projectDefs = {};     // project_slug -> fetched project definition JSON, or null
   let rosterTimer = null;     // setInterval handle for the 30s live roster auto-refresh
 
   function msg(text, kind) {
@@ -246,20 +247,37 @@
       : `<button class="lock-btn" data-lock-id="${id}" data-readonly="0" title="Editable. Click to lock (make view-only).">🔓 Open</button>`;
   }
 
-  // The project's starter baseline (meaningful lines), computed once per slug by fetching the
-  // project definition and running the shared assembler. Cached; null if it can't be loaded.
-  async function baselineFor(slug) {
-    if (slug in projectBaselines) { return projectBaselines[slug]; }
-    let val = null;
+  // Fetch a project's definition JSON (from projects/index.json -> its file), cached per slug.
+  // Returns null if it can't be loaded.
+  async function projectDefFor(slug) {
+    if (slug in projectDefs) { return projectDefs[slug]; }
+    let def = null;
     try {
       if (!projectIndex) {
         const ir = await fetch('projects/index.json');
         projectIndex = ((await ir.json()).projects) || [];
       }
       const entry = projectIndex.find((p) => p.id === slug);
-      if (entry && window.ProjectSource) {
+      if (entry) {
         const dr = await fetch(`projects/${entry.file}`);
-        val = window.ProjectSource.starterMeaningfulLines(await dr.json());
+        def = await dr.json();
+      }
+    } catch {
+      def = null;
+    }
+    projectDefs[slug] = def;
+    return def;
+  }
+
+  // The project's starter baseline (meaningful lines), computed once per slug from the project
+  // definition via the shared assembler. Cached; null if it can't be loaded.
+  async function baselineFor(slug) {
+    if (slug in projectBaselines) { return projectBaselines[slug]; }
+    let val = null;
+    try {
+      const def = await projectDefFor(slug);
+      if (def && window.ProjectSource) {
+        val = window.ProjectSource.starterMeaningfulLines(def);
       }
     } catch {
       val = null;
@@ -561,8 +579,10 @@
       if (!students.length) { msg('No students with saved work to print yet.', 'err'); return; }
       const slug = (currentRoster[0] && currentRoster[0].project_slug) || 'pixel-game';
       btn.textContent = 'Saving PDF…';
+      const def = await projectDefFor(slug);
       await window.CoverSheet.generateFinalSheets({
-        students, projectId: slug, projectTitle: prettyTitle(slug)
+        students, projectId: slug, projectTitle: prettyTitle(slug),
+        progressPack: def && def.progressPack
       });
       msg(`Built progress sheets for ${students.length} student${students.length === 1 ? '' : 's'}.`, 'ok');
     } catch (e) {
