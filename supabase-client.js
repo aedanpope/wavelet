@@ -93,6 +93,10 @@ const api = {
     rpc('reprint_codes', { p_teacher_code: teacherCode, p_class_id: classId }, opts),
   setReadonly: (teacherCode, projectId, readonly, opts) =>
     rpc('set_readonly', { p_teacher_code: teacherCode, p_project_id: projectId, p_readonly: !!readonly }, opts),
+  setAssigned: (teacherCode, projectId, assigned, opts) =>
+    rpc('set_assigned', { p_teacher_code: teacherCode, p_project_id: projectId, p_assigned: !!assigned }, opts),
+  renameClass: (teacherCode, classId, name, opts) =>
+    rpc('rename_class', { p_teacher_code: teacherCode, p_class_id: classId, p_name: name }, opts),
   markComplete: (teacherCode, classProjectId, opts) =>
     rpc('mark_complete', { p_teacher_code: teacherCode, p_class_project_id: classProjectId }, opts)
 };
