@@ -1917,24 +1917,34 @@ function openWithProject(overlay, code, data) {
     overlay.remove();
     showLoginIndicator(code);
 
-    // Read-only lock (set by the teacher): the student can view and run, but not save. The
-    // server also rejects saves (the real guard); here we make the editors read-only, skip the
-    // autosave controller entirely, and say so, so nothing gives the false impression of saving.
-    if (data.readonly) {
+    // View-only: either the teacher locked the project (data.readonly) or a teacher opened it
+    // to inspect it (?inspect=1, the dashboard "Open" link). Editors are read-only and NO
+    // autosave controller is created, so an inspecting teacher can never overwrite the student's
+    // work and a student never sees a false "saving". The server also rejects saves on a locked
+    // project (the real guard).
+    const inspectMode = /[?&]inspect=1(&|$)/.test(window.location.search);
+    if (data.readonly || inspectMode) {
         setEditorsReadOnly(true);
         const importBtn = document.getElementById('import-file-btn');
         if (importBtn) { importBtn.style.display = 'none'; }
         const chip = document.getElementById('save-status');
-        if (chip) { chip.textContent = '🔒 Locked (view only)'; chip.className = 'save-status'; chip.style.display = ''; }
+        if (chip) {
+            chip.textContent = inspectMode ? '🔍 Inspecting (view only)' : '🔒 Locked (view only)';
+            chip.className = 'save-status';
+            chip.style.display = '';
+        }
         const histBtn = document.getElementById('history-btn');
         if (histBtn) { histBtn.style.display = ''; }
-        showConfirmModal({
-            icon: '🔒',
-            title: 'This project is locked',
-            message: 'Your teacher set this to view-only. You can read it and run it, but changes will not be saved.',
-            code: code,
-            button: 'OK'
-        });
+        // Show the "locked" notice to a student; an inspecting teacher doesn't need a popup.
+        if (data.readonly && !inspectMode) {
+            showConfirmModal({
+                icon: '🔒',
+                title: 'This project is locked',
+                message: 'Your teacher set this to view-only. You can read it and run it, but changes will not be saved.',
+                code: code,
+                button: 'OK'
+            });
+        }
         return;
     }
 

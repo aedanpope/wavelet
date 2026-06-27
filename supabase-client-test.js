@@ -88,6 +88,14 @@ g = capture((o) => SC.setReadonly('teach-code', 'proj-1', true, o));
 check('setReadonly maps args', fnOf(g) === 'set_readonly'
   && body(g).p_project_id === 'proj-1' && body(g).p_readonly === true);
 
+g = capture((o) => SC.setAssigned('teach-code', 'proj-1', true, o));
+check('setAssigned maps args', fnOf(g) === 'set_assigned'
+  && body(g).p_project_id === 'proj-1' && body(g).p_assigned === true);
+
+g = capture((o) => SC.renameClass('teach-code', 'cls-1', '5B Room 12', o));
+check('renameClass maps args', fnOf(g) === 'rename_class'
+  && body(g).p_class_id === 'cls-1' && body(g).p_name === '5B Room 12');
+
 console.log(`\n📊 supabase-client test summary\n✅ Passed: ${passed}\n❌ Failed: ${failed}`);
 if (failed === 0) { console.log('\n🎉 All supabase-client tests passed!'); process.exit(0); }
 else { console.log(`\n⚠️  ${failed} failed.`); process.exit(1); }

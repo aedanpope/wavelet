@@ -210,6 +210,17 @@ def main():
     _, res = rpc(cfg, "save_project", {"p_code": student, "p_content": "print('unlocked')", "p_base_version": 4, "p_session": "s1"})
     check("save works after unlock", res.get("ok") is True, str(res))
 
+    # assigned flag (controls whether a no-work code gets a progress-pack page)
+    _, res = rpc(cfg, "set_assigned", {"p_teacher_code": cfg["teacher"], "p_project_id": project_id, "p_assigned": True})
+    check("set_assigned ok", res.get("ok") is True and res.get("assigned") is True, str(res))
+    _, res = rpc(cfg, "teacher_roster", {"p_teacher_code": cfg["teacher"], "p_class_id": class_id})
+    arow = next((r for r in res.get("roster", []) if r.get("project_id") == project_id), None)
+    check("roster row shows assigned", arow is not None and arow.get("assigned") is True, str(arow))
+    _, res = rpc(cfg, "set_assigned", {"p_teacher_code": "nope-not-a-teacher", "p_project_id": project_id, "p_assigned": False})
+    check("set_assigned rejects a bad teacher code", res.get("ok") is False, str(res))
+    _, res = rpc(cfg, "set_assigned", {"p_teacher_code": cfg["teacher"], "p_project_id": project_id, "p_assigned": False})
+    check("set_assigned clear ok", res.get("ok") is True and res.get("assigned") is False, str(res))
+
     # mark_complete
     if class_project_id:
         _, res = rpc(cfg, "mark_complete", {"p_teacher_code": cfg["teacher"], "p_class_project_id": class_project_id})
@@ -224,6 +235,14 @@ def main():
         "p_school": None, "p_project_slug": cfg["slug"]})
     check("create_class ok", res.get("ok") and res.get("class_id"), str(res))
     new_class_id = res.get("class_id") if isinstance(res, dict) else None
+
+    # rename_class
+    _, res = rpc(cfg, "rename_class", {"p_teacher_code": cfg["teacher"], "p_class_id": new_class_id, "p_name": "  ITest Renamed " + rand[:4] + "  "})
+    check("rename_class ok (trimmed)", res.get("ok") is True and res.get("name") == "ITest Renamed " + rand[:4], str(res))
+    _, res = rpc(cfg, "rename_class", {"p_teacher_code": cfg["teacher"], "p_class_id": new_class_id, "p_name": "   "})
+    check("rename_class rejects a blank name", res.get("ok") is False and res.get("error") == "bad_name", str(res))
+    _, res = rpc(cfg, "rename_class", {"p_teacher_code": "nope-not-a-teacher", "p_class_id": new_class_id, "p_name": "Hacked"})
+    check("rename_class rejects a bad teacher code", res.get("ok") is False, str(res))
 
     # Pool of 5 candidates, ask for 3: server should land exactly 3 from the pool (the extras
     # are spares for collisions).

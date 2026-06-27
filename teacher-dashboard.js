@@ -30,6 +30,39 @@
   const projectDefs = {};     // project_slug -> fetched project definition JSON, or null
   let rosterTimer = null;     // setInterval handle for the 30s live roster auto-refresh
 
+  // Local-only names for generating the progress pack / code table. These NEVER hit the server
+  // (the server only ever sees a code); they live in this browser, keyed by project_id, so they
+  // survive a reload. PDF name = local name if set, else the server display_name.
+  const LOCAL_NAMES_KEY = 'wavelet-pdf-names';
+  function loadLocalNames() {
+    try { return JSON.parse(localStorage.getItem(LOCAL_NAMES_KEY) || '{}') || {}; } catch { return {}; }
+  }
+  const localNames = loadLocalNames();
+  function saveLocalNames() {
+    try { localStorage.setItem(LOCAL_NAMES_KEY, JSON.stringify(localNames)); } catch { /* storage full/blocked */ }
+  }
+  // The name to print for a student: the teacher's local name once they've touched the field,
+  // otherwise the server display_name.
+  function effectiveName(r) {
+    return Object.prototype.hasOwnProperty.call(localNames, r.project_id)
+      ? localNames[r.project_id]
+      : (r.display_name || '');
+  }
+
+  // Keep the teacher code across a refresh, in sessionStorage (this tab only; cleared when the
+  // tab closes or on Log out). It's the capability that unlocks the class, so it stays out of
+  // localStorage / disk and is never shown once signed in.
+  const TEACHER_CODE_KEY = 'wavelet-teacher-code';
+  function rememberTeacherCode(code) {
+    try { window.sessionStorage.setItem(TEACHER_CODE_KEY, code); } catch { /* storage blocked */ }
+  }
+  function forgetTeacherCode() {
+    try { window.sessionStorage.removeItem(TEACHER_CODE_KEY); } catch { /* storage blocked */ }
+  }
+  function savedTeacherCode() {
+    try { return window.sessionStorage.getItem(TEACHER_CODE_KEY) || ''; } catch { return ''; }
+  }
+
   function msg(text, kind) {
     statusBox.innerHTML = text ? `<div class="msg ${kind || ''}">${text}</div>` : '';
   }
@@ -100,6 +133,7 @@
   // code field, and return to the login view.
   function logout() {
     stopRosterAutoRefresh();
+    forgetTeacherCode();
     teacherCode = null;
     teacherInfo = null;
     classes = [];
@@ -154,6 +188,7 @@
     if (!res.ok || !res.data || res.data.ok === false) {
       const err = res.data && res.data.error ? res.data.error : `HTTP ${res.status}`;
       msg(err === 'bad_teacher_code' ? 'That teacher code was not recognised.' : `Error: ${esc(err)}`, 'err');
+      if (res.data && res.data.ok === false) { forgetTeacherCode(); }  // bad code: don't keep auto-trying it
       setSignedIn(false);
       classesWrap.style.display = 'none';
       rosterWrap.style.display = 'none';
@@ -161,6 +196,7 @@
     }
     msg('');
     setSignedIn(true);  // logged in: hide the code field, show Log out
+    rememberTeacherCode(teacherCode);  // survive a refresh (sessionStorage; cleared on tab close / log out)
     teacherInfo = res.data.teacher || {};
     classes = res.data.classes || [];
     renderClassList();
@@ -220,9 +256,10 @@
     revealBtn.textContent = revealedIds.size > 0 ? 'Hide all codes' : 'Reveal all codes';
   }
 
-  function nameCell(name) {
-    const n = (name || '').trim();
-    return n ? esc(n) : '<span class="muted-name">(no name)</span>';
+  // The Name cell is an editable, local-only input (see localNames): defaults to the server
+  // name, but anything typed stays in this browser and is what the PDFs use.
+  function nameInputCell(r) {
+    return `<input class="name-box" data-name-id="${esc(r.project_id)}" value="${esc(effectiveName(r))}" placeholder="(name for PDF)" autocomplete="off">`;
   }
 
   // Net "lines you wrote" for a student: their latest meaningful line count (from the roster
@@ -245,6 +282,22 @@
     return r.readonly
       ? `<button class="lock-btn locked" data-lock-id="${id}" data-readonly="1" title="Locked: the student can view and run but not save. Click to unlock.">🔒 Locked</button>`
       : `<button class="lock-btn" data-lock-id="${id}" data-readonly="0" title="Editable. Click to lock (make view-only).">🔓 Open</button>`;
+  }
+
+  // "Assigned": a student with saved work is always in the progress pack (ticked + disabled).
+  // For a no-work code, the teacher ticks it to include a blank page (a real student who did not
+  // submit) vs leaving it off (an unused spare code). Persisted via set_assigned.
+  function assignedCell(r) {
+    if (r.version) {
+      return '<input type="checkbox" checked disabled title="Has saved work, always in the progress pack">';
+    }
+    return `<input type="checkbox" class="assign-box" data-assign-id="${esc(r.project_id)}" ${r.assigned ? 'checked' : ''} title="Tick if this code was given to a real student (prints a blank page even with no saved work)">`;
+  }
+
+  // Open the student's project read-only to inspect it (uses the same code-in-URL link as the
+  // cover sheet, plus inspect=1 so the teacher can't accidentally save over their work).
+  function openCell(r) {
+    return `<button class="open-btn" data-open-id="${esc(r.project_id)}" data-slug="${esc(r.project_slug)}" title="Open this student's project to inspect it (read-only)">↗ open</button>`;
   }
 
   // Fetch a project's definition JSON (from projects/index.json -> its file), cached per slug.
@@ -307,12 +360,14 @@
       const status = r.completed_at ? '✓ complete' : '—';
       return `<tr>
         <td>${i + 1}</td>
-        <td>${nameCell(r.display_name)}</td>
+        <td>${nameInputCell(r)}</td>
+        <td class="center">${assignedCell(r)}</td>
         <td>${netCell(r)}</td>
         <td>${esc(r.version)}</td>
         <td>${esc(fmtTime(r.last_saved_at))}</td>
         <td>${status}</td>
         <td>${lockCell(r)}</td>
+        <td>${openCell(r)}</td>
         <td>${codeCell}</td>
       </tr>`;
     }).join('');
@@ -353,8 +408,24 @@
     const slugs = [...new Set(roster.map((r) => r.project_slug).filter(Boolean))];
     await Promise.all(slugs.map(baselineFor));
     updateClassHeading(slugs);
-    renderRoster(roster);
+    // Don't blow away a name field the teacher is typing in during a silent auto-refresh; keep
+    // the data fresh and re-render on the next cycle (when they're done).
+    if (silent && isEditingName()) { currentRoster = roster; }
+    else { renderRoster(roster); }
     return true;
+  }
+
+  function isEditingName() {
+    const a = document.activeElement;
+    return !!(a && a.classList && a.classList.contains('name-box'));
+  }
+
+  // Persist a typed PDF name (local only) on every keystroke.
+  function onNameInput(e) {
+    const box = e.target.closest('.name-box');
+    if (!box) { return; }
+    localNames[box.getAttribute('data-name-id')] = box.value;
+    saveLocalNames();
   }
 
   // Poll the roster every 30s while a class is open, so progress shows up live without the
@@ -385,10 +456,43 @@
     renderRoster(currentRoster);
   }
 
+  // Persist the "assigned" tick (no re-render, so the checkbox keeps its state; the 30s refresh
+  // reconciles).
+  async function onAssignToggle(box) {
+    const id = box.getAttribute('data-assign-id');
+    const assigned = box.checked;
+    box.disabled = true;
+    const res = await SC.setAssigned(teacherCode, id, assigned);
+    box.disabled = false;
+    if (!res.ok || !res.data || res.data.ok === false) {
+      msg('Could not save that. Try again.', 'err');
+      box.checked = !assigned;  // revert
+      return;
+    }
+    const row = currentRoster.find((r) => r.project_id === id);
+    if (row) { row.assigned = assigned; }
+  }
+
+  // Open a student's project read-only (inspect=1) in a new tab, using their code in the URL
+  // fragment (kept out of server logs, like the cover-sheet link).
+  async function onOpenProject(btn) {
+    const id = btn.getAttribute('data-open-id');
+    const slug = btn.getAttribute('data-slug') || 'pixel-game';
+    if (!(await ensureCodes())) { return; }
+    const code = codesById[id];
+    if (!code) { msg('Could not find that code.', 'err'); return; }
+    const url = `${window.location.origin}/project.html?project=${encodeURIComponent(slug)}&inspect=1#code=${encodeURIComponent(code)}`;
+    window.open(url, '_blank');
+  }
+
   // Per-row click: toggle just that student's code (lazily fetching codes on first reveal).
   async function onRosterClick(e) {
     const lockBtn = e.target.closest('.lock-btn');
     if (lockBtn) { onLockToggle(lockBtn); return; }
+    const assignBox = e.target.closest('.assign-box');
+    if (assignBox) { onAssignToggle(assignBox); return; }
+    const openBtn = e.target.closest('.open-btn');
+    if (openBtn) { onOpenProject(openBtn); return; }
     const copyBtn = e.target.closest('.copy-btn');
     if (copyBtn) { copyText(copyBtn.getAttribute('data-copy'), copyBtn); return; }
     const target = e.target.closest('[data-reveal-id]');
@@ -540,7 +644,7 @@
     if (!currentClass || !currentRoster.length) { msg('Add some students first.', 'err'); return; }
     if (!window.CoverSheet) { msg('Download is unavailable (library failed to load).', 'err'); return; }
     if (!(await ensureCodes())) { return; }
-    const rows = currentRoster.map((r) => ({ name: r.display_name || '', code: codesById[r.project_id] || '' }));
+    const rows = currentRoster.map((r) => ({ name: effectiveName(r), code: codesById[r.project_id] || '' }));
     try {
       window.CoverSheet.generateCodeTable({
         className: currentClass.name, school: currentClass.school, rows, scale: scale || 1
@@ -565,7 +669,9 @@
         const r = currentRoster[i];
         const code = codesById[r.project_id];
         if (!code) { continue; }
-        if (!r.version) { continue; }  // skip unused codes (never saved -> nothing to print)
+        // Print a page for anyone with saved work OR ticked "assigned" (a real student who did
+        // not submit gets a blank page); skip unused, unassigned spare codes.
+        if (!r.version && !r.assigned) { continue; }
         btn.textContent = `Building… ${i + 1}/${currentRoster.length}`;
         let content = '';
         try {
@@ -574,9 +680,9 @@
         } catch {
           /* leave content empty; the sheet still prints the identity block */
         }
-        students.push({ name: r.display_name, code, content });
+        students.push({ name: effectiveName(r), code, content });
       }
-      if (!students.length) { msg('No students with saved work to print yet.', 'err'); return; }
+      if (!students.length) { msg('No students with saved work or ticked "assigned" to print yet.', 'err'); return; }
       const slug = (currentRoster[0] && currentRoster[0].project_slug) || 'pixel-game';
       btn.textContent = 'Saving PDF…';
       const def = await projectDefFor(slug);
@@ -591,6 +697,48 @@
       btn.disabled = false;
       btn.textContent = prev;
     }
+  }
+
+  // A small modal prompt (used for renaming a class). Resolves to the typed string, or null if
+  // cancelled. Text set via value/textContent, so no injection.
+  function showPromptModal(opts) {
+    const o = opts || {};
+    return new Promise((resolve) => {
+      const overlay = document.createElement('div');
+      overlay.className = 'dash-modal-overlay';
+      overlay.innerHTML =
+        '<div class="dash-modal"><h3></h3>' +
+        '<input type="text" class="dash-modal-input" autocomplete="off">' +
+        '<div class="dash-modal-actions"><button class="dm-save">Save</button>' +
+        '<button class="secondary dm-cancel">Cancel</button></div></div>';
+      overlay.querySelector('h3').textContent = o.title || '';
+      const input = overlay.querySelector('.dash-modal-input');
+      input.value = o.value || '';
+      document.body.appendChild(overlay);
+      const done = (val) => { overlay.remove(); resolve(val); };
+      overlay.querySelector('.dm-save').addEventListener('click', () => done(input.value));
+      overlay.querySelector('.dm-cancel').addEventListener('click', () => done(null));
+      overlay.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { done(input.value); }
+        if (e.key === 'Escape') { done(null); }
+      });
+      input.focus();
+      input.select();
+    });
+  }
+
+  async function onRenameClass() {
+    if (!currentClass) { return; }
+    const name = await showPromptModal({ title: 'Rename class', value: currentClass.name });
+    if (name === null) { return; }  // cancelled
+    const trimmed = name.trim();
+    if (!trimmed) { msg('Enter a class name.', 'err'); return; }
+    const res = await SC.renameClass(teacherCode, currentClass.class_id, trimmed);
+    if (!res.ok || !res.data || res.data.ok === false) { msg('Could not rename the class.', 'err'); return; }
+    currentClass.name = trimmed;
+    const c = classes.find((x) => x.class_id === currentClass.class_id);
+    if (c) { c.name = trimmed; }
+    updateClassHeading([...new Set(currentRoster.map((r) => r.project_slug).filter(Boolean))]);
   }
 
   // ── Wiring ──────────────────────────────────────────────────────────────
@@ -613,5 +761,15 @@
   el('download-codes-btn').addEventListener('click', () => onDownloadCodeTable(1));
   el('download-strips-btn').addEventListener('click', () => onDownloadCodeTable(2));
   el('print-final-btn').addEventListener('click', onPrintFinal);
+  el('rename-class-btn').addEventListener('click', onRenameClass);
   rosterBody.addEventListener('click', onRosterClick);
+  rosterBody.addEventListener('input', onNameInput);
+
+  // Auto-resume from a saved teacher code (survives refresh). onLoad re-validates it; a bad/
+  // rotated code falls back to the login form and clears the saved value.
+  const resume = savedTeacherCode();
+  if (resume) {
+    teacherInput.value = resume;
+    onLoad();
+  }
 })();
