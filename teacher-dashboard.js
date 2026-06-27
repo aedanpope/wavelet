@@ -664,13 +664,26 @@
     btn.disabled = true;
     try {
       if (!(await ensureCodes())) { return; }
+      // Assigned-but-no-work students print the project's starter code, so their page reads the
+      // same as a real submission. Built once per slug from the cached project definition.
+      const starterBySlug = {};
+      async function starterFor(slug) {
+        if (slug in starterBySlug) { return starterBySlug[slug]; }
+        let src = '';
+        try {
+          const d = await projectDefFor(slug);
+          if (d && window.ProjectSource) { src = window.ProjectSource.assembleStarterFile(d); }
+        } catch { src = ''; }
+        starterBySlug[slug] = src;
+        return src;
+      }
       const students = [];
       for (let i = 0; i < currentRoster.length; i++) {
         const r = currentRoster[i];
         const code = codesById[r.project_id];
         if (!code) { continue; }
         // Print a page for anyone with saved work OR ticked "assigned" (a real student who did
-        // not submit gets a blank page); skip unused, unassigned spare codes.
+        // not submit gets the starter code); skip unused, unassigned spare codes.
         if (!r.version && !r.assigned) { continue; }
         btn.textContent = `Building… ${i + 1}/${currentRoster.length}`;
         let content = '';
@@ -678,8 +691,10 @@
           const res = await SC.loadProject(code);
           if (res.ok && res.data && res.data.found !== false) { content = res.data.content || ''; }
         } catch {
-          /* leave content empty; the sheet still prints the identity block */
+          /* leave content empty; we fall back to the starter code below */
         }
+        // No saved work (assigned student who never submitted): print the starter code.
+        if (!content.trim()) { content = await starterFor(r.project_slug); }
         students.push({ name: effectiveName(r), code, content });
       }
       if (!students.length) { msg('No students with saved work or ticked "assigned" to print yet.', 'err'); return; }

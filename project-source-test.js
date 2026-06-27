@@ -45,6 +45,21 @@ check('starterMeaningfulLines sums code-bearing parts (expect 10)',
 check('crossArea + concept tasks excluded',
   PS.assembleStarterSource(def).indexOf('skip') === -1);
 
+// ---- assembleStarterFile: the full printable starter file (header + markers) ----
+const file = PS.assembleStarterFile({ id: 'pixel-game', title: 'Pixel Game', ...def });
+check('assembleStarterFile carries the header', file.startsWith('# Wavelet Pixel Game\n# Project: pixel-game\n'),
+  JSON.stringify(file.slice(0, 60)));
+check('assembleStarterFile keeps the locked preamble', file.indexOf('use_canvas(GRID20)') !== -1);
+check('assembleStarterFile merges setup seed + editable preamble',
+  file.indexOf('state = SimpleNamespace()\nstate.x = 0') !== -1);
+check('assembleStarterFile has a freestyle section', file.indexOf('# ── Freestyle ──\nx = 1') !== -1);
+check('assembleStarterFile numbers function tasks (Task 1 / Task 2)',
+  file.indexOf('# Task 1: ') !== -1 && file.indexOf('# Task 2: ') !== -1 && file.indexOf('def draw():') !== -1);
+check('assembleStarterFile excludes crossArea + concept tasks', file.indexOf('skip') === -1);
+check('assembleStarterFile omits the Saved date line', file.indexOf('# Saved:') === -1);
+check('assembleStarterFile handles an empty def without throwing',
+  typeof PS.assembleStarterFile({}) === 'string' && typeof PS.assembleStarterFile(null) === 'string');
+
 console.log(`\n📊 project-source test summary\n✅ Passed: ${passed}\n❌ Failed: ${failed}`);
 if (failed === 0) { console.log('\n🎉 All project-source tests passed!'); process.exit(0); }
 else { console.log(`\n⚠️  ${failed} failed.`); process.exit(1); }
