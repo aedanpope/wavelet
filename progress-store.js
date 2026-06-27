@@ -13,10 +13,9 @@ const ProgressStore = (() => {
 
     // Local data that must SURVIVE a content-version bump. The "clear on update" below is meant
     // to reset student worksheet/project progress when content changes; it must NOT wipe the
-    // teacher dashboard's local-only PDF names (they live on the teacher's device and are not
-    // tied to any worksheet version). The teacher code itself is in sessionStorage, so it is
-    // untouched by localStorage.clear() either way.
-    const PRESERVE_KEYS = ['wavelet-pdf-names'];
+    // teacher dashboard's device-local data: the PDF names and the saved teacher code (both live
+    // on the teacher's own machine and are not tied to any worksheet version).
+    const PRESERVE_KEYS = ['wavelet-pdf-names', 'wavelet-teacher-code'];
 
     // Apply a content-version change to a storage: when the stored version differs from the
     // current one, clear it (resetting student progress) but carry over PRESERVE_KEYS, then

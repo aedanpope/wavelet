@@ -30,7 +30,8 @@ const s1 = makeStorage({
   pythonProgress: '{"w1":1}',
   'wavelet-project-selfcheck:pixel-game:t1': '1',
   scratchpadState: '{"code":"x"}',
-  'wavelet-pdf-names': '{"abc":"Alexis"}'
+  'wavelet-pdf-names': '{"abc":"Alexis"}',
+  'wavelet-teacher-code': 'foxtrot-abacus'
 });
 ProgressStore.applyVersion(s1, 'new-sha');
 check('version change clears student worksheet progress', s1.get('pythonProgress') === null);
@@ -38,6 +39,8 @@ check('version change clears student self-check state', s1.get('wavelet-project-
 check('version change clears scratchpad state', s1.get('scratchpadState') === null);
 check('version change PRESERVES teacher dashboard PDF names',
   s1.get('wavelet-pdf-names') === '{"abc":"Alexis"}', s1.get('wavelet-pdf-names'));
+check('version change PRESERVES the saved teacher code',
+  s1.get('wavelet-teacher-code') === 'foxtrot-abacus', s1.get('wavelet-teacher-code'));
 check('version change records the new version', s1.get('appVersion') === 'new-sha');
 
 // ── same version: nothing cleared ──
