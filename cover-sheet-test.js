@@ -40,6 +40,8 @@ check('sheetTitle adds the possessive', sheetTitle('Sam', 'Pixel Game') === "Sam
 check('sheetTitle says "My ..." when there is no name', sheetTitle('', 'Pixel Game') === 'My Pixel Game');
 check('sheetTitle treats whitespace-only as no name', sheetTitle('   ', 'Pixel Game') === 'My Pixel Game');
 check('sheetTitle trims whitespace around a real name', sheetTitle('  Sam  ', 'Pixel Game') === "Sam's Pixel Game");
+check('sheetTitle uses a bare apostrophe for a name ending in s', sheetTitle('Alexis', 'Pixel Game') === "Alexis' Pixel Game");
+check('sheetTitle handles an uppercase trailing S', sheetTitle('Chris', 'Pixel Game') === "Chris' Pixel Game");
 
 // ── fitCodeFontSize ─────────────────────────────────────────────────────────
 const geom = { availableHeight: 600, maxFont: 9, minFont: 5, lineHeightRatio: 1.25 };

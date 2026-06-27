@@ -37,10 +37,13 @@
     }
 
     // "Sam's Pixel Game", or "My Pixel Game" when there's no name (we'll merge in some
-    // students without names, so the sheet must still read naturally).
+    // students without names, so the sheet must still read naturally). A name ending in "s"
+    // takes a bare apostrophe ("Alexis' Pixel Game"), not "Alexis's".
     function sheetTitle(name, projectTitle) {
         const n = (name || '').trim();
-        return n ? `${n}'s ${projectTitle}` : `My ${projectTitle}`;
+        if (!n) { return `My ${projectTitle}`; }
+        const possessive = /s$/i.test(n) ? `${n}'` : `${n}'s`;
+        return `${possessive} ${projectTitle}`;
     }
 
     // Largest font (pt) in [minFont, maxFont] at which lineCount lines fit in
